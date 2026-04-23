@@ -1,0 +1,41 @@
+# Default: treat text as CRLF on checkout for Windows devs; LF in repo.
+* text=auto
+
+# Source code — always LF in repo, CRLF on Windows checkout (normal)
+*.cpp     text
+*.h       text
+*.c       text
+*.hpp     text
+*.cs      text
+*.py      text
+*.md      text
+*.json    text
+*.jsonl   text
+*.proto   text
+*.cmake   text
+CMakeLists.txt text
+*.yml     text
+*.yaml    text
+*.toml    text
+*.idc     text
+
+# Shell scripts — LF always (even on Windows; some tools care)
+*.sh      text eol=lf
+
+# Windows scripts — CRLF always
+*.bat     text eol=crlf
+*.cmd     text eol=crlf
+*.ps1     text eol=crlf
+
+# Binary fixtures — never normalise
+*.bin     binary
+*.pem     binary
+*.key     binary
+*.crt     binary
+*.p12     binary
+*.pdf     binary
+*.png     binary
+*.jpg     binary
+*.zip     binary
+*.dll     binary
+*.exe     binary

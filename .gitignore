@@ -1,0 +1,118 @@
+# ──────────────────────────────────────────────────────────────────────────
+# Build outputs
+# ──────────────────────────────────────────────────────────────────────────
+build/
+out/
+cmake-build-*/
+*.obj
+*.o
+*.a
+*.lib
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.exp
+*.idb
+
+# Don't track built binaries in dist/ — rebuild locally via scripts/build.ps1
+dist/
+
+# ──────────────────────────────────────────────────────────────────────────
+# vcpkg
+# ──────────────────────────────────────────────────────────────────────────
+vcpkg_installed/
+vcpkg-manifest-install.log
+
+# ──────────────────────────────────────────────────────────────────────────
+# CMake
+# ──────────────────────────────────────────────────────────────────────────
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+CMakeSettings.json
+Testing/
+_deps/
+
+# ──────────────────────────────────────────────────────────────────────────
+# Visual Studio / MSBuild (generated; CMake is the source of truth)
+# ──────────────────────────────────────────────────────────────────────────
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.suo
+*.VC.db
+*.ipch
+.vs/
+x64/
+Debug/
+Release/
+RelWithDebInfo/
+MinSizeRel/
+
+# ──────────────────────────────────────────────────────────────────────────
+# VS Code / CLion / IDE
+# ──────────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.code-workspace
+.clangd/
+
+# ──────────────────────────────────────────────────────────────────────────
+# Python — RE tooling
+# ──────────────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+
+# ──────────────────────────────────────────────────────────────────────────
+# Runtime files — generated during gameplay, not part of the codebase
+# ──────────────────────────────────────────────────────────────────────────
+logs/
+*.log
+*.log.*
+capture-*.jsonl
+emulator.db
+emulator.db-shm
+emulator.db-wal
+active_account.kv
+characters.json
+
+# ──────────────────────────────────────────────────────────────────────────
+# Editor / OS cruft
+# ──────────────────────────────────────────────────────────────────────────
+*.swp
+*.bak
+*.tmp
+*.orig
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ──────────────────────────────────────────────────────────────────────────
+# Local-only config overrides (each dev can have their own)
+# ──────────────────────────────────────────────────────────────────────────
+config/local.json
+config/*.local.json
+.env
+.env.local
+
+# ──────────────────────────────────────────────────────────────────────────
+# Captured packet dumps (experimental; not authoritative)
+# Keep the canonical fixtures under fixtures/ and src/protocol/tools/
+# but don't accidentally commit large debug captures.
+# ──────────────────────────────────────────────────────────────────────────
+dump_*.bin
+capture_*.bin
+*.pcap
+*.pcapng
+Dumped*.txt
+
+# ──────────────────────────────────────────────────────────────────────────
+# Intermediate CSV analysis output — regenerated on-demand
+# ──────────────────────────────────────────────────────────────────────────
+*.csv

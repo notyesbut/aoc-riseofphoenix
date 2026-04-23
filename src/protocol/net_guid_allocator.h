@@ -1,0 +1,150 @@
+// ============================================================================
+//  protocol/net_guid_allocator.h
+//
+//  Server-side dynamic NetGUID allocator for multiplayer.
+//
+//  UE5 NetGUIDs are the client's stable reference to an actor/subobject.
+//  For our live-server transition:
+//
+//    * STATIC NetGUIDs (class BPs, level, plugins) are SHARED across all
+//      players.  They match what the client already has loaded from disk.
+//      Hardcoded in the actor builders (e.g. Archetype=120, Level=10).
+//
+//    * DYNAMIC NetGUIDs (a player's PlayerController, Pawn, PlayerState,
+//      AbilityComponent, etc.) are ALLOCATED PER-PLAYER by this class.
+//      Each connecting player gets a unique block so their actors don't
+//      collide with other players' actors.
+//
+//  Allocation scheme:
+//    * kDynamicBase = 0x01000000 (16.7M) — well clear of captured NetGUIDs
+//      which are in the low thousands range.
+//    * Per-player block of kBlockSize = 256 GUIDs.  A player gets their
+//      PC=base, Pawn=base+1, PlayerState=base+2, plus room for components.
+//    * Up to (MaxPlayers) = (UINT32_MAX - kDynamicBase) / kBlockSize
+//      ≈ 16 million players.  More than enough for any realistic server.
+//
+//  Thread-safety: the allocator is lock-free via std::atomic.  Multiple
+//  GameServer threads can allocate concurrently without blocking.
+//
+//  Lifecycle:
+//    * allocate_player_block() — called on player connect → returns the
+//      base NetGUID for that player's block.
+//    * release_player_block(base) — called on player disconnect.  Marks
+//      the block as free for reuse.  In the MVP we just leak; reuse is
+//      a TODO for long-running servers.
+// ============================================================================
+#pragma once
+
+#include <atomic>
+#include <cstdint>
+#include <mutex>
+#include <unordered_map>
+#include <spdlog/spdlog.h>
+
+namespace aoc { namespace protocol {
+
+/// Per-player NetGUID block.  Returned to the caller after allocation
+/// so they can pass specific GUIDs into the actor builders.
+struct PlayerNetGuidBlock {
+    uint64_t base                 = 0;   // First GUID in the block
+    uint64_t player_controller    = 0;   // base + 0
+    uint64_t pawn                 = 0;   // base + 1
+    uint64_t player_state         = 0;   // base + 2
+    uint64_t ability_component    = 0;   // base + 3
+    uint64_t stats_component      = 0;   // base + 4
+    uint64_t alignment_component  = 0;   // base + 5
+    uint64_t combat_component     = 0;   // base + 6
+    uint64_t base_character_info  = 0;   // base + 7
+    uint64_t interact_info        = 0;   // base + 8
+    // + room for future growth up to kBlockSize-1
+
+    bool is_valid() const { return base != 0; }
+};
+
+class NetGuidAllocator {
+public:
+    // Dynamic block base — chosen to be clearly above any captured NetGUID.
+    // Captured RandomChar's actor NetGUID is 1; class BP is 120; level is 10.
+    // All captured NetGUIDs fit in the low thousands.  16.7M gives us an
+    // unmistakable gap.
+    static constexpr uint64_t kDynamicBase = 0x01000000ULL;  // 16,777,216
+
+    // Number of GUIDs reserved per player.  256 is comfortable:
+    //   - 10 actor/component slots defined now
+    //   - Room for 246 more future slots (pets, summons, etc.)
+    //   - Aligns to 0x100 boundary for easy debugging in hex
+    static constexpr uint64_t kBlockSize = 256;
+
+    /// Allocate a fresh block for a newly-connected player.
+    /// Thread-safe.  Returns a valid block or an all-zero block if
+    /// exhausted (only happens at >16M concurrent players).
+    PlayerNetGuidBlock allocate_player_block(const std::string& player_key) {
+        const uint64_t slot = next_slot_.fetch_add(1, std::memory_order_relaxed);
+        const uint64_t base = kDynamicBase + slot * kBlockSize;
+
+        if (base + kBlockSize < base) {
+            // Overflow — should never realistically happen
+            spdlog::error("[NetGuidAllocator] Overflow: {} slots exhausted",
+                          slot);
+            return {};
+        }
+
+        PlayerNetGuidBlock block;
+        block.base                 = base;
+        block.player_controller    = base + 0;
+        block.pawn                 = base + 1;
+        block.player_state         = base + 2;
+        block.ability_component    = base + 3;
+        block.stats_component      = base + 4;
+        block.alignment_component  = base + 5;
+        block.combat_component     = base + 6;
+        block.base_character_info  = base + 7;
+        block.interact_info        = base + 8;
+
+        {
+            std::lock_guard<std::mutex> lk(mu_);
+            player_to_block_[player_key] = block;
+        }
+
+        spdlog::info("[NetGuidAllocator] Allocated block for \"{}\": "
+                     "base=0x{:x} (PC={}, Pawn={}, PS={})",
+                     player_key, base,
+                     block.player_controller, block.pawn, block.player_state);
+        return block;
+    }
+
+    /// Return the block for a player if one was allocated.
+    PlayerNetGuidBlock get_block(const std::string& player_key) const {
+        std::lock_guard<std::mutex> lk(mu_);
+        auto it = player_to_block_.find(player_key);
+        if (it == player_to_block_.end()) return {};
+        return it->second;
+    }
+
+    /// Called on player disconnect.  MVP: just records the release.
+    /// Reuse of released blocks is a future optimization.
+    void release_player_block(const std::string& player_key) {
+        std::lock_guard<std::mutex> lk(mu_);
+        auto it = player_to_block_.find(player_key);
+        if (it == player_to_block_.end()) return;
+        spdlog::info("[NetGuidAllocator] Released block for \"{}\" "
+                     "(base=0x{:x})", player_key, it->second.base);
+        player_to_block_.erase(it);
+    }
+
+    /// Diagnostics: how many blocks have been allocated so far.
+    size_t live_block_count() const {
+        std::lock_guard<std::mutex> lk(mu_);
+        return player_to_block_.size();
+    }
+    uint64_t total_slots_issued() const {
+        return next_slot_.load(std::memory_order_relaxed);
+    }
+
+private:
+    std::atomic<uint64_t> next_slot_{0};
+    mutable std::mutex mu_;
+    std::unordered_map<std::string, PlayerNetGuidBlock> player_to_block_;
+};
+
+}} // namespace aoc::protocol

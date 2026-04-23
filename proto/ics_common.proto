@@ -1,0 +1,152 @@
+syntax = "proto3";
+
+package ics_common;
+
+option csharp_namespace = "IcsCommon";
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum IcsStatusCode {
+    option allow_alias = true;
+    ICS_STATUS_CODE_SUCCESS                                      = 0;
+    ICS_STATUS_CODE_ACKNOWLEDGED                                 = 1;
+    ICS_STATUS_CODE_STREAM_FINISHED                              = 2;
+
+    // Fatal errors (100-199)
+    ICS_STATUS_CODE_ERROR_ANY_BEGIN                              = 100;
+    ICS_STATUS_CODE_ERROR_FATAL_BEGIN                            = 100;
+    ICS_STATUS_CODE_ERROR_FATAL_NO_CONNECTION                    = 101;
+    ICS_STATUS_CODE_ERROR_FATAL_CALL_IS_DEAD                    = 102;
+    ICS_STATUS_CODE_ERROR_FATAL_STREAM_IS_DEAD                  = 103;
+    ICS_STATUS_CODE_ERROR_FATAL_END                              = 199;
+
+    // General errors (200-599)
+    ICS_STATUS_CODE_ERROR_BEGIN                                  = 200;
+    ICS_STATUS_CODE_ERROR_INVALID_PROTO_VERSION                  = 201;
+    ICS_STATUS_CODE_ERROR_INTERNAL_ERROR                         = 202;
+    ICS_STATUS_CODE_ERROR_UNKNOWN_REQUEST                        = 203;
+    ICS_STATUS_CODE_ERROR_INVALID_REQUEST                        = 204;
+    ICS_STATUS_CODE_ERROR_REQUEST_FAILED                         = 205;
+    ICS_STATUS_CODE_ERROR_REQUEST_TIMEOUT                        = 206;
+    ICS_STATUS_CODE_ERROR_REQUEST_PENDING                        = 207;
+    ICS_STATUS_CODE_ERROR_UNKNOWN_MESSAGE                        = 208;
+    ICS_STATUS_CODE_ERROR_INVALID_MESSAGE                        = 209;
+    ICS_STATUS_CODE_ERROR_DESERIALIZE_MESSAGE_FAILED             = 210;
+    ICS_STATUS_CODE_ERROR_SERIALIZE_MESSAGE_FAILED               = 211;
+    ICS_STATUS_CODE_ERROR_BROKER_RECEIVE_FAILED                  = 212;
+    ICS_STATUS_CODE_ERROR_BROKER_SEND_FAILED                     = 213;
+    ICS_STATUS_CODE_ERROR_FILE_OPERATION_FAILED                  = 214;
+    ICS_STATUS_CODE_ERROR_FILE_OBJECT_NOT_FOUND                  = 215;
+    ICS_STATUS_CODE_ERROR_DATABASE_OPERATION_FAILED              = 216;
+    ICS_STATUS_CODE_ERROR_DATABASE_OBJECT_NOT_FOUND              = 217;
+    ICS_STATUS_CODE_ERROR_KVSTORE_OPERATION_FAILED               = 218;
+    ICS_STATUS_CODE_ERROR_KVSTORE_OBJECT_NOT_FOUND               = 219;
+    ICS_STATUS_CODE_ERROR_AUTHENTICATION_FAILED                  = 220;
+    ICS_STATUS_CODE_ERROR_PERMISSION_CHECK_FAILED                = 221;
+    ICS_STATUS_CODE_ERROR_ACCOUNT_KICK_CHECK_FAILED              = 222;
+    ICS_STATUS_CODE_ERROR_SESSION_CHECK_FAILED                   = 223;
+    ICS_STATUS_CODE_ERROR_CAPACITY_CHECK_FAILED                  = 224;
+    ICS_STATUS_CODE_ERROR_EXISTING_JOB_FOUND                     = 225;
+    ICS_STATUS_CODE_ERROR_JOB_NOT_FOUND                          = 226;
+    ICS_STATUS_CODE_ERROR_EXISTING_NAME_FOUND                    = 227;
+    ICS_STATUS_CODE_ERROR_CHARACTER_COUNT_CHECK_FAILED           = 228;
+    ICS_STATUS_CODE_ERROR_GATEWAY_RESERVATION_ADD_FAILED         = 229;
+    ICS_STATUS_CODE_ERROR_PLAY_RESERVATION_NO_GATEWAY            = 230;
+    ICS_STATUS_CODE_ERROR_PLAY_RESERVATION_NO_SERVER             = 231;
+    ICS_STATUS_CODE_ERROR_EXPLOIT_ACCOUNT_IN_USE                 = 232;
+    ICS_STATUS_CODE_ERROR_PLAYER_ONLINE_REC_NOT_FOUND            = 233;
+    ICS_STATUS_CODE_ERROR_PLAYER_ONLINE_GXCLIENT_REC_NOT_FOUND   = 234;
+    ICS_STATUS_CODE_ERROR_PLAYER_ONLINE_XCLIENT_REC_NOT_FOUND    = 235;
+    ICS_STATUS_CODE_ERROR_PLAYER_CHARACTER_CACHE_REC_NOT_FOUND   = 236;
+    ICS_STATUS_CODE_ERROR_PLAYER_CHARACTER_MINI_REC_NOT_FOUND    = 237;
+    ICS_STATUS_CODE_ERROR_ACCOUNT_REC_NOT_FOUND                  = 238;
+    ICS_STATUS_CODE_ERROR_CHARACTER_REC_NOT_FOUND                = 239;
+    ICS_STATUS_CODE_ERROR_CHARACTER_LIST_NOT_FOUND               = 240;
+    ICS_STATUS_CODE_ERROR_GAME_BRANCH_INFO_REC_NOT_FOUND         = 241;
+    ICS_STATUS_CODE_ERROR_SPM_FINDER_REC_NOT_FOUND               = 242;
+    ICS_STATUS_CODE_ERROR_WORLD_CONFIG_REC_NOT_FOUND             = 243;
+    ICS_STATUS_CODE_ERROR_WORLD_STATUS_REC_NOT_FOUND             = 244;
+    ICS_STATUS_CODE_ERROR_WORLD_OFFLINE                          = 245;
+    ICS_STATUS_CODE_ERROR_PLAY_RESERVATION_TIMEOUT               = 246;
+    ICS_STATUS_CODE_ERROR_GAME_BRANCH_REC_EXISTS                 = 247;
+    ICS_STATUS_CODE_ERROR_GAME_BRANCH_REC_NOT_FOUND              = 248;
+    ICS_STATUS_CODE_ERROR_GAME_VERSION_REC_NOT_FOUND             = 249;
+    ICS_STATUS_CODE_ERROR_GAME_PATCH_REC_NOT_FOUND               = 250;
+    ICS_STATUS_CODE_ERROR_END                                    = 499;
+
+    // Session termination errors (500-599)
+    ICS_STATUS_CODE_ERROR_TERM_SESSION_BEGIN                     = 500;
+    ICS_STATUS_CODE_ERROR_TERM_SESSION_ADMIN_KICK                = 501;
+    ICS_STATUS_CODE_ERROR_TERM_SESSION_ACCOUNT_IN_USE            = 502;
+    ICS_STATUS_CODE_ERROR_TERM_SESSION_ACCOUNT_OVERWRITE         = 503;
+    ICS_STATUS_CODE_ERROR_TERM_SESSION_END                       = 599;
+    ICS_STATUS_CODE_ERROR_ANY_END                                = 599;
+}
+
+enum SessionRequestType {
+    SESSION_REQUEST_TYPE_INVALID = 0;
+    SESSION_REQUEST_TYPE_OPEN    = 1;
+    SESSION_REQUEST_TYPE_CLOSE   = 2;
+}
+
+enum SystemEventType {
+    SYSTEM_EVENT_TYPE_INVALID     = 0;
+    SYSTEM_EVENT_TYPE_SESSION_END = 1;
+}
+
+// ─── Messages ────────────────────────────────────────────────────────────────
+
+message TraceSample {
+    int32             sample_index = 1;
+    map<string, string> tags         = 2;
+}
+
+message SystemData {
+    map<string, string>  tags          = 1;
+    repeated TraceSample trace_samples = 2;
+}
+
+message MessageWrapper {
+    SystemData    system_data       = 1;
+    IcsStatusCode status_code       = 2;
+    string        message_type_name = 3;
+    bytes         message_data      = 4;
+}
+
+message MessageWrapperBatch {
+    repeated MessageWrapper batch = 1;
+}
+
+message KeepAliveMessage {
+    int64 timestamp_msec = 1;
+}
+
+message SessionRequest {
+    SessionRequestType    request_type = 1;
+    map<string, string>   tags         = 2;
+    map<string, string>   data_map     = 3;
+    string                data_string  = 4;
+}
+
+message SessionReply {
+    IcsStatusCode         result_code  = 1;
+    SessionRequestType    request_type = 2;
+    map<string, string>   tags         = 3;
+    map<string, string>   data_map     = 4;
+    string                data_string  = 5;
+}
+
+message SystemEvent {
+    IcsStatusCode         status_code = 1;
+    SystemEventType       event_type  = 2;
+    map<string, string>   tags        = 3;
+}
+
+message TestMessage {
+    map<string, string> tags = 1;
+}
+
+message TraceMessage {
+    map<string, string> tags    = 1;
+    string              message = 2;
+}

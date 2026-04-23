@@ -1,0 +1,72 @@
+AoC-RiseOfPhoenix — Private Reverse-Engineering Research
+Copyright (c) 2026 The AoC-RiseOfPhoenix Team.  All rights reserved.
+
+=============================================================================
+
+                 INTERNAL / TEAM USE ONLY — NOT A LICENSE GRANT
+
+This repository is distributed to specified team members under a non-
+transferable, revocable, private arrangement.  It is NOT open-source.  It
+is NOT licensed to the public.  Access via a GitHub team invitation does
+not constitute a license.
+
+You may:
+
+  * Read the source.
+  * Build, run, and modify the code on your own hardware, for your own
+    private educational reverse-engineering research.
+  * Contribute back to this repository under the arrangement set by its
+    maintainers.
+
+You may NOT:
+
+  * Redistribute the source or binaries in any form, public or private,
+    to anyone outside the currently-invited team.
+  * Host, operate, or offer a service based on this code to any third
+    party, for consideration or otherwise.
+  * Use this code to circumvent, evade, or interfere with the
+    authentication, licensing, or anti-cheat systems of the Ashes of
+    Creation game client or Intrepid Studios' infrastructure, except
+    for strictly local loopback testing against your own development
+    machine.
+  * Use the captured `replay_data.bin` or any other fixture derived from
+    live Ashes of Creation servers for any purpose other than local
+    reverse-engineering on your own hardware.
+  * Make any claim of ownership of, or authorial connection to, Intrepid
+    Studios Inc. or the Ashes of Creation intellectual property.
+
+=============================================================================
+
+                             PROJECT DISCLAIMER
+
+This project exists strictly for educational reverse-engineering.  It is
+not affiliated with, endorsed by, or in any way approved by Intrepid
+Studios Inc.  "Ashes of Creation," "Verra," "Intrepid Studios," and any
+other Intrepid trademarks remain the exclusive property of their
+respective owners.
+
+The `fixtures/replay_data.bin` file contains a captured stream of
+network packets originating from Intrepid Studios' servers.  It is
+included here solely to enable offline reverse-engineering analysis.
+Its contents are not authored by this project.  If Intrepid Studios
+requests its removal, it will be removed and this project will be
+dissolved.
+
+=============================================================================
+
+                                    NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Running this code may violate the Ashes of Creation Terms of Service or
+End-User License Agreement.  That is a matter between you and Intrepid
+Studios.  By using this code you accept full personal responsibility
+for any such consequences.
+
+=============================================================================

@@ -1,0 +1,555 @@
+Capture: replay_full.jsonl
+Phase 3: RepLayout Property Analyzer
+============================================================
+
+Loading replay_full.jsonl...
+  29010 packets, 143 reassembled chains
+Processing bunches...
+  58174 payloads extracted
+
+================================================================================
+  PHASE 3: RepLayout Handle Stream Analysis
+================================================================================
+
+  Payloads extracted:      58,174
+  Handle parse OK:         20,775 (35.7%)
+  Handle parse failed:     37,399
+  Total handle instances:  20,769
+  Channels with handles:   236
+  Multi-property payloads: 9,505
+  Movement samples found:  0
+
+================================================================================
+  PER-CHANNEL HANDLE MAP (top 30)
+================================================================================
+
+  Ch   19
+    RepLayout=11 CustomDelta=4192
+    Payloads: 4203, Parsed: 4203, Fails: 0, Multi: 3
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD   58   4191          58b                 fixed_58b  CustomDelta
+    CD   39      1          39b                 fixed_39b  CustomDelta
+    RL   38     11          17b                 fixed_17b    RepLayout
+
+  Ch   60
+    RepLayout=1 CustomDelta=1158
+    Payloads: 1159, Parsed: 1072, Fails: 87, Multi: 494
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  349      4         349b                fixed_349b  CustomDelta
+    CD  293      2         293b                fixed_293b  CustomDelta
+    CD   16      1          16b                    uint16  CustomDelta
+    CD    3      1           3b                  fixed_3b  CustomDelta
+    CD    2      1           2b                     enum2  CustomDelta
+    CD    1     15           1b                      bool  CustomDelta
+    RL    0   1048           0b                     empty    RepLayout
+
+  Ch   94
+    RepLayout=9 CustomDelta=1215
+    Payloads: 1224, Parsed: 868, Fails: 356, Multi: 298
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  349      8         349b                fixed_349b  CustomDelta
+    CD  341      1         341b                fixed_341b  CustomDelta
+    CD  293      1         293b                fixed_293b  CustomDelta
+    CD  269      1         269b                fixed_269b  CustomDelta
+    CD   16      1          16b                    uint16  CustomDelta
+    CD    4      1           4b                  fixed_4b  CustomDelta
+    CD    3      1           3b                  fixed_3b  CustomDelta
+    CD    1     44           1b                      bool  CustomDelta
+    RL    0    801           0b                     empty    RepLayout
+    RL   14      9     118-194b              var_118-194b    RepLayout
+
+  Ch   22
+    RepLayout=16 CustomDelta=1357
+    Payloads: 1373, Parsed: 828, Fails: 545, Multi: 812
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  373      1         373b                fixed_373b  CustomDelta
+    CD  349      2         349b                fixed_349b  CustomDelta
+    CD  277      1         277b                fixed_277b  CustomDelta
+    CD  269      1         269b                fixed_269b  CustomDelta
+    RL    0    807           0b                     empty    RepLayout
+    RL   14     16     118-194b              var_118-194b    RepLayout
+
+  Ch  110
+    RepLayout=23 CustomDelta=1000
+    Payloads: 1023, Parsed: 718, Fails: 305, Multi: 683
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  373      1         373b                fixed_373b  CustomDelta
+    CD  349      4         349b                fixed_349b  CustomDelta
+    CD  293      2         293b                fixed_293b  CustomDelta
+    RL    0    688           0b                     empty    RepLayout
+    RL   14     23     118-194b              var_118-194b    RepLayout
+
+  Ch   72
+    RepLayout=18 CustomDelta=1081
+    Payloads: 1099, Parsed: 642, Fails: 457, Multi: 529
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  373      1         373b                fixed_373b  CustomDelta
+    CD  349      1         349b                fixed_349b  CustomDelta
+    CD  293      1         293b                fixed_293b  CustomDelta
+    CD  125      1         125b                fixed_125b  CustomDelta
+    CD   83      1          83b                 fixed_83b  CustomDelta
+    CD    1      2           1b                      bool  CustomDelta
+    RL    0    617           0b                     empty    RepLayout
+    RL   14     18     118-194b              var_118-194b    RepLayout
+
+  Ch   78
+    RepLayout=27 CustomDelta=1563
+    Payloads: 1590, Parsed: 622, Fails: 968, Multi: 561
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  373      3         373b                fixed_373b  CustomDelta
+    CD  349      1         349b                fixed_349b  CustomDelta
+    CD  293      2         293b                fixed_293b  CustomDelta
+    CD  269      1         269b                fixed_269b  CustomDelta
+    CD    1      1           1b                      bool  CustomDelta
+    RL    0    587           0b                     empty    RepLayout
+    RL   14     27     118-194b              var_118-194b    RepLayout
+
+  Ch   44
+    RepLayout=0 CustomDelta=1081
+    Payloads: 1081, Parsed: 547, Fails: 534, Multi: 527
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  373      1         373b                fixed_373b  CustomDelta
+    CD  349      2         349b                fixed_349b  CustomDelta
+    CD  293      1         293b                fixed_293b  CustomDelta
+    CD  269      2         269b                fixed_269b  CustomDelta
+    CD   24      1          24b                 fixed_24b  CustomDelta
+    CD   16      6          16b                    uint16  CustomDelta
+    CD    5      1           5b                  fixed_5b  CustomDelta
+    CD    4      1           4b                  fixed_4b  CustomDelta
+    RL    0    532           0b                     empty    RepLayout
+
+  Ch    6
+    RepLayout=521 CustomDelta=13
+    Payloads: 534, Parsed: 529, Fails: 5, Multi: 10
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  122      4         122b                fixed_122b  CustomDelta
+    CD  104      1         104b                fixed_104b  CustomDelta
+    CD   48      2          48b           FRotator(3×u16)  CustomDelta
+    CD    9      1           9b                  fixed_9b  CustomDelta
+    CD    5      1           5b                  fixed_5b  CustomDelta
+    RL   46    515      48-988b               var_48-988b    RepLayout
+    RL   56      1         192b            FVector(3×f64)    RepLayout
+    RL  120      4          86b                 fixed_86b    RepLayout
+
+  Ch  114
+    RepLayout=31 CustomDelta=1614
+    Payloads: 1645, Parsed: 518, Fails: 1127, Multi: 334
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  373      1         373b                fixed_373b  CustomDelta
+    CD  349      1         349b                fixed_349b  CustomDelta
+    CD  293      2         293b                fixed_293b  CustomDelta
+    CD  269      2         269b                fixed_269b  CustomDelta
+    CD  108      1         108b                fixed_108b  CustomDelta
+    CD   93      1          93b                 fixed_93b  CustomDelta
+    CD    4      1           4b                  fixed_4b  CustomDelta
+    CD    2      1           2b                     enum2  CustomDelta
+    CD    1      1           1b                      bool  CustomDelta
+    RL    0    479           0b                     empty    RepLayout
+    RL    2      3        1323b               fixed_1323b    RepLayout
+    RL   14     25     118-191b              var_118-191b    RepLayout
+
+  Ch   30
+    RepLayout=18 CustomDelta=1510
+    Payloads: 1528, Parsed: 513, Fails: 1015, Multi: 235
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  349      3         349b                fixed_349b  CustomDelta
+    CD  293      1         293b                fixed_293b  CustomDelta
+    CD  269      1         269b                fixed_269b  CustomDelta
+    CD  111      1         111b                fixed_111b  CustomDelta
+    CD   16      1          16b                    uint16  CustomDelta
+    CD    1    120           1b                      bool  CustomDelta
+    RL    0    368           0b                     empty    RepLayout
+    RL   14     18     118-194b              var_118-194b    RepLayout
+
+  Ch   54
+    RepLayout=33 CustomDelta=483
+    Payloads: 516, Parsed: 511, Fails: 5, Multi: 478
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  349      1         349b                fixed_349b  CustomDelta
+    CD  293      6         293b                fixed_293b  CustomDelta
+    CD   48      1          48b           FRotator(3×u16)  CustomDelta
+    CD   23     42          23b                 fixed_23b  CustomDelta
+    RL    0    428           0b                     empty    RepLayout
+    RL   14     21     118-158b              var_118-158b    RepLayout
+    RL   62     12          33b                 fixed_33b    RepLayout
+
+  Ch   46
+    RepLayout=0 CustomDelta=806
+    Payloads: 806, Parsed: 468, Fails: 338, Multi: 335
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  373      1         373b                fixed_373b  CustomDelta
+    CD   16      5          16b                    uint16  CustomDelta
+    CD    4      1           4b                  fixed_4b  CustomDelta
+    CD    1     24           1b                      bool  CustomDelta
+    RL    0    437           0b                     empty    RepLayout
+
+  Ch   62
+    RepLayout=2 CustomDelta=674
+    Payloads: 676, Parsed: 466, Fails: 210, Multi: 37
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  349     21         349b                fixed_349b  CustomDelta
+    CD  269      2         269b                fixed_269b  CustomDelta
+    CD   16      1          16b                    uint16  CustomDelta
+    CD    6     14           6b                  fixed_6b  CustomDelta
+    CD    3      1           3b                  fixed_3b  CustomDelta
+    CD    1     44           1b                      bool  CustomDelta
+    RL    0    382           0b                     empty    RepLayout
+    RL   32      1          40b                 fixed_40b    RepLayout
+
+  Ch   10
+    RepLayout=7 CustomDelta=870
+    Payloads: 877, Parsed: 460, Fails: 416, Multi: 443
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  373      1         373b                fixed_373b  CustomDelta
+    CD  349      4         349b                fixed_349b  CustomDelta
+    CD  293      3         293b                fixed_293b  CustomDelta
+    CD  269      3         269b                fixed_269b  CustomDelta
+    CD  127      1         127b                fixed_127b  CustomDelta
+    CD   76      1          76b                 fixed_76b  CustomDelta
+    CD   49      1          49b                 fixed_49b  CustomDelta
+    CD   16      2          16b                    uint16  CustomDelta
+    CD    1      4           1b                      bool  CustomDelta
+    RL    0    434           0b                     empty    RepLayout
+    RL   14      4     130-346b              var_130-346b    RepLayout
+    RL   52      1         132b                fixed_132b    RepLayout
+    RL  107      1          38b                 fixed_38b    RepLayout
+
+  Ch   82
+    RepLayout=16 CustomDelta=534
+    Payloads: 550, Parsed: 456, Fails: 94, Multi: 105
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  373      1         373b                fixed_373b  CustomDelta
+    CD  349      4         349b                fixed_349b  CustomDelta
+    CD  269      2         269b                fixed_269b  CustomDelta
+    CD   50      1          50b                 fixed_50b  CustomDelta
+    CD   21      1          21b                 fixed_21b  CustomDelta
+    CD    2      2           2b                     enum2  CustomDelta
+    CD    1     37           1b                      bool  CustomDelta
+    RL    0    392           0b                     empty    RepLayout
+    RL   14     16     118-194b              var_118-194b    RepLayout
+
+  Ch  122
+    RepLayout=2 CustomDelta=425
+    Payloads: 427, Parsed: 422, Fails: 4, Multi: 421
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  373      1         373b                fixed_373b  CustomDelta
+    CD  352      1         352b                fixed_352b  CustomDelta
+    CD  349      3         349b                fixed_349b  CustomDelta
+    CD  293      2         293b                fixed_293b  CustomDelta
+    RL    0    414           0b                     empty    RepLayout
+    RL    2      1         653b                fixed_653b    RepLayout
+
+  Ch    3
+    RepLayout=16 CustomDelta=406
+    Payloads: 422, Parsed: 408, Fails: 13, Multi: 26
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD 4139      1        4139b               fixed_4139b  CustomDelta
+    CD 3983      1        3983b               fixed_3983b  CustomDelta
+    CD 2519      1        2519b               fixed_2519b  CustomDelta
+    CD 2023      1        2023b               fixed_2023b  CustomDelta
+    CD 1599      1        1599b               fixed_1599b  CustomDelta
+    CD 1495      2        1495b               fixed_1495b  CustomDelta
+    CD 1487      1        1487b               fixed_1487b  CustomDelta
+    CD 1471      1        1471b               fixed_1471b  CustomDelta
+    CD 1355      1        1355b               fixed_1355b  CustomDelta
+    CD 1220      1        1220b               fixed_1220b  CustomDelta
+    CD 1195     47        1195b               fixed_1195b  CustomDelta
+    CD 1171      1        1171b               fixed_1171b  CustomDelta
+    CD  781      1         781b                fixed_781b  CustomDelta
+    CD  725      1         725b                fixed_725b  CustomDelta
+    CD  455      4         455b                fixed_455b  CustomDelta
+    CD  427      2         427b                fixed_427b  CustomDelta
+    CD  397      1         397b                fixed_397b  CustomDelta
+    CD  381      1         381b                fixed_381b  CustomDelta
+    CD  365      1         365b                fixed_365b  CustomDelta
+    CD  350      1         350b                fixed_350b  CustomDelta
+    CD  349      1         349b                fixed_349b  CustomDelta
+    CD  341      1         341b                fixed_341b  CustomDelta
+    CD  277      1         277b                fixed_277b  CustomDelta
+    CD  261      1         261b                fixed_261b  CustomDelta
+    CD  235    307         235b                fixed_235b  CustomDelta
+    CD  156      7         156b                fixed_156b  CustomDelta
+    CD  116      1         116b                fixed_116b  CustomDelta
+    CD   22      1          22b                 fixed_22b  CustomDelta
+    CD   14      1          14b                 fixed_14b  CustomDelta
+    CD    4      1           4b                  fixed_4b  CustomDelta
+    RL    0      1           0b                     empty    RepLayout
+    RL   24     12          36b                 fixed_36b    RepLayout
+    RL  102      2        1119b               fixed_1119b    RepLayout
+
+  Ch   34
+    RepLayout=0 CustomDelta=563
+    Payloads: 563, Parsed: 403, Fails: 160, Multi: 4
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  285      2         285b                fixed_285b  CustomDelta
+    CD   16      4          16b                    uint16  CustomDelta
+    CD   12      1          12b                 fixed_12b  CustomDelta
+    CD    4      1           4b                  fixed_4b  CustomDelta
+    CD    3      3           3b                  fixed_3b  CustomDelta
+    CD    2     11           2b                     enum2  CustomDelta
+    CD    1     69           1b                      bool  CustomDelta
+    RL    0    312           0b                     empty    RepLayout
+
+  Ch   28
+    RepLayout=2 CustomDelta=483
+    Payloads: 485, Parsed: 390, Fails: 95, Multi: 349
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  909      1         909b                fixed_909b  CustomDelta
+    CD  349      1         349b                fixed_349b  CustomDelta
+    CD  293      2         293b                fixed_293b  CustomDelta
+    CD  269      2         269b                fixed_269b  CustomDelta
+    CD    1      6           1b                      bool  CustomDelta
+    RL    0    377           0b                     empty    RepLayout
+    RL   99      1          66b                 fixed_66b    RepLayout
+
+  Ch  116
+    RepLayout=0 CustomDelta=383
+    Payloads: 383, Parsed: 379, Fails: 4, Multi: 379
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  373      6         373b                fixed_373b  CustomDelta
+    CD  349      2         349b                fixed_349b  CustomDelta
+    CD  269      1         269b                fixed_269b  CustomDelta
+    RL    0    370           0b                     empty    RepLayout
+
+  Ch   96
+    RepLayout=14 CustomDelta=531
+    Payloads: 545, Parsed: 309, Fails: 236, Multi: 265
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  373      1         373b                fixed_373b  CustomDelta
+    CD  349      2         349b                fixed_349b  CustomDelta
+    CD  269      1         269b                fixed_269b  CustomDelta
+    CD   97      1          97b                 fixed_97b  CustomDelta
+    CD   25     30          25b                 fixed_25b  CustomDelta
+    CD    2      3           2b                     enum2  CustomDelta
+    CD    1      8           1b                      bool  CustomDelta
+    RL    0    250           0b                     empty    RepLayout
+    RL   14     10     118-334b              var_118-334b    RepLayout
+    RL   46      1         169b                fixed_169b    RepLayout
+    RL   62      1          33b                 fixed_33b    RepLayout
+    RL 3274      1          90b                 fixed_90b    RepLayout
+
+  Ch   14
+    RepLayout=15 CustomDelta=495
+    Payloads: 510, Parsed: 276, Fails: 234, Multi: 263
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  373      2         373b                fixed_373b  CustomDelta
+    CD  293      2         293b                fixed_293b  CustomDelta
+    CD  269      1         269b                fixed_269b  CustomDelta
+    CD  119      1         119b                fixed_119b  CustomDelta
+    CD   99      1          99b                 fixed_99b  CustomDelta
+    CD   63      1          63b                 fixed_63b  CustomDelta
+    CD   51      1          51b                 fixed_51b  CustomDelta
+    CD   32      1          32b             float32/int32  CustomDelta
+    CD   21      1          21b                 fixed_21b  CustomDelta
+    CD    7      1           7b                  fixed_7b  CustomDelta
+    CD    2      2           2b                     enum2  CustomDelta
+    RL    0    250           0b                     empty    RepLayout
+    RL   14     10     118-194b              var_118-194b    RepLayout
+    RL   86      1          14b                 fixed_14b    RepLayout
+    RL 3018      1          81b                 fixed_81b    RepLayout
+
+  Ch   24
+    RepLayout=0 CustomDelta=441
+    Payloads: 441, Parsed: 269, Fails: 172, Multi: 25
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  349      6         349b                fixed_349b  CustomDelta
+    CD  269      4         269b                fixed_269b  CustomDelta
+    CD  213      1         213b                fixed_213b  CustomDelta
+    CD   16      4          16b                    uint16  CustomDelta
+    CD    6      7           6b                  fixed_6b  CustomDelta
+    CD    2      1           2b                     enum2  CustomDelta
+    CD    1     61           1b                      bool  CustomDelta
+    RL    0    185           0b                     empty    RepLayout
+
+  Ch   70
+    RepLayout=27 CustomDelta=1142
+    Payloads: 1169, Parsed: 249, Fails: 920, Multi: 175
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  349      1         349b                fixed_349b  CustomDelta
+    CD  269      1         269b                fixed_269b  CustomDelta
+    CD  100      1         100b                fixed_100b  CustomDelta
+    CD   16      3          16b                    uint16  CustomDelta
+    CD    1     29           1b                      bool  CustomDelta
+    RL    0    187           0b                     empty    RepLayout
+    RL   14     27     118-194b              var_118-194b    RepLayout
+
+  Ch   16
+    RepLayout=0 CustomDelta=426
+    Payloads: 426, Parsed: 237, Fails: 189, Multi: 21
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  349      5         349b                fixed_349b  CustomDelta
+    CD  269      2         269b                fixed_269b  CustomDelta
+    CD   25     14          25b                 fixed_25b  CustomDelta
+    CD    1    135           1b                      bool  CustomDelta
+    RL    0     81           0b                     empty    RepLayout
+
+  Ch   13
+    RepLayout=133 CustomDelta=92
+    Payloads: 225, Parsed: 229, Fails: 6, Multi: 99
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  127      1         127b                fixed_127b  CustomDelta
+    CD   96      1          96b            FVector(3×f32)  CustomDelta
+    CD   94      1          94b                 fixed_94b  CustomDelta
+    CD   70      1          70b                 fixed_70b  CustomDelta
+    CD   40      1          40b                 fixed_40b  CustomDelta
+    CD   37      1          37b                 fixed_37b  CustomDelta
+    CD   18      1          18b                 fixed_18b  CustomDelta
+    CD   15      1          15b                 fixed_15b  CustomDelta
+    CD   11      1          11b                 fixed_11b  CustomDelta
+    CD    5     19           5b                  fixed_5b  CustomDelta
+    CD    3      1           3b                  fixed_3b  CustomDelta
+    RL    0     59           0b                     empty    RepLayout
+    RL   14     98     158-334b              var_158-334b    RepLayout
+    RL   46     25       1-169b                var_1-169b    RepLayout
+    RL   47      1         160b                fixed_160b    RepLayout
+    RL   52      1         160b                fixed_160b    RepLayout
+    RL   56      1          45b                 fixed_45b    RepLayout
+    RL   60      1         160b                fixed_160b    RepLayout
+    RL   62      5          33b                 fixed_33b    RepLayout
+    RL   66      2      79-160b               var_79-160b    RepLayout
+    RL   71      1         160b                fixed_160b    RepLayout
+    RL   87      1         160b                fixed_160b    RepLayout
+    RL   96      1         160b                fixed_160b    RepLayout
+    RL  102      1         160b                fixed_160b    RepLayout
+    RL  111      1         160b                fixed_160b    RepLayout
+    RL  112      1         160b                fixed_160b    RepLayout
+    RL  120      1         160b                fixed_160b    RepLayout
+
+  Ch   76
+    RepLayout=3 CustomDelta=364
+    Payloads: 367, Parsed: 205, Fails: 162, Multi: 202
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD  349      5         349b                fixed_349b  CustomDelta
+    CD  293      2         293b                fixed_293b  CustomDelta
+    CD  269      4         269b                fixed_269b  CustomDelta
+    RL    0    191           0b                     empty    RepLayout
+    RL   14      3     118-170b              var_118-170b    RepLayout
+
+  Ch  102
+    RepLayout=1 CustomDelta=279
+    Payloads: 280, Parsed: 192, Fails: 88, Multi: 0
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD   16      3          16b                    uint16  CustomDelta
+    CD    2      1           2b                     enum2  CustomDelta
+    CD    1     91           1b                      bool  CustomDelta
+    RL    0     96           0b                     empty    RepLayout
+    RL  119      1          16b                    uint16    RepLayout
+
+  Ch   92
+    RepLayout=31 CustomDelta=1766
+    Payloads: 1797, Parsed: 181, Fails: 1616, Multi: 1
+          ID  Count         Size                Type Guess       Format
+    ──────── ────── ──────────── ───────────────────────── ────────────
+    CD   24      1          24b                 fixed_24b  CustomDelta
+    CD   16      1          16b                    uint16  CustomDelta
+    CD    4      1           4b                  fixed_4b  CustomDelta
+    CD    2      3           2b                     enum2  CustomDelta
+    CD    1    111           1b                      bool  CustomDelta
+    RL    0     33           0b                     empty    RepLayout
+    RL   14     31     118-194b              var_118-194b    RepLayout
+
+================================================================================
+  PAYLOAD SIZE DISTRIBUTION (all channels)
+================================================================================
+
+        Size    Count       %  Type Hint
+          29    26961   46.3%  ? SIP(h)+13b+SIP(0)
+          35     7753   13.3%  ? SIP(h)+19b+SIP(0)
+          18     7379   12.7%  ? SIP(h)+2b+SIP(0) → enum/bool
+          10     5460    9.4%  
+          66     4197    7.2%  ? SIP(h)+50b+SIP(0)
+         180      552    0.9%  
+         174      515    0.9%  
+          81      510    0.9%  
+         251      294    0.5%  
+        1973      284    0.5%  
+         134      226    0.4%  
+         210      197    0.3%  
+         382      192    0.3%  
+        1714      172    0.3%  
+         349      152    0.3%  
+         146      135    0.2%  
+        1682      133    0.2%  
+         186      122    0.2%  
+        1940      122    0.2%  
+         207       91    0.2%  
+         350       84    0.1%  
+         421       79    0.1%  
+           8       67    0.1%  uint8
+         185       66    0.1%  
+        1924       65    0.1%  
+
+================================================================================
+  PLAYER CHANNEL DEEP ANALYSIS (Ch 19, 4203 payloads)
+================================================================================
+
+  CustomDelta CD58 (4191× occurrences, type: fixed_58b):
+    Samples [actor]:
+        58b: 235485f6a49b0301                                 → qvec=(0.0, -0.3, 0.2)
+        58b: 235485e20fb80301                                 → qvec=(0.0, -0.3, 0.2)
+        58b: 2354859abdd40301                                 → qvec=(0.0, -0.3, 0.2)
+        58b: 235485e2f7ee0301                                 → qvec=(0.0, -0.3, 0.2)
+        58b: 2354859ab0050401                                 → qvec=(0.0, -0.3, 0.2)
+        58b: 235485f2a7130401                                 → qvec=(0.0, -0.3, 0.2)
+        58b: 235485fac6210401                                 → qvec=(0.0, -0.3, 0.2)
+        58b: 235485be8c2f0401                                 → qvec=(0.0, -0.3, 0.2)
+
+  CustomDelta CD39 (1× occurrences, type: fixed_39b):
+    Samples [sub_guid=47]:
+        39b: 0000000000                                       → 0000000000
+
+  RepLayout RL38 (11× occurrences, type: fixed_17b):
+    Samples [actor]:
+        17b: a8dd01                                           → qvec=(-6.9, 0.3, -12.8)
+        17b: 82e801                                           → qvec=(0.1, 0.0, 0.1)
+        17b: 9aff01                                           → 9aff01
+        17b: ecfb01                                           → qvec=(101.5, -204.8, -23.7)
+        17b: fc1900                                           → fc1900
+        17b: 483000                                           → qvec=(9.6, 0.0, -12.8)
+        17b: 283500                                           → qvec=(10.6, 0.0, -6.4)
+        17b: 903400                                           → qvec=(10.5, 147.2, -1635.3)
+
+================================================================================
+  BIT ENTROPY ANALYSIS (Ch 19)
+================================================================================
+
+  Handle -58 (30 samples, 58 bits each):
+    Constant bits: 33/58 (57%)
+    Variable bits: 25/58 (43%)
+    Variable fields (contiguous regions):
+      bits [ 26: 51] ( 25b)                            samples=[15132989, 15598584, 16068454, 16498168, 16870438]
+
+  Handle 38 (11 samples, 17 bits each):
+    Constant bits: 1/17 (6%)
+    Variable bits: 16/17 (94%)
+    Variable fields (contiguous regions):
+      bits [  1: 17] ( 16b)                    uint16  samples=[61140, 62529, 65485, 65014, 3326]

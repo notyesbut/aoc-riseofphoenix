@@ -1,0 +1,48 @@
+[
+  {
+    "cmd_start_bit": 4011,
+    "cmd_index": 0,
+    "type": "u32",
+    "value": 1082194944,
+    "body_bits": 32,
+    "total_bits": 64,
+    "next_cmd_index_preview": 0,
+    "score": 100
+  },
+  {
+    "cmd_start_bit": 4075,
+    "cmd_index": 0,
+    "type": "u64",
+    "value": 355332201574842880,
+    "body_bits": 64,
+    "total_bits": 96,
+    "next_cmd_index_preview": 0,
+    "score": 100
+  },
+  {
+    "cmd_start_bit": 4171,
+    "cmd_index": 0,
+    "type": "u64",
+    "value": 8593984230764052960,
+    "body_bits": 64,
+    "total_bits": 96,
+    "next_cmd_index_preview": 355,
+    "score": 91
+  },
+  {
+    "cmd_start_bit": 4267,
+    "cmd_index": 355,
+    "type": "u8",
+    "value": 0,
+    "body_bits": 8,
+    "total_bits": 40,
+    "next_cmd_index_preview": 155048968,
+    "score": -100
+  },
+  {
+    "cmd_start_bit": 4307,
+    "cmd_index": 155048968,
+    "error": "implausible cmd_index (>2000)",
+    "remaining_bits": 557
+  }
+]

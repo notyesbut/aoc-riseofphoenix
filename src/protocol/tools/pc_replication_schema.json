@@ -1,0 +1,171 @@
+{
+  "class_chain": "AActor -> AController -> APlayerController -> AAoCPlayerController",
+  "source": "Extracted via IDA step-5 script from AOCClient-Win64-Shipping.exe",
+  "date": "2026-04-23",
+  "_notes": [
+    "cmd_index order = declaration order of Net-flagged properties across the",
+    "full inheritance chain (UObject -> AActor -> AController -> APlayerController",
+    "-> AAoCPlayerController).  UE5's RepLayout walks the chain from topmost parent",
+    "to most derived and assigns cmd_indices sequentially to CPF_Net properties only.",
+    "",
+    "Rollback semantic: per Function J, properties whose data write doesn't advance",
+    "the archive are rolled back (both cmd_index and data).  So the wire contains",
+    "only properties with non-default values.",
+    "",
+    "TODO: AController and further APawn scans needed to fill gaps.  ReplicatedMovement",
+    "may actually be first in cmd_index order because UE5 places it near the top."
+  ],
+
+  "aactor_net_properties": [
+    {
+      "decl_order": 0,
+      "name": "AuthServerIDReplicated",
+      "struct_addr": "0x14A77C220",
+      "onrep": null,
+      "flags_raw": "0x40000000000020",
+      "flags": ["Net"],
+      "vtable": "0x0",
+      "likely_type": "uint32 or FGuid (AoC custom addition to AActor)",
+      "note": "This is AoC-specific — not in stock UE5 AActor.  Added by AoC for cross-server ID tracking."
+    },
+    {
+      "decl_order": 1,
+      "name": "bReplicateMovement",
+      "struct_addr": "0x14A77C3F0",
+      "onrep": "OnRep_ReplicateMovement",
+      "flags_raw": "0x40000100010021",
+      "flags": ["Net", "Edit", "RepNotify"],
+      "vtable": "0x143B657E0",
+      "likely_type": "bool"
+    },
+    {
+      "decl_order": 2,
+      "name": "bHidden",
+      "struct_addr": "0x14A77C4E0",
+      "onrep": null,
+      "flags_raw": "0x4040000200000035",
+      "flags": ["Net", "Edit"],
+      "vtable": "0x143B077E0",
+      "likely_type": "bool"
+    },
+    {
+      "decl_order": 3,
+      "name": "bTearOff",
+      "struct_addr": "0x14A77C540",
+      "onrep": null,
+      "flags_raw": "0x40000000000020",
+      "flags": ["Net"],
+      "vtable": "0x143B65810",
+      "likely_type": "bool"
+    },
+    {
+      "decl_order": 4,
+      "name": "bCanBeDamaged",
+      "struct_addr": "0x14A77C810",
+      "onrep": null,
+      "flags_raw": "0x40000001000025",
+      "flags": ["Net", "SaveGame", "Edit"],
+      "vtable": "0x143B658E0",
+      "likely_type": "bool"
+    },
+    {
+      "decl_order": 5,
+      "name": "bReplicates",
+      "struct_addr": "0x14A77CA30",
+      "onrep": "OnRep_Replicates",
+      "flags_raw": "0x4020080100010035",
+      "flags": ["Net", "Edit", "RepNotify"],
+      "vtable": "0x143B65990",
+      "likely_type": "bool"
+    },
+    {
+      "decl_order": 6,
+      "name": "ReplicatedMovement",
+      "struct_addr": "0x14A77CD70",
+      "onrep": "OnRep_ReplicatedMovement",
+      "flags_raw": "0x4040040100010021",
+      "flags": ["Net", "Edit", "RepNotify"],
+      "vtable": "0x143FE8C40",
+      "likely_type": "FRepMovement (UStruct — complex body)"
+    },
+    {
+      "decl_order": 7,
+      "name": "Instigator",
+      "struct_addr": "0x14A77D3B0",
+      "onrep": "OnRep_Instigator",
+      "flags_raw": "0x4145000100000024",
+      "flags": ["Net", "RepNotify"],
+      "vtable": "0x1443182B0",
+      "likely_type": "UObject* (APawn*) — 128-bit FIntrepidNetworkGUID"
+    }
+  ],
+  "aactor_notes": [
+    "8 Net properties found.  Stock UE5 AActor typically has MORE (e.g. AttachmentReplication).",
+    "The step-5 scan broke the AActor array into 3 separate regions due to non-plausible",
+    "entries in between.  May need to widen the struct-pointer plausibility range and rescan."
+  ],
+
+  "acontroller_net_properties": [],
+  "acontroller_notes": [
+    "Step-6 scan using seeds 'bAttachToPawn' and 'ControlRotation' located the correct",
+    "AController table — 4 entries: Character, TransformComponent, ControlRotation, bAttachToPawn.",
+    "NONE have the Net flag!  In stock UE5, AController::PlayerState and AController::Pawn",
+    "are Net-replicated.  AoC has apparently REMOVED these base-class replications and moved",
+    "them to AAoCPlayerController as custom fields (ControllersOriginalPawn, ControlledExternalPawn).",
+    "This is a significant architectural divergence from stock UE5, consistent with AoC's",
+    "custom InterServer replication system."
+  ],
+
+  "aplayercontroller_net_properties": [
+    {
+      "decl_order": 0,
+      "name": "TargetViewRotation",
+      "struct_addr": "0x14AA40720",
+      "onrep": null,
+      "flags_raw": "0x10000000000020",
+      "flags": ["Net"],
+      "vtable": "0x1416C6320",
+      "likely_type": "FRotator (FRotator_NetQuantize)"
+    }
+  ],
+  "aplayercontroller_notes": [
+    "Only 1 Net property (TargetViewRotation) in the 42-entry APlayerController table.",
+    "Stock UE5 confirms APlayerController itself adds very few Net properties — most",
+    "come from inherited AController/AActor.  PlayerCameraManager is NOT Net (it's",
+    "per-client)."
+  ],
+
+  "aaocplayercontroller_net_properties_summary": "18 properties — see aocpc_net_properties.json for details",
+
+  "predicted_cmd_index_order": {
+    "0":  "AActor.AuthServerIDReplicated",
+    "1":  "AActor.bReplicateMovement",
+    "2":  "AActor.bHidden",
+    "3":  "AActor.bTearOff",
+    "4":  "AActor.bCanBeDamaged",
+    "5":  "AActor.bReplicates",
+    "6":  "AActor.ReplicatedMovement",
+    "7":  "AActor.Instigator",
+    "__gap_ac": "?  AController.PlayerState + AController.Pawn likely here",
+    "8":  "APlayerController.TargetViewRotation",
+    "__gap_more_apc": "? possibly more if earlier scan was incomplete",
+    "9":  "AAoCPC.bRegisteredForDamageMeter",
+    "10": "AAoCPC.CaravanLaunchNode",
+    "11": "AAoCPC.SocketDebugData",
+    "12": "AAoCPC.CurrentSurveyingScanResults",
+    "13": "AAoCPC.CurrentSurveyingSearchResults",
+    "14": "AAoCPC.bEnableVehicleRecovery",
+    "15": "AAoCPC.VehicleRecoveryTransform",
+    "16": "AAoCPC.ControllersOriginalPawn",
+    "17": "AAoCPC.ControlledExternalPawn",
+    "18": "AAoCPC.CharacterLoadTracker",
+    "19": "AAoCPC.SummonCooldownTimer",
+    "20": "AAoCPC.DefaultRespawnInfo",
+    "21": "AAoCPC.CurrentCommissionBoard",
+    "22": "AAoCPC.PuppetComponentReference",
+    "23": "AAoCPC.CharacterInGameSettings",
+    "24": "AAoCPC.MarkedTargets",
+    "25": "AAoCPC.CalloutQueueReplication",
+    "26": "AAoCPC.CurrentDialogueInstance"
+  }
+}

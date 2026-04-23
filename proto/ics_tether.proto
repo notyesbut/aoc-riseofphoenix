@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ics_tether;
+
+option csharp_namespace = "IcsTether";
+
+import "ics_common.proto";
+
+service TetherService {
+    rpc ProcessTetherMessage(stream ics_common.MessageWrapper) returns (stream ics_common.MessageWrapper);
+}
+
+message TetherMessage {
+    map<string, string> tags        = 1;
+    string              data_string = 2;
+    bytes               data_bytes  = 3;
+}

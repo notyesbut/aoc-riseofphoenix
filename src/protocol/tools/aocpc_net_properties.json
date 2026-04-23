@@ -1,0 +1,209 @@
+{
+  "class": "AAoCPlayerController",
+  "source": "Extracted via IDA step-4 script (ida_step4_dump_prop_table.idc)",
+  "binary": "AOCClient-Win64-Shipping.exe",
+  "date": "2026-04-23",
+  "_note": [
+    "Only the AAoCPlayerController-specific Net properties are listed.",
+    "Inherited properties (from APlayerController, AController, APawn, AActor)",
+    "are NOT here — those need a separate extraction or reference to stock UE5.",
+    "The `declaration_order` is the order they appear in the PropPointers[] table;",
+    "cmd_index in the RepLayout is assigned in this order AFTER all parent class",
+    "replicated properties have consumed their cmd_indices."
+  ],
+  "properties": [
+    {
+      "declaration_order": 1,
+      "name": "bRegisteredForDamageMeter",
+      "struct_addr": "0x14B6CD930",
+      "onrep": "OnRep_bRegisteredForDamageMeter",
+      "flags_raw": "0x4010000100002020",
+      "flag_decoded": ["Net", "Transient", "RepNotify"],
+      "vtable": "0x145CFE4E0",
+      "likely_type": "bool"
+    },
+    {
+      "declaration_order": 2,
+      "name": "CaravanLaunchNode",
+      "struct_addr": "0x14B6CE518",
+      "onrep": "OnRep_CaravanLaunchedToNode",
+      "flags_raw": "0x8010000100000020",
+      "flag_decoded": ["Net", "RepNotify"],
+      "vtable": "0x14B6CEC10",
+      "likely_type": "UStruct or UObjectProperty"
+    },
+    {
+      "declaration_order": 3,
+      "name": "SocketDebugData",
+      "struct_addr": "0x14B6D1EA0",
+      "onrep": null,
+      "flags_raw": "0x10000000000020",
+      "flag_decoded": ["Net"],
+      "vtable": "0x14B6D1650",
+      "likely_type": "TArray or UStruct (vt points into struct range)"
+    },
+    {
+      "declaration_order": 4,
+      "name": "CurrentSurveyingScanResults",
+      "struct_addr": "0x14B6D43C0",
+      "onrep": "OnRep_SurveyScanResults",
+      "flags_raw": "0x8040000100000020",
+      "flag_decoded": ["Net", "RepNotify"],
+      "vtable": "0x145C5ED40",
+      "likely_type": "UStruct"
+    },
+    {
+      "declaration_order": 5,
+      "name": "CurrentSurveyingSearchResults",
+      "struct_addr": "0x14B6D4400",
+      "onrep": "OnRep_SurveySearchResults",
+      "flags_raw": "0x8040000100000020",
+      "flag_decoded": ["Net", "RepNotify"],
+      "vtable": "0x145C5CCF0",
+      "likely_type": "UStruct"
+    },
+    {
+      "declaration_order": 6,
+      "name": "bEnableVehicleRecovery",
+      "struct_addr": "0x14B6D47E0",
+      "onrep": "OnRep_EnableVehicleRecovery",
+      "flags_raw": "0x8040000100000020",
+      "flag_decoded": ["Net", "RepNotify"],
+      "vtable": "0x145CFFA00",
+      "likely_type": "bool"
+    },
+    {
+      "declaration_order": 7,
+      "name": "VehicleRecoveryTransform",
+      "struct_addr": "0x14B6D4830",
+      "onrep": "OnRep_VehicleRecoveryTransform",
+      "flags_raw": "0x8040000100000020",
+      "flag_decoded": ["Net", "RepNotify"],
+      "vtable": "0x1416C6560",
+      "likely_type": "FTransform or FVector-struct"
+    },
+    {
+      "declaration_order": 8,
+      "name": "ControllersOriginalPawn",
+      "struct_addr": "0x14B6D4970",
+      "onrep": null,
+      "flags_raw": "0x4144000000000020",
+      "flag_decoded": ["Net"],
+      "vtable": "0x1443182B0",
+      "likely_type": "UObjectProperty (Pawn*)"
+    },
+    {
+      "declaration_order": 9,
+      "name": "ControlledExternalPawn",
+      "struct_addr": "0x14B6D49B0",
+      "onrep": null,
+      "flags_raw": "0x44000000000020",
+      "flag_decoded": ["Net"],
+      "vtable": "0x145D75170",
+      "likely_type": "UObjectProperty (Pawn*)"
+    },
+    {
+      "declaration_order": 10,
+      "name": "CharacterLoadTracker",
+      "struct_addr": "0x14B6D4A20",
+      "onrep": null,
+      "flags_raw": "0x8040000000000020",
+      "flag_decoded": ["Net"],
+      "vtable": "0x145994410",
+      "likely_type": "UStruct or UObjectProperty"
+    },
+    {
+      "declaration_order": 11,
+      "name": "SummonCooldownTimer",
+      "struct_addr": "0x14B6D4B30",
+      "onrep": null,
+      "flags_raw": "0x40000000000020",
+      "flag_decoded": ["Net"],
+      "vtable": "0x0",
+      "likely_type": "float or double (vtable-less = primitive)"
+    },
+    {
+      "declaration_order": 12,
+      "name": "DefaultRespawnInfo",
+      "struct_addr": "0x14B6D4C40",
+      "onrep": null,
+      "flags_raw": "0x40000000000020",
+      "flag_decoded": ["Net"],
+      "vtable": "0x145BFFA90",
+      "likely_type": "UStruct"
+    },
+    {
+      "declaration_order": 13,
+      "name": "CurrentCommissionBoard",
+      "struct_addr": "0x14B6D4D10",
+      "onrep": "OnRep_CurrentCommissionBoard",
+      "flags_raw": "0x8040000100000020",
+      "flag_decoded": ["Net", "RepNotify"],
+      "vtable": "0x1459C5DA0",
+      "likely_type": "UStruct"
+    },
+    {
+      "declaration_order": 14,
+      "name": "PuppetComponentReference",
+      "struct_addr": "0x14B6D4E30",
+      "onrep": null,
+      "flags_raw": "0x4144000000080029",
+      "flag_decoded": ["Net", "Edit"],
+      "vtable": "0x145B9FE40",
+      "likely_type": "UObjectProperty"
+    },
+    {
+      "declaration_order": 15,
+      "name": "CharacterInGameSettings",
+      "struct_addr": "0x14B6D4EE0",
+      "onrep": "OnRep_CharacterInGameSettings",
+      "flags_raw": "0x4040000100002020",
+      "flag_decoded": ["Net", "Transient", "RepNotify"],
+      "vtable": "0x145A86A10",
+      "likely_type": "UStruct"
+    },
+    {
+      "declaration_order": 16,
+      "name": "MarkedTargets",
+      "struct_addr": "0x14B6D50A0",
+      "onrep": "OnRep_MarkedTargets",
+      "flags_raw": "0x40000100000020",
+      "flag_decoded": ["Net", "RepNotify"],
+      "vtable": "0x14B6D5020",
+      "likely_type": "TArray<FName>",
+      "_type_note": "vt points to CharacterName struct which is FName type"
+    },
+    {
+      "declaration_order": 17,
+      "name": "CalloutQueueReplication",
+      "struct_addr": "0x14B6D5170",
+      "onrep": null,
+      "flags_raw": "0x10000000002020",
+      "flag_decoded": ["Net", "Transient"],
+      "vtable": "0x145D0D650",
+      "likely_type": "UStruct"
+    },
+    {
+      "declaration_order": 18,
+      "name": "CurrentDialogueInstance",
+      "struct_addr": "0x14B6D5370",
+      "onrep": "OnRep_CurrentDialogueInstance",
+      "flags_raw": "0x10000100000020",
+      "flag_decoded": ["Net", "RepNotify"],
+      "vtable": "0x145B5A6F0",
+      "likely_type": "UObjectProperty"
+    }
+  ],
+  "distinct_vtables_for_bool": [
+    "0x145CFE4E0",
+    "0x145CFFA00"
+  ],
+  "_analysis_notes": [
+    "Two of the 18 are bools (bRegisteredForDamageMeter, bEnableVehicleRecovery).",
+    "Their vtables differ which is odd — UE5 normally shares one UBoolProperty vtable.",
+    "Possibly the vtable@+0x38 is NOT the UProperty vtable but something else like",
+    "a getter/setter or struct-body pointer.",
+    "MarkedTargets' vtable points to CharacterName struct, strongly suggesting",
+    "arrays use +0x38 for InnerProperty* (not vtable)."
+  ]
+}

@@ -1,0 +1,11 @@
+# Fixture metadata — pkt#80
+# Generated from ..\dist\Release\replay_data.bin
+raw_size         = 978
+bunch_start_bit  = 152
+bunch_bits       = 7665
+bunch_end_bit    = 7817
+original_seq     = 14345
+original_ack     = 1178
+has_pkt_info     = 0
+has_srv_frame    = 0
+frame_time       = 0
