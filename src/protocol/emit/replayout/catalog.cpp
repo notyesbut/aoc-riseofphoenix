@@ -90,13 +90,37 @@ const ClassCatalog& aactor_catalog() {
     c.class_name = "AActor";
     c.parent = nullptr;
 
-    // Populated from ida_dump_parent_classes.idc on 2026-04-23.
-    // Cluster at 0x14A77C220..0x14A77D3B0.  13 replicated properties.
+    // ── REPLICATED PROPERTIES (13 total, post-2026-04-24 correction) ───
     //
-    // FIRST entry (AuthServerIDReplicated) is an AOC-SPECIFIC addition
-    // to the base actor class — stock UE5 does not have this property.
-    // Its presence is important: it shifts every subsequent RepIndex on
-    // every actor class by 1 relative to stock UE5 documentation.
+    // Populated from DIRECT BINARY RE of AOCClient-Win64-Shipping.exe on
+    // 2026-04-24.  Walked the FPropertyParams pointer table at VA
+    // 0x14A77DB70 (93 entries total) and filtered to those with the
+    // CPF_Net (0x20) bit set in PropertyFlags.
+    //
+    // Previously this list had 15 entries including bIsInterServerReplicated
+    // and ProxyNetUpdateInterval, both AoC additions.  BINARY RE proved
+    // those two do NOT have CPF_Net set — they use AoC's bit-63 flag
+    // (0x8000000000000000, which we're calling CPF_InterServer for now)
+    // instead.  They replicate via a different pathway (server-to-server
+    // InterServer channel) and NEVER appear in pkt#22's RepLayout stream.
+    //
+    // Confirmed CPF flag for each (from PropertyFlags field at +0x10):
+    //   AuthServerIDReplicated : 0x0040000000000020  CPF_Net only
+    //   bReplicateMovement     : 0x0040000100010021  CPF_Net|CPF_RepNotify
+    //   bHidden                : 0x4040000200000035  CPF_Net
+    //   bTearOff               : 0x0040000000000020  CPF_Net
+    //   bCanBeDamaged          : 0x0040000001000025  CPF_Net
+    //   bReplicates            : 0x4020080100010035  CPF_Net|CPF_RepNotify
+    //   ReplicatedMovement     : 0x4040040100010021  CPF_Net|CPF_RepNotify
+    //   RemoteRole             : 0x4040000000022821  CPF_Net
+    //   AttachmentReplication  : 0x4020088100002020  CPF_Net|CPF_RepNotify
+    //   Owner                  : 0x0114000100000020  CPF_Net|CPF_RepNotify
+    //   Role                   : 0x0040000000020821  CPF_Net
+    //   NetDormancy            : 0x4010000100010035  CPF_Net|CPF_RepNotify
+    //   Instigator             : 0x4145000100000024  CPF_Net|CPF_RepNotify
+    //
+    // RepIndex order matches declaration order in the FPropertyParams
+    // pointer table — this IS the stream order in pkt#22.
     //
     // Struct expansion (ReplicatedMovement, AttachmentReplication) is
     // not filled in yet — those sub_cmds will be populated when we have
@@ -110,27 +134,36 @@ const ClassCatalog& aactor_catalog() {
             d.type = t;
             c.own_props.push_back(std::move(d));
         };
-        //     RepIdx  Name                       Type (inferred)
+        //     RepIdx  Name                       Type
         //     ------  ------------------------   -----------------------
-        // AuthServerIDReplicated is AoC-specific.  In their cross-server
-        // architecture every replicated actor carries the authority
-        // server's NetGUID.  With Int32 guess the walker finds two
-        // consecutive cmd=0 hits (suspicious), but with Object
-        // (FIntrepidNetworkGUID = 128 bits) the walker advances cleanly.
-        // Type confirmed via round-trip harness.
-        add( 0, "AuthServerIDReplicated",   FPropertyType::Object);  // FIntrepidNetworkGUID
+        // AuthServerIDReplicated is a 128-bit FIntrepidNetworkGUID (Object
+        // type on the wire), NOT a 32-bit FInt.  The FPropertyParams
+        // TypeCode=0x0084 we observed is likely a size-hint or class
+        // discriminator, not the primitive-type code.  Setting type=Int
+        // causes the decoder to consume only 32 bits, leaving 96 bits of
+        // garbage in the stream which collides with the next cmd_index read.
+        //   Round-trip evidence (2026-04-24): with type=Int, the decoder
+        //   saw "cmd_index=0 twice" because the middle of the 128-bit GUID
+        //   happened to be zeros.  With type=Object, body=128 bits, and
+        //   the decoder advances to the next real cmd_index correctly.
+        add( 0, "AuthServerIDReplicated",   FPropertyType::Object);   // FIntrepidNetworkGUID (128-bit)
         add( 1, "bReplicateMovement",       FPropertyType::Bool);
         add( 2, "bHidden",                  FPropertyType::Bool);
         add( 3, "bTearOff",                 FPropertyType::Bool);
         add( 4, "bCanBeDamaged",            FPropertyType::Bool);
         add( 5, "bReplicates",              FPropertyType::Bool);
-        add( 6, "ReplicatedMovement",       FPropertyType::Struct);  // FRepMovement (~13 sub-cmds)
-        add( 7, "RemoteRole",               FPropertyType::Byte);    // ENetRole enum (uint8)
-        add( 8, "AttachmentReplication",    FPropertyType::Struct);  // FRepAttachment
-        add( 9, "Owner",                    FPropertyType::Object);  // AActor*
-        add(10, "Role",                     FPropertyType::Byte);    // ENetRole enum (uint8)
-        add(11, "NetDormancy",              FPropertyType::Byte);    // ENetDormancy enum (uint8)
-        add(12, "Instigator",               FPropertyType::Object);  // APawn*
+        add( 6, "ReplicatedMovement",       FPropertyType::Struct);   // FRepMovement (~13 sub-cmds)
+        add( 7, "RemoteRole",               FPropertyType::Byte);     // ENetRole enum (uint8)
+        add( 8, "AttachmentReplication",    FPropertyType::Struct);   // FRepAttachment
+        add( 9, "Owner",                    FPropertyType::Object);   // AActor*
+        add(10, "Role",                     FPropertyType::Byte);     // ENetRole enum (uint8)
+        add(11, "NetDormancy",              FPropertyType::Byte);     // ENetDormancy enum (uint8)
+        add(12, "Instigator",               FPropertyType::Object);   // APawn*
+
+        // NOTE: bIsInterServerReplicated and ProxyNetUpdateInterval are
+        // AoC additions BUT have CPF_InterServer (bit 63 = 0x8000000000000000)
+        // instead of CPF_Net — they replicate via server-to-server channel,
+        // not the RepLayout stream.  DO NOT ADD to this list.
     }
     return c;
 }
@@ -182,25 +215,47 @@ const ClassCatalog& aaoc_player_controller_catalog() {
     c.class_name = "AAoCPlayerController";
     c.parent = &aplayer_controller_catalog();
 
-    // Populated from ida_dump_replicated_catalog.idc output on 2026-04-23.
-    // The 19 replicated properties in declaration order (which IS RepIndex
-    // order within AAoCPlayerController's own slice of the hierarchy).
+    // ── REPLICATED PROPERTIES (19 total) ────────────────────────────────
     //
-    // cmd_index is NOT filled in yet — it depends on the total cmd count
-    // of the parent chain (AActor → AController → APlayerController) which
-    // requires the parent-class IDA dumps to compute.  Until those arrive,
-    // leave cmd_index = 0 and rely on lookup by name.
+    // Ground truth from DIRECT BINARY RE of AOCClient-Win64-Shipping.exe
+    // on 2026-04-24.  Walked the FPropertyParams pointer table at VA
+    // 0x14B6D5410 (224 total entries in AAoCPlayerController) and filtered
+    // to those with the CPF_Net (0x20) bit set.  Confirmed 19 matches,
+    // exactly matching the count we had inferred.
     //
-    // Types below are a mix of:
-    //   ✓  CONFIRMED   — either observed in wire data (Name is FString,
-    //                    RandomChar bytes found in pkt#22's payload) or
-    //                    named with a UE5 convention we trust
-    //                    (b<Something> prefix → Bool).
-    //   ?  BEST-GUESS  — inferred from property name; needs verification
-    //                    via the decoder's bit-length when we run pkt#22
-    //                    round-trip.  Marked with FPropertyType::Unknown
-    //                    for now so the RawBits fallback handles them
-    //                    safely.
+    // Declaration order IS RepIndex order within AAoCPlayerController's
+    // own slice of the hierarchy.
+    //
+    // Flags observed per property (CPF bitmap at FPropertyParams +0x10):
+    //   RepIdx  Name                           PropertyFlags        RN  IS
+    //   ------  -----------------------------  -------------------- --  --
+    //   0       bRegisteredForDamageMeter      0x4010000100002020   Y   -
+    //   1       CaravanLaunchNode              0x8010000100000020   Y   Y
+    //   2       SocketDebugData                0x0010000000000020   -   -
+    //   3       CurrentSurveyingScanResults    0x8040000100000020   Y   Y
+    //   4       CurrentSurveyingSearchResults  0x8040000100000020   Y   Y
+    //   5       bEnableVehicleRecovery         0x8040000100000020   Y   Y
+    //   6       VehicleRecoveryTransform       0x8040000100000020   Y   Y
+    //   7       ControllersOriginalPawn        0x4144000000000020   -   -
+    //   8       ControlledExternalPawn         0x0044000000000020   -   -
+    //   9       CharacterLoadTracker           0x8040000000000020   -   Y
+    //   10      SummonCooldownTimer            0x0040000000000020   -   -
+    //   11      Name                           0x4040000100002020   Y   -
+    //   12      DefaultRespawnInfo             0x0040000000000020   -   -
+    //   13      CurrentCommissionBoard         0x8040000100000020   Y   Y
+    //   14      PuppetComponentReference       0x4144000000080029   -   -
+    //   15      CharacterInGameSettings        0x4040000100002020   Y   -
+    //   16      MarkedTargets                  0x0040000100000020   Y   -
+    //   17      CalloutQueueReplication        0x0010000000002020   -   -
+    //   18      CurrentDialogueInstance        0x0010000100000020   Y   -
+    //
+    // RN = CPF_RepNotify (has OnRep_ callback)
+    // IS = bit 63 set (AoC's CPF_InterServer — replicates both client AND
+    //      to other AoC backend servers)
+    //
+    // Type inferences:
+    //   ✓  CONFIRMED by TypeCode=0x0001 (bool bitfield) or observed wire data
+    //   ?  BEST-GUESS from property name; Unknown uses RawBits fallback
     if (c.own_props.empty()) {
         auto add = [&](uint32_t rep_idx,
                         const char* name,
@@ -213,27 +268,27 @@ const ClassCatalog& aaoc_player_controller_catalog() {
             d.offset_in_instance = offset;
             c.own_props.push_back(std::move(d));
         };
-        //     RepIdx  Name                           Type inference
-        //     ------  ----------------------------   ---------------------------
-        add(0,  "bRegisteredForDamageMeter",    FPropertyType::Bool);     // ✓  b-prefix
-        add(1,  "CaravanLaunchNode",            FPropertyType::Unknown);  // ?  Likely Object
-        add(2,  "SocketDebugData",              FPropertyType::Unknown);  // ?  Likely Struct
-        add(3,  "CurrentSurveyingScanResults",  FPropertyType::Unknown);  // ?  Array or Struct
-        add(4,  "CurrentSurveyingSearchResults",FPropertyType::Unknown);  // ?  Array or Struct
-        add(5,  "bEnableVehicleRecovery",       FPropertyType::Bool);     // ✓  b-prefix
-        add(6,  "VehicleRecoveryTransform",     FPropertyType::Unknown);  // ?  Likely Struct(FTransform)
-        add(7,  "ControllersOriginalPawn",      FPropertyType::Unknown);  // ?  Likely Object
-        add(8,  "ControlledExternalPawn",       FPropertyType::Unknown);  // ?  Likely Object
-        add(9,  "CharacterLoadTracker",         FPropertyType::Unknown);  // ?  Likely Struct
-        add(10, "SummonCooldownTimer",          FPropertyType::Unknown);  // ?  Likely Float/Struct
-        add(11, "Name",                         FPropertyType::String);   // ✓  RandomChar seen in payload
-        add(12, "DefaultRespawnInfo",           FPropertyType::Unknown);  // ?  Likely Struct
-        add(13, "CurrentCommissionBoard",       FPropertyType::Unknown);  // ?  Likely Object or Struct
-        add(14, "PuppetComponentReference",     FPropertyType::Unknown);  // ?  Likely Object
-        add(15, "CharacterInGameSettings",      FPropertyType::Unknown);  // ?  Likely Struct
-        add(16, "MarkedTargets",                FPropertyType::Unknown);  // ?  Likely Array<Object>
-        add(17, "CalloutQueueReplication",      FPropertyType::Unknown);  // ?  Likely Struct/Array
-        add(18, "CurrentDialogueInstance",      FPropertyType::Unknown);  // ?  Likely Object
+        //     RepIdx  Name                           Type              Offset
+        //     ------  -----------------------------  ----------------  ---------
+        add(0,  "bRegisteredForDamageMeter",    FPropertyType::Bool,    0x3A60); // ✓ TypeCode=0x0001
+        add(1,  "CaravanLaunchNode",            FPropertyType::Object,  0x1B28); // Object (class+1B28 byte ofs)
+        add(2,  "SocketDebugData",              FPropertyType::Unknown, 0x23E0); // ? struct or array
+        add(3,  "CurrentSurveyingScanResults",  FPropertyType::Array,   0x2F88); // array (plural)
+        add(4,  "CurrentSurveyingSearchResults",FPropertyType::Array,   0x2FE8); // array (plural)
+        add(5,  "bEnableVehicleRecovery",       FPropertyType::Bool,    0x3A60); // ✓ TypeCode=0x0001
+        add(6,  "VehicleRecoveryTransform",     FPropertyType::Struct,  0x30D0); // FTransform
+        add(7,  "ControllersOriginalPawn",      FPropertyType::Object,  0x3148); // APawn*
+        add(8,  "ControlledExternalPawn",       FPropertyType::Object,  0x3150); // APawn*
+        add(9,  "CharacterLoadTracker",         FPropertyType::Unknown, 0x3158); // ? obj or struct
+        add(10, "SummonCooldownTimer",          FPropertyType::Float,   0x3174); // float ("Timer" suffix)
+        add(11, "Name",                         FPropertyType::String,  0x3178); // ✓ FString (RandomChar in wire)
+        add(12, "DefaultRespawnInfo",           FPropertyType::Struct,  0x3188); // struct
+        add(13, "CurrentCommissionBoard",       FPropertyType::Object,  0x31A8); // UCommissionBoard*
+        add(14, "PuppetComponentReference",     FPropertyType::Object,  0x33E0); // UComponent*
+        add(15, "CharacterInGameSettings",      FPropertyType::Struct,  0x33E8); // struct
+        add(16, "MarkedTargets",                FPropertyType::Array,   0x34B8); // array (plural + RepNotify)
+        add(17, "CalloutQueueReplication",      FPropertyType::Struct,  0x34F8); // struct
+        add(18, "CurrentDialogueInstance",      FPropertyType::Object,  0x37A8); // UDialogueInstance*
     }
     return c;
 }

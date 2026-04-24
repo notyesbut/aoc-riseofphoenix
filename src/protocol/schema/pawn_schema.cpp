@@ -14,6 +14,32 @@
 //  Discovered via Session 2 walker (docs/re-review-2026-04-22.md) on
 //  ch=78, 90, 94, 100, 101, 104, 108, 110, 111, 127 — all character
 //  actors share this 6-component pattern.
+//
+// ── 2026-04-24 RE UPDATE (direct binary + pkt#78 fixture) ────────────────
+//
+//  Confirmed from binary + captured pkt#78:
+//    - AoC player pawn is a BLUEPRINT class, not C++.
+//    - Archetype leaf path: "Default__PlayerPawn_C"   (FString length 22)
+//    - Outer path:          "/Game/ThirdPersonCPP/Blueprints/PlayerPawn"
+//                           (FString length 43)
+//    - Parent C++ class: ACharacter (44 props total, 11 replicated).
+//    - No dedicated AAoCPawn FPropertyParams table exists in the binary
+//      (confirmed by exhaustive search of all 6285 pointer tables).
+//    - Replication follows ACharacter + APawn + AActor inheritance chain.
+//
+//  Fixture: src/protocol/tools/captured_pkt_78.bin (816 bytes, raw packet).
+//  For byte-identity calibration against captured:
+//    1. Extract actor_netguid + archetype/level NetGUIDs from pkt#78 bunch
+//       (same methodology as test_pc_spawn_diff).
+//    2. Confirm partial-bunch status; if multi-fragment, reassemble first
+//       (see reassemble_pc_spawn.py for the pattern).
+//    3. Write test_pawn_spawn_diff.cpp and iterate handle/value alignment.
+//
+//  Current state: ActorBuilder produces 1084 bits (136 bytes) for this
+//  schema.  NOT yet bit-compared against captured pkt#78 — the 844-bit
+//  gap between our output and captured (6528 bits packet vs 1084 bits
+//  our bunch) suggests captured pkt#78 has significant tail we don't
+//  yet emit.  Calibration work remaining.
 // ============================================================================
 #include "protocol/schema/schema_registry.h"
 

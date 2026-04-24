@@ -392,14 +392,388 @@ Known AoC client functions in the RepLayout pipeline (addresses as of
 | `sub_14141E960` | `ReadFIntrepidNetworkGUID` | reads 128-bit NetGUID (4× uint32) |
 | `sub_1450360E0` | `WriteFIntrepidNetworkGUID` | recursive NetGUID writer w/ outer chain |
 | `sub_1450318A0` | `FGuidCache::GetOrAssignNetGUID` | UObject → NetGUID resolver |
-| `sub_14504F1A0` | **Function G**: `WriteActorChanges` | top-level RepLayout iterator |
-| `sub_145057C30` | **Function J**: per-cmd entry | writes 32-bit cmd_index; dispatches |
+| `sub_14504F1A0` | **Function G**: `WriteActorChanges` | top-level RepLayout iterator — walks phase bitmask at ctx[+0], emits `[cmd_idx][body]*[0xDEADBEEF]` per phase (see §16) |
+| `sub_145057C30` | **Function J**: per-cmd entry | writes 32-bit cmd_index atomically; runs diff-check, skips unchanged; rewinds if body empty |
 | `sub_1450357C0` | **Function D**: per-property dispatcher | 4-branch flag-based routing |
-| `sub_14503E260` | Function F: array writer | TArray per-element |
+| `sub_14503E260` | Function F: array writer | TArray flag-detect + dispatch |
 | `sub_145056800` | Shadow state updater | NOT a network writer |
 | `sub_145037460` | Struct sub-field walker | recursive for inner fields |
 | `sub_141D0EA50` | `GetFastArraySerializerClass` | lazy-init FFieldClass getter |
-| `sub_145035420` | (special flag 0x200000 path) | unknown |
+| `sub_145035420` | **Function F-body**: TArray element iteration | uint16 Num + per-elem dispatch |
 
 This taxonomy is how you navigate from a decompiled function back to "what
 layer of the protocol am I looking at."
+
+### 15.1 `sub_145035420` — TArray element serializer (RE'd 2026-04-23)
+
+Previously marked "special flag 0x200000 path: unknown".  Full decomp
+(see session notes) shows this is the **inner body of the TArray
+serializer** — `sub_14503E260` detects the `FArrayProperty` flag and
+tail-calls here for the actual element loop.
+
+Behaviour:
+
+1. **Read/write uint16 Num** through FArchive:
+   ```
+   v39 = *(_WORD *)(v4 + 8);     // in-memory Num snapshot
+   if (cursor + 1 > end) {
+       // slow path: virtual FArchive::Serialize(&v39, 2)
+       // at vtable offset 384 (method #48)
+   } else {
+       v39 = **cursor;                     // fast-path load
+       *cursor += 2;                        // advance 2 bytes
+   }
+   ```
+   So TArray Num on the wire is **16 bits, byte-aligned** (not a
+   SerializeIntPacked as stock UE5 uses on disk).
+
+2. **Validate Num < 0xFFFF**.  Sentinel value hits error path
+   `sub_1414E84D0` which logs "Serializing/Deserializing FField: None
+   (size 0xFFFF)" and aborts.
+
+3. **Resize in-memory TArray** (load path only):
+   - Shrink: call element destructors via vtable method @ +312 (#39),
+     then `sub_1416D0920` to truncate.
+   - Grow: `sub_1416B5170(new_count - old_count)`.
+
+4. **Per-element loop**:
+   ```
+   for (v3 = 0; v3 < Num; ++v3) {
+       context.field = v6[15];                      // FField* for elem type
+       context.data  = array_base + v3 * stride;    // element address
+       // stride = FField[+0x34] = ElementSize
+       if (!sub_1450357C0(a1, context)) break;
+   }
+   ```
+   This means each TArray element goes through the full **FProperty
+   dispatcher** (`sub_1450357C0`, "Function D"), so nested structures,
+   TArray-of-struct, etc. all recurse correctly.
+
+5. **Element destructor fast-path** gated by FField flag
+   `0x1000000000` (bit 36).  When SET, the destructor virtual call is
+   skipped — likely a POD-like flag ("TriviallyDestructible").  Combined
+   with `0x40000000` (bit 30) as `0x1040000000`, the entire destroy
+   phase is skipped.  This matters for our synthesiser: if we ever
+   construct a TArray<T> for replication, T's FField flags must mark
+   either the destructible path OR the POD flag, otherwise we hit a
+   virtual call on an uninitialised vtable.
+
+**Consequence for our decoder**: when we see a cmd_index whose catalog
+entry is `FPropertyType::Array`, the wire encoding is:
+  ```
+  uint16 Num
+  Num × <element_body>   // each via decode_property(element_desc, ...)
+  ```
+No per-element header, no termination sentinel.  This gives us the
+decoder to implement once we start seeing array-typed properties in
+pkt#22 / pkt#78 (e.g. `MarkedTargets` on AAoCPlayerController at
+RepIndex 16 is likely `TArray<AActor*>`).
+
+---
+
+## 16. RepLayout property stream format (RE'd 2026-04-24)
+
+**THIS SUPERSEDES** our earlier assumption of a flat per-class cmd_index
+list.  `sub_14504F1A0` (Function G) is the top-level RepLayout iterator
+and it emits properties **partitioned into phases, each phase terminated
+by a 0xDEADBEEF sentinel**.
+
+### 16.1 Phase model
+
+Function G reads an 8-bit **phase bitmask** from `context[+0]` and iterates
+the set bits lowest-first:
+
+```c
+for ( i = *(_BYTE *)a2; v27; ... )
+    *(_BYTE *)(a2 + 64) = v27 & -v27;      // isolate lowest set bit
+```
+
+Each phase bit selects a different property list on the actor's UClass:
+
+| Phase bit | UClass offset | List name (our naming)      | Meaning                        |
+|-----------|---------------|-----------------------------|--------------------------------|
+| `0x01`    | `+0x130` (304)| **InitialRepProps**         | "constant once" — sent at open |
+| others    | `+0x120` (288)| **LifetimeRepProps**        | "change over time" — deltas    |
+
+Each list is a `TArray<FRepParentCmd>` (16-byte entries) at `offset+0` with
+`Num` at `offset+8`.
+
+### 16.2 Per-phase stream layout
+
+Within a phase, Function G emits a sequence of `[cmd_index][body]` pairs
+with cmd_index starting at 0 and **incrementing by 1 per property** (not
+skipping unreplicated ones — the list is already filtered).  After the
+last property, Function G writes **`0xDEADBEEF` (little-endian: `DE AD
+BE EF`)** as a 4-byte sentinel.
+
+**Writer path** (v31 & 4 = `IsSaving`):
+```
+for v33 = 0; v33 < num_props; ++v33:
+    context.cmd_index = v33
+    context.field     = property_list[v33]
+    Function J(a1, context)     // may emit [cmd_idx][body], or skip if unchanged
+0xDEADBEEF                       // phase terminator
+```
+
+**Reader path** (v31 & 1 = `IsLoading`):
+```
+loop:
+    read uint32 cmd_index
+    if cmd_index == 0xDEADBEEF: break
+    field = property_list[cmd_index]           // 16-byte stride lookup
+    dispatch via sub_14503E260 or Function J
+    if loop_count >= 1024: break                // safety bound
+```
+
+### 16.3 Why pkt#22 shows cmd_index=0 twice
+
+pkt#22 is an actor-**OPEN**, which runs **both phases** in one
+burst:
+
+```
+[Phase 1 — InitialRepProps]
+    uint32 cmd_index = 0      (e.g. AuthServerIDReplicated)
+    <body>
+    uint32 cmd_index = 1      (e.g. bIsInterServerReplicated)
+    <body>
+    ...
+    uint32 0xDEADBEEF
+[Phase 0 — LifetimeRepProps]
+    uint32 cmd_index = 0      (e.g. bReplicateMovement — NEW phase, NEW index space)
+    <body>
+    ...
+    uint32 0xDEADBEEF
+```
+
+Our earlier decoder saw "cmd_index=0 twice" because it was walking a
+single-list model.  The correct model is **two lists back-to-back,
+each starting at cmd_index=0**, with a sentinel between them.
+
+This also explains why delta packets (pkt#79, mutation tests) have fewer
+cmd_indices — those are LifetimeRepProps-only, and properties unchanged
+since last tick are filtered by the diff-checker (`sub_14502D230`, see
+§16.5).
+
+### 16.4 Wire bitness — cmd_index and sentinel are byte-aligned
+
+Both cmd_index and the 0xDEADBEEF sentinel are **32-bit byte-aligned**
+writes through FArchive:
+
+```c
+if ( (unsigned __int64)(*(_QWORD *)v21 + 4LL) > *(_QWORD *)(v21 + 8) )
+    virtual FArchive::Serialize(&val, 4)    // slow path: may realign
+else
+    *(uint32*)cursor = val; cursor += 4;    // fast path: byte-aligned
+```
+
+However, a bunch is a bit stream — so when RepLayout calls into Function
+G, the archive is a `FBitArchive` subclass whose `Serialize()` vtable slot
+writes a 32-bit value at the **current bit position**, rounded up / not,
+depending on whether bit-packing is enabled.  For our decoder: read the
+cmd_index and sentinel as **32 bits at the current bit cursor, no byte
+realignment**.  This is confirmed by `test_pkt104_round_trip` which
+already assumes this bitness.
+
+### 16.5 Diff-check (delta path) — `sub_14502D230`
+
+Function J gates every write on `sub_14502D230(shadow_state, cmd_index,
+FField, data_base)`.  This function walks a 3-level hashtable (cmd_index
+→ shadow entry at 32-byte stride), then invokes **FField vtable slot 23**
+(offset 184) = `FField::Identical(current_ptr, shadow_ptr, 0)`.
+
+- `Identical()` returns 1 → value unchanged → Function J's rewind logic
+  cancels the cmd_index write, so the property is **silently skipped**
+- `Identical()` returns 0 → value changed → Function J emits
+  `[cmd_index][body]` and calls `sub_145056800` to update the shadow state
+
+On actor OPEN (pkt#22), the shadow state is fresh (all default values),
+so every property that differs from its class-default value is emitted.
+For subsequent deltas, only changed properties are emitted.
+
+### 16.6 Phase-mask for pkt#22 (conjecture, to verify)
+
+Our fixture (`captured_pc_spawn_reassembled.bin`) almost certainly has
+phase mask `0x03` (both bits 0 and 1 set) based on the "two concatenated
+property streams" observation.  This should be visible in the bunch
+payload immediately before the stream start — search for an 8-bit field
+with value `0x03` around the pkt#22 RepLayout offset (bit 4003 or so in
+our capture).
+
+### 16.7 Shadow-state hashing — `sub_145032980`
+
+Function J keys its shadow-state lookup with a Bob Jenkins mix over 16
+bytes at `object+40` (the FName + some padding).  The magic constant
+`0x9E3779B9` (golden ratio) is the canonical Jenkins mixing seed.  This
+gives us a stable hash per actor instance — we don't need to replicate
+this hash unless we implement our own shadow-state tracking, which is
+not on the M1 critical path.
+
+### 16.8 Implications for `decode_pc_spawn.cpp`
+
+Given this wire format, the **Phase e** (property-stream walker) pseudo
+becomes:
+
+```cpp
+std::vector<DecodedPhase> phases;
+uint8_t phase_mask = read_byte();           // context[+0]
+for (int phase_bit = 0; phase_bit < 8; ++phase_bit) {
+    if (!(phase_mask & (1 << phase_bit))) continue;
+    DecodedPhase phase{};
+    phase.phase_id = phase_bit;
+    const auto& list = phase_bit == 0
+        ? catalog.lifetime_props()   // UClass+288
+        : catalog.initial_props();   // UClass+304
+    while (true) {
+        uint32_t cmd_index = read_uint32_lsb();
+        if (cmd_index == 0xDEADBEEFu) break;
+        if (cmd_index >= list.size()) return std::nullopt;  // corrupt
+        const auto& prop = list[cmd_index];
+        DecodedProperty dp{ cmd_index, decode_body(prop) };
+        phase.properties.push_back(std::move(dp));
+    }
+    phases.push_back(std::move(phase));
+}
+```
+
+**Catalog change needed**: our current `class_catalog` is a flat
+`vector<PropertyDesc>`.  We now need to split it into **two lists per
+class** (initial vs lifetime) to match the phase model.  Stock UE5
+`GetLifetimeReplicatedProps()` tags each `FDoRepLifetimeParams` with
+`Condition` and `RepNotifyCondition`, and the RepLayout builder sorts
+them into these two lists based on the `COND_InitialOnly` condition.
+
+We don't have the AoC client's exact list ordering — but the IDA
+FPropertyParams table dumps (off_14A77DB70 upward) give us the full
+property set in declaration order, and we can infer the split by looking
+for `COND_InitialOnly` usage in `AAoCPlayerController::GetLifetimeReplicatedProps`
+(or equivalent).
+
+### 16.9 Updated function taxonomy
+
+Add these to §15's table:
+
+| Address | Name | Role |
+|---|---|---|
+| `sub_145032980` | Shadow-hash (Jenkins) | FName-based 16-byte content hash → shadow-state slot |
+| `sub_14502D230` | Diff-checker | 3-level hashtable → `FField::Identical()` comparison |
+| `sub_1414E84D0` | `FArchive::SetError` (+ chain propagate) | sets bit 1 of archive[+41], walks linked chain at +136 |
+| `sub_1416B5170` | `FArrayProperty::AddUninitialized` + init | grow TArray + per-elem `InitializeValue` or bulk memset |
+| `sub_14502EBC0` | Shadow-state getter | returns per-object shadow-state ptr (keyed by hash) |
+| `sub_1450205D0` | Shadow-state hashtable lookup | input: hash, returns: entry index or -1 |
+
+### 16.10 FField offsets (consolidated from Functions D, F, G, J)
+
+Confirmed field offsets in `FField` (needed for the walker):
+
+| Offset | Size | Field | Notes |
+|--------|------|-------|-------|
+| `+0x00` | ptr  | vtable | slot 23 = `Identical`, slot 42 = `InitializeValue`, slot 48 = `Serialize` |
+| `+0x30` | 4    | **ArrayDim** | fixed-array dimension (1 for scalars) |
+| `+0x34` | 4    | **ElementSize** | stride per element |
+| `+0x38` | 8    | **FieldFlags** | CPF_* bits; bit 9 (0x200) = POD init, bit 36 (0x1000000000) = POD destroy |
+| `+0x44` | 4    | **Offset_Internal** | offset within enclosing actor/struct |
+
+### 16.11 FArchive offsets (consolidated)
+
+Confirmed field offsets in the bit-archive flavour used by Function G:
+
+| Offset | Size | Field | Notes |
+|--------|------|-------|-------|
+| `+0x08` | ptr  | buffer cursor (uint8**)  | fast-path byte writer target |
+| `+0x28` | 1    | mode flags | bit 0 = IsLoading, bit 2 = IsSaving |
+| `+0x29` | 1    | status flags | bit 1 = ArError (set by `sub_1414E84D0`) |
+| `+0x2A` | 1    | bit-pack mode | bit 0 = use bit writer slow path |
+| `+0x88` | 8    | linked chain next | for error propagation |
+| `+0xA0` | 4    | bit position | `FBitWriter::Pos` — Function J's rewind target |
+
+---
+
+## 17. FPropertyParams layout (RE'd 2026-04-24 via direct binary read)
+
+Rather than rely on IDA XRefs (which the Shipping build strips), we read
+`AOCClient-Win64-Shipping.exe` directly via a Python PE parser — see
+`C:\Users\xmaxt\AppData\Local\Temp\re_pe_dump.py`.  This gave us the full
+structure layout of every UE5 `FPropertyParams` entry.
+
+### 17.1 64-byte layout
+
+```
+struct FPropertyParams {
+    +0x00  const char*  NameUTF8;           // property name (always set)
+    +0x08  void (*)()   RepNotifyFunc;      // OnRep_X callback OR nullptr
+    +0x10  uint64       PropertyFlags;      // CPF_* bits (EPropertyFlags)
+    +0x18  uint32       ObjectFlags;        // EObjectFlags for the property
+    +0x1C  uint32       Discriminator;      // always 0x00000045 for AActor's props
+    +0x20  uint64       Reserved_0;         // always 0 in observed samples
+    +0x28  uint64       Reserved_1;         // always 0
+    +0x30  uint16       ArrayDim;           // 1 for non-array
+    +0x32  uint16       BitIndex_or_Offset; // for Bool: bitfield bit index
+                                             // for non-Bool: byte offset lo16
+    +0x34  uint32       OffsetInClass;      // absolute byte offset within UObject
+    +0x38  void*        ExtraPtr;           // for Bool/Struct: getter/setter thunk
+                                             // for Int/Float: nullptr
+}                                            // TOTAL: 0x40 (64) bytes
+```
+
+### 17.2 PropertyFlags bits (EPropertyFlags)
+
+Standard UE5 bits:
+
+| Bit | Value | Name |
+|-----|-------|------|
+| 0 | `0x1` | `CPF_Edit` |
+| 2 | `0x4` | `CPF_BlueprintVisible` |
+| 4 | `0x10` | `CPF_BlueprintReadOnly` |
+| **5** | **`0x20`** | **`CPF_Net`** (is replicated through standard RepLayout) |
+| 16 | `0x10000` | `CPF_DisableEditOnInstance` |
+| 30 | `0x40000000` | `CPF_IsPlainOldData` |
+| **32** | **`0x100000000`** | **`CPF_RepNotify`** (has OnRep_ callback) |
+| 36 | `0x1000000000` | `CPF_NoDestructor` |
+
+**AoC-specific** (not in stock UE5):
+
+| Bit | Value | Name (hypothesis) |
+|-----|-------|------|
+| **63** | **`0x8000000000000000`** | **`CPF_InterServer`** — replicates across AoC's server mesh |
+
+### 17.3 How to tell if a property is in pkt#22's stream
+
+A property is emitted in pkt#22's RepLayout property stream **if and only
+if** its `PropertyFlags & CPF_Net (0x20)` is set.
+
+### 17.4 Critical correction: AActor catalog has 13 entries, not 15
+
+Our earlier catalog had 15 entries including `bIsInterServerReplicated`
+and `ProxyNetUpdateInterval`.  Binary RE shows these two **do NOT have
+`CPF_Net` set** — only `CPF_InterServer` (bit 63).  They replicate via
+AoC's server-to-server channel, NOT the standard RepLayout stream in
+pkt#22.  The corrected AActor catalog:
+
+| RepIdx | Name | CPF flags |
+|--------|------|-----------|
+| 0 | AuthServerIDReplicated | CPF_Net (AoC add, IS stream) |
+| 1 | bReplicateMovement | CPF_Net \| CPF_RepNotify |
+| 2 | bHidden | CPF_Net |
+| 3 | bTearOff | CPF_Net |
+| 4 | bCanBeDamaged | CPF_Net |
+| 5 | bReplicates | CPF_Net \| CPF_RepNotify |
+| 6 | ReplicatedMovement | CPF_Net \| CPF_RepNotify |
+| 7 | RemoteRole | CPF_Net |
+| 8 | AttachmentReplication | CPF_Net \| CPF_RepNotify |
+| 9 | Owner | CPF_Net \| CPF_RepNotify |
+| 10 | Role | CPF_Net |
+| 11 | NetDormancy | CPF_Net \| CPF_RepNotify |
+| 12 | Instigator | CPF_Net \| CPF_RepNotify |
+
+This correction likely resolves our "cmd_index=0 twice" mystery **without
+needing the phase model**: our old 15-entry catalog caused mis-indexing
+during the walk.  The phase-model hypothesis (§16) may still be correct
+architecturally, but pkt#22 might be walkable as a single flat stream
+with the corrected catalog.  To be verified via round-trip test.
+
+### 17.5 AAoCPlayerController catalog (19 entries, full ground truth)
+
+See `catalog.cpp::aaoc_player_controller_catalog()` for the complete
+list with PropertyFlags, RepNotify markers, and type inferences.  All
+19 properties extracted from the binary pointer table at VA
+`0x14B6D5410` (224 total fields; filtered to CPF_Net subset).

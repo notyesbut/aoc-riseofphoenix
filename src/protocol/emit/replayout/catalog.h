@@ -16,6 +16,21 @@
 //  contributes (1 + sum of its sub-cmds).  This flat index is what the
 //  rep-field-mask bits in the wire payload reference.
 //
+//  ── TODO (2026-04-24, Phase III M1) ──────────────────────────────────────
+//  This catalog is currently a single flat list per class.  Per the
+//  RE findings in docs/wire-format.md §16, UE5 RepLayout actually splits
+//  properties into TWO lists: InitialRepProps (emitted at actor-open) and
+//  LifetimeRepProps (emitted in deltas).  cmd_index is PER-LIST (starts at
+//  0 in each phase), and a 0xDEADBEEF uint32 sentinel terminates each
+//  phase on the wire.
+//
+//  Before M1 round-trip can pass, this struct needs:
+//    - `std::vector<ReplicatedPropertyDesc> initial_props;`
+//    - `std::vector<ReplicatedPropertyDesc> lifetime_props;`
+//  replacing `own_props`.  The split requires RE'ing each class's
+//  GetLifetimeReplicatedProps() implementation (look for DOREPLIFETIME_CONDITION
+//  + COND_InitialOnly calls).
+//
 //  LAYER:  Protocol / emit / replayout
 //  OWNER:  Phase II synthesizer
 // ============================================================================

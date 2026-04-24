@@ -1,0 +1,9 @@
+# pkt#78 — Pawn ActorOpen fixture
+# Extracted from bootstrap_data.h kPacket78_raw
+raw_size = 816
+
+# Known facts from RE:
+# - Class name: Default__PlayerPawn_C (Blueprint)
+# - Blueprint path: /Game/ThirdPersonCPP/Blueprints/PlayerPawn
+# - Parent C++ class: ACharacter
+# - Archetype string at bit 1195 (shift 3 = byte 149.3)

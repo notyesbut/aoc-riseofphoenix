@@ -41,4 +41,11 @@ public:
 PropertyValue decode_property(const ReplicatedPropertyDesc& desc,
                               ::aoc::protocol::wire::PacketReader& reader);
 
+/// Read exactly `n_bits` bits and return them as a RawBits PropertyValue.
+/// Used as a round-trip-clean fallback for properties whose type is still
+/// Unknown in the catalog.  The encoder's `encode_property` handles a
+/// RawBits-payload value by emitting the bits verbatim.
+PropertyValue decode_raw_bits(::aoc::protocol::wire::PacketReader& reader,
+                              size_t n_bits);
+
 }}}} // namespace aoc::protocol::emit::replayout

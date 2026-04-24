@@ -444,6 +444,33 @@ if(MSVC)
 endif()
 set_target_properties(test_pkt22_round_trip PROPERTIES FOLDER "Tools")
 
+# ── test_decode_pc_spawn (Phase III M1 typed PC-spawn decoder harness) ────────
+add_executable(test_decode_pc_spawn
+    src/tools/test_decode_pc_spawn.cpp
+    src/protocol/bootstrap/decode_pc_spawn.cpp
+    src/protocol/bootstrap/pc_spawn_parser.cpp
+    src/protocol/emit/replayout/catalog.cpp
+    src/protocol/emit/replayout/decoder.cpp
+    src/protocol/emit/replayout/encoder.cpp
+    src/protocol/emit/replayout/encoders/fstring_codec.cpp
+    src/protocol/emit/replayout/encoders/scalar_codec.cpp
+    src/protocol/emit/replayout/encoders/fobject_codec.cpp
+    src/protocol/emit/replayout/encoders/fstruct_codec.cpp
+)
+target_compile_features(test_decode_pc_spawn PRIVATE cxx_std_20)
+target_include_directories(test_decode_pc_spawn PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_link_libraries(test_decode_pc_spawn PRIVATE spdlog::spdlog)
+if(MSVC)
+    target_compile_definitions(test_decode_pc_spawn PRIVATE
+        _CRT_SECURE_NO_WARNINGS
+        WIN32_LEAN_AND_MEAN
+        NOMINMAX
+    )
+endif()
+set_target_properties(test_decode_pc_spawn PROPERTIES FOLDER "Tools")
+
 # ── test_pkt104_round_trip (Phase II pkt#104 name FString harness) ────────────
 add_executable(test_pkt104_round_trip
     src/tools/test_pkt104_round_trip.cpp
@@ -462,6 +489,46 @@ if(MSVC)
     )
 endif()
 set_target_properties(test_pkt104_round_trip PROPERTIES FOLDER "Tools")
+
+# ── test_name_update_bunch (Phase III M1 native Name-delta emitter) ──────────
+add_executable(test_name_update_bunch
+    src/tools/test_name_update_bunch.cpp
+    src/protocol/emit/name_update_bunch.cpp
+)
+
+# ── test_property_update_bunch_builder (Phase III M1 full bunch builder) ─────
+add_executable(test_property_update_bunch_builder
+    src/tools/test_property_update_bunch_builder.cpp
+    src/protocol/emit/name_update_bunch.cpp
+    src/protocol/emit/property_update_bunch_builder.cpp
+)
+target_compile_features(test_property_update_bunch_builder PRIVATE cxx_std_20)
+target_include_directories(test_property_update_bunch_builder PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_link_libraries(test_property_update_bunch_builder PRIVATE spdlog::spdlog)
+if(MSVC)
+    target_compile_definitions(test_property_update_bunch_builder PRIVATE
+        _CRT_SECURE_NO_WARNINGS
+        WIN32_LEAN_AND_MEAN
+        NOMINMAX
+    )
+endif()
+set_target_properties(test_property_update_bunch_builder PROPERTIES FOLDER "Tools")
+
+target_compile_features(test_name_update_bunch PRIVATE cxx_std_20)
+target_include_directories(test_name_update_bunch PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_link_libraries(test_name_update_bunch PRIVATE spdlog::spdlog)
+if(MSVC)
+    target_compile_definitions(test_name_update_bunch PRIVATE
+        _CRT_SECURE_NO_WARNINGS
+        WIN32_LEAN_AND_MEAN
+        NOMINMAX
+    )
+endif()
+set_target_properties(test_name_update_bunch PROPERTIES FOLDER "Tools")
 
 # ── test_replay_mutator (Phase II ReplayMutator library tests) ────────────────
 add_executable(test_replay_mutator
@@ -698,6 +765,29 @@ if(MSVC)
         _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX)
 endif()
 set_target_properties(test_pc_spawn_diff PROPERTIES FOLDER "Tools")
+
+# ── test_pawn_spawn_diff (Phase III M1 pawn-synth calibration baseline) ─────
+add_executable(test_pawn_spawn_diff
+    src/tools/test_pawn_spawn_diff.cpp
+    src/protocol/emit/actor_builder.cpp
+    src/protocol/emit/nmt_builder.cpp
+    src/protocol/emit/package_map_exporter.cpp
+    src/protocol/schema/actor_schema.cpp
+    src/protocol/schema/schema_registry.cpp
+    src/protocol/schema/pc_schema.cpp
+    src/protocol/schema/pawn_schema.cpp
+    src/protocol/schema/player_state_schema.cpp
+)
+target_compile_features(test_pawn_spawn_diff PRIVATE cxx_std_20)
+target_include_directories(test_pawn_spawn_diff PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(test_pawn_spawn_diff PRIVATE spdlog::spdlog)
+if(MSVC)
+    target_compile_definitions(test_pawn_spawn_diff PRIVATE
+        _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX)
+    target_compile_definitions(test_pawn_spawn_diff PRIVATE
+        AOC_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
+endif()
+set_target_properties(test_pawn_spawn_diff PROPERTIES FOLDER "Tools")
 
 # ── test_package_map_export (Session H.3d structural round-trip) ────────────
 add_executable(test_package_map_export

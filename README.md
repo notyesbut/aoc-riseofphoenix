@@ -5,7 +5,7 @@ layer of Ashes of Creation's Unreal Engine 5 game client.  Currently a
 replay-based emulator with an in-progress native synthesis pipeline.
 
 > ⚠️ **INTERNAL / TEAM USE ONLY.**  This codebase reverse-engineers the
-> wire protocol of an unreleased commercial MMO.  Do not distribute, do not
+> wire protocol of an unreleased MMO.  Do not distribute, do not
 > publish publicly, do not use to operate a service for third parties.
 > See [LICENSE](./LICENSE) for the full terms.
 

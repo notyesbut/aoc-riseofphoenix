@@ -35,16 +35,31 @@ replaying and start **building fresh bunches** using our codec layer.
 1. **A server-side authoritative state model** — today `LiveWorld` /
    `ActorRegistry` exists but is mostly stubs.  We need typed actor
    state (name, position, class, etc.) that the emitter reads from.
-2. **The `sub_145035420` (flag `0x200000`) dispatch path** — still
-   unknown.  Might affect ~10–20% of replicated properties.
-3. **Per-subobject RepLayout framing** — pkt#22 shows two `cmd_index=0`
-   entries in its property stream.  We believe this is per-subobject
-   interleaving but haven't pinned down the framing marker.
-4. **FastArraySerializer NetDelta emit** — for `TArray<FItem>` replicated
-   state (abilities list, inventory, etc.).
-5. **Handshake-path integration** — the real client initiates connection
+2. **Per-class phase splits** — we now know (as of 2026-04-24, see
+   `docs/wire-format.md` §16) that RepLayout uses a **2-phase model**
+   (InitialRepProps vs LifetimeRepProps) with a `0xDEADBEEF` sentinel
+   between them.  Our catalogs are flat — we need to split each class's
+   properties into InitialOnly vs Lifetime lists to match the wire.
+3. **FastArraySerializer NetDelta emit** — for `TArray<FItem>` replicated
+   state (abilities list, inventory, etc.).  Flag 0x200000 (now resolved
+   to the TArray element serializer `sub_145035420`) handles the simple
+   TArray case; FastArraySerializer is a separate path (flag 0x100000).
+4. **Handshake-path integration** — the real client initiates connection
    via `StatelessConnect`.  Right now replay bypasses that.  Phase III
    needs a proper handshake at the start.
+
+### What we resolved 2026-04-24 (was blocking M1)
+
+- ✅ **The "cmd_index=0 twice" mystery** — not per-subobject interleaving.
+  It's the **phase boundary**: pkt#22 emits InitialRepProps (cmd_index=0..N)
+  + `0xDEADBEEF` sentinel + LifetimeRepProps (cmd_index=0..M) + sentinel.
+- ✅ **`sub_145035420` dispatch path** — fully RE'd, it's the TArray
+  element serializer (uint16 Num + per-element recurse).
+- ✅ **Function G / J / diff-checker / shadow-hash** — all mapped (see
+  `docs/wire-format.md` §16).
+- ✅ **AActor AoC additions** — confirmed 3 properties at the top of the
+  AActor FPropertyParams table: AuthServerIDReplicated (FInt),
+  bIsInterServerReplicated (FBool), ProxyNetUpdateInterval (FFloat).
 
 ---
 
@@ -56,24 +71,61 @@ replaying and start **building fresh bunches** using our codec layer.
 using `ActorBuilder` + `replayout`, with the chosen name baked in.
 
 **Sub-tasks:**
-1. Decode the captured pkt#22 via a `decode_pc_spawn` function that uses
-   our full codec layer (not the Python decoders — those are for
-   exploration).  Output: a typed `ActorState` struct with every
-   replicated property in a typed slot.
-2. Round-trip validator: `encode(decode(captured)) == captured` at the
-   bit level.
-3. Mutate `ActorState.name = "YourName"` and emit.  Non-partial.  Send
-   to client.
-4. Replace pkt#22 in the replay stream with our synthesised version
+1. **Split catalogs into phase lists** (`initial_props` + `lifetime_props`
+   on each class) — the wire model from `wire-format.md` §16.2.
+
+   **DO NOT try to find `GetLifetimeReplicatedProps` via string XRefs
+   in IDA.** It doesn't work: UE5 Shipping builds precompute `FName`
+   indices at compile-time, so `DOREPLIFETIME(Class, Property)` emits
+   no string literals.  Attempts on 2026-04-24 chased `aGetlifetime`,
+   `aAaocplayercont`, `aCondInitialonl` — all landed on unrelated
+   Slate UI / physics / math code because those strings are generic
+   and reused in dozens of places.
+
+   Approaches that DO work (in order of preference):
+
+   a. **Read FPropertyParams flags directly.**  Each property has a
+      64-byte descriptor (e.g. `0x14A77C220` for `AuthServerIDReplicated`)
+      containing a `PropertyFlags` field with the CPF_* bits.  Flag
+      `CPF_RepNotify` (0x0000000000000100) and CPF conditions encode
+      the phase implicitly.  Dump 3 known-type structures and diff to
+      find the flags offset.  **This is the preferred path.**
+
+   b. **Heuristic split + round-trip validator.**  Assume:
+      - InitialOnly = `AuthServerIDReplicated`, `bIsInterServerReplicated`
+        (identity markers, sent once)
+      - Lifetime = everything else (stock UE5 replicated AActor props
+        are all Lifetime)
+      Run `test_pc_spawn_round_trip`.  If bits differ, move properties
+      between lists until the round-trip is bit-exact.  Coarse but
+      effective — the search space is small (we know there are only
+      15 AActor replicated props, 3 AoC additions, etc.).
+
+   c. **Locate `UClass::PropertyLink` table** for AAoCPlayerController.
+      UClass+0x130/+0x120 hold the per-phase property lists at runtime
+      (per `wire-format.md` §16.1).  Finding the UClass object itself
+      (via `AAoCPlayerController::StaticClass`) gives us the split at
+      a known offset.  Requires more IDA spelunking but is definitive.
+2. Decode the captured pkt#22 via `decode_pc_spawn(bytes)` → typed
+   `DecodedPCSpawn`.  Walker expects `[phase_mask][phase body × N]` where
+   each phase body is `[(cmd_index, body)*][0xDEADBEEF]`.
+3. Round-trip validator: `encode(decode(captured)) == captured` at the
+   bit level.  Exact-bit match including the 0xDEADBEEF sentinels.
+4. Mutate `DecodedPCSpawn.name = "YourName"` and emit.  Non-partial.
+   Send to client.
+5. Replace pkt#22 in the replay stream with our synthesised version
    for connecting clients.
 
 **Risks:**
-- The per-subobject framing unknown (§3 in "missing" list).  Workaround:
-  initially synthesise only the actor root, skip subobjects.  Client
-  may tolerate it.
-- `sub_145035420` path may handle some of AAoCPlayerController's 19
-  properties.  Workaround: identify which ones, treat as `Unknown`
-  for now and don't emit them.
+- **Phase-split correctness** — if we mis-classify a property (Initial vs
+  Lifetime), the client will see cmd_indices in the wrong list and either
+  ignore them or crash.  Round-trip validator catches this early: if
+  `encode(decode(captured)) != captured`, our split is wrong.
+- **Unclassified property types** — AAoCPlayerController has 19 replicated
+  properties but our catalog only types 3-4 of them.  Decode will fail on
+  first `FPropertyType::Unknown`.  Mitigation: the RE done via IDA's
+  FPropertyParams walker (see `wire-format.md` §16) gives us every
+  type — just need to extend the catalog.
 
 **Success criterion:** client logs in, spawns with the custom name
 visible in HUD + nametag.
