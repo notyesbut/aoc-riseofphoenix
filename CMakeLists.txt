@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(AoCRiseOfPhoenix VERSION 0.1.0 LANGUAGES CXX)
+project(AshesOfCreation VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -10,23 +10,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # ── Output directory ────────────────────────────────────────────────────────
-# Default to <repo>/dist/<config>/ so the working directory matches what the
-# launch scripts expect.  Override with -DAOC_DIST_ROOT=/some/path to build
-# binaries elsewhere.
-set(AOC_DIST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dist" CACHE PATH
+set(AOC_DIST_ROOT "C:/Users/xmaxt/source/repos/AshesOfCreation/AshesOfCreation/dist" CACHE PATH
     "Canonical output root: binaries land in <AOC_DIST_ROOT>/<config>/")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG          "${AOC_DIST_ROOT}/Debug")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE        "${AOC_DIST_ROOT}/Release")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${AOC_DIST_ROOT}/RelWithDebInfo")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL     "${AOC_DIST_ROOT}/MinSizeRel")
-message(STATUS "AoC-RiseOfPhoenix dist/ root: ${AOC_DIST_ROOT}")
-
-# ── Repo root as a compile definition ──────────────────────────────────────
-# Test harnesses use AOC_REPO_ROOT to locate fixture files without hardcoding
-# user-specific paths.  Defined globally here so every target picks it up.
-add_compile_definitions(
-    AOC_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}"
-)
+message(STATUS "AshesOfCreation dist/ root: ${AOC_DIST_ROOT}")
 
 # ── Dependencies ────────────────────────────────────────────────────────────
 find_package(Protobuf CONFIG REQUIRED)
@@ -125,6 +115,21 @@ set(SERVER_SOURCES
     src/protocol/emit/replayout/encoders/fstruct_codec.cpp
     # Phase II — replay mutator (rewrites captured bunches with live state)
     src/protocol/emit/replay_mutator.cpp
+    # Phase III M1 — native Name-update bunch emission
+    src/protocol/emit/name_update_bunch.cpp
+    src/protocol/emit/property_update_bunch_builder.cpp
+    # Path B — authoritative-server connect orchestrator (M1.0 scaffolding)
+    src/net/native_connect_sequencer.cpp
+    # Path B — M1.1 bootstrap emitter (ch=0 control bunches before PC spawn)
+    src/net/bootstrap_emitter.cpp
+    # Path B — M1.2 PC emitter (PlayerController ActorOpen + props)
+    src/net/pc_emitter.cpp
+    # Path B — M1.4.b Pawn emitter (spliced captured pkt#78 bunch stream)
+    src/net/pawn_emitter.cpp
+    # Path B — M2 bootstrap framework (CharacterProfile + NetGUIDAllocator + PacketRecipe)
+    src/net/bootstrap/packet_recipe.cpp
+    # Path B — M2 live server state (WorldState + CharacterState + 10Hz tick)
+    src/net/world_state/world_state.cpp
     src/world/events/world_events.cpp
     src/world/simulation/actor_registry.cpp
     src/world/replication/visibility_manager.cpp
@@ -237,24 +242,6 @@ if(MSVC)
         /wd4146  # minus operator on unsigned (spdlog)
     )
 endif()
-
-# ── Post-build: stage runtime assets next to aoc_server.exe ──────────────────
-# aoc_server loads certs and config files from paths relative to its CWD.
-# Copy them from the repo root into <AOC_DIST_ROOT>/<config>/ after every
-# build so `dist/<config>/` is a self-contained, runnable directory.
-add_custom_command(TARGET aoc_server POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/certs
-        $<TARGET_FILE_DIR:aoc_server>/certs
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/config
-        $<TARGET_FILE_DIR:aoc_server>/config
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_CURRENT_SOURCE_DIR}/fixtures/replay_data.bin
-        $<TARGET_FILE_DIR:aoc_server>/replay_data.bin
-    COMMENT "Staging certs/, config/, and replay_data.bin into output directory"
-    VERBATIM
-)
 
 # ── Tether server (standalone UDP ARQ executable) ───────────────────────────
 add_executable(tether_server
@@ -444,33 +431,6 @@ if(MSVC)
 endif()
 set_target_properties(test_pkt22_round_trip PROPERTIES FOLDER "Tools")
 
-# ── test_decode_pc_spawn (Phase III M1 typed PC-spawn decoder harness) ────────
-add_executable(test_decode_pc_spawn
-    src/tools/test_decode_pc_spawn.cpp
-    src/protocol/bootstrap/decode_pc_spawn.cpp
-    src/protocol/bootstrap/pc_spawn_parser.cpp
-    src/protocol/emit/replayout/catalog.cpp
-    src/protocol/emit/replayout/decoder.cpp
-    src/protocol/emit/replayout/encoder.cpp
-    src/protocol/emit/replayout/encoders/fstring_codec.cpp
-    src/protocol/emit/replayout/encoders/scalar_codec.cpp
-    src/protocol/emit/replayout/encoders/fobject_codec.cpp
-    src/protocol/emit/replayout/encoders/fstruct_codec.cpp
-)
-target_compile_features(test_decode_pc_spawn PRIVATE cxx_std_20)
-target_include_directories(test_decode_pc_spawn PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
-target_link_libraries(test_decode_pc_spawn PRIVATE spdlog::spdlog)
-if(MSVC)
-    target_compile_definitions(test_decode_pc_spawn PRIVATE
-        _CRT_SECURE_NO_WARNINGS
-        WIN32_LEAN_AND_MEAN
-        NOMINMAX
-    )
-endif()
-set_target_properties(test_decode_pc_spawn PROPERTIES FOLDER "Tools")
-
 # ── test_pkt104_round_trip (Phase II pkt#104 name FString harness) ────────────
 add_executable(test_pkt104_round_trip
     src/tools/test_pkt104_round_trip.cpp
@@ -495,8 +455,19 @@ add_executable(test_name_update_bunch
     src/tools/test_name_update_bunch.cpp
     src/protocol/emit/name_update_bunch.cpp
 )
+target_compile_features(test_name_update_bunch PRIVATE cxx_std_20)
+target_include_directories(test_name_update_bunch PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_link_libraries(test_name_update_bunch PRIVATE spdlog::spdlog)
+if(MSVC)
+    target_compile_definitions(test_name_update_bunch PRIVATE
+        _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX
+        AOC_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
+endif()
+set_target_properties(test_name_update_bunch PROPERTIES FOLDER "Tools")
 
-# ── test_property_update_bunch_builder (Phase III M1 full bunch builder) ─────
+# ── test_property_update_bunch_builder (Phase III M1 builder class) ──────────
 add_executable(test_property_update_bunch_builder
     src/tools/test_property_update_bunch_builder.cpp
     src/protocol/emit/name_update_bunch.cpp
@@ -509,26 +480,31 @@ target_include_directories(test_property_update_bunch_builder PRIVATE
 target_link_libraries(test_property_update_bunch_builder PRIVATE spdlog::spdlog)
 if(MSVC)
     target_compile_definitions(test_property_update_bunch_builder PRIVATE
-        _CRT_SECURE_NO_WARNINGS
-        WIN32_LEAN_AND_MEAN
-        NOMINMAX
-    )
+        _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX)
 endif()
 set_target_properties(test_property_update_bunch_builder PROPERTIES FOLDER "Tools")
 
-target_compile_features(test_name_update_bunch PRIVATE cxx_std_20)
-target_include_directories(test_name_update_bunch PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+# ── test_pawn_spawn_diff (Phase III M1 pawn-synth calibration) ───────────────
+add_executable(test_pawn_spawn_diff
+    src/tools/test_pawn_spawn_diff.cpp
+    src/protocol/emit/actor_builder.cpp
+    src/protocol/emit/nmt_builder.cpp
+    src/protocol/emit/package_map_exporter.cpp
+    src/protocol/schema/actor_schema.cpp
+    src/protocol/schema/schema_registry.cpp
+    src/protocol/schema/pc_schema.cpp
+    src/protocol/schema/pawn_schema.cpp
+    src/protocol/schema/player_state_schema.cpp
 )
-target_link_libraries(test_name_update_bunch PRIVATE spdlog::spdlog)
+target_compile_features(test_pawn_spawn_diff PRIVATE cxx_std_20)
+target_include_directories(test_pawn_spawn_diff PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(test_pawn_spawn_diff PRIVATE spdlog::spdlog)
 if(MSVC)
-    target_compile_definitions(test_name_update_bunch PRIVATE
-        _CRT_SECURE_NO_WARNINGS
-        WIN32_LEAN_AND_MEAN
-        NOMINMAX
-    )
+    target_compile_definitions(test_pawn_spawn_diff PRIVATE
+        _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX
+        AOC_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
 endif()
-set_target_properties(test_name_update_bunch PROPERTIES FOLDER "Tools")
+set_target_properties(test_pawn_spawn_diff PROPERTIES FOLDER "Tools")
 
 # ── test_replay_mutator (Phase II ReplayMutator library tests) ────────────────
 add_executable(test_replay_mutator
@@ -765,29 +741,6 @@ if(MSVC)
         _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX)
 endif()
 set_target_properties(test_pc_spawn_diff PROPERTIES FOLDER "Tools")
-
-# ── test_pawn_spawn_diff (Phase III M1 pawn-synth calibration baseline) ─────
-add_executable(test_pawn_spawn_diff
-    src/tools/test_pawn_spawn_diff.cpp
-    src/protocol/emit/actor_builder.cpp
-    src/protocol/emit/nmt_builder.cpp
-    src/protocol/emit/package_map_exporter.cpp
-    src/protocol/schema/actor_schema.cpp
-    src/protocol/schema/schema_registry.cpp
-    src/protocol/schema/pc_schema.cpp
-    src/protocol/schema/pawn_schema.cpp
-    src/protocol/schema/player_state_schema.cpp
-)
-target_compile_features(test_pawn_spawn_diff PRIVATE cxx_std_20)
-target_include_directories(test_pawn_spawn_diff PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(test_pawn_spawn_diff PRIVATE spdlog::spdlog)
-if(MSVC)
-    target_compile_definitions(test_pawn_spawn_diff PRIVATE
-        _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX)
-    target_compile_definitions(test_pawn_spawn_diff PRIVATE
-        AOC_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
-endif()
-set_target_properties(test_pawn_spawn_diff PROPERTIES FOLDER "Tools")
 
 # ── test_package_map_export (Session H.3d structural round-trip) ────────────
 add_executable(test_package_map_export

@@ -3,7 +3,7 @@ IDAPython step-1 script: locate AoCPlayerController references.
 
 Run in IDA via: File -> Script file... -> this script
 
-Output: prints to IDA console + writes %USERPROFILE%\Desktop\aocpc_step1.txt
+Output: prints to IDA console + writes C:\\Users\\xmaxt\\Desktop\\aocpc_step1.txt
 
 Purpose: get a reliable map of every place "AoCPlayerController" appears
 as a string, and every function that references those strings.  No fancy
@@ -14,8 +14,7 @@ import idaapi
 import idautils
 import idc
 
-import os
-OUT_PATH = os.path.join(os.path.expanduser("~"), "Desktop", "aocpc_step1.txt")
+OUT_PATH = r"C:\Users\xmaxt\Desktop\aocpc_step1.txt"
 
 # Multiple candidate strings — UE5 generates several variants
 CANDIDATES = [

@@ -95,12 +95,9 @@ int main() {
     std::printf("=== Session H.3d PC spawn diff — full captured fixture ===\n\n");
 
     // Load the captured reassembled bunch payload (608 bytes, 4864 bits).
-#ifndef AOC_REPO_ROOT
-#  define AOC_REPO_ROOT "."
-#endif
     const std::string fixture_path =
-        std::string(AOC_REPO_ROOT) +
-        "/src/protocol/tools/captured_pc_spawn_reassembled.bin";
+        "C:\\Users\\xmaxt\\source\\repos\\AshesOfCreation\\AshesOfCreation\\"
+        "src\\protocol\\tools\\captured_pc_spawn_reassembled.bin";
     auto captured = read_binary(fixture_path);
     if (captured.empty()) {
         std::fprintf(stderr, "[FAIL] Could not read fixture: %s\n",

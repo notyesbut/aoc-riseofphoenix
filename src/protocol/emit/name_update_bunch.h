@@ -69,4 +69,29 @@ namespace aoc { namespace protocol { namespace emit {
 size_t build_name_update_bunch_payload(const std::string& name,
                                         BunchWriter& out);
 
+/// V2 — proper property-delta bunch payload (for LIVE sends).
+///
+/// Unlike V1 (which copies a mid-bunch 16-byte region that looks valid
+/// only when following earlier property content), V2 starts with the
+/// canonical bunch-payload header that UActorChannel::ProcessBunch
+/// expects when applying a delta on an already-open actor channel:
+///
+///   [1 bit ]  bHasRepLayoutExport = 0
+///   [32 bits] NumGUIDsInBunch     = 0
+///   [32 bits] cmd_index           = <caller's choice>
+///   [32 bits] FString save_num    = name.size() + 1
+///   [N+1 B ]  FString bytes + NUL
+///
+/// The caller chooses `cmd_index`:
+///   28  (0x1C) — our flat catalog hierarchy index for
+///                AAoCPlayerController.Name
+///   106 (0x6A) — value observed in captured pkt#104 at the Name slot
+///                (exact semantics unverified; may be FName index or
+///                AoC-specific per-class numbering)
+///
+/// Total bits written: `97 + 8*(name.size()+1)`.
+size_t build_name_update_bunch_payload_v2(const std::string& name,
+                                            uint32_t cmd_index,
+                                            BunchWriter& out);
+
 }}} // namespace aoc::protocol::emit

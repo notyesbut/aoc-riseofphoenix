@@ -15,13 +15,26 @@ namespace aoc { namespace protocol { namespace emit {
 // ── Public accumulators ────────────────────────────────────────────────
 
 void PropertyUpdateBunchBuilder::add_name_update(const std::string& name) {
-    // Render Name payload into a temp BunchWriter, then snapshot into a blob.
+    // V1 — mid-bunch region bytes (for bit-identity testing only).
     BunchWriter tmp(64);
     size_t bits = build_name_update_bunch_payload(name, tmp);
 
     Blob b;
     b.bit_count = bits;
-    // Copy the valid bits only (BunchWriter's internal buffer may be larger).
+    const size_t n_bytes = (bits + 7) / 8;
+    b.bytes.assign(tmp.data(), tmp.data() + n_bytes);
+    queued_payloads_.push_back(std::move(b));
+    payload_bits_ += bits;
+}
+
+void PropertyUpdateBunchBuilder::add_name_update_v2(const std::string& name,
+                                                     uint32_t cmd_index) {
+    // V2 — proper property-delta payload for LIVE sends.
+    BunchWriter tmp(64);
+    size_t bits = build_name_update_bunch_payload_v2(name, cmd_index, tmp);
+
+    Blob b;
+    b.bit_count = bits;
     const size_t n_bytes = (bits + 7) / 8;
     b.bytes.assign(tmp.data(), tmp.data() + n_bytes);
     queued_payloads_.push_back(std::move(b));

@@ -51,13 +51,47 @@ constexpr uint8_t kPrefix[16] = {
 
 size_t build_name_update_bunch_payload(const std::string& name,
                                         BunchWriter& out) {
+    // DEPRECATED for live sends — use build_name_update_bunch_payload_v2.
+    // Kept for test_name_update_bunch's bit-identity test against the
+    // captured pkt#104 region (which this verbatim 16-byte prefix was
+    // extracted from).  When used in a standalone bunch the client rejects
+    // it because the first 32 bits of payload parse as NumGUIDsInBunch =
+    // 0x01000000 (16M), which is an impossible value.
+    const size_t start_bits = out.bit_pos();
+    out.write_bytes(kPrefix, sizeof(kPrefix));
+    out.write_fstring_ansi(name);
+    return out.bit_pos() - start_bits;
+}
+
+// ─── V2 — proper property-delta bunch payload ──────────────────────────────
+//
+// A standalone property-delta bunch on an already-open actor channel has
+// the following payload structure (matches what UActorChannel::ProcessBunch
+// expects when applying a delta to an existing actor):
+//
+//   [1 bit]   bHasRepLayoutExport = 0
+//   [32 bits] NumGUIDsInBunch     = 0    (no export section)
+//   [32 bits] cmd_index           = <target property>
+//   [32 bits] FString save_num    = name.size() + 1 (ASCII positive)
+//   [(N+1)*8] FString bytes       = name + NUL
+//
+// The caller supplies cmd_index; two plausible values exist for the Name:
+//   - 28  (0x1C) — our flat hierarchy catalog position
+//   - 106 (0x6A) — the observed value in captured pkt#104 at the Name slot
+//
+// The captured chain's 0x6A may be an FName table index or an AoC-specific
+// scheme; we've empirically observed it sits at the Name property position
+// in pkt#104's reassembled content block.  Live test determines which the
+// client actually accepts.
+size_t build_name_update_bunch_payload_v2(const std::string& name,
+                                            uint32_t cmd_index,
+                                            BunchWriter& out) {
     const size_t start_bits = out.bit_pos();
 
-    // 16-byte prefix — byte-for-byte verbatim from captured pkt#104.
-    out.write_bytes(kPrefix, sizeof(kPrefix));
-
-    // FString: ASCII path (positive save_num = length + NUL terminator).
-    out.write_fstring_ansi(name);
+    out.write_bit(0);                // bHasRepLayoutExport = 0
+    out.write_uint32(0);             // NumGUIDsInBunch     = 0
+    out.write_uint32(cmd_index);     // property cmd_index  = caller's choice
+    out.write_fstring_ansi(name);    // save_num + bytes + NUL
 
     return out.bit_pos() - start_bits;
 }

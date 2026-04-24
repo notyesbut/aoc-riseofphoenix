@@ -77,12 +77,9 @@ constexpr size_t EFFECTIVE_BITS      = 4859;   // last 5 bits of byte-aligned bu
 constexpr size_t BUFFER_BITS         = 4864;   // total bits in the file
 constexpr uint32_t DEADBEEF          = 0xDEADBEEF;
 
-// Fixture path is injected by CMake via AOC_REPO_ROOT compile definition.
-#ifndef AOC_REPO_ROOT
-#  define AOC_REPO_ROOT "."
-#endif
 constexpr const char* FIXTURE_PATH =
-    AOC_REPO_ROOT "/src/protocol/tools/captured_pc_spawn_reassembled.bin";
+    "C:\\Users\\xmaxt\\source\\repos\\AshesOfCreation\\AshesOfCreation\\"
+    "src\\protocol\\tools\\captured_pc_spawn_reassembled.bin";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
 

@@ -1352,9 +1352,9 @@ corrections take precedence where they conflict with earlier sections.*
 
 # Reference: UE5 source tree location
 
-Local UE5 source checkout (convention used in this repo):
+Local UE5 5.7 source is available at:
 
-    <UE5_SRC>    e.g. %USERPROFILE%\Documents\UnrealEngine-release
+    C:\Users\xmaxt\Documents\UnrealEngine-release
 
 When any session needs to verify UE5 semantics (e.g. exact FBitReader behavior,
 SerializeInt edge cases, UNetDriver's connection handling, FRepLayout internals),

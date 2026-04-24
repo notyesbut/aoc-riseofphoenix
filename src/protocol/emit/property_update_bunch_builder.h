@@ -68,9 +68,18 @@ public:
     void set_reliable(bool r)             { is_reliable_ = r; }
 
     // ── Property-update accumulators ──────────────────────────────────
-    /// Queue a Name update (AAoCPlayerController.Name FString property).
-    /// The wire format is documented in name_update_bunch.h.
+    /// V1 — queue a mid-bunch-region Name payload.  Byte-identical to
+    /// the captured pkt#104 Name region; DO NOT USE FOR LIVE SENDS —
+    /// the client rejects it because the payload starts with what
+    /// parses as `NumGUIDsInBunch = 16M`.  Kept for the bit-identity
+    /// test (test_name_update_bunch).
     void add_name_update(const std::string& name);
+
+    /// V2 — queue a proper property-delta Name payload.  Use this for
+    /// live sends.  Structure:
+    ///    [bHasRepLayoutExport=0][NumGUIDs=0][cmd_index][FString]
+    /// `cmd_index` candidates: 28 (our catalog) or 106/0x6A (observed).
+    void add_name_update_v2(const std::string& name, uint32_t cmd_index);
 
     /// Append a pre-rendered payload blob.  Use this when you have a
     /// property body encoded elsewhere (e.g. from replay_mutator's

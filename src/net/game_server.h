@@ -135,6 +135,16 @@ inline void init_sockets() {}
 #include "net/nmt_opcodes.h"
 #include "protocol/schema/schema_registry.h"
 
+// ─── Phase III M1: native property-update bunches ───────────────────────────
+// PropertyUpdateBunchBuilder produces non-partial property-delta bunches
+// (e.g. Name update).  Used by NativeConnectSequencer in --native mode
+// (not wired into the replay path — that experiment was abandoned).
+#include "protocol/emit/property_update_bunch_builder.h"
+#include "protocol/emit/bunch_writer.h"
+
+// ─── Path B: authoritative-server connect orchestrator ─────────────────────
+#include "net/native_connect_sequencer.h"
+
 // ─── UE5 Bit Reader/Writer ─────────────────────────────────────────────────
 //
 // UE5 FBitReader uses LSB-first per byte. These helpers mirror that layout.
@@ -749,7 +759,7 @@ inline void write_sc_packet_prefix(uint8_t* buf, size_t cap, size_t& off,
 
 // ─── GameServer class ───────────────────────────────────────────────────────
 
-class GameServer {
+class GameServer : public aoc::net::IGameServerHost {
 public:
     struct Config {
         std::string bind_ip          = "0.0.0.0";
@@ -779,6 +789,22 @@ public:
         // the main emu log via spdlog.  Non-empty → open this path and
         // write bunch summaries as plain lines (one per bunch).
         std::string verbose_bunch_log = "";
+
+        // ── Path B: authoritative-server mode ──────────────────────────
+        // When true, GameServer starts NativeConnectSequencer after NMT
+        // instead of spawning the replay thread.  The sequencer walks a
+        // state machine (AwaitNmtJoin → SendBootstrap → SendPcOpen →
+        // SendPcProps → Maintain) emitting every packet natively from
+        // server-side state.  No captured bytes are played.
+        //
+        // M1.0 (2026-04-24) wires the scaffolding; handlers are stubs.
+        // M1.1-M1.4 progressively fill in real emission.
+        bool        native_mode = false;
+
+        // The character name the server uses when emitting the
+        // PlayerController's Name property in native mode.  Ignored in
+        // replay mode (replay sends the captured name verbatim).
+        std::string custom_name = "";
 
         // ── Session F: live-world integration ─────────────────────────
         // When true, GameServer spins up a LiveWorld alongside the legacy
@@ -1162,6 +1188,10 @@ private:
     std::unique_ptr<ReplayData> replay_data_;
     std::thread replay_thread_;
 
+    // Path B: authoritative-server sequencer.  Instantiated after NMT when
+    // config_.native_mode is set (instead of replay_thread_).
+    std::unique_ptr<aoc::net::NativeConnectSequencer> native_sequencer_;
+
     // ── Session F: live-world integration (optional) ────────────────────
     // Null unless config_.enable_live_world was set at construction time.
     // When present: receives a copy of every post-handshake packet via
@@ -1178,6 +1208,17 @@ private:
         std::chrono::steady_clock::now();
     std::atomic<bool> replay_active_{false};    // true once replay_loop started
     std::atomic<bool> replay_map_loaded_{false}; // true when client finished LoadMap
+
+    // M1.4.d — Fix #36 equivalent for --native mode.  Same semantics as
+    // replay_map_loaded_ but for the NativeConnectSequencer path.  The
+    // client sends NMT_GameSpecific BEFORE its game thread finishes
+    // LoadMap(); if we emit PC ActorOpen immediately, those bunches are
+    // dropped while the client is still loading → player spawns
+    // underwater at world-origin with an empty world.  Sequencer waits
+    // on this flag before entering SendBootstrap/SendPcOpen.  Set by
+    // the data-receive path when client sends first non-empty bunch
+    // post-NMT (state >= 4).
+    std::atomic<bool> native_map_loaded_{false};
 
     // Bootstrap sender (embedded data from bootstrap_data.h)
     // One thread at a time; per-client guard is ClientState::bootstrap_active.
@@ -1391,8 +1432,88 @@ private:
 #endif
     }
 
-    /// Send UDP packet to a client.
-    int send_to_client(const uint8_t* data, size_t len, const sockaddr_in& dest) {
+    // ── IGameServerHost interface overrides ─────────────────────────────
+    // These let NativeConnectSequencer (in --native mode) send packets,
+    // look up client state, and read config values through a narrow
+    // contract — so the sequencer file doesn't need to include all of
+    // game_server.h.
+
+    int send_to_client(const uint8_t* buf, size_t n,
+                        const sockaddr_in& addr) override {
+        return send_to_client_impl(buf, n, addr);
+    }
+    const std::string& custom_name() const override {
+        return config_.custom_name;
+    }
+    bool send_keepalive_for(const std::string& client_key,
+                              const sockaddr_in& addr) override {
+        // Look up ClientState under lock and call the existing send_keepalive
+        // helper.  This matches the pattern used by the replay's post-replay
+        // keepalive loop (end of replay_loop).
+        std::lock_guard<std::mutex> lk(client_mu_);
+        auto it = clients_.find(client_key);
+        if (it == clients_.end()) return false;
+        if (it->second.phase < ClientState::CONNECTED) return false;
+        send_keepalive(it->second, addr, client_key);
+        return true;
+    }
+
+    bool send_bunch_packet(const std::string& client_key,
+                             const sockaddr_in& addr,
+                             const uint8_t* bunch_data,
+                             size_t bunch_bits) override {
+        // Build a full UDP packet wrapping the given bunch bits, using the
+        // client's current seq/ack state.  Mirrors the keepalive emission
+        // path but with a real bunch payload between the PacketInfo and
+        // the termination sentinel.
+        std::lock_guard<std::mutex> lk(client_mu_);
+        auto it = clients_.find(client_key);
+        if (it == clients_.end()) return false;
+        if (it->second.phase < ClientState::CONNECTED) return false;
+        ClientState& cs = it->second;
+
+        uint8_t buf[4096] = {};
+        size_t  off = 0;
+
+        write_sc_packet_prefix(buf, sizeof(buf), off, cs, /*handshake=*/false);
+
+        // PacketInfo — hasPacketInfo=1, jitter=max, no ServerFrameTime
+        ue5::write_bits(buf, sizeof(buf), off, 1,    1);
+        ue5::write_bits(buf, sizeof(buf), off, 1023, 10);
+        ue5::write_bits(buf, sizeof(buf), off, 0,    1);
+
+        // Append bunch bits
+        for (size_t i = 0; i < bunch_bits; ++i) {
+            int bit = (bunch_data[i >> 3] >> (i & 7)) & 1;
+            ue5::write_bits(buf, sizeof(buf), off, bit, 1);
+        }
+
+        size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
+        uint16_t sent_seq = cs.out_seq;
+        cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
+
+        int sent = send_to_client_impl(buf, pkt_len, addr);
+        if (sent > 0) {
+            spdlog::info("[GameServer] send_bunch_packet: seq={} {}B "
+                         "({} bunch bits)", sent_seq, pkt_len, bunch_bits);
+            return true;
+        }
+        spdlog::warn("[GameServer] send_bunch_packet: send failed");
+        return false;
+    }
+
+    bool has_client_finished_map_load() const override {
+        // M1.4.d — Set by the data-receive path when the client sends its
+        // first non-empty bunch post-NMT.  Before this flag goes true,
+        // the sequencer should NOT emit any world-data bunches (they'll
+        // be dropped while the client's game thread is still in LoadMap).
+        return native_map_loaded_.load();
+    }
+
+    /// Send UDP packet to a client (original implementation, renamed so
+    /// the IGameServerHost virtual above can call into it without
+    /// creating a recursive cycle).
+    int send_to_client_impl(const uint8_t* data, size_t len, const sockaddr_in& dest) {
         if (len > 0 && data[len - 1] == 0) {
             spdlog::error("[GameServer] BUG: ZERO LAST BYTE in outgoing packet! len={} last4=[{:02x} {:02x} {:02x} {:02x}]",
                           len,
@@ -1400,11 +1521,43 @@ private:
                           len >= 2 ? data[len-2] : 0, data[len-1]);
             spdlog::error("[GameServer]   full hex: {}", ue5::hex_dump(data, len, 128));
         }
-        return sendto(sock_, reinterpret_cast<const char*>(data),
-                     static_cast<int>(len), 0,
-                     reinterpret_cast<const sockaddr*>(&dest),
-                     sizeof(dest));
+        const int sent = sendto(sock_, reinterpret_cast<const char*>(data),
+                                static_cast<int>(len), 0,
+                                reinterpret_cast<const sockaddr*>(&dest),
+                                sizeof(dest));
+
+        // ── S>C counter (symmetric with << C>S #N logging) ──────────────
+        // Every outgoing UDP packet gets a sequence-independent monotonic
+        // counter so users can see the full S>C stream alongside C>S.
+        // Kept at info level so keepalives show up; if this is too noisy
+        // for long sessions we can move to debug later.
+        if (sent > 0) {
+            const uint32_t n = ++sc_pkt_counter_;
+            char addr_buf[32] = {};
+            inet_ntop(AF_INET, &dest.sin_addr, addr_buf, sizeof(addr_buf));
+            spdlog::info("[GameServer] >> S>C #{} to {}:{} {}B "
+                         "first8=[{:02x} {:02x} {:02x} {:02x} {:02x} {:02x} {:02x} {:02x}]",
+                         n, addr_buf, ntohs(dest.sin_port), sent,
+                         len >= 1 ? data[0] : 0, len >= 2 ? data[1] : 0,
+                         len >= 3 ? data[2] : 0, len >= 4 ? data[3] : 0,
+                         len >= 5 ? data[4] : 0, len >= 6 ? data[5] : 0,
+                         len >= 7 ? data[6] : 0, len >= 8 ? data[7] : 0);
+        } else if (sent < 0) {
+            spdlog::warn("[GameServer] >> S>C SEND FAILED (len={}, WSAGetLastError={})",
+                         len,
+#ifdef _WIN32
+                         WSAGetLastError()
+#else
+                         errno
+#endif
+                         );
+        }
+        return sent;
     }
+
+    // Monotonic counter for outgoing UDP packets (informational only —
+    // not the per-channel chSeq or per-client out_seq).  Wraps at 2^32.
+    std::atomic<uint32_t> sc_pkt_counter_{0};
 
     // ── DNS resolution (relay mode) ─────────────────────────────────────
     bool resolve_relay_target() {
@@ -1813,7 +1966,138 @@ private:
                 if (nmt_types.empty() && nmt_type >= 0)
                     nmt_types.push_back(nmt_type);
 
-                if (replay_data_ && !replay_data_->packets.empty()) {
+                if (config_.native_mode) {
+                    // ── PATH B: NATIVE / AUTHORITATIVE-SERVER MODE ─────
+                    // M1.0: dispatch NMT handshake (same sequence as replay
+                    // mode), and once NMT completes, hand control to the
+                    // NativeConnectSequencer instead of a replay thread.
+                    for (int cur_nmt : nmt_types) {
+                        if (cs.nmt_state < 4) {
+                            if (cur_nmt == 0 && cs.nmt_state == 0) {
+                                spdlog::info("[GameServer] ★ NMT_Hello → NMT_Challenge [NATIVE]");
+                                send_nmt_challenge(cs, client_addr, key);
+                                cs.nmt_state = 1;
+                            } else if (cur_nmt == 5 && cs.nmt_state == 1) {
+                                spdlog::info("[GameServer] ★ NMT_Login → NMT_Welcome [NATIVE]");
+                                send_nmt_welcome(cs, client_addr, key);
+                                cs.nmt_state = 2;
+                            } else if (cur_nmt == 4 && cs.nmt_state >= 2) {
+                                spdlog::info("[GameServer] ★ NMT_NetSpeed [NATIVE]");
+                                send_keepalive(cs, client_addr, key);
+                                cs.nmt_state = 3;
+                            } else if ((cur_nmt == 9 || cur_nmt == 18) && cs.nmt_state >= 2) {
+                                spdlog::info("[GameServer] ★★★ NMT_{} — NATIVE SEQUENCER READY ★★★",
+                                             cur_nmt);
+                                send_keepalive(cs, client_addr, key);
+                                cs.nmt_state = 4;
+                                cs.phase = ClientState::CONNECTED;
+
+                                // Stop previous sequencer if any (reconnect case).
+                                if (native_sequencer_) {
+                                    native_sequencer_->stop();
+                                    native_sequencer_.reset();
+                                }
+                                // M1.4.d: reset map-loaded flag so the new
+                                // sequencer waits for this session's LoadMap
+                                // signal (not a stale value from a previous
+                                // reconnect).
+                                native_map_loaded_.store(false);
+
+                                // M1.4.e — HYBRID MODE: if --replay is ALSO
+                                // provided alongside --native, start the
+                                // proven replay_loop instead of the native
+                                // sequencer for bootstrap.  This uses the
+                                // existing replay infrastructure to emit
+                                // the first N captured packets (#0..N-1)
+                                // which empirically get the client into
+                                // the world.  Native Maintain resumes after.
+                                //
+                                // Cap controlled by --replay-max-packets (CLI)
+                                // or config_.replay_max_packets (default
+                                // 29010 if unset; recommend 100 for
+                                // minimum-world-entry per user test).
+                                //
+                                // Path B roadmap (see
+                                // docs/NATIVE-EMISSION-ARCHITECTURE.md):
+                                // progressive replacement — each pkt
+                                // promoted from splice → native as its
+                                // emitter class becomes byte-identical
+                                // to captured fixture.
+                                const bool hybrid =
+                                    replay_data_ && !replay_data_->packets.empty();
+                                if (hybrid) {
+                                    spdlog::warn("[GameServer] ★ HYBRID MODE: "
+                                                 "replay_loop will emit first "
+                                                 "{} packets (native NMT + "
+                                                 "replay body)",
+                                                 config_.replay_max_packets > 0
+                                                     ? config_.replay_max_packets
+                                                     : replay_data_->packets.size());
+                                    // Kick off existing replay_loop — same
+                                    // thread model as pure replay mode.
+                                    replay_active_.store(false);
+                                    replay_map_loaded_.store(false);
+                                    if (replay_thread_.joinable())
+                                        replay_thread_.join();
+                                    replay_active_.store(true);
+                                    {
+                                        std::string rkey = key;
+                                        sockaddr_in raddr = client_addr;
+                                        replay_thread_ = std::thread(
+                                            [this, rkey, raddr]() {
+                                                replay_loop(rkey, raddr);
+                                            });
+                                    }
+                                    spdlog::warn("[GameServer] replay_loop "
+                                                 "thread launched (hybrid mode)");
+                                } else {
+                                    // Start the authoritative-server flow.
+                                    native_sequencer_ = std::make_unique<aoc::net::NativeConnectSequencer>(
+                                        *this, key, client_addr);
+                                    native_sequencer_->start();
+                                    spdlog::warn("[GameServer] NativeConnectSequencer started for {}", key);
+                                }
+                            }
+                        }
+                    }
+                    // Keepalive if state didn't advance
+                    if (cs.nmt_state < 4 && !nmt_types.empty()) {
+                        bool any_advanced = false;
+                        for (int t : nmt_types) {
+                            if ((t == 0 && cs.nmt_state >= 1) || (t == 5 && cs.nmt_state >= 2) ||
+                                (t == 4 && cs.nmt_state >= 3)) {
+                                any_advanced = true;
+                                break;
+                            }
+                        }
+                        if (!any_advanced) send_keepalive(cs, client_addr, key);
+                    }
+
+                    // M1.4.d — Fix #36 equivalent: detect when the client
+                    // finishes LoadMap().  Once NMT is complete (state >= 4),
+                    // the FIRST packet the client sends with any bunch bits
+                    // and no NMT opcodes is the "game thread running" signal.
+                    // Before this, PC ActorOpen would be dropped because the
+                    // client's game thread is still loading the world.
+                    if (cs.nmt_state >= 4 && bunch_bits > 0 && nmt_types.empty()
+                        && !native_map_loaded_.load()) {
+                        native_map_loaded_.store(true);
+                        spdlog::warn("[GameServer] *** MAP LOADED [NATIVE]: "
+                                     "client sent game data on non-control ch "
+                                     "— sequencer advancing to SendBootstrap");
+                    }
+                    // M1.4.e — Hybrid mode: the replay_loop (if started as
+                    // the hybrid bootstrap) waits on replay_map_loaded_,
+                    // not native_map_loaded_.  Set both so either path
+                    // unblocks the emission thread.
+                    if (cs.nmt_state >= 4 && bunch_bits > 0 && nmt_types.empty()
+                        && replay_data_ && !replay_data_->packets.empty()
+                        && !replay_map_loaded_.load()) {
+                        replay_map_loaded_.store(true);
+                        spdlog::warn("[GameServer] *** MAP LOADED [HYBRID]: "
+                                     "replay_loop unblocked");
+                    }
+                } else if (replay_data_ && !replay_data_->packets.empty()) {
                     // ── REPLAY MODE ────────────────────────────────────
                     for (int cur_nmt : nmt_types) {
                         if (cs.nmt_state >= 4 && !replay_active_.load()) {
@@ -3865,6 +4149,17 @@ private:
                          max_packets, config_.replay_max_packets, start_idx);
         }
 
+        // NOTE (2026-04-24): Removed the custom-name injection-into-replay
+        // experiment.  After 3 live-test iterations the client kept silently
+        // rejecting our injected bunches (the wire format for delta bunches
+        // has more structural requirements than "mid-bunch region verbatim"
+        // or "bHasRepLayoutExport + NumGUIDs + cmd_index").
+        //
+        // Decision: stop patching the replay.  The real path forward is the
+        // authoritative-server flow (see NativeConnectSequencer).  Replay
+        // remains here as a reference / debug tool but `custom_name` is now
+        // honored only by the native flow.
+
         for (size_t i = start_idx; i < max_packets && running_ && replay_active_.load(); ++i) {
             const auto& rpkt = replay_data_->packets[i];
 
@@ -4081,6 +4376,7 @@ private:
                     if (sent_count <= 100 || sent_count % 500 == 0)
                         spdlog::info("[REPLAY] >> #{} {}B seq={} ack={} cliAck={} ahead={} total={}",
                                      i + 1, pkt_len, pkt_seq, pkt_ack, client_ack, ahead, sent_count);
+
                 } else {
                     ++error_count;
                     if (error_count <= 5)
@@ -4097,6 +4393,37 @@ private:
         spdlog::warn("[Replay]  Sent: {} / {} (skipped {} NMT, {} build-fail)", sent_count,
                      replay_data_->packets.size() - start_idx, start_idx, skip_count);
         spdlog::warn("[Replay]  Errors: {}", error_count);
+
+        // ── Native property-update emission (MISSING PIECE) ──────────────
+        // At this point the client has received every captured ActorOpen
+        // and property-update bunch from our capped replay window.  The
+        // captured session's character state (name="RandomChar", stats,
+        // appearance) is now mirrored on the client.
+        //
+        // To override those values with OUR live state (custom_name, our
+        // HP/MP/Stamina), we now emit native property-update bunches.
+        // UE5 reliable-channel last-write-wins semantics: each emission
+        // replaces the corresponding captured value in the client's
+        // actor state.
+        //
+        // inject_custom_name_bunch() is defined below and was already
+        // built — we just weren't CALLING it.  That ends now.
+        if (!config_.custom_name.empty()) {
+            spdlog::warn("[Replay] ★★★ Emitting native Name update "
+                         "(override captured 'RandomChar' → '{}')",
+                         config_.custom_name);
+            bool name_ok = inject_custom_name_bunch(client_key, client_addr);
+            if (name_ok) {
+                spdlog::warn("[Replay] ★ Native Name update emitted");
+            } else {
+                spdlog::error("[Replay] ✗ Native Name update FAILED — "
+                              "client will keep seeing 'RandomChar'");
+            }
+        } else {
+            spdlog::info("[Replay] No custom_name set; skipping native "
+                         "Name override (HUD will show captured name)");
+        }
+
         spdlog::warn("[Replay]  Entering post-replay keepalive loop — session will stay alive.");
         spdlog::warn("[Replay] ========================================");
 
@@ -4124,6 +4451,90 @@ private:
     }
 
     /// Send a keep-alive (empty data packet) acknowledging the client's sequence.
+    /// Phase III M1: build and send a native non-partial property-update
+    /// bunch carrying the custom Name.  Called from replay_loop right after
+    /// the captured PC ActorOpen (pkt#22) has been delivered — by this
+    /// point the client's actor channel is open and ready for deltas.
+    ///
+    /// Returns true on successful send.
+    bool inject_custom_name_bunch(const std::string& client_key,
+                                   const sockaddr_in& client_addr) {
+        // 1. Build the native bunch via PropertyUpdateBunchBuilder.
+        //    Bunch targets channel 3 (PlayerController's actor channel,
+        //    matching the captured pkt#22 structure).
+        aoc::protocol::emit::PropertyUpdateBunchBuilder b;
+        b.set_channel(3);
+
+        // ── Match CAPTURED pkt#104 bunch format (2026-04-24 RE) ───────
+        // decode_pkt104_bunch_header.py revealed the captured Name update
+        // bunch structure on ch=3:
+        //
+        //   ch=3  reliable=0  ctrl=0  partial=0
+        //   has_pme=0  has_mbg=1  chSeq=0 (no chSeq tracking when !reliable)
+        //   bdb=4593 bits  (contains Name + many other prop updates)
+        //
+        // Crucially:  reliable=0  (NOT reliable!).  UE5 reliable-channel
+        // protocol requires exact chSeq+1 ordering; captured AoC skips
+        // that for Name updates by sending them non-reliable.  Our
+        // earlier reliable=1 sends were being buffered/discarded because
+        // chSeq didn't match the client's expected next-value.
+        //
+        // Non-reliable has no chSeq tracking; we set it to 0.
+        b.set_ch_sequence(0);
+        b.set_reliable(false);
+
+        // V2 emitter: proper property-delta bunch payload.  Try cmd_index
+        // 0x6A first (observed in captured pkt#104 at the Name slot —
+        // empirically what the wire uses, even though we don't know its
+        // exact semantic meaning).  If that fails, we'll retry with 28.
+        constexpr uint32_t kNameCmdIndex = 0x6A;
+        b.add_name_update_v2(config_.custom_name, kNameCmdIndex);
+
+        aoc::protocol::emit::BunchWriter bunch;
+        size_t bunch_bits = b.build(bunch);
+        if (bunch_bits == 0) {
+            spdlog::warn("[Replay] inject_custom_name_bunch: empty bunch");
+            return false;
+        }
+
+        // 2. Wrap in a full UDP packet (same outer framing as other S>C pkts).
+        uint8_t buf[1024] = {};
+        size_t  off  = 0;
+
+        std::lock_guard<std::mutex> lk(client_mu_);
+        auto it = clients_.find(client_key);
+        if (it == clients_.end()) return false;
+        ClientState& cs = it->second;
+
+        write_sc_packet_prefix(buf, sizeof(buf), off, cs, /*handshake=*/false);
+
+        // PacketInfo: hasPktInfo=1 (required), hasSrvFrame=0
+        ue5::write_bits(buf, sizeof(buf), off, 1,    1);   // bHasPacketInfo
+        ue5::write_bits(buf, sizeof(buf), off, 1023, 10);  // jitter=max
+        ue5::write_bits(buf, sizeof(buf), off, 0,    1);   // bHasServerFrameTime
+
+        // Append the bunch bits.
+        for (size_t i = 0; i < bunch_bits; ++i) {
+            int bit = (bunch.data()[i >> 3] >> (i & 7)) & 1;
+            ue5::write_bits(buf, sizeof(buf), off, bit, 1);
+        }
+
+        size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
+
+        uint16_t pkt_seq = cs.out_seq;
+        cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
+
+        int sent = send_to_client(buf, pkt_len, client_addr);
+        if (sent > 0) {
+            spdlog::info("[Replay] Injected Name-update bunch: seq={} "
+                          "{}B bunch={}bits name=\"{}\"",
+                          pkt_seq, pkt_len, bunch_bits, config_.custom_name);
+            return true;
+        }
+        spdlog::warn("[Replay] inject_custom_name_bunch: send_to_client failed");
+        return false;
+    }
+
     void send_keepalive(ClientState& cs, const sockaddr_in& client_addr,
                         const std::string& key) {
         uint8_t buf[128] = {};

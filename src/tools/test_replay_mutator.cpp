@@ -35,11 +35,9 @@ using aoc::protocol::emit::NameSite;
 using aoc::protocol::emit::BunchWriter;  // unused but keeps include symmetry
 using aoc::protocol::wire::PacketReader;
 
-#ifndef AOC_REPO_ROOT
-#  define AOC_REPO_ROOT "."
-#endif
 constexpr const char* FIXTURE_DIR =
-    AOC_REPO_ROOT "/src/protocol/tools/";
+    "C:\\Users\\xmaxt\\source\\repos\\AshesOfCreation\\AshesOfCreation\\"
+    "src\\protocol\\tools\\";
 
 int g_passed = 0;
 int g_failed = 0;

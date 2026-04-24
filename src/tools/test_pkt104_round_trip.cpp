@@ -61,11 +61,9 @@ using namespace aoc::protocol::emit::replayout;
 using aoc::protocol::emit::BunchWriter;
 using aoc::protocol::wire::PacketReader;
 
-#ifndef AOC_REPO_ROOT
-#  define AOC_REPO_ROOT "."
-#endif
 constexpr const char* FIXTURE_PATH =
-    AOC_REPO_ROOT "/src/protocol/tools/captured_pkt_104.bin";
+    "C:\\Users\\xmaxt\\source\\repos\\AshesOfCreation\\AshesOfCreation\\"
+    "src\\protocol\\tools\\captured_pkt_104.bin";
 
 constexpr size_t RAW_BITS            = 7824;
 constexpr size_t BUNCH_START         = 152;

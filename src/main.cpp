@@ -201,6 +201,20 @@ int main(int argc, char* argv[]) {
     app.add_option("--replay-max-packets", replay_max_packets,
         "Truncate replay after N packets (0 = unlimited). Use for bootstrap-only tests.");
 
+    std::string custom_name = "";
+    app.add_option("--custom-name", custom_name,
+        "Character name for native mode (--native).  In replay mode this "
+        "is ignored (replay sends the captured name).  Default = empty "
+        "(native mode falls back to 'PlayerOne').");
+
+    bool native_mode = false;
+    app.add_flag("--native", native_mode,
+        "Path B: run in AUTHORITATIVE-SERVER mode.  Instead of replaying "
+        "captured packets, the server emits all world/PC/property data from "
+        "live state via NativeConnectSequencer.  M1.0 (scaffolding) currently "
+        "completes NMT handshake then logs stubs; M1.1-M1.4 will progressively "
+        "fill in bootstrap, PC open, properties, and input handling.");
+
     bool use_embedded_bootstrap = false;
     app.add_flag("--use-embedded-bootstrap", use_embedded_bootstrap,
         "Phase 1 (no-replay path): load the 400-packet bootstrap from compiled-in "
@@ -384,6 +398,8 @@ int main(int argc, char* argv[]) {
         gs_config.relay_target = udp_proxy_target;  // empty = emulation mode
         gs_config.replay_file  = replay_file;        // empty = normal, else replay mode
         gs_config.replay_max_packets = replay_max_packets;
+        gs_config.custom_name = custom_name;          // Path B: char name for native mode
+        gs_config.native_mode = native_mode;          // Path B: authoritative-server flow
         gs_config.use_embedded_bootstrap = use_embedded_bootstrap;
         gs_config.generator_config = generator_config; // Phase D1 allowlist
         gs_config.verbose_bunches     = verbose_bunches;

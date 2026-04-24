@@ -219,7 +219,7 @@ bit 5840 (+17)  u16=2  aligned   ← could be Kaelar at byte-aligned offset
 
 ## UE5 source references
 
-All source paths are under `<UE5_SRC>\` (your local UE5 source clone).
+All source paths are under `C:\Users\xmaxt\Documents\UnrealEngine-release\`.
 
 ### RepLayout send/receive
 

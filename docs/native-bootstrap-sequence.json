@@ -1,0 +1,746 @@
+{
+  "replay_header": {
+    "count": 29010,
+    "initial_seq": 14265,
+    "initial_ack": 1171
+  },
+  "scan_count": 30,
+  "packets": [
+    {
+      "pkt_idx": 0,
+      "orig_seq": 14265,
+      "raw_size": 42,
+      "bunch_bits": 167,
+      "bunches": [
+        {
+          "idx": 0,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": true,
+          "ch": 0,
+          "ch_name": "EName[255]",
+          "ch_seq": 954,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 112,
+          "has_exports": false,
+          "has_mbg": false
+        }
+      ]
+    },
+    {
+      "pkt_idx": 1,
+      "orig_seq": 14266,
+      "raw_size": 20,
+      "bunch_bits": 0,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 2,
+      "orig_seq": 14267,
+      "raw_size": 151,
+      "bunch_bits": 1039,
+      "bunches": [
+        {
+          "idx": 0,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": true,
+          "ch": 0,
+          "ch_name": "EName[255]",
+          "ch_seq": 955,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 984,
+          "has_exports": false,
+          "has_mbg": false
+        }
+      ]
+    },
+    {
+      "pkt_idx": 3,
+      "orig_seq": 14268,
+      "raw_size": 20,
+      "bunch_bits": 0,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 4,
+      "orig_seq": 14269,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 5,
+      "orig_seq": 14270,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 6,
+      "orig_seq": 14271,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 7,
+      "orig_seq": 14272,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 8,
+      "orig_seq": 14273,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 9,
+      "orig_seq": 14274,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 10,
+      "orig_seq": 14275,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 11,
+      "orig_seq": 14276,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 12,
+      "orig_seq": 14277,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 13,
+      "orig_seq": 14278,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 14,
+      "orig_seq": 14279,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 15,
+      "orig_seq": 14280,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 16,
+      "orig_seq": 14281,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 17,
+      "orig_seq": 14282,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 18,
+      "orig_seq": 14283,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 19,
+      "orig_seq": 14284,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 20,
+      "orig_seq": 14285,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 21,
+      "orig_seq": 14286,
+      "raw_size": 21,
+      "bunch_bits": 1,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 22,
+      "orig_seq": 14287,
+      "raw_size": 784,
+      "bunch_bits": 6104,
+      "bunches": [
+        {
+          "idx": 0,
+          "ctrl": true,
+          "open": true,
+          "close": false,
+          "reliable": true,
+          "ch": 3,
+          "ch_name": "EName[102]",
+          "ch_seq": 954,
+          "partial": true,
+          "p_init": true,
+          "p_final": false,
+          "bdb": 3545,
+          "has_exports": true,
+          "has_mbg": false,
+          "b_has_rep_layout_export": 0,
+          "num_guids": 3,
+          "exports": [
+            {
+              "guid": {
+                "ObjectId": 3503756484819958835,
+                "ServerId": 0,
+                "Randomizer": 0
+              },
+              "flags": 5,
+              "has_path": true,
+              "no_load": false,
+              "checksum_flag": true,
+              "outer": {
+                "guid": {
+                  "ObjectId": 4074085207143396457,
+                  "ServerId": 0,
+                  "Randomizer": 0
+                },
+                "flags": 5,
+                "has_path": true,
+                "no_load": false,
+                "checksum_flag": true,
+                "outer": {
+                  "guid": {
+                    "ObjectId": 0,
+                    "ServerId": 0,
+                    "Randomizer": 0
+                  },
+                  "null": true
+                },
+                "path": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP",
+                "checksum": 0
+              },
+              "path": "Default__AoCPlayerControllerBP_C",
+              "checksum": 1801619740
+            },
+            {
+              "guid": {
+                "ObjectId": 16442478405498561049,
+                "ServerId": 0,
+                "Randomizer": 0
+              },
+              "flags": 7,
+              "has_path": true,
+              "no_load": true,
+              "checksum_flag": true,
+              "outer": {
+                "guid": {
+                  "ObjectId": 16604466839667550161,
+                  "ServerId": 0,
+                  "Randomizer": 0
+                },
+                "flags": 7,
+                "has_path": true,
+                "no_load": true,
+                "checksum_flag": true,
+                "outer": {
+                  "guid": {
+                    "ObjectId": 12923414834320654503,
+                    "ServerId": 0,
+                    "Randomizer": 0
+                  },
+                  "flags": 7,
+                  "has_path": true,
+                  "no_load": true,
+                  "checksum_flag": true,
+                  "outer": {
+                    "guid": {
+                      "ObjectId": 0,
+                      "ServerId": 0,
+                      "Randomizer": 0
+                    },
+                    "null": true
+                  },
+                  "path": "/Game/Levels/Verra_World_Master/Verra_World_Master",
+                  "checksum": 0
+                },
+                "path": "Verra_World_Master",
+                "checksum": 0
+              },
+              "path": "PersistentLevel",
+              "checksum": 0
+            },
+            {
+              "guid": {
+                "ObjectId": 485698175673737329,
+                "ServerId": 0,
+                "Randomizer": 0
+              },
+              "flags": 5,
+              "has_path": true,
+              "no_load": false,
+              "checksum_flag": true,
+              "outer": {
+                "guid": {
+                  "ObjectId": 158953490572197689,
+                  "ServerId": 0,
+                  "Randomizer": 0
+                },
+                "flags": 5,
+                "has_path": true,
+                "no_load": false,
+                "checksum_flag": true,
+                "outer": {
+                  "guid": {
+                    "ObjectId": 0,
+                    "ServerId": 0,
+                    "Randomizer": 0
+                  },
+                  "null": true
+                },
+                "path": "/Script/GameSystemsPlugin",
+                "checksum": 0
+              },
+              "path": "GlobalGMCommands",
+              "checksum": 3400199742
+            }
+          ]
+        },
+        {
+          "idx": 1,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": true,
+          "ch": 3,
+          "ch_name": "EName[102]",
+          "ch_seq": 955,
+          "partial": true,
+          "p_init": false,
+          "p_final": true,
+          "bdb": 1314,
+          "has_exports": false,
+          "has_mbg": false
+        },
+        {
+          "idx": 2,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": true,
+          "ch": 3,
+          "ch_name": "EName[102]",
+          "ch_seq": 956,
+          "partial": true,
+          "p_init": true,
+          "p_final": false,
+          "bdb": 873,
+          "has_exports": true,
+          "has_mbg": false,
+          "b_has_rep_layout_export": 0,
+          "num_guids": 1,
+          "exports": [
+            {
+              "guid": {
+                "ObjectId": 8463636446363390223,
+                "ServerId": 0,
+                "Randomizer": 0
+              },
+              "flags": 5,
+              "has_path": true,
+              "no_load": false,
+              "checksum_flag": true,
+              "outer": {
+                "guid": {
+                  "ObjectId": 7805116325763694055,
+                  "ServerId": 0,
+                  "Randomizer": 0
+                },
+                "flags": 5,
+                "has_path": true,
+                "no_load": false,
+                "checksum_flag": true,
+                "outer": {
+                  "guid": {
+                    "ObjectId": 0,
+                    "ServerId": 0,
+                    "Randomizer": 0
+                  },
+                  "null": true
+                },
+                "path": "/Game/UI/Widgets/BP_AOCHUD",
+                "checksum": 0
+              },
+              "path": "BP_AOCHUD_C",
+              "checksum": 2892960337
+            }
+          ]
+        },
+        {
+          "idx": 3,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": true,
+          "ch": 3,
+          "ch_name": "EName[102]",
+          "ch_seq": 957,
+          "partial": true,
+          "p_init": false,
+          "p_final": true,
+          "bdb": 173,
+          "has_exports": false,
+          "has_mbg": false
+        }
+      ]
+    },
+    {
+      "pkt_idx": 23,
+      "orig_seq": 14288,
+      "raw_size": 508,
+      "bunch_bits": 3905,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 24,
+      "orig_seq": 14289,
+      "raw_size": 830,
+      "bunch_bits": 6476,
+      "bunches": [
+        {
+          "idx": 0,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 85,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 1615,
+          "has_exports": true,
+          "has_mbg": true,
+          "b_has_rep_layout_export": 1,
+          "num_guids": 307779,
+          "exports": []
+        }
+      ]
+    },
+    {
+      "pkt_idx": 25,
+      "orig_seq": 14290,
+      "raw_size": 912,
+      "bunch_bits": 7143,
+      "bunches": [
+        {
+          "idx": 0,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 2,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": true,
+          "p_init": true,
+          "p_final": true,
+          "bdb": 4923,
+          "has_exports": false,
+          "has_mbg": true
+        }
+      ]
+    },
+    {
+      "pkt_idx": 26,
+      "orig_seq": 14291,
+      "raw_size": 721,
+      "bunch_bits": 5604,
+      "bunches": [
+        {
+          "idx": 0,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 85,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 1615,
+          "has_exports": true,
+          "has_mbg": true,
+          "b_has_rep_layout_export": 1,
+          "num_guids": 273267,
+          "exports": []
+        },
+        {
+          "idx": 1,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 0,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 0,
+          "has_exports": false,
+          "has_mbg": false
+        },
+        {
+          "idx": 2,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 0,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 1792,
+          "has_exports": false,
+          "has_mbg": false
+        },
+        {
+          "idx": 3,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 0,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 0,
+          "has_exports": false,
+          "has_mbg": false
+        },
+        {
+          "idx": 4,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 0,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 244,
+          "has_exports": false,
+          "has_mbg": false
+        },
+        {
+          "idx": 5,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 1,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 0,
+          "has_exports": false,
+          "has_mbg": false
+        }
+      ]
+    },
+    {
+      "pkt_idx": 27,
+      "orig_seq": 14292,
+      "raw_size": 644,
+      "bunch_bits": 4999,
+      "bunches": []
+    },
+    {
+      "pkt_idx": 28,
+      "orig_seq": 14293,
+      "raw_size": 460,
+      "bunch_bits": 3516,
+      "bunches": [
+        {
+          "idx": 0,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 85,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 1615,
+          "has_exports": true,
+          "has_mbg": true,
+          "b_has_rep_layout_export": 1,
+          "num_guids": 105251,
+          "exports": []
+        }
+      ]
+    },
+    {
+      "pkt_idx": 29,
+      "orig_seq": 14294,
+      "raw_size": 978,
+      "bunch_bits": 7665,
+      "bunches": [
+        {
+          "idx": 0,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 3,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": true,
+          "p_init": true,
+          "p_final": true,
+          "bdb": 4667,
+          "has_exports": false,
+          "has_mbg": true
+        },
+        {
+          "idx": 1,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 0,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 0,
+          "has_exports": false,
+          "has_mbg": false
+        },
+        {
+          "idx": 2,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": true,
+          "ch": 2,
+          "ch_name": "\u06004\uf400\u3888",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 0,
+          "has_exports": false,
+          "has_mbg": false
+        },
+        {
+          "idx": 3,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 0,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 8,
+          "has_exports": false,
+          "has_mbg": false
+        },
+        {
+          "idx": 4,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 0,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 272,
+          "has_exports": false,
+          "has_mbg": false
+        },
+        {
+          "idx": 5,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 0,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 0,
+          "has_exports": false,
+          "has_mbg": false
+        },
+        {
+          "idx": 6,
+          "ctrl": false,
+          "open": false,
+          "close": false,
+          "reliable": false,
+          "ch": 54,
+          "ch_name": "",
+          "ch_seq": 0,
+          "partial": false,
+          "p_init": false,
+          "p_final": false,
+          "bdb": 0,
+          "has_exports": false,
+          "has_mbg": false
+        }
+      ]
+    }
+  ]
+}
