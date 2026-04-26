@@ -413,3 +413,49 @@ F5 sub_143F2A2A0 in IDA.  The decomp will reveal:
    9-byte AoC RPC envelope we need to construct.
 
 Once we have that decomp, native ClientRestart becomes a 50-line implementation.
+
+---
+
+## Phase B.0j-k — Native ClientRestart with envelope (still loops)
+
+After RE'ing UActorChannel::ProcessBunch (sub_143F2A2A0), 
+ReadContentBlockPayload (sub_143F2DA40), and ReadContentBlockHeader
+(sub_143F2C340), implemented the proper outer envelope:
+
+```
+[bit 0]  bHasRepLayout = 0
+[bit 1]  bIsActor = 1
+[SIP]    payload_bits = 136
+[8 bits] fn_idx varint
+[128 bits] FIntrepidNetGUID
+```
+
+Total bdb = 154 bits. Validated against captured SNLW byte stream:
+2 + 16 + 816 = 834 ✓
+
+### Test result: still cycles, BUT major behavior shift
+
+- World briefly loads (flash), user has full control (~400 ServerMove inputs)
+- Only 2 SNLW retries (was many) — client mostly accepted our bunch
+- World eventually resets back to loading screen
+- No SAP, no SCCP from client (no Implementation reached?)
+
+### Next nested function discovered
+
+FObjectReplicator::ReceivedBunch (sub_143F2F820) at line 216 calls
+**sub_143F2DC60** = ReadFieldHeaderAndPayload.  This reads the INNER
+field header (between content block payload and parameters).
+
+So the format is 3 levels deep:
+- Outer: ContentBlockPayload (2-bit envelope + size + payload)
+- Mid:   Per-field header via ReadFieldHeaderAndPayload
+- Inner: Function ID + parameters
+
+The 9 bytes between byte 0 and FName in captured SNLW likely span
+BOTH the outer envelope AND the inner field header.
+
+### Path to full unlock
+
+F5 sub_143F2DC60 in IDA → see exact field header encoding.  Then
+construct the full nested structure: outer envelope + field header
++ function index + parameters.  Should be the final missing piece.

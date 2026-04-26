@@ -1878,27 +1878,37 @@ private:
                                       uint64_t pawn_obj_id,
                                       uint32_t pawn_server_id,
                                       uint32_t pawn_randomizer) override {
-        // Road A — Phase B.0f (2026-04-26).  Builds + sends a native
-        // ClientRestart RPC bunch on the PC's actor channel (ch=3).
+        // Road A — Phase B.0j (2026-04-26 — FORMAT CORRECTED).
         //
-        // Wire format (per IDA RE of sub_143F45AD0):
-        //   [bunch header — ch=3, reliable, NOT partial, NOT exports]
-        //   [varint] function_index   ← UNKNOWN, fuzzing
-        //   [128 bits] FIntrepidNetGUID Pawn = (obj_id, server_id, randomizer)
+        // After RE'ing UActorChannel::ProcessBunch (sub_143F2A2A0),
+        // ReadContentBlockPayload (sub_143F2DA40), and
+        // ReadContentBlockHeader (sub_143F2C340), the EXACT bunch
+        // payload format is:
         //
-        // Phase B.0g (2026-04-26) — FUZZ MODE: instead of one bunch, send
-        // a BURST of ClientRestart bunches with different candidate
-        // function indices on each call.  If ANY index hits, the client
-        // accepts and unblocks.  Indices to try (centered around our
-        // RE'd hypothesis of 31, plus the SNLW value 67 in case the
-        // S>C/C>S RPC tables share indices):
+        //   [bunch header — already done by caller]
+        //   ── content block ──
+        //   [1 bit]  bHasRepLayout = 0   (RPCs don't have RepLayout exports)
+        //   [1 bit]  bIsActor = 1        (target = channel actor, no NetGUID)
+        //   [SIP]    payload_bits = N    (size of inner payload)
+        //   [N bits] payload {
+        //       [SIP varint] function_index
+        //       [params]     per UFunction.Children
+        //   }
+        //
+        // Validated against captured ServerNotifyLoadedWorld bunch:
+        // bytes 86 31 70... decode to bHasRepLayout=0, bIsActor=1,
+        // payload_bits=816, 834 total bdb (2+16+816). ✓ MATCHES.
+        //
+        // Previous fuzz emits omitted the envelope, so 0x3E byte got
+        // interpreted as bHasRepLayout=0, bIsActor=1, then varint of
+        // garbage value → client silently dropped.
+        //
+        // Single-shot now (no fuzz) — function index 31 hypothesis
+        // applies; if wrong we'll fuzz with the CORRECT envelope.
         static constexpr uint32_t kFuzzIndices[] = {
             26,   // Raw table position (no offset)
-            27, 28, 29, 30,
-            31,   // Hypothesis: pos 26 + 5 reserved
-            32, 33, 34, 35,
+            31,   // Hypothesis: pos 26 + 5 reserved (RPC#26)
             36,   // Alphabetical position in full table
-            67,   // SNLW value (in case shared S>C/C>S indexing)
         };
         constexpr size_t kFuzzCount = sizeof(kFuzzIndices)/sizeof(kFuzzIndices[0]);
 
@@ -1908,13 +1918,43 @@ private:
         if (it->second.phase < ClientState::CONNECTED) return false;
         ClientState& cs = it->second;
 
-        // Per-channel chSeq for ch=3 — start past the spliced range.
-        // Each fuzz bunch consumes one chSeq.
-        static thread_local uint32_t pc_ch_reliable_seq = 3000;
+        // Per-channel chSeq for ch=3.
+        //
+        // Phase B.0k (2026-04-26) — chSeq gap fix.  Previous chSeq=3000
+        // left a ~1015-bunch gap on the reliable channel (spliced PC
+        // chain ends around chSeq=1985).  UE5 reliable bunch reassembly
+        // (per sub_143F32E00 IDA decomp) treats missing bunches as
+        // pending retransmits — a 1015-bunch gap blocks ALL future
+        // bunches and may trigger the client's connection-recycle
+        // heuristic, causing the observed world-flash-then-reload cycle.
+        //
+        // Captured pkts 22-44 (PC chain) span ch=3 reliable chSeq 1978-1985.
+        // Continuation bunches in pkts 47-149 may push ch=3 chSeq up to
+        // ~2050.  Use chSeq=2080 — just past the splice tail so the
+        // client treats it as the next-expected reliable bunch.  Each
+        // fuzz bunch consumes one chSeq.
+        static thread_local uint32_t pc_ch_reliable_seq = 2080;
         int sent_ok = 0;
+
+        // Helper: count bits SerializeIntPacked needs for value v
+        auto sip_bit_count = [](uint32_t v) -> size_t {
+            if (v == 0) return 8;
+            size_t bits = 0;
+            while (v > 0) { bits += 8; v >>= 7; }
+            return bits;
+        };
 
         for (size_t fi = 0; fi < kFuzzCount; ++fi) {
             const uint32_t fn_idx = kFuzzIndices[fi];
+
+            // ── Compute sizes ──
+            // Inner payload = function_index_varint + Pawn NetGUID (128 bits)
+            const size_t fn_idx_bits = sip_bit_count(fn_idx);   // 8 for values < 128
+            const size_t inner_payload_bits = fn_idx_bits + 128;
+            // Content block envelope:
+            //   1 bit bHasRepLayout + 1 bit bIsActor + SIP(inner_payload_bits) + payload
+            const size_t size_varint_bits = sip_bit_count(static_cast<uint32_t>(inner_payload_bits));
+            const size_t total_bdb = 2 + size_varint_bits + inner_payload_bits;
 
             // Build the ch=3 reliable bunch
             uint8_t bunch_buf[256] = {};
@@ -1933,16 +1973,23 @@ private:
             ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // ChName.bIsHardcoded=1
             ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 102);  // EName=102 (NAME_Actor)
 
-            // payload bits = function_index_varint(8) + NetGUID(128) = 136
-            const size_t payload_bit_count = 136;
+            // BunchDataBits = total content (2 envelope + size varint + inner)
             ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
-                            payload_bit_count, 13);
+                            total_bdb, 13);
 
-            // Function index varint (single byte for values < 128)
-            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
-                            (fn_idx << 1) & 0xFF, 8);
+            // ── Content block header ──
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1);  // bHasRepLayout=0
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1);  // bIsActor=1
 
-            // FIntrepidNetGUID payload
+            // Payload size as SIP varint
+            ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb,
+                            static_cast<uint32_t>(inner_payload_bits));
+
+            // ── Inner payload ──
+            // Function index as SIP varint
+            ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb, fn_idx);
+
+            // FIntrepidNetGUID payload (128 bits)
             for (int i = 0; i < 8; ++i) {
                 ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
                                 (pawn_obj_id >> (i * 8)) & 0xFF, 8);
