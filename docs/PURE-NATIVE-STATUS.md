@@ -459,3 +459,63 @@ BOTH the outer envelope AND the inner field header.
 F5 sub_143F2DC60 in IDA → see exact field header encoding.  Then
 construct the full nested structure: outer envelope + field header
 + function index + parameters.  Should be the final missing piece.
+
+---
+
+## Phase B.0l — Discovered 3-level nesting + pre-field header
+
+F5'd sub_143F2DC60 = `ReadFieldHeaderAndPayload`.  Has TWO modes
+(Mode A = newer indexed, Mode B = older FieldHandle).  Both call
+`InPayload->SerializeInt(&field_idx, max_value)` — a FIXED-WIDTH
+encoding using ceil(log2(max+1)) bits.
+
+Tried to validate field index against captured SNLW (filtered RPC#62):
+read 7-11 bits at offset 18 of bunch → got 92.  Discrepancy with
+expected 62 reveals there are MORE bits before field_handle.
+
+Source: sub_143F2F820 (FObjectReplicator::ReceivedBunch) calls
+**sub_1444E4A40 BEFORE the field iteration loop** — likely reads
+class header or initial protocol flags we haven't decoded.
+
+### Complete chain (now mapped)
+
+```
+ProcessBunch (sub_143F2A2A0)
+  → ReadContentBlockPayload (sub_143F2DA40)
+    → ReadContentBlockHeader (sub_143F2C340)  [2 bits + maybe NetGUID]
+  → FObjectReplicator::ReceivedBunch (sub_143F2F820)
+    → sub_1444E4A40                         [unknown bits — pre-field]
+    → ReadFieldHeaderAndPayload LOOP (sub_143F2DC60)
+      → SerializeInt(field_handle, max)     [fixed-width, log2(max+1)]
+      → SerializeIntPacked(payload_bits)    [SIP varint]
+      → payload                              [RPC params or property delta]
+```
+
+### What's still unknown for byte-perfect emission
+
+1. `sub_1444E4A40` decomp — the pre-field header bits
+2. APlayerController's exact `FieldExportGroup` count (for field_handle
+   bit width)
+3. Whether AoC uses Mode A (indexed) or Mode B (FieldHandle)
+4. How to construct FFieldNetCache server-side to mirror client's view
+
+### Test results progression (final)
+
+| Phase | Test outcome |
+|---|---|
+| B.0a-c | Floating rocks → 100% loop → world flash → reload cycle |
+| B.0e (splice pkt #134) | No improvement, splice was wrong RPC |
+| B.0f-g (raw fn_idx, 12 fuzz) | World briefly loaded, BunchWrongChannelType resolved |
+| B.0h (full RPC decoder) | NO new diagnostic RPCs detected — fuzz indices wrong |
+| B.0j (proper outer envelope) | Major shift: only 2 SNLW retries (was many), 379 movements |
+| B.0k (chSeq fix 2080) | Same as B.0j — 428 movements, but still cycles |
+
+The "world briefly loads + ~400 ServerMove inputs" pattern strongly
+suggests we're VERY close.  Just need the inner field header decoded.
+
+### Recommendation
+
+For production gameplay tonight, use **launch_all_hybrid.bat** (proven
+10-min config).  Pure-native ClientRestart is unblocked by RE'ing
+sub_1444E4A40 in a future session — estimated 2-4 hours of focused
+work to complete the wire format.
