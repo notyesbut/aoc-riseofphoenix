@@ -1873,6 +1873,121 @@ private:
         return static_cast<uint32_t>(replay_data_->packets.size());
     }
 
+    bool send_client_restart_native(const std::string& client_key,
+                                      const sockaddr_in& addr,
+                                      uint64_t pawn_obj_id,
+                                      uint32_t pawn_server_id,
+                                      uint32_t pawn_randomizer) override {
+        // Road A — Phase B.0f (2026-04-26).  Builds + sends a native
+        // ClientRestart RPC bunch on the PC's actor channel (ch=3).
+        //
+        // Wire format (per IDA RE of sub_143F45AD0):
+        //   [bunch header — ch=3, reliable, NOT partial, NOT exports]
+        //   [varint] function_index   ← UNKNOWN, fuzzing
+        //   [128 bits] FIntrepidNetGUID Pawn = (obj_id, server_id, randomizer)
+        //
+        // Phase B.0g (2026-04-26) — FUZZ MODE: instead of one bunch, send
+        // a BURST of ClientRestart bunches with different candidate
+        // function indices on each call.  If ANY index hits, the client
+        // accepts and unblocks.  Indices to try (centered around our
+        // RE'd hypothesis of 31, plus the SNLW value 67 in case the
+        // S>C/C>S RPC tables share indices):
+        static constexpr uint32_t kFuzzIndices[] = {
+            26,   // Raw table position (no offset)
+            27, 28, 29, 30,
+            31,   // Hypothesis: pos 26 + 5 reserved
+            32, 33, 34, 35,
+            36,   // Alphabetical position in full table
+            67,   // SNLW value (in case shared S>C/C>S indexing)
+        };
+        constexpr size_t kFuzzCount = sizeof(kFuzzIndices)/sizeof(kFuzzIndices[0]);
+
+        std::lock_guard<std::mutex> lk(client_mu_);
+        auto it = clients_.find(client_key);
+        if (it == clients_.end()) return false;
+        if (it->second.phase < ClientState::CONNECTED) return false;
+        ClientState& cs = it->second;
+
+        // Per-channel chSeq for ch=3 — start past the spliced range.
+        // Each fuzz bunch consumes one chSeq.
+        static thread_local uint32_t pc_ch_reliable_seq = 3000;
+        int sent_ok = 0;
+
+        for (size_t fi = 0; fi < kFuzzCount; ++fi) {
+            const uint32_t fn_idx = kFuzzIndices[fi];
+
+            // Build the ch=3 reliable bunch
+            uint8_t bunch_buf[256] = {};
+            size_t bb = 0;
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bControl=0
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bIsReplicationPaused=0
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // bReliable=1
+            ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 3);    // ChIdx=3
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasPME=0
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasMBG=0
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bPartial=0
+
+            const uint32_t this_chseq = pc_ch_reliable_seq++;
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                            this_chseq & 0xFFF, 12);                 // ChSeq (12-bit S>C)
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // ChName.bIsHardcoded=1
+            ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 102);  // EName=102 (NAME_Actor)
+
+            // payload bits = function_index_varint(8) + NetGUID(128) = 136
+            const size_t payload_bit_count = 136;
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                            payload_bit_count, 13);
+
+            // Function index varint (single byte for values < 128)
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                            (fn_idx << 1) & 0xFF, 8);
+
+            // FIntrepidNetGUID payload
+            for (int i = 0; i < 8; ++i) {
+                ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                                (pawn_obj_id >> (i * 8)) & 0xFF, 8);
+            }
+            for (int i = 0; i < 4; ++i) {
+                ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                                (pawn_server_id >> (i * 8)) & 0xFF, 8);
+            }
+            for (int i = 0; i < 4; ++i) {
+                ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                                (pawn_randomizer >> (i * 8)) & 0xFF, 8);
+            }
+
+            const size_t bunch_bits = bb;
+
+            // Wrap in UDP packet
+            uint8_t buf[1024] = {};
+            size_t off = 0;
+            write_sc_packet_prefix(buf, sizeof(buf), off, cs, /*handshake=*/false);
+            ue5::write_bits(buf, sizeof(buf), off, 1,    1);
+            ue5::write_bits(buf, sizeof(buf), off, 1023, 10);
+            ue5::write_bits(buf, sizeof(buf), off, 0,    1);
+            for (size_t i = 0; i < bunch_bits; ++i) {
+                int bit = (bunch_buf[i >> 3] >> (i & 7)) & 1;
+                ue5::write_bits(buf, sizeof(buf), off, bit, 1);
+            }
+            size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
+            const uint16_t sent_seq = cs.out_seq;
+            cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
+
+            int sent = send_to_client_impl(buf, pkt_len, addr);
+            if (sent > 0) {
+                spdlog::warn("[GameServer] >> ★ NATIVE ClientRestart FUZZ "
+                              "[{}/{}]: fn_idx={} chSeq={} bunch_bits={} pkt={}B seq={}",
+                              fi+1, kFuzzCount, fn_idx, this_chseq,
+                              bunch_bits, pkt_len, sent_seq);
+                ++sent_ok;
+            }
+        }
+        spdlog::warn("[GameServer] FUZZ COMPLETE: sent {}/{} ClientRestart variants "
+                      "(pawn obj={} srv={} rnd=0x{:08x})",
+                      sent_ok, kFuzzCount, pawn_obj_id, pawn_server_id, pawn_randomizer);
+        return sent_ok > 0;
+    }
+
     /// Send UDP packet to a client (original implementation, renamed so
     /// the IGameServerHost virtual above can call into it without
     /// creating a recursive cycle).
@@ -2971,7 +3086,19 @@ private:
                             // but that's BEFORE the client requests it.  Re-
                             // emitting on detection ensures the client gets it
                             // exactly when expected.
-                            static constexpr uint32_t kClientRestartReplayIdx = 134;
+                            // ── Road A — Phase B.0f ─────────────────────────
+                            // Native ClientRestart emit using RE'd wire index.
+                            // Hypothesis from binary RE of AOCClient-Win64-Shipping.exe:
+                            //   ClientRestart wire index = 31 (RPC table pos 26 + 5 reserved)
+                            // Validated against ServerNotifyLoadedWorld (table pos 62 + 5 = 67,
+                            // matches captured byte 0x86 = (67<<1)|0).
+                            //
+                            // Pawn parameter: use the captured PC NetGUID 10341530
+                            // as a placeholder.  For best results we'd use the
+                            // actual captured Pawn NetGUID extracted from the
+                            // spliced pkt#78, but that requires bit-level decode
+                            // we haven't done yet.  If function index 31 is right,
+                            // the client will at least process the bunch.
                             static std::mutex client_restart_mu;
                             static std::unordered_set<std::string> client_restart_sent;
                             if (client_key && client_addr_for_reactive) {
@@ -2981,15 +3108,18 @@ private:
                                     already_sent = !client_restart_sent.insert(*client_key).second;
                                 }
                                 if (!already_sent) {
-                                    spdlog::warn("[NMT-DETECT] → emitting captured "
-                                                  "ClientRestart (replay_idx={}) reactively",
-                                                  kClientRestartReplayIdx);
-                                    bool ok = send_captured_packet(*client_key,
-                                                                    *client_addr_for_reactive,
-                                                                    kClientRestartReplayIdx);
-                                    spdlog::warn("[NMT-DETECT] → ClientRestart emit "
-                                                  "result: {}",
-                                                  ok ? "SUCCESS" : "FAILED (no replay loaded?)");
+                                    spdlog::warn("[NMT-DETECT] → emitting NATIVE "
+                                                  "ClientRestart (fn_idx=31) reactively");
+                                    // Placeholder Pawn NetGUID — same as captured PC for now
+                                    bool ok = send_client_restart_native(
+                                        *client_key,
+                                        *client_addr_for_reactive,
+                                        /*obj_id=*/   10341530ULL,
+                                        /*server_id=*/60,
+                                        /*randomizer=*/1860730596U);
+                                    spdlog::warn("[NMT-DETECT] → native ClientRestart "
+                                                  "emit result: {}",
+                                                  ok ? "SUCCESS" : "FAILED");
                                 } else {
                                     spdlog::info("[NMT-DETECT] (already emitted "
                                                   "ClientRestart for {}, suppressing "

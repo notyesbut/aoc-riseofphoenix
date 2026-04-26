@@ -228,3 +228,66 @@ This unblocks native emission of ALL APlayerController RPCs.
 
 **Next code task**: Build `IGameServerHost::send_client_rpc(rpc_name, params)` that
 encodes the wire index + parameters into a bunch and sends via the actor channel.
+
+---
+
+## Phase B.0f - B.0g — Native ClientRestart attempt (2026-04-26 evening)
+
+Implemented `IGameServerHost::send_client_restart_native()` that builds a ch=3
+reliable bunch from scratch with fuzz-mode burst of 12 candidate function
+indices (26-36 + 67).
+
+### Test results
+
+1. **First attempt (fn_idx=31, single bunch)** — Client returned
+   `NMT_CloseReason: "BunchWrongChannelType"`. Diagnostic: bunch header was
+   misaligned by 3 bits.
+
+2. **Bunch widths fixed** — chSeq: 14 → 12 bits (S>C direction), BDB: 14 → 13
+   bits. Matches existing `send_ch0_reliable_payload` and parser code.
+   No more BunchWrongChannelType errors. ✓
+
+3. **Fuzz burst (12 indices)** — Sent indices 26, 27, 28, 29, 30, 31, 32,
+   33, 34, 35, 36, 67. ALL accepted at bunch header level (no CloseReason).
+   But client RETRIED ServerNotifyLoadedWorld 5s later — none of the 12
+   was recognized as a valid ClientRestart.
+
+### Final scan: no captured ClientRestart exists in 29010-packet replay
+
+Scanned all 29010 captured packets for ch=3 reliable bunches with
+bdb in range 50-400 (typical RPC + NetGUID size). Found only:
+- `bdb=128` at pkt #134 (likely ActorClose)
+- `bdb=67` at pkt #28115 (way past bootstrap, likely something else)
+
+**No captured ClientRestart bunch in the standalone-RPC bdb range.**
+
+### Implications
+
+Three possibilities:
+1. **AoC client doesn't use standard `ClientRestart` for world entry** — has
+   a custom AoC-specific RPC or bypass we haven't identified
+2. **ClientRestart is bundled in a multi-bunch packet** — would require
+   full bunch-stream parsing (not just first-bunch-per-packet)
+3. **Wire format has additional pre-payload header bits** beyond just the
+   varint function index
+
+The bunch header IS structurally valid (no CloseReason after width fix).
+The function index encoding IS validated against ServerNotifyLoadedWorld
+(byte `0x86` decodes to value 67 = table pos 62 + 5 reserved offset).
+The remaining unknown is what specifically AoC expects in a Server→Client
+RPC bunch payload.
+
+### Path forward (next session)
+
+Requires either:
+- **Live client debugging** (attach debugger, single-step `ServerNotifyLoadedWorld_Implementation`
+  on client to see what server response it expects)
+- OR **deep RE** of `sub_1444EC7B0` (property iteration) and `sub_143F45AD0`
+  (function ID writer) to understand the EXACT bit-level structure of an
+  outgoing RPC bunch
+- OR **multi-bunch packet parsing** in our scanner to find a captured
+  ClientRestart that's bundled inside a partial-bunch chain
+
+For production gameplay, `launch_all_hybrid.bat` (proven 10-minute working
+config) remains the recommended mode until pure-native ClientRestart is
+solved.

@@ -202,6 +202,25 @@ public:
     /// Returns 0 if no replay is loaded.
     virtual uint32_t loaded_replay_packet_count() const = 0;
 
+    /// Road A — Phase B.0f (2026-04-26) — emit native ClientRestart RPC.
+    /// Constructs a bunch on the PC's actor channel (ch=3 reliable)
+    /// carrying the ClientRestart RPC: function index (varint) + Pawn
+    /// NetGUID (128 bits FIntrepidNetGUID).
+    ///
+    /// Function index hypothesis: APlayerController's RPC table position
+    /// for ClientRestart is 26 (filtered by FUNC_Net), with a +5 offset
+    /// for reserved system RPCs giving wire index 31 (varint byte 0x3E).
+    /// Validated against ServerNotifyLoadedWorld where table pos 62 + 5 =
+    /// 67 matches the captured first byte 0x86 (=(67<<1)|0 in AoC SIP).
+    ///
+    /// Returns true on successful send.  Used by the NMT-DETECT
+    /// recognizer to react to ServerNotifyLoadedWorld.
+    virtual bool send_client_restart_native(const std::string& client_key,
+                                              const sockaddr_in& addr,
+                                              uint64_t pawn_obj_id,
+                                              uint32_t pawn_server_id,
+                                              uint32_t pawn_randomizer) = 0;
+
     // NOTE: richer client-state access (seq counters etc.) intentionally
     // omitted; when a phase needs it, we'll add narrow accessors.
 };
