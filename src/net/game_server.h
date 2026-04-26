@@ -3133,6 +3133,74 @@ private:
                         }
                     }
 
+                    // ── Road A — Phase B.0h (2026-04-26) ────────────────
+                    // Recognizer: ServerCheckClientPossession.
+                    //
+                    // Per IDA decomp of sub_144412750
+                    // (APlayerController::ClientRestart_Implementation),
+                    // when ClientRestart is invoked with a NULL Pawn
+                    // parameter (because the NetGUID we sent doesn't
+                    // resolve client-side), the client immediately fires
+                    // `ServerCheckClientPossession` RPC back to the server.
+                    //
+                    // This gives us a UNIQUE OBSERVABLE: if our fuzz
+                    // burst includes a ClientRestart with the right
+                    // function index but wrong Pawn NetGUID, the client
+                    // sends ServerCheckClientPossession.  Detecting this
+                    // confirms our function index is correct — we just
+                    // need a valid Pawn NetGUID.
+                    //
+                    // The RPC is very small: ch=3 reliable, no parameters.
+                    // Per our table, ServerCheckClientPossession is at
+                    // RPC#58 (table pos 116 alphabetically, +5 reserved)
+                    // = wire index 63 → varint byte (63 << 1) = 0x7E.
+                    //
+                    // We detect it by signature: a small ch=3 reliable
+                    // bunch with the function index byte 0x7E early in
+                    // payload.  Conservative match: bunch_data_bits in
+                    // 8-50 range AND first byte == 0x7E.
+                    if (b_reliable && ch_idx == 3 && !b_partial && !b_exports
+                        && bunch_data_bits >= 8 && bunch_data_bits <= 256
+                        && payload_bytes.size() >= 1) {
+                        const uint8_t fb = payload_bytes[0];
+                        // Decode varint byte → wire index → RPC name (per table)
+                        // varint byte for value V: (V << 1) | 0 = V*2
+                        // So wire_idx = fb >> 1
+                        const uint32_t wire_idx = fb >> 1;
+                        const char* rpc_name = nullptr;
+                        bool is_success = false, is_fail = false;
+                        switch (wire_idx) {
+                        case 59: rpc_name = "ServerAcknowledgePossession (★ SUCCESS — ClientRestart worked!)"; is_success = true; break;
+                        case 60: rpc_name = "ServerBlockPlayer"; break;
+                        case 61: rpc_name = "ServerCamera"; break;
+                        case 62: rpc_name = "ServerChangeName"; break;
+                        case 63: rpc_name = "ServerCheckClientPossession (Pawn ref wrong, fn_idx RIGHT)"; is_fail = true; break;
+                        case 64: rpc_name = "ServerCheckClientPossessionReliable (Pawn wrong, retry)"; is_fail = true; break;
+                        case 65: rpc_name = "ServerExecRPC"; break;
+                        case 66: rpc_name = "ServerMutePlayer"; break;
+                        case 67: rpc_name = "ServerNotifyLoadedWorld (retry — ClientRestart NOT recognized)"; break;
+                        case 68: rpc_name = "ServerPause"; break;
+                        case 69: rpc_name = "ServerRestartPlayer"; break;
+                        default: break;
+                        }
+                        if (is_success) {
+                            spdlog::warn("[NMT-DETECT] 🎉🎉🎉 {} (ch=3 chSeq={} bdb={} byte=0x{:02x})",
+                                          rpc_name, ch_seq, bunch_data_bits, fb);
+                        } else if (is_fail) {
+                            spdlog::warn("[NMT-DETECT] ★★★ {} (ch=3 chSeq={} bdb={} byte=0x{:02x}) — "
+                                          "DIAGNOSTIC: function index RIGHT for ClientRestart but "
+                                          "Pawn NetGUID we sent doesn't resolve. Need captured Pawn GUID.",
+                                          rpc_name, ch_seq, bunch_data_bits, fb);
+                        } else if (rpc_name) {
+                            spdlog::warn("[NMT-DETECT] small ch=3 RPC: {} (chSeq={} bdb={} byte=0x{:02x})",
+                                          rpc_name, ch_seq, bunch_data_bits, fb);
+                        } else {
+                            spdlog::info("[NMT-DETECT] unrecognized ch=3 RPC (chSeq={} bdb={} "
+                                          "first_byte=0x{:02x} → wire_idx={}) — RPC not in table",
+                                          ch_seq, bunch_data_bits, fb, wire_idx);
+                        }
+                    }
+
                     // ── Road A — Phase B.0d ─────────────────────────────
                     // Recognizer: ServerUpdateLevelVisibility — client
                     // tells us about each streaming chunk it has loaded.

@@ -291,3 +291,78 @@ Requires either:
 For production gameplay, `launch_all_hybrid.bat` (proven 10-minute working
 config) remains the recommended mode until pure-native ClientRestart is
 solved.
+
+---
+
+## Phase B.0h — `ClientRestart_Implementation` RE'd; full RPC decoder added (2026-04-26 night)
+
+Found and decoded the CLIENT-side receive handler:
+
+- **`sub_144412750`** = `APlayerController::ClientRestart_Implementation(this, APawn* NewPawn)`
+- **`sub_144433720`** = `APlayerController::ServerAcknowledgePossession_Implementation(this, APawn*)`
+
+Key insight from `ClientRestart_Implementation`:
+```c
+// If NewPawn parameter resolves to null/invalid client-side
+if (!current_pawn) {
+    UFunction* f = FindFunction("ServerCheckClientPossession");
+    return ProcessRemoteFunction(this, f, nullptr);  // ★ Fires SCCP back
+}
+```
+
+This gave us a unique observable: if our fuzz fn_idx is RIGHT but Pawn ref is wrong,
+client fires `ServerCheckClientPossession` (byte 0x7E) back.  If fn_idx is WRONG,
+client silently drops (no observable response).
+
+### Diagnostic recognizer added
+Decodes any small ch=3 reliable bunch's first byte → wire index → RPC name.
+Catches: `ServerAcknowledgePossession (0x76)`, `ServerCheckClientPossession (0x7E)`,
+`ServerCheckClientPossessionReliable (0x80)`, `ServerNotifyLoadedWorld (0x86)`,
+plus all other Server* RPCs.
+
+### Fuzz test result
+Sent 12 ClientRestart variants (fn_idx 26-36 + 67) on each `ServerNotifyLoadedWorld`
+detection. **NO observable response from client.**  All 12 fuzz indices were
+either wrong, OR the bunch format has additional missing fields.
+
+### Identified the bunch format gap
+Captured `ServerNotifyLoadedWorld` payload (105 bytes):
+```
+86 | 31 70 d1 c2 30 b2 00 00 00 | 5e 8e c2 da ca ...
+^^   ^^^^^^^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^
+fn=67  9 bytes ENVELOPE/HEADER     FString parameter
+       (unknown structure)         (shifted /Game/Levels/...)
+```
+
+Our native ClientRestart emits `[fn_idx_byte][16_byte_NetGUID]` = **136 bits**.
+The captured RPC has 9 EXTRA bytes between fn_idx and parameters — this is the
+**AoC-specific RPC envelope** that we don't yet understand.
+
+### Possible envelope contents
+- `bHasMustBeMappedGUIDs` flag (1 bit)
+- ContentBlock size (varint)
+- RepIndex into actor's RepLayout
+- Parameter count/sizes prefix
+- Validate-bool slots
+- Other AoC-specific framing
+
+### Path forward (next session — focused RE target)
+
+**Find `UActorChannel::ProcessBunch` or equivalent** — the client function that
+parses an incoming RPC bunch. Its decomp will reveal the EXACT bit-level
+structure between fn_idx and parameters.
+
+Search IDA for these strings to find it:
+- `UActorChannel::ProcessBunch`
+- `ReceivedBunch on Closing actor`
+- `Failed to read header info`
+- `ReadContentBlockPayload`
+
+Once we have that decomp, the format reveals itself, and native ClientRestart
+becomes a ~50-line wire format implementation.
+
+### For production gameplay
+
+`launch_all_hybrid.bat` (proven 10-min config) remains the recommended mode.
+All Phase B.0a-h infrastructure (~2200 lines) stays in tree as foundation
+and is incrementally usable as we close the format gap.
