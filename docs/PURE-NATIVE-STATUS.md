@@ -366,3 +366,50 @@ becomes a ~50-line wire format implementation.
 `launch_all_hybrid.bat` (proven 10-min config) remains the recommended mode.
 All Phase B.0a-h infrastructure (~2200 lines) stays in tree as foundation
 and is incrementally usable as we close the format gap.
+
+---
+
+## Phase B.0i — UActorChannel::ProcessBunch found via binary RE (2026-04-26 night)
+
+Found the client's bunch parser via direct binary analysis of
+AOCClient-Win64-Shipping.exe.  Located the UE_LOG descriptor for the
+"UActorChannel::ProcessBunch: New actor channel..." string at VA 0x14a8a6100.
+A single LEA instruction at VA 0x143f2a41b loads this descriptor — meaning
+that LEA is INSIDE the function we want.
+
+Walking the .pdata (exception table) confirms the enclosing function:
+
+  ★ **`sub_143F2A2A0`** = `UActorChannel::ProcessBunch`
+  Size: 3952 bytes (VA 0x143f2a2a0 to 0x143f2b210)
+
+Confirmed by 14+ UE_LOG strings inside the function:
+- "Creating ChIndex: %d Actor: %s"
+- "SerializeNewActor received an open bunch for a torn off actor..."
+- "SerializeNewActor failed to find/spawn actor..."
+- "Replicator.ReceivedBunch failed (Ignoring because of IsInternalAck)..."
+- "ReadContentBlockPayload failed to find/create object..."
+- "ReadContentBlockPayload failed to find/create ACTOR..."
+- "Actor was destroyed during Replicator.ReceivedBunch processing"
+- "PostReceivedBunch: Object == nullptr"
+- "ObjectId: %llu | ServerId: %u | Randomizer: %u" (FIntrepidNetGUID format)
+
+### Inner function call targets
+From CALL instruction analysis inside sub_143F2A2A0, the substantive
+non-utility calls (excluding Free/UE_LOG/GetName) are:
+
+- **`sub_143F3ADC0`** — likely `UActorChannel::SerializeNewActor` (called 1x near offset 797)
+- **`sub_14426E280`** — likely `ReadContentBlockPayload` (called 1x near offset 1238)
+- **`sub_143F3E000`** — UNetConnection/Channel helper (called 2x)
+- **`sub_143F174A0`** — UChannel utility (called 2x)
+- **`sub_14422E810`** — possibly Bunch operations (called 2x)
+
+### Next step
+
+F5 sub_143F2A2A0 in IDA.  The decomp will reveal:
+1. The loop structure (while bunch has more bits)
+2. The 1-bit "is RPC" or "has content" flag at start of each block
+3. The exact call sequence: ReadContentBlockPayload → Replicator->ReceivedBunch
+4. **The exact bytes that make up each content block** — this IS the
+   9-byte AoC RPC envelope we need to construct.
+
+Once we have that decomp, native ClientRestart becomes a 50-line implementation.
