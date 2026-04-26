@@ -192,3 +192,39 @@ Without it, we can't:
 - User reaches gameplay with character visible, can move around freely
 
 Use this for any actual gameplay testing while pure-native is unblocked.
+
+---
+
+## 🎯 Update — Function index found via binary RE (2026-04-26 late session)
+
+Direct binary analysis of `AOCClient-Win64-Shipping.exe` revealed the
+RPC descriptor table at `.data:0x14d29a518` (and surrounding entries).
+Each descriptor is 48 bytes:
+```
++0:  qword constructor function ptr
++8:  zero (padding)
++16: qword name string ptr
++24: qword aux ptr
++32: qword metadata: NumParms(u16) | ParmsSize(u16) | 0x45(u32 const)
++40: qword function flags
+```
+
+Walking the descriptor array alphabetically and filtering for `FUNC_Net`:
+
+| RPC | RPC# (filtered) | Wire index (RPC#+5) | Validated |
+|---|---|---|---|
+| ClientAckUpdateLevelVisibility | 2 | 7 | (TBD) |
+| ClientRestart | **26** | **31** | (TBD via test) |
+| ClientUpdateLevelStreamingStatus | 48 | 53 | (TBD) |
+| ServerNotifyLoadedWorld | 62 | 67 | ✅ matches captured bunch byte 0x86 |
+| ServerUpdateLevelVisibility | 73 | 78 | (TBD) |
+
+The +5 offset hypothesis is confirmed by ServerNotifyLoadedWorld:
+- Captured first byte = `0x86`
+- Decoded via AoC SIP (bit-0 continuation): `(0x86 >> 1) = 67`
+- Table position 62 + 5 = 67 ✓
+
+This unblocks native emission of ALL APlayerController RPCs.
+
+**Next code task**: Build `IGameServerHost::send_client_rpc(rpc_name, params)` that
+encodes the wire index + parameters into a bunch and sends via the actor channel.
