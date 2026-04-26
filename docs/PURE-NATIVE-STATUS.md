@@ -519,3 +519,51 @@ For production gameplay tonight, use **launch_all_hybrid.bat** (proven
 10-min config).  Pure-native ClientRestart is unblocked by RE'ing
 sub_1444E4A40 in a future session — estimated 2-4 hours of focused
 work to complete the wire format.
+
+---
+
+## Phase B.0m — Full nested format implemented, still no breakthrough
+
+Implemented the complete UE5 nested RPC bunch format per RE:
+
+```
+[1 bit]  bHasRepLayout = 0
+[1 bit]  bIsActor = 1
+[SIP]    outer_payload_size_bits
+[outer payload {
+    [9 bits] field_handle (fixed-width SerializeInt)
+    [SIP]    inner_field_payload_size = 128
+    [128 bits] FIntrepidNetGUID Pawn
+}]
+```
+
+Fuzzed 14 field_handle values: 26, 46, 50-60, 92.  All silently dropped.
+Client behavior unchanged from B.0k (only 2 SNLW retries, no SCCP/SAP).
+
+### Final remaining unknowns
+
+To construct byte-perfect ClientRestart, we still need:
+1. **APlayerController's exact FieldExportGroup count** (sets bit width)
+2. **Mode A vs Mode B**: which encoding does AoC's NetDriver use?
+3. **The exact field_handle value** for ClientRestart in AoC's table
+4. **FFieldNetCache structure** to mirror client's field registration
+
+These require either:
+- Live debugger on client (attach to sub_143F2DC60, single-step)
+- Find APlayerController class registration in IDA (~2-4h more RE)
+- Runtime memory dump
+
+### Final session totals
+
+- 8 commits to AoC-RiseOfPhoenix
+- ~2400 lines of new C++ code
+- Full UE5 RPC chain mapped (15+ functions decoded)
+- Pure-native bootstrap framework operational
+- Wire format outer envelope decoded + validated
+- Wire format inner field structure mostly decoded
+
+### For production gameplay
+
+`launch_all_hybrid.bat` remains the proven 10-min config. All Phase B.0
+infrastructure stays in tree as foundation for the next focused session
+when we can attach a debugger or do deeper RE.

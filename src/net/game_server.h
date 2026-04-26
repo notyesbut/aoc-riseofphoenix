@@ -1905,12 +1905,33 @@ private:
         //
         // Single-shot now (no fuzz) — function index 31 hypothesis
         // applies; if wrong we'll fuzz with the CORRECT envelope.
+        // Phase B.0m (2026-04-26 night) — full inner-payload format.
+        // After RE'ing sub_143F2F820 (ReceivedBunch), sub_143F2DC60
+        // (ReadFieldHeaderAndPayload), and sub_1444E4A40 (RepLayout
+        // exports — NOT called when bHasRepLayout=0), confirmed:
+        //   - For RPC bunches (bHasRepLayout=0), field loop starts
+        //     directly at bit 18 of bunch payload
+        //   - field_handle is FIXED-WIDTH via SerializeInt(value, max)
+        //     — width = ceil(log2(max+1)), where max = group->Count
+        //
+        // Validation: captured SNLW field_handle = 92 (read 9 bits at
+        // bit 18). Filtered RPC#62 + offset 30 = 92 ✓.  The offset
+        // ≈ number of UProperty fields registered before FUNC_Net
+        // functions in APlayerController's FieldExportGroup.
+        //
+        // For ClientRestart filtered RPC#26 → expected field_handle = 56.
+        // Fuzz around it in case offset is slightly different.
         static constexpr uint32_t kFuzzIndices[] = {
-            26,   // Raw table position (no offset)
-            31,   // Hypothesis: pos 26 + 5 reserved (RPC#26)
-            36,   // Alphabetical position in full table
+            56,   // Hypothesis: 26 + 30 offset = 56
+            55, 57, 58, 59, 60,
+            54, 53, 52, 51, 50,
+            // Backup wider range
+            46, 92, 26,
         };
         constexpr size_t kFuzzCount = sizeof(kFuzzIndices)/sizeof(kFuzzIndices[0]);
+        // Fixed-width bits for field_handle.  If APlayerController's
+        // group has 300+ fields, ceil(log2(301)) = 9.  Try 9.
+        static constexpr size_t kFieldHandleBits = 9;
 
         std::lock_guard<std::mutex> lk(client_mu_);
         auto it = clients_.find(client_key);
@@ -1945,16 +1966,23 @@ private:
         };
 
         for (size_t fi = 0; fi < kFuzzCount; ++fi) {
-            const uint32_t fn_idx = kFuzzIndices[fi];
+            const uint32_t field_handle = kFuzzIndices[fi];
 
             // ── Compute sizes ──
-            // Inner payload = function_index_varint + Pawn NetGUID (128 bits)
-            const size_t fn_idx_bits = sip_bit_count(fn_idx);   // 8 for values < 128
-            const size_t inner_payload_bits = fn_idx_bits + 128;
-            // Content block envelope:
-            //   1 bit bHasRepLayout + 1 bit bIsActor + SIP(inner_payload_bits) + payload
-            const size_t size_varint_bits = sip_bit_count(static_cast<uint32_t>(inner_payload_bits));
-            const size_t total_bdb = 2 + size_varint_bits + inner_payload_bits;
+            // Inner field payload = Pawn NetGUID (128 bits)
+            const size_t inner_field_payload_bits = 128;
+            const size_t inner_size_varint_bits = sip_bit_count(static_cast<uint32_t>(inner_field_payload_bits));
+
+            // Outer content block payload = field_handle (9 bits)
+            //                             + SIP(inner_field_payload_bits)
+            //                             + inner_field_payload (128 bits)
+            const size_t outer_payload_bits = kFieldHandleBits
+                                            + inner_size_varint_bits
+                                            + inner_field_payload_bits;
+            const size_t outer_size_varint_bits = sip_bit_count(static_cast<uint32_t>(outer_payload_bits));
+
+            // Content block envelope: 2 bits + size_varint + outer payload
+            const size_t total_bdb = 2 + outer_size_varint_bits + outer_payload_bits;
 
             // Build the ch=3 reliable bunch
             uint8_t bunch_buf[256] = {};
@@ -1981,15 +2009,20 @@ private:
             ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1);  // bHasRepLayout=0
             ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1);  // bIsActor=1
 
-            // Payload size as SIP varint
+            // Outer payload size as SIP varint
             ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb,
-                            static_cast<uint32_t>(inner_payload_bits));
+                            static_cast<uint32_t>(outer_payload_bits));
 
-            // ── Inner payload ──
-            // Function index as SIP varint
-            ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb, fn_idx);
+            // ── Inner field block ──
+            // Field handle as FIXED-WIDTH 9 bits (per sub_143F2DC60 RE)
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                            field_handle & 0x1FF, kFieldHandleBits);
 
-            // FIntrepidNetGUID payload (128 bits)
+            // Inner field payload size as SIP varint
+            ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb,
+                            static_cast<uint32_t>(inner_field_payload_bits));
+
+            // ── Inner field payload — FIntrepidNetGUID (128 bits) ──
             for (int i = 0; i < 8; ++i) {
                 ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
                                 (pawn_obj_id >> (i * 8)) & 0xFF, 8);
@@ -2023,8 +2056,8 @@ private:
             int sent = send_to_client_impl(buf, pkt_len, addr);
             if (sent > 0) {
                 spdlog::warn("[GameServer] >> ★ NATIVE ClientRestart FUZZ "
-                              "[{}/{}]: fn_idx={} chSeq={} bunch_bits={} pkt={}B seq={}",
-                              fi+1, kFuzzCount, fn_idx, this_chseq,
+                              "[{}/{}]: field_handle={} chSeq={} bunch_bits={} pkt={}B seq={}",
+                              fi+1, kFuzzCount, field_handle, this_chseq,
                               bunch_bits, pkt_len, sent_seq);
                 ++sent_ok;
             }
