@@ -802,6 +802,22 @@ public:
         // M1.1-M1.4 progressively fill in real emission.
         bool        native_mode = false;
 
+        // ── Road A — Phase B.0 (2026-04-26) ────────────────────────────
+        // When true (and --native is set), GameServer does NOT launch the
+        // legacy replay_loop thread.  The replay file is still loaded
+        // (so WorldBootstrapEmitter's Splice plan rows can pull captured
+        // bytes from it via send_captured_packet), but no parallel thread
+        // emits packets — the NativeConnectSequencer is the SOLE driver
+        // of the post-NMT bootstrap stream.
+        //
+        // Why a separate flag (and not just `--replay-max-packets 0`):
+        // legacy semantics treat replay_max_packets=0 as "unlimited" (all
+        // 29010 captured packets), not "send zero".  Repurposing 0 would
+        // break callers that already use the legacy meaning.
+        //
+        // Pure-native = `--native --replay <file> --no-replay-loop`.
+        bool        disable_replay_loop = false;
+
         // The character name the server uses when emitting the
         // PlayerController's Name property in native mode.  Ignored in
         // replay mode (replay sends the captured name verbatim).
@@ -823,17 +839,8 @@ public:
         // Set v3_emit_enabled=true to fire the synthetic bunch after replay.
         bool      v3_emit_enabled        = false;
 
-        // V3 can use a DIFFERENT name than custom_name (which M2.1 uses).
-        // Useful for proving V3 actually applied (vs. M2.1 winning).
-        // Empty string = use custom_name.
+        // V3 can use a DIFFERENT name than custom_name. Empty = use custom_name.
         std::string v3_custom_name        = "";
-
-        // When true, skip the M2.1 'RandomChar' byte patcher entirely.
-        // Lets V3 prove itself in isolation: with M2.1 disabled, the HUD
-        // shows the captured "RandomChar" until V3 overrides it. Useful
-        // when both layers fight for the Name slot and we cannot tell
-        // which one applied. Default false (M2.1 still patches as before).
-        bool        disable_m21          = false;
 
         uint32_t  v3_target_channel       = 3;        // PC's actor channel
         // V3 subobject targeting (verified empirical RE 2026-04-26):
@@ -1068,22 +1075,35 @@ public:
                 add_i32("character_race_id", config_.captured_race_id, config_.custom_race_id);
             }
             if (patcher.enabled_rule_count() > 0) {
-                spdlog::warn("[GameServer][Tier1] applying {} property patch "
-                             "rule(s) to {} packets at startup...",
-                             patcher.enabled_rule_count(),
-                             replay_data_->packets.size());
+                // Tier1 is the M2.1-era byte-level replay patcher. It tries
+                // to find captured int32 values (HP=100 etc) in raw replay
+                // bytes and substitute them. Most stats aren't byte-aligned
+                // so it normally finds 0 matches.  Logs lowered from warn
+                // to debug 2026-04-26 — they were drowning the console with
+                // expected "0 matches" reports for fields that simply aren't
+                // patchable via byte search.  Set spdlog level to debug
+                // (or use --verbose-bunches) to see them.
+                spdlog::debug("[GameServer][Tier1] applying {} property patch "
+                              "rule(s) to {} packets at startup...",
+                              patcher.enabled_rule_count(),
+                              replay_data_->packets.size());
                 auto reports = patcher.apply_all(replay_data_->packets);
-                std::string summary = ReplayPropertyPatcher::format_report(reports);
-                spdlog::warn("[GameServer][Tier1] patch report:\n{}", summary);
+                int n_applied = 0;
+                int n_aborted = 0;
                 for (const auto& rep : reports) {
-                    if (rep.applied_count == 0) {
-                        spdlog::warn("[GameServer][Tier1] \"{}\" found 0 "
-                                     "matches. The captured_* value for this "
-                                     "field is wrong for your replay — no "
-                                     "effect in-game.",
-                                     rep.name);
-                    }
+                    if (rep.applied_count > 0) ++n_applied;
+                    else ++n_aborted;
+                    spdlog::debug("[GameServer][Tier1] '{}' applied={}",
+                                  rep.name, rep.applied_count);
                 }
+                if (n_applied > 0) {
+                    spdlog::info("[GameServer][Tier1] {} rule(s) applied, "
+                                 "{} skipped (captured value unmatched or "
+                                 "too generic). Run with --verbose-bunches "
+                                 "for per-rule detail.", n_applied, n_aborted);
+                }
+                // Silent on n_applied==0 — that's the common case and not
+                // actionable noise.
             }
         }
         // (allow_variable_name propagation removed — patcher is gone.)
@@ -1398,6 +1418,20 @@ private:
     // post-NMT (state >= 4).
     std::atomic<bool> native_map_loaded_{false};
 
+    // Phase A.3 (2026-04-26) — server-minted NetGUID block allocator for
+    // native --native mode.  Per-client allocation is idempotent: the
+    // first allocate_player_block(client_key) call mints a fresh block
+    // from a monotonic counter (base ≥ 0x01000000, well clear of any
+    // captured GUIDs); subsequent calls return the same block.  Used by
+    // PcEmitter (and eventually PawnEmitter) to replace the captured PC
+    // NetGUID 10341530 with a server-minted GUID, so we can incrementally
+    // retire the captured fixtures.
+    //
+    // This is independent of LiveWorld's own allocator (which only exists
+    // when Session G is enabled) so the native sequencer can run without
+    // needing the full LiveWorld pipeline.
+    aoc::protocol::NetGuidAllocator native_pc_allocator_;
+
     // Bootstrap sender (embedded data from bootstrap_data.h)
     // One thread at a time; per-client guard is ClientState::bootstrap_active.
     std::thread bootstrap_thread_;
@@ -1680,12 +1714,163 @@ private:
         return false;
     }
 
+    bool send_ch0_reliable_payload(const std::string& client_key,
+                                     const sockaddr_in& addr,
+                                     const uint8_t* payload,
+                                     size_t payload_bytes) override {
+        // Build a ch=0 reliable data bunch with the given payload bytes.
+        // Mirrors the structure decoded from captured pkt#0 (opcode-3):
+        //   [1] bControl=0
+        //   [1] bIsReplicationPaused=0
+        //   [1] bReliable=1
+        //   [SIP] ChIdx = 0
+        //   [1] bHasPME=0  [1] bHasMBG=0  [1] bPartial=0
+        //   [10] ChSeq (ch=0 uses 10-bit ChSeq for NMT/control)
+        //   [1] ChName.bIsHardcoded=1  [SIP] EName=255
+        //   [13] BDB = payload_bytes * 8
+        //   [N] payload bits
+        //
+        // Per native-bootstrap-sequence.md §2.1.  This is the foundation
+        // call for any ch=0 control opcode we emit natively.
+        std::lock_guard<std::mutex> lk(client_mu_);
+        auto it = clients_.find(client_key);
+        if (it == clients_.end()) return false;
+        if (it->second.phase < ClientState::CONNECTED) return false;
+        ClientState& cs = it->second;
+
+        // Build the bunch into a temp buffer
+        uint8_t bunch_buf[512] = {};
+        size_t bb = 0;
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bControl=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bIsReplicationPaused=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // bReliable=1
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 0);    // ChIdx=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasPME=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasMBG=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bPartial=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                        cs.reliable_seq & 0x3FF, 10);            // ChSeq (10-bit ch=0)
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // ChName.bIsHardcoded=1
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 255);  // EName=255 (control name)
+        const uint32_t bdb_bits = static_cast<uint32_t>(payload_bytes * 8);
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, bdb_bits, 13); // BDB
+        // Payload bytes
+        for (size_t i = 0; i < payload_bytes; ++i) {
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, payload[i], 8);
+        }
+        const size_t bunch_bits = bb;
+
+        // Wrap in UDP packet (same shape as send_bunch_packet)
+        uint8_t buf[1024] = {};
+        size_t off = 0;
+        write_sc_packet_prefix(buf, sizeof(buf), off, cs, /*handshake=*/false);
+        ue5::write_bits(buf, sizeof(buf), off, 1,    1);   // bHasPacketInfo
+        ue5::write_bits(buf, sizeof(buf), off, 1023, 10);  // jitter=max
+        ue5::write_bits(buf, sizeof(buf), off, 0,    1);   // bHasServerFrameTime
+        // Splice bunch bits
+        for (size_t i = 0; i < bunch_bits; ++i) {
+            int bit = (bunch_buf[i >> 3] >> (i & 7)) & 1;
+            ue5::write_bits(buf, sizeof(buf), off, bit, 1);
+        }
+        size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
+        const uint16_t sent_seq = cs.out_seq;
+        cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
+        const uint16_t sent_chseq = cs.reliable_seq & 0x3FF;
+        cs.reliable_seq++;
+
+        int sent = send_to_client_impl(buf, pkt_len, addr);
+        if (sent > 0) {
+            spdlog::info("[GameServer] >> ch=0 reliable bunch ({} payload B) "
+                         "seq={} chSeq={} ({}B total)",
+                         payload_bytes, sent_seq, sent_chseq, pkt_len);
+            return true;
+        }
+        spdlog::warn("[GameServer] send_ch0_reliable_payload: send failed");
+        return false;
+    }
+
     bool has_client_finished_map_load() const override {
         // M1.4.d — Set by the data-receive path when the client sends its
         // first non-empty bunch post-NMT.  Before this flag goes true,
         // the sequencer should NOT emit any world-data bunches (they'll
         // be dropped while the client's game thread is still in LoadMap).
         return native_map_loaded_.load();
+    }
+
+    aoc::protocol::PlayerNetGuidBlock allocate_player_block(
+        const std::string& client_key) override {
+        // Idempotent — return existing block if already allocated for
+        // this client.  This lets PcEmitter, PawnEmitter, and any future
+        // emitter share the same block without coordinating allocation
+        // order amongst themselves.
+        auto existing = native_pc_allocator_.get_block(client_key);
+        if (existing.is_valid()) return existing;
+        return native_pc_allocator_.allocate_player_block(client_key);
+    }
+
+    bool send_captured_packet(const std::string& client_key,
+                                const sockaddr_in& addr,
+                                uint32_t replay_idx) override {
+        // Road A — Phase B.0.  Mirror the per-packet emission half of
+        // replay_loop, but driven externally by WorldBootstrapEmitter
+        // instead of the legacy replay thread.  This lets the native
+        // sequencer act as the SOLE driver of the bootstrap stream
+        // (no parallel replay thread), while still emitting captured
+        // bytes for the ~75 packets we haven't yet promoted to native.
+        if (!replay_data_ || replay_data_->packets.empty()) {
+            spdlog::warn("[GameServer] send_captured_packet: no replay loaded");
+            return false;
+        }
+        if (replay_idx >= replay_data_->packets.size()) {
+            spdlog::warn("[GameServer] send_captured_packet: idx {} out of "
+                          "range (have {} packets)",
+                          replay_idx, replay_data_->packets.size());
+            return false;
+        }
+        const ReplayPacketInfo& rpkt = replay_data_->packets[replay_idx];
+        if (rpkt.bunch_bits == 0) {
+            // Sentinel/keepalive — caller should have classified this
+            // as Skip in the plan.  Quiet info, not warn.
+            spdlog::info("[GameServer] send_captured_packet: idx {} is "
+                          "sentinel (bunch_bits=0) — skipping",
+                          replay_idx);
+            return true;  // not an error, just nothing to send
+        }
+
+        std::lock_guard<std::mutex> lk(client_mu_);
+        auto it = clients_.find(client_key);
+        if (it == clients_.end()) return false;
+        if (it->second.phase < ClientState::CONNECTED) return false;
+        ClientState& cs = it->second;
+
+        // Reuse the existing builder.  Same code path the replay thread
+        // uses, so we get identical wire output.
+        uint8_t buf[2048] = {};
+        size_t pkt_len = build_replay_packet(buf, sizeof(buf), rpkt, cs);
+        if (pkt_len == 0) {
+            spdlog::warn("[GameServer] send_captured_packet: build returned "
+                          "0 for idx {} (size {} bunch_bits {})",
+                          replay_idx, rpkt.raw.size(), rpkt.bunch_bits);
+            return false;
+        }
+
+        const uint16_t sent_seq = cs.out_seq;
+        cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
+        int sent = send_to_client_impl(buf, pkt_len, addr);
+        if (sent > 0) {
+            spdlog::info("[GameServer] >> [SPLICE] replay_idx={} ({}B, "
+                          "{} bunch bits) seq={}",
+                          replay_idx, pkt_len, rpkt.bunch_bits, sent_seq);
+            return true;
+        }
+        spdlog::warn("[GameServer] send_captured_packet: send_to_client failed "
+                      "for idx {}", replay_idx);
+        return false;
+    }
+
+    uint32_t loaded_replay_packet_count() const override {
+        if (!replay_data_) return 0;
+        return static_cast<uint32_t>(replay_data_->packets.size());
     }
 
     /// Send UDP packet to a client (original implementation, renamed so
@@ -2083,7 +2268,7 @@ private:
             while (bunch_off + 20 <= eff_bits) {
                 uint64_t sm_ts = 0;
                 size_t prev_off = bunch_off;
-                int nmt = try_parse_bunch(data, len, eff_bits, bunch_off, &sm_ts, &key);
+                int nmt = try_parse_bunch(data, len, eff_bits, bunch_off, &sm_ts, &key, &client_addr);
                 // sm_ts is written when a ServerMove is detected, regardless of
                 // whether try_parse_bunch returns an NMT type.  Push FIRST so
                 // we don't lose the timestamp when the bunch is a non-control
@@ -2201,9 +2386,12 @@ private:
                                 // promoted from splice → native as its
                                 // emitter class becomes byte-identical
                                 // to captured fixture.
-                                const bool hybrid =
+                                const bool replay_loaded =
                                     replay_data_ && !replay_data_->packets.empty();
-                                if (hybrid) {
+                                const bool start_replay_thread =
+                                    replay_loaded && !config_.disable_replay_loop;
+
+                                if (start_replay_thread) {
                                     spdlog::warn("[GameServer] ★ HYBRID MODE: "
                                                  "replay_loop will emit first "
                                                  "{} packets (native NMT + "
@@ -2228,8 +2416,46 @@ private:
                                     }
                                     spdlog::warn("[GameServer] replay_loop "
                                                  "thread launched (hybrid mode)");
+
+                                    // ── HYBRID+NATIVE (2026-04-26): in --native
+                                    // mode, ALWAYS start the NativeConnectSequencer
+                                    // alongside replay.  Replay handles the world
+                                    // bootstrap (which our BootstrapEmitter doesn't
+                                    // yet implement); native sequencer handles
+                                    // ongoing emission (opcode-3, PC, props, pawn).
+                                    spdlog::warn("[GameServer] HYBRID+NATIVE: "
+                                                 "replay + native sequencer running "
+                                                 "in parallel (replay handles world "
+                                                 "bootstrap, native handles ongoing "
+                                                 "emission).");
+                                    native_sequencer_ = std::make_unique<aoc::net::NativeConnectSequencer>(
+                                        *this, key, client_addr);
+                                    native_sequencer_->start();
+                                } else if (replay_loaded && config_.disable_replay_loop) {
+                                    // ── PURE-NATIVE (Road A — Phase B.0) ──
+                                    // Replay file IS loaded (so the
+                                    // WorldBootstrapEmitter's Splice rows
+                                    // can pull captured bytes via
+                                    // send_captured_packet), but NO replay
+                                    // thread is launched.  The native
+                                    // sequencer is the sole driver of the
+                                    // post-NMT bootstrap stream.
+                                    spdlog::warn("[GameServer] ★ PURE-NATIVE MODE: "
+                                                 "replay loaded ({} packets) but "
+                                                 "thread DISABLED — sequencer drives "
+                                                 "bootstrap via WorldBootstrapEmitter",
+                                                 replay_data_->packets.size());
+                                    native_sequencer_ = std::make_unique<aoc::net::NativeConnectSequencer>(
+                                        *this, key, client_addr);
+                                    native_sequencer_->start();
                                 } else {
-                                    // Start the authoritative-server flow.
+                                    // No replay loaded at all — pure native,
+                                    // sequencer plan can only run NativeXxx
+                                    // rows; Splice rows will log a warning
+                                    // and skip.
+                                    spdlog::warn("[GameServer] NATIVE MODE: no "
+                                                 "replay loaded — Splice rows in "
+                                                 "the bootstrap plan will be skipped");
                                     native_sequencer_ = std::make_unique<aoc::net::NativeConnectSequencer>(
                                         *this, key, client_addr);
                                     native_sequencer_->start();
@@ -2462,7 +2688,8 @@ private:
     int try_parse_bunch(const uint8_t* data, size_t data_len,
                         size_t eff_bits, size_t& b,
                         uint64_t* sm_ts_out = nullptr,
-                        const std::string* client_key = nullptr) {
+                        const std::string* client_key = nullptr,
+                        const sockaddr_in* client_addr_for_reactive = nullptr) {
         int nmt_result = -1;
         if (b + 20 > eff_bits) return -1; // too few bits
 
@@ -2655,6 +2882,171 @@ private:
                                 }
                             }
                             i = (j > i) ? j : (i + 1);
+                        }
+                    }
+
+                    // ── Road A — Phase B.0d (2026-04-26) ────────────────
+                    // Recognizer: ServerNotifyLoadedWorld (post-streaming
+                    // RPC the client sends once World Partition Streaming
+                    // hits 100%).  Without our reply (ClientRestart) the
+                    // client gets stuck on the loading screen.
+                    //
+                    // RPC name "ServerNotifyLoadedWorld" was confirmed via
+                    // IDA decomp (sub_140FA5160 — UFunction registrar) and
+                    // its parameter "WorldPackageName" (FName).  The client
+                    // emits this as a reliable bunch on the PC channel
+                    // (ch=3) carrying the FName as an FString payload that
+                    // expands to "/Game/Levels/Verra_World_Master/Verra_World_Master".
+                    //
+                    // The FString is bit-packed inside the bunch and lands
+                    // at a non-byte-aligned offset, so when payload_bytes[]
+                    // reads it byte-aligned each character ends up shifted
+                    // 1 bit.  Hence the signature `5E 8E C2 DA CA` =
+                    // ('/'<<1) ('G'<<1) ('a'<<1) ('m'<<1) ('e'<<1).
+                    //
+                    // We also try the unshifted signature in case alignment
+                    // happens to land byte-aligned for any reason.
+                    //
+                    // This is OBSERVABILITY ONLY — it logs a loud line to
+                    // help us correlate timing with the WorldBootstrap
+                    // emission.  Reactive emission of ClientRestart will be
+                    // wired in a follow-up commit once we know exactly when
+                    // the client expects it.
+                    if (b_reliable && payload_bytes.size() >= 32) {
+                        // Signatures for "/Game/Levels" — first 12 bytes is
+                        // enough to be unique.  Each entry is 12 bytes.
+                        static constexpr uint8_t kSigShifted[12] = {
+                            0x5E, 0x8E, 0xC2, 0xDA, 0xCA,  // "/Game"
+                            0x5E, 0x98, 0xCA, 0xEC, 0xCA, 0xD8, 0xE6  // "/Levels"
+                        };
+                        static constexpr uint8_t kSigDirect[12] = {
+                            '/', 'G', 'a', 'm', 'e',
+                            '/', 'L', 'e', 'v', 'e', 'l', 's'
+                        };
+                        bool found_shifted = false, found_direct = false;
+                        size_t found_offset = 0;
+                        if (payload_bytes.size() >= sizeof(kSigShifted)) {
+                            for (size_t s = 0; s + sizeof(kSigShifted) <= payload_bytes.size(); ++s) {
+                                if (std::memcmp(&payload_bytes[s], kSigShifted, sizeof(kSigShifted)) == 0) {
+                                    found_shifted = true; found_offset = s; break;
+                                }
+                                if (std::memcmp(&payload_bytes[s], kSigDirect, sizeof(kSigDirect)) == 0) {
+                                    found_direct = true; found_offset = s; break;
+                                }
+                            }
+                        }
+                        if (found_shifted || found_direct) {
+                            // Hex-dump first 16 bytes (function ID + FName
+                            // header — useful for further RE).
+                            std::string hdr_hex;
+                            for (size_t k = 0; k < std::min<size_t>(16, payload_bytes.size()); ++k) {
+                                if (k) hdr_hex += ' ';
+                                hdr_hex += spdlog::fmt_lib::format("{:02x}", payload_bytes[k]);
+                            }
+                            spdlog::warn("[NMT-DETECT] ★ ServerNotifyLoadedWorld DETECTED "
+                                          "(ch={} chSeq={} bytes={} bits={} sig={} offset={}) "
+                                          "hdr=[{}]",
+                                          ch_idx, ch_seq, payload_bytes.size(), bunch_data_bits,
+                                          found_shifted ? "shifted" : "direct", found_offset,
+                                          hdr_hex);
+
+                            // ── Road A — Phase B.0e (2026-04-26) ─────────────
+                            // REACTIVE EMIT: re-send the captured ClientRestart
+                            // bunch.  Per replay scan, captured pkt #134 is a
+                            // ch=3 reliable bunch with bdb=128 bits = 16 bytes
+                            // = exactly one FIntrepidNetGUID — the canonical
+                            // shape of `ClientRestart(NewPawn)` per IDA decomp
+                            // of sub_144412AB0 (APlayerController::ClientRestart
+                            // calls ProcessRemoteFunction with one Pawn param).
+                            //
+                            // Idempotent: only fire once per client (suppress
+                            // re-emission if the client retries the request
+                            // before the previous emit has had time to apply).
+                            // Tracked per-client-key in a static set under a
+                            // mutex.
+                            //
+                            // Empirically the client sends ServerNotifyLoadedWorld
+                            // ~4s into our bootstrap.  WorldBootstrap also emits
+                            // pkt #134 around t=3.4s as part of its plan walk —
+                            // but that's BEFORE the client requests it.  Re-
+                            // emitting on detection ensures the client gets it
+                            // exactly when expected.
+                            static constexpr uint32_t kClientRestartReplayIdx = 134;
+                            static std::mutex client_restart_mu;
+                            static std::unordered_set<std::string> client_restart_sent;
+                            if (client_key && client_addr_for_reactive) {
+                                bool already_sent = false;
+                                {
+                                    std::lock_guard<std::mutex> lk(client_restart_mu);
+                                    already_sent = !client_restart_sent.insert(*client_key).second;
+                                }
+                                if (!already_sent) {
+                                    spdlog::warn("[NMT-DETECT] → emitting captured "
+                                                  "ClientRestart (replay_idx={}) reactively",
+                                                  kClientRestartReplayIdx);
+                                    bool ok = send_captured_packet(*client_key,
+                                                                    *client_addr_for_reactive,
+                                                                    kClientRestartReplayIdx);
+                                    spdlog::warn("[NMT-DETECT] → ClientRestart emit "
+                                                  "result: {}",
+                                                  ok ? "SUCCESS" : "FAILED (no replay loaded?)");
+                                } else {
+                                    spdlog::info("[NMT-DETECT] (already emitted "
+                                                  "ClientRestart for {}, suppressing "
+                                                  "duplicate)", *client_key);
+                                }
+                            } else {
+                                spdlog::warn("[NMT-DETECT] → cannot emit "
+                                              "ClientRestart: missing client_key or "
+                                              "client_addr context");
+                            }
+                        }
+                    }
+
+                    // ── Road A — Phase B.0d ─────────────────────────────
+                    // Recognizer: ServerUpdateLevelVisibility — client
+                    // tells us about each streaming chunk it has loaded.
+                    // Sent as unreliable partial bunches on synthetic-channel
+                    // numbers (ch=5377+) carrying a plain-ASCII "_Generated_/..."
+                    // path payload.  Without our ACK
+                    // (ClientAckUpdateLevelVisibility) the client may NOT
+                    // consider the chunk "ready" from the server's view,
+                    // which can block ClientRestart fully taking effect.
+                    //
+                    // Detect via plain-ASCII signature of "_Generated_/"
+                    // (12 bytes) anywhere in the payload.
+                    if (payload_bytes.size() >= 32) {
+                        static constexpr uint8_t kSigGenerated[12] = {
+                            '_', 'G', 'e', 'n', 'e', 'r', 'a', 't', 'e', 'd', '_', '/'
+                        };
+                        bool found = false;
+                        size_t off_gen = 0;
+                        for (size_t s = 0; s + sizeof(kSigGenerated) <= payload_bytes.size(); ++s) {
+                            if (std::memcmp(&payload_bytes[s], kSigGenerated, sizeof(kSigGenerated)) == 0) {
+                                found = true; off_gen = s; break;
+                            }
+                        }
+                        if (found) {
+                            // Throttle these: they're very chatty (one per
+                            // streaming chunk × multiple loads).  Only log
+                            // first 5 then count silently.
+                            static std::atomic<int> sulv_count{0};
+                            int n = ++sulv_count;
+                            if (n <= 5) {
+                                std::string tail;
+                                size_t tend = std::min(off_gen + 64, payload_bytes.size());
+                                for (size_t k = off_gen; k < tend; ++k) {
+                                    char c = static_cast<char>(payload_bytes[k]);
+                                    tail += (c >= 32 && c < 127) ? c : '.';
+                                }
+                                spdlog::warn("[NMT-DETECT] ServerUpdateLevelVisibility #{}: "
+                                              "ch={} reliable={} bytes={} payload@{}: '{}'",
+                                              n, ch_idx, b_reliable, payload_bytes.size(),
+                                              off_gen, tail);
+                            } else if ((n % 50) == 0) {
+                                spdlog::info("[NMT-DETECT] ServerUpdateLevelVisibility "
+                                              "received: {} total so far", n);
+                            }
                         }
                     }
 
@@ -4159,148 +4551,11 @@ private:
                          profile.name);
         }
 
-        // ── M2.1 — NUL-padded CharacterName patch (REVERTED) ────────
-        //
-        // M2.2 variable-length attempt was BROKEN: my bunch-header
-        // decoder used stock UE5 SIP (high-bit continuation) but AoC
-        // uses INVERTED SIP (low-bit continuation per ue5_primitives.h).
-        // Every field offset I derived was wrong:
-        //   - thought ch=3, actually ch=8833
-        //   - thought bdb at bit 166, actually at bit 177
-        //   - thought bunch was non-partial, actually partial init
-        //   - 'RandomChar' at bit 1656 is in a LATER bunch entirely
-        // Writing "new bdb" at bit 166-178 corrupted the ChIndex SIP
-        // bytes, causing client parse drift → connection timeout.
-        //
-        // TODO M2.3: re-decode pkt#104 with correct AoC-SIP and
-        // identify which bunch actually contains 'RandomChar' + its
-        // true bdb offset.  Then build a correct variable-length patch.
-        //
-        // Until then: fall back to NUL-padded same-length patch
-        // (1-10 char names, renders as name + trailing NULs which
-        // UE5 string display truncates at first NUL).
-        //
-        // Wire format of the captured Name-update (from decode_pkt104_exact.py):
-        //
-        //   Bunch header (28 bits, starts at bit 152):
-        //     [1 bit]  bControl=0
-        //     [1 bit]  bIsReplicationPaused=1
-        //     [1 bit]  bReliable=0
-        //     [8 bit]  ChIndex SIP = 3  (for ch=3, 0x03)
-        //     [1 bit]  bHasPackageMapExports=0
-        //     [1 bit]  bHasMustBeMappedGUIDs=1
-        //     [1 bit]  bPartial=0
-        //     [14 bit] BunchDataBits = 4593  ← SerializeInt(16384), fixed 14 bits
-        //
-        //   Bunch 0 payload (4593 bits / ~574 bytes, starts at bit 180):
-        //     [bits 180..1615]  content-block routing preamble (1436 bits / 180 bytes)
-        //     [bits 1616..1623] cmd_index = 0x6A (1 byte, SIP for value 106)
-        //     [bits 1624..1655] FString.Length = 11 (4 bytes LE u32)
-        //     [bits 1648..1735] FString.ASCII = "RandomChar" (10 bytes)
-        //     [bits 1736..1743] FString.NUL = 0x00 (1 byte)
-        //     [bits 1744..4772] post-Name payload (more properties, ~378 bytes)
-        //
-        // Rewrite algorithm:
-        //   1. Scan pkt.raw for the 16-byte needle
-        //      [6A 0B 00 00 00] R a n d o m C h a r [00]
-        //   2. delta_bytes = new_name.size() - 10
-        //   3. Build new raw:
-        //        [0..i+1)               copy (prefix + bunch header + preamble + cmd=0x6A)
-        //        write 4-byte length LE = new_name.size() + 1
-        //        write new_name.size() ASCII bytes
-        //        write 1 NUL byte
-        //        [i+16..end)            copy (post-Name payload + bunch 1 + termination)
-        //   4. Update bdb at bit 166 width 14: new_bdb = 4593 + delta_bytes * 8
-        //   5. Update pkt.bunch_bits += delta_bytes * 8
-        //
-        // Per-bunch bdb location depends on ChIndex SIP width (8 bits for
-        // ch=3 → bdb at bit 166).  Since "RandomChar" only appears in
-        // pkt#104 (ch=3 confirmed by decode_pkt104_bunch_header.py), the
-        // hardcoded bit-166 offset is correct for all current patches.
-        //
-        // RISK MITIGATION: if the client has any checksum over the bunch
-        // payload, this rewrite will fail validation.  IDA RE agent is
-        // running in parallel to verify no such validation exists.
-        // If it does, we'll need to either (a) emit a fresh routed bunch
-        // natively or (b) compute + patch the checksum.
-        if (config_.disable_m21) {
-            spdlog::warn("[Replay] M2.1 RandomChar byte patcher DISABLED via "
-                         "--disable-m21 (V3 emit will run in isolation if enabled).");
-        }
-        if (!config_.disable_m21 && !config_.custom_name.empty() && replay_data_) {
-            // ── Accepted range ──
-            // Lower bound (4):  arbitrary safety — AoC's in-game minimum.
-            // Upper bound (16): user-requested maximum name length.
-            //
-            // Current implementation uses a FIXED-SIZE 15-byte FString slot
-            // (4 bytes StrLen=11 + 11 bytes "RandomChar\0") and only patches
-            // the 10 writable characters, NUL-padding shorter names.  The
-            // client displays the FString up to its first NUL, so names
-            // 4-10 chars render exactly as typed.
-            //
-            // For names 11-16 chars we cannot write into the 10-byte window
-            // without overrunning the NUL terminator at byte 216.  True
-            // variable-length support requires:
-            //   1. Identify the exact bunch containing "RandomChar" (we
-            //      parse 24 bunches via sc_bunch_parser.h but none of their
-            //      payload ranges covers bit 1656).
-            //   2. Expand/shrink the 15-byte slot, shift subsequent bits.
-            //   3. Recompute that bunch's BunchDataBits header field.
-            // Blocked on RE of UChannel::ReceivedRawBunch (IDA Pass 3).
-            //
-            // For now: names > 10 chars are TRUNCATED to first 10 chars
-            // (with a loud warning).  Names < 4 chars are rejected.
-            std::string target = config_.custom_name;
-            const size_t HARD_MIN = 4;
-            const size_t HARD_MAX = 16;
-            const size_t SLOT_LEN = 10;         // writable chars (slot minus NUL)
+        // (M2.1 RandomChar byte patcher removed 2026-04-26 — was a dead-end
+        //  hack tied to captured bytes; doesn't survive a real authoritative
+        //  pipeline.  custom_name is still consumed by PcEmitter / native
+        //  sequencer for the actual property emit path.)
 
-            if (target.size() < HARD_MIN) {
-                spdlog::warn("[Replay] custom_name=\"{}\" ({} chars) too short. "
-                             "Minimum {} — skipping patch, HUD shows 'RandomChar'.",
-                             target, target.size(), HARD_MIN);
-                target.clear();   // disable patching
-            } else if (target.size() > HARD_MAX) {
-                spdlog::warn("[Replay] custom_name=\"{}\" ({} chars) too long. "
-                             "Maximum {} — skipping patch.",
-                             target, target.size(), HARD_MAX);
-                target.clear();
-            } else if (target.size() > SLOT_LEN) {
-                spdlog::warn("[Replay] custom_name=\"{}\" ({} chars) exceeds "
-                             "current 10-char FIXED-SLOT limit. Variable-length "
-                             "patch (11-16 chars) requires UChannel::ReceivedRawBunch "
-                             "RE (in progress — IDA Pass 3).  TRUNCATING to "
-                             "first {} chars for now.",
-                             target, target.size(), SLOT_LEN);
-                target.resize(SLOT_LEN);
-            }
-
-            if (!target.empty()) {
-                const uint8_t needle[16] = {
-                    0x6A, 0x0B, 0x00, 0x00, 0x00,
-                    'R','a','n','d','o','m','C','h','a','r', 0x00
-                };
-                uint8_t slot[SLOT_LEN];
-                std::memset(slot, 0, SLOT_LEN);
-                std::memcpy(slot, target.data(), target.size());
-                size_t patched_packets = 0;
-                for (auto& pkt : replay_data_->packets) {
-                    if (pkt.raw.size() < 16) continue;
-                    for (size_t i = 0; i + 16 <= pkt.raw.size(); ++i) {
-                        if (std::memcmp(pkt.raw.data() + i, needle, 16) == 0) {
-                            std::memcpy(pkt.raw.data() + i + 5, slot, SLOT_LEN);
-                            ++patched_packets;
-                        }
-                    }
-                }
-                if (patched_packets > 0) {
-                    spdlog::warn("[Replay] ★ Patched 'RandomChar' → \"{}\" "
-                                 "(NUL-padded to {} bytes) in {} replay "
-                                 "packet(s).  Variable-length 11-16 TBD.",
-                                 target, SLOT_LEN, patched_packets);
-                }
-            }
-        }
         // Tier-1 property patcher moved to GameServer constructor (runs ONCE
         // at startup on replay_data_ regardless of source — embedded or file).
         // See ctor around line ~960 for the single-instance patcher block.

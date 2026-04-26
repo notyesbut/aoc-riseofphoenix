@@ -174,18 +174,49 @@ bool PcEmitter::emit_open(const sockaddr_in& client_addr) {
     exports[2].has_checksum = true;
     exports[2].outer->has_checksum = true;
 
-    // Runtime — placeholder NetGUIDs (our server generates fresh ones)
+    // ── Runtime — server-minted PC NetGUID + static archetype/level GUIDs ──
+    //
+    // Phase A.3 (2026-04-26): the PC actor NetGUID is now MINTED by
+    // GameServer's per-client NetGuidAllocator (block base ≥ 0x01000000)
+    // instead of using the captured value 10341530.  This proves the
+    // pipeline can carry server-authoritative GUIDs end-to-end.  The
+    // ServerId stays at 60 (matches captured convention) and the
+    // Randomizer is derived deterministically from the ObjectId via the
+    // same hash NetGUIDAllocator uses (so repeated lookups for the same
+    // PC return the same Randomizer — required so the client's NetGUID
+    // cache doesn't drift mid-session).
+    //
+    // Archetype + Level NetGUIDs stay hardcoded — those are
+    // content-addressable (Default__AoCPlayerControllerBP_C and
+    // PersistentLevel/Verra_World_Master) and the SAME on every
+    // client/server because they're derived from class+package hashes.
+    auto block = host_.allocate_player_block(client_key_);
+    auto rnd_for = [](uint64_t obj) -> uint32_t {
+        // Same hash as bootstrap::NetGUIDAllocator::alloc_rnd_for —
+        // deterministic per ObjectId so repeated encodes match.
+        uint64_t h = obj * 0x9E3779B97F4A7C15ULL;
+        h ^= (h >> 33);
+        h *= 0xFF51AFD7ED558CCDULL;
+        h ^= (h >> 33);
+        return static_cast<uint32_t>(h);
+    };
+    const uint64_t pc_obj = block.player_controller;
+
     emit::ActorRuntime rt;
     rt.type                 = schema::ActorType::PlayerController;
-    rt.actor_netguid        = 10341530ULL;        // placeholder PC NetGUID
+    rt.actor_netguid        = pc_obj;             // MINTED — was 10341530
     rt.actor_server_id      = 60;
-    rt.actor_randomizer     = 1860730596U;
+    rt.actor_randomizer     = rnd_for(pc_obj);    // deterministic per ObjId
     rt.archetype_netguid    = 3503756484819958835ULL;
     rt.archetype_server_id  = 0;
     rt.archetype_randomizer = 0;
     rt.level_netguid        = 16442478405498561049ULL;
     rt.level_server_id      = 0;
     rt.level_randomizer     = 0;
+
+    spdlog::warn("[PcEmitter] PC NetGUID minted: ObjectId={} ServerId={} "
+                  "Randomizer={} (block base=0x{:x}, was captured=10341530)",
+                  pc_obj, rt.actor_server_id, rt.actor_randomizer, block.base);
 
     // Transform — same captured values (test_pc_spawn_diff uses these exactly)
     rt.serialize_location   = true;

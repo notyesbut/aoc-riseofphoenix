@@ -24,6 +24,7 @@
 #include "net/bootstrap_emitter.h"
 #include "net/pc_emitter.h"
 #include "net/pawn_emitter.h"
+#include "net/world_bootstrap_emitter.h"
 
 #include <spdlog/spdlog.h>
 
@@ -195,79 +196,60 @@ void NativeConnectSequencer::do_await_nmt_join() {
 }
 
 void NativeConnectSequencer::do_send_bootstrap() {
-    // M1.1: invoke BootstrapEmitter (see docs/native-bootstrap-sequence.md
-    // for the RE'd sequence this emits).
-    spdlog::info("[NativeConnectSequencer] SendBootstrap — invoking BootstrapEmitter");
+    // Road A — Phase B.0 (2026-04-26).  Single integrated bootstrap pass:
+    // WorldBootstrapEmitter walks kDefaultBootstrapPlan, emitting each of
+    // the first ~150 packets either natively (BootstrapEmitter / PcEmitter
+    // / PawnEmitter) or by splicing the captured bytes from ReplayData.
+    //
+    // This replaces the previous M1.1-M1.4.b chain
+    //   SendBootstrap → SendPcOpen → SendPcProps → SendPawn
+    // with a single state.  The chain emitted only 4 essential bunches
+    // (opcode-3 + PC + Name + Pawn) and relied on an external replay
+    // thread for the world-bootstrap heavy-lifting.  After Road A this
+    // is the ONE path that drives the full bootstrap stream — no
+    // parallel replay loop required.
+    //
+    // The plan rows individually identify which packets are Native vs
+    // Splice, so the path to retiring the captured bytes entirely is
+    // mechanical: build a new native emitter, flip a row, repeat.
+    spdlog::info("[NativeConnectSequencer] SendBootstrap — invoking "
+                  "WorldBootstrapEmitter (plan size {})",
+                  kDefaultBootstrapPlan.size());
 
     const sockaddr_in* addr =
         reinterpret_cast<const sockaddr_in*>(client_addr_storage_);
-    BootstrapEmitter em(host_, client_key_);
-    bool ok = em.emit_all(*addr);
+    WorldBootstrapEmitter em(host_, client_key_);
+    bool ok = em.emit_all(*addr, kDefaultBootstrapPlan);
     if (!ok) {
-        spdlog::error("[NativeConnectSequencer] BootstrapEmitter failed");
-        state_.store(NativeConnectState::Error);
-        return;
+        spdlog::error("[NativeConnectSequencer] WorldBootstrapEmitter failed "
+                       "hard — Maintain will still try to keep the connection "
+                       "alive");
+        // Don't enter Error — let Maintain run so we can observe client
+        // behaviour and keepalives prevent a 20s timeout disconnect.
     }
-    spdlog::info("[NativeConnectSequencer] SendBootstrap → SendPcOpen");
-    state_.store(NativeConnectState::SendPcOpen);
+    spdlog::info("[NativeConnectSequencer] SendBootstrap → Maintain");
+    state_.store(NativeConnectState::Maintain);
 }
 
 void NativeConnectSequencer::do_send_pc_open() {
-    // M1.2: emit the PlayerController ActorOpen bunch using ActorBuilder.
-    // ActorBuilder is already byte-identical to captured pkt#22 per
-    // test_pc_spawn_diff (4859/4864 bits).
-    spdlog::info("[NativeConnectSequencer] SendPcOpen — invoking PcEmitter");
-
-    const sockaddr_in* addr =
-        reinterpret_cast<const sockaddr_in*>(client_addr_storage_);
-    PcEmitter pc(host_, client_key_);
-    bool ok = pc.emit_open(*addr);
-    if (!ok) {
-        spdlog::error("[NativeConnectSequencer] PcEmitter::emit_open failed");
-        state_.store(NativeConnectState::Error);
-        return;
-    }
-    spdlog::info("[NativeConnectSequencer] SendPcOpen → SendPcProps");
-    state_.store(NativeConnectState::SendPcProps);
+    // Road A: this state is now an unreachable vestige — WorldBootstrapEmitter
+    // handles PC ActorOpen as part of its plan walk.  Kept in the enum/switch
+    // so older code paths that drove the state machine externally don't
+    // crash; if we somehow land here, treat it as a no-op transition.
+    spdlog::warn("[NativeConnectSequencer] do_send_pc_open() called — "
+                  "Road A made this unreachable; advancing to Maintain");
+    state_.store(NativeConnectState::Maintain);
 }
 
 void NativeConnectSequencer::do_send_pc_props() {
-    // M1.2: emit initial property values (Name, etc.) via
-    // PropertyUpdateBunchBuilder.
-    spdlog::info("[NativeConnectSequencer] SendPcProps — invoking PcEmitter");
-
-    const sockaddr_in* addr =
-        reinterpret_cast<const sockaddr_in*>(client_addr_storage_);
-    PcEmitter pc(host_, client_key_);
-    bool ok = pc.emit_properties(*addr);
-    if (!ok) {
-        spdlog::error("[NativeConnectSequencer] PcEmitter::emit_properties failed");
-        // Non-fatal: the PC is open, just custom name failed — keep going
-    }
-    spdlog::info("[NativeConnectSequencer] SendPcProps → SendPawn");
-    state_.store(NativeConnectState::SendPawn);
+    spdlog::warn("[NativeConnectSequencer] do_send_pc_props() called — "
+                  "Road A made this unreachable; advancing to Maintain");
+    state_.store(NativeConnectState::Maintain);
 }
 
 void NativeConnectSequencer::do_send_pawn() {
-    // M1.4.b — emit the captured Pawn ActorOpen (pkt#78 three-bunch stream)
-    // so the client can resolve the Pawn NetGUID referenced in the PC's
-    // spliced 848-bit RepLayout tail (see pc_emitter.cpp kCapturedPcTailBits).
-    // Without this, the PC is created but has no body → floating-rocks
-    // scene (observed in emu-20260424-131518.log).
-    spdlog::info("[NativeConnectSequencer] SendPawn — invoking PawnEmitter");
-
-    const sockaddr_in* addr =
-        reinterpret_cast<const sockaddr_in*>(client_addr_storage_);
-    PawnEmitter pe(host_, client_key_);
-    bool ok = pe.emit_captured(*addr);
-    if (!ok) {
-        spdlog::error("[PawnEmitter] emit_captured failed — continuing "
-                      "to Maintain anyway (client may still render PC "
-                      "without a pawn mesh)");
-        // Non-fatal: advance to Maintain so the connection stays alive
-        // and we can still observe client behaviour in the log.
-    }
-    spdlog::info("[NativeConnectSequencer] SendPawn → Maintain");
+    spdlog::warn("[NativeConnectSequencer] do_send_pawn() called — "
+                  "Road A made this unreachable; advancing to Maintain");
     state_.store(NativeConnectState::Maintain);
 }
 

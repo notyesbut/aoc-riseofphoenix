@@ -126,6 +126,11 @@ set(SERVER_SOURCES
     src/net/pc_emitter.cpp
     # Path B — M1.4.b Pawn emitter (spliced captured pkt#78 bunch stream)
     src/net/pawn_emitter.cpp
+    # Road A — Phase B.0: WorldBootstrapEmitter — single driver of the
+    # post-NMT bootstrap stream (replaces the hybrid+native parallel-thread
+    # model with one ordered plan that mixes splice + native emission).
+    src/net/world_bootstrap_emitter.cpp
+    src/net/world_bootstrap_plan.cpp
     # Path B — M2 bootstrap framework (CharacterProfile + NetGUIDAllocator + PacketRecipe)
     src/net/bootstrap/packet_recipe.cpp
     # Path B — M2 live server state (WorldState + CharacterState + 10Hz tick)

@@ -71,6 +71,8 @@
 // ============================================================================
 #pragma once
 
+#include "protocol/net_guid_allocator.h"
+
 #include <atomic>
 #include <cstdint>
 #include <memory>
@@ -140,6 +142,65 @@ public:
     /// the player spawns underwater at world-origin with an empty
     /// world — exactly the symptom observed in emu-20260424-130202.log.
     virtual bool has_client_finished_map_load() const = 0;
+
+    /// Phase A.1 (2026-04-26) — emit a control-channel (ch=0) reliable
+    /// data bunch carrying an arbitrary byte payload (e.g. AoC opcode
+    /// bytes).  The host:
+    ///   - Builds the bunch header with the client's current
+    ///     `reliable_seq` (ch=0, 10-bit ChSeq, hardcoded ChName=255)
+    ///   - Appends the caller's payload bytes
+    ///   - Wraps in a UDP packet (prefix + PacketInfo + termination)
+    ///   - Sends it and advances `reliable_seq`
+    /// Returns true on successful send.  This is the foundation for
+    /// every ch=0 control opcode we native-emit (opcode-3, etc.).
+    virtual bool send_ch0_reliable_payload(const std::string& client_key,
+                                            const sockaddr_in& addr,
+                                            const uint8_t* payload,
+                                            size_t payload_bytes) = 0;
+
+    /// Phase A.3 (2026-04-26) — allocate (or fetch existing) per-client
+    /// NetGUID block.  Returns a struct containing minted PC, Pawn, and
+    /// PlayerState NetGUIDs (and room for components).  Idempotent: the
+    /// first call for a given client_key allocates a fresh block from a
+    /// monotonic counter; subsequent calls return the same block.
+    ///
+    /// Used by PcEmitter/PawnEmitter to replace the captured PC NetGUID
+    /// (10341530) with a server-minted GUID in the safe range
+    /// (≥0x01000000), so we can incrementally retire the captured
+    /// fixtures.  Block layout:
+    ///   .player_controller   = base + 0    (PC actor)
+    ///   .pawn                = base + 1
+    ///   .player_state        = base + 2
+    ///   .ability_component   = base + 3
+    ///   ...etc up to base + 8
+    virtual aoc::protocol::PlayerNetGuidBlock allocate_player_block(
+        const std::string& client_key) = 0;
+
+    /// Road A — Phase B.0 (2026-04-26) — splice a captured packet from
+    /// loaded ReplayData and send it to the client with our session's
+    /// outer header (seq/ack/PacketInfo).  Used by WorldBootstrapEmitter
+    /// to splice the ~75 bootstrap packets we don't yet emit natively.
+    ///
+    /// `replay_idx` is the 0-based index into the loaded replay's packet
+    /// vector (e.g. 0 = post-NMT opcode-3, 22 = PC ActorOpen).  Returns
+    /// true on successful send.  Returns false if:
+    ///   - No replay loaded (--replay was not set)
+    ///   - Index out of range
+    ///   - Captured packet has bunch_bits == 0 (sentinel keepalive — the
+    ///     plan should mark these as Skip, not Splice)
+    ///   - Send-to-socket failed
+    ///
+    /// This is the only packet-emission primitive a "splice mode" entry
+    /// needs.  Client sees byte-equivalent content to what the legacy
+    /// replay_loop would have sent, so the world loads identically.
+    virtual bool send_captured_packet(const std::string& client_key,
+                                       const sockaddr_in& addr,
+                                       uint32_t replay_idx) = 0;
+
+    /// Road A — Phase B.0 — total number of loaded replay packets
+    /// (so the bootstrap plan can iterate without hardcoding the count).
+    /// Returns 0 if no replay is loaded.
+    virtual uint32_t loaded_replay_packet_count() const = 0;
 
     // NOTE: richer client-state access (seq counters etc.) intentionally
     // omitted; when a phase needs it, we'll add narrow accessors.

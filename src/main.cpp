@@ -201,6 +201,18 @@ int main(int argc, char* argv[]) {
     app.add_option("--replay-max-packets", replay_max_packets,
         "Truncate replay after N packets (0 = unlimited). Use for bootstrap-only tests.");
 
+    // Road A — Phase B.0 (2026-04-26): pure-native bootstrap.
+    // With --native, replay is normally LOADED (so the WorldBootstrapEmitter
+    // can splice captured bytes via send_captured_packet) AND the legacy
+    // replay_loop thread also runs in parallel.  This flag turns OFF the
+    // legacy thread so the NativeConnectSequencer is the SOLE driver of
+    // the post-NMT bootstrap stream.
+    bool no_replay_loop = false;
+    app.add_flag("--no-replay-loop", no_replay_loop,
+        "(--native only) Load --replay file for splice access but do NOT "
+        "start the legacy replay_loop thread.  Pure-native = "
+        "--native --replay <file> --no-replay-loop.");
+
     std::string custom_name = "";
     app.add_option("--custom-name", custom_name,
         "Character name for native mode (--native).  In replay mode this "
@@ -253,7 +265,6 @@ int main(int argc, char* argv[]) {
 
     // ── Path X / V3 — synthetic property emit (2026-04-26) ────────────
     bool     v3_emit                  = false;
-    bool     disable_m21              = false;
     uint32_t v3_target_channel        = 3;
     uint32_t v3_num_properties        = 256;
     bool     v3_reliable              = false;
@@ -269,8 +280,7 @@ int main(int argc, char* argv[]) {
     uint32_t v3_cmd_gold              = 0;
     std::string v3_name_override = "";
     app.add_flag  ("--v3-emit",            v3_emit,            "Path X: enable synthetic property-update bunch after replay");
-    app.add_flag  ("--disable-m21",        disable_m21,        "Skip M2.1 RandomChar byte patcher (lets V3 prove itself in isolation)");
-    app.add_option("--v3-name",            v3_name_override,   "V3: separate name for V3 emit (overrides --custom-name in V3 only; useful for proving V3 vs M2.1)");
+    app.add_option("--v3-name",            v3_name_override,   "V3: separate name for V3 emit (overrides --custom-name for V3 only)");
     app.add_option("--v3-channel",         v3_target_channel,  "V3: target channel (default 3 = PC)");
     app.add_option("--v3-subobject-guid",  v3_subobject_guid,  "V3: SIP NetGUID of subobject to update (0=target channel root). Empirical: ch=3 PC has subobj GUID 7193 (likely PlayerState).");
     app.add_option("--v3-num-properties",  v3_num_properties,  "V3: NumProperties for cmd_handle SerializeInt width (default 256)");
@@ -476,6 +486,7 @@ int main(int argc, char* argv[]) {
         gs_config.relay_target = udp_proxy_target;  // empty = emulation mode
         gs_config.replay_file  = replay_file;        // empty = normal, else replay mode
         gs_config.replay_max_packets = replay_max_packets;
+        gs_config.disable_replay_loop = no_replay_loop;  // Road A — Phase B.0
         gs_config.custom_name = custom_name;          // Path B: char name for native mode
 
         // ── Tier-1 property overrides wired from CLI ─────────────────
@@ -501,7 +512,6 @@ int main(int argc, char* argv[]) {
 
         // ── Path X / V3 wiring ──
         gs_config.v3_emit_enabled         = v3_emit;
-        gs_config.disable_m21             = disable_m21;
         gs_config.v3_custom_name          = v3_name_override;
         gs_config.v3_target_channel       = v3_target_channel;
         gs_config.v3_subobject_guid       = v3_subobject_guid;
