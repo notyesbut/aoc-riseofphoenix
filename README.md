@@ -127,11 +127,14 @@ AoC-RiseOfPhoenix/
 │   ├── build_eossdk_proxy.bat           # stub EOSSDK DLL
 │   └── launch_all.bat                   # start the full stack
 ├── docs/
+│   ├── PROJECT-OVERVIEW.md              # ★ single consolidated entry point
 │   ├── architecture.md                  # layered component overview
 │   ├── wire-format.md                   # consolidated wire-format RE
 │   ├── phase-ii-postmortem.md           # why replay-mutation failed
 │   ├── phase-iii-roadmap.md             # live-synthesis plan
-│   └── *.md                             # historical session notes + RE findings
+│   ├── re-*.md                          # per-class RE catalogs + binary analysis
+│   ├── *.md                             # other reference docs (auth-server-plan, etc.)
+│   └── archive/                         # historical session notes
 ├── CMakeLists.txt
 ├── vcpkg.json
 ├── README.md
@@ -143,13 +146,17 @@ AoC-RiseOfPhoenix/
 
 ## Getting oriented — if you're new to the team
 
-Start reading in this order:
+**Start here**: [`docs/PROJECT-OVERVIEW.md`](./docs/PROJECT-OVERVIEW.md) — single consolidated entry point covering the full project: current state, 4-layer architecture, complete RE catalog (wire format, ~12 RE'd UE5 functions, class metadata, bootstrap analysis), build/run pointers, and the Phase A/B/C roadmap.
 
-1. **[`docs/architecture.md`](./docs/architecture.md)** — what the emulator looks like at a 10 000-ft view.
-2. **[`docs/wire-format.md`](./docs/wire-format.md)** — the actual bits on the wire.  This is the reverse-engineering meat.
-3. **[`docs/phase-ii-postmortem.md`](./docs/phase-ii-postmortem.md)** — what we tried with replay mutation, why it failed, what we learned.  Avoid re-treading this path.
-4. **[`docs/phase-iii-roadmap.md`](./docs/phase-iii-roadmap.md)** — where we're going.
+Then drill into the canonical references it links to:
+
+1. **[`docs/architecture.md`](./docs/architecture.md)** — 10 000-ft component layout.
+2. **[`docs/wire-format.md`](./docs/wire-format.md)** — authoritative wire-format spec.
+3. **[`docs/phase-ii-postmortem.md`](./docs/phase-ii-postmortem.md)** — what didn't work and why. Avoid re-treading.
+4. **[`docs/phase-iii-roadmap.md`](./docs/phase-iii-roadmap.md)** — active roadmap.
 5. **[`CONTRIBUTING.md`](./CONTRIBUTING.md)** — coding conventions, test policy, commit style.
+
+For deeper reference data (per-class catalogs, IDA function maps, captured-packet decode walkthroughs), see the rest of `docs/`. Historical session notes are archived under `docs/archive/`.
 
 Then poke at the test suites in `src/tools/test_*.cpp` — they're small and show exactly how the emit/decode pipeline composes.
 
