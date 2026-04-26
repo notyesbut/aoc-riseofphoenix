@@ -107,7 +107,22 @@ void test_name_bunch_structure() {
     cursor += 12;
     CHECK(ch_seq == 1978, "ChSequence = 1978");
 
-    uint32_t bdb = read_sip(out.data(), cursor);
+    // ChName — emitted by the builder for reliable, non-partial bunches.
+    // Defaults: hardcoded=1 + SIP(103) — empirical most-common EName from
+    // replay_data.bin (148/285 captured ChName bunches).  See builder
+    // header for full distribution.  Was 102, but 102 never appears in
+    // capture so it was wrong.
+    uint64_t ch_name_hardcoded = read_bits(out.data(), cursor, 1); cursor += 1;
+    CHECK(ch_name_hardcoded == 1, "ChName.bIsHardcoded = 1");
+    uint32_t ch_name_idx = read_sip(out.data(), cursor);
+    CHECK(ch_name_idx == 103, "ChName.EName = 103 (empirical Actor default)");
+
+    // BDB = 13 bits fixed (CeilLog2(MAX_PKT_BITS=8192)=13). Matches
+    // sc_bunch_parser.h L204 and actor_builder.cpp L172. Earlier this test
+    // used read_sip() because the builder mistakenly wrote SIP — that bug
+    // misframed the bunch on the wire and silently dropped V3 emits.
+    uint32_t bdb = static_cast<uint32_t>(read_bits(out.data(), cursor, 13));
+    cursor += 13;
     CHECK(bdb == 216, "BunchDataBits = 216 (matches payload)");
 
     // Remaining bits should be exactly the payload (216 bits).

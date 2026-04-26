@@ -154,6 +154,7 @@ inline void init_sockets() {}
 // protocol/wire/ue5_primitives.h — one source of truth for the 4-layer
 // architecture.  This include makes them available under the same names.
 #include "protocol/wire/ue5_primitives.h"
+#include "protocol/tools/replay_property_patcher.h"
 
 // ─── Shared S>C bunch parser ────────────────────────────────────────────────
 // Include AFTER ue5:: is defined (the parser uses ue5::read_bits and
@@ -806,6 +807,133 @@ public:
         // replay mode (replay sends the captured name verbatim).
         std::string custom_name = "";
 
+        // ── Path X / V3 — synthetic property update emit (2026-04-26) ───
+        // After the captured replay finishes (~100 packets), optionally
+        // emit a synthetic property-update bunch to override OUR character's
+        // in-game properties (level, HP, name, etc.).  Uses V3 content-block
+        // wire format from PropertyUpdateBunchBuilder.
+        //
+        // Multiple unknowns (controlled by these knobs) — find correct
+        // values via in-game iteration:
+        //   - which channel hosts our PC (probably 3, may differ)
+        //   - NumProperties for the actor's class (try 256 first)
+        //   - cmd_handle per property (try common values like 28, 0x6A,
+        //     iterate 0..30 if those don't work)
+        //
+        // Set v3_emit_enabled=true to fire the synthetic bunch after replay.
+        bool      v3_emit_enabled        = false;
+
+        // V3 can use a DIFFERENT name than custom_name (which M2.1 uses).
+        // Useful for proving V3 actually applied (vs. M2.1 winning).
+        // Empty string = use custom_name.
+        std::string v3_custom_name        = "";
+
+        // When true, skip the M2.1 'RandomChar' byte patcher entirely.
+        // Lets V3 prove itself in isolation: with M2.1 disabled, the HUD
+        // shows the captured "RandomChar" until V3 overrides it. Useful
+        // when both layers fight for the Name slot and we cannot tell
+        // which one applied. Default false (M2.1 still patches as before).
+        bool        disable_m21          = false;
+
+        uint32_t  v3_target_channel       = 3;        // PC's actor channel
+        // V3 subobject targeting (verified empirical RE 2026-04-26):
+        //   0      = target the channel's main actor (bIsChannelActor=1)
+        //   non-0  = target a subobject by SIP NetGUID (bIsChannelActor=0)
+        // For ch=3 PC, capture decode shows subobj GUID 7193 receives the
+        // largest property payloads (up to 2755 bits) — almost certainly
+        // PlayerState (where Name lives).
+        uint32_t  v3_subobject_guid       = 0;        // 0 = channel root
+        uint32_t  v3_num_properties       = 256;      // ceil(log2) for cmd_handle width
+        bool      v3_reliable             = false;    // last attempt: false=client applied (wrong prop)
+        bool      v3_has_mbg              = true;     // bHasMustBeMappedGUIDs (empirical: capture always sets)
+        // bIsReplicationPaused override.  -1 = auto (set 1 when targeting a
+        // subobject, 0 otherwise — matches captured ch=3 GUID-7193 pattern).
+        // 0 = always send rp=0.  1 = always send rp=1.
+        int32_t   v3_rep_paused_override  = -1;
+
+        // V3 test mode — when non-empty, OVERRIDES the per-property emit
+        // logic to send a single specific test property.  Used to isolate
+        // whether V3 wire format works at all, separate from the question
+        // of whether Name updates trigger visible HUD change.
+        //   ""          (default) — use existing v3_cmd_*/custom_* emit logic
+        //   "spectator" — send bIsSpectator=true at cmd_handle=3 (1-bit bool).
+        //                 If V3 works, HUD vanishes and player switches to
+        //                 spectator mode.  HIGHLY VISIBLE.
+        //   "score"     — send Score=999 at cmd_handle=1 (32-bit int32).
+        //                 May or may not be visible in AOC HUD.
+        //   "pvpoptin"  — send bRemovePVPOptInProtection=true at cmd_handle=1
+        //                 TARGETING UAoCStatsComponent (= GUID 7193, NOW VERIFIED).
+        //                 Tests modern inner format on the CORRECT class.
+        std::string v3_test_mode = "";
+
+        // V3 inner-property wire format selector (2026-04-26 finding):
+        //   true  (default) — modern: [SerializeInt handle][value bits]
+        //   false           — legacy: [SerializeInt handle][SIP NumBits][value]
+        // Per RE of sub_143F2DC60: modern path L169-220 doesn't read NumBits.
+        bool        v3_use_modern_format = true;
+        uint32_t  v3_cmd_handle_name      = 0x6A;     // observed in pkt#104 (Name slot)
+        uint32_t  v3_cmd_handle_level     = 28;       // catalog guess — iterate
+        uint32_t  v3_cmd_handle_health    = 0;         // unknown — iterate
+        uint32_t  v3_cmd_handle_max_health= 0;
+        uint32_t  v3_cmd_handle_gold      = 0;
+
+        // Which V3 properties to actually emit (use -1 in custom_* to skip).
+        // E.g. setting v3_emit_enabled=true with custom_level=25 will emit
+        // a Level=25 update; if custom_level=-1, level is skipped.
+
+        // ── Tier-1 property patches (2026-04-25) ───────────────────────
+        // Fixed-width property overrides applied to replay packets at load
+        // time.  Each field below has a "captured value" we observed in
+        // replay_data.bin when the capture was recorded.  Setting a
+        // non-default value here causes the patcher to find those bytes
+        // in replay packets and overwrite them with the new value.
+        //
+        // ZERO RISK: fixed-width overwrites don't change packet size or
+        // bit alignment, so the client's parser is unaffected.
+        //
+        // Captured values below come from the Cleric (class_id=17748)
+        // character that was used to record replay_data.bin.
+        //
+        // Leave as the sentinel (see defaults) to skip patching that field.
+        // Set to a new value to apply the patch.
+        int32_t  custom_level         = -1;   // -1 = skip; set 1-60 to patch
+        int32_t  custom_hp_current    = -1;   // -1 = skip
+        int32_t  custom_hp_max        = -1;   // -1 = skip
+        int32_t  custom_mp_current    = -1;   // -1 = skip
+        int32_t  custom_mp_max        = -1;   // -1 = skip
+        int32_t  custom_stamina_max   = -1;   // -1 = skip
+        int32_t  custom_gold          = -1;   // -1 = skip
+        int32_t  custom_xp_current    = -1;   // -1 = skip
+        int32_t  custom_str           = -1;   // -1 = skip
+        int32_t  custom_dex           = -1;   // -1 = skip
+        int32_t  custom_int_stat      = -1;   // -1 = skip (renamed to avoid 'int' keyword)
+        int32_t  custom_vit           = -1;   // -1 = skip
+        int32_t  custom_class_id      = -1;   // -1 = skip (visible Cleric=17748 captured)
+        int32_t  custom_race_id       = -1;   // -1 = skip
+
+        // Captured values observed in replay_data.bin, in-game HUD 2026-04-25:
+        //   Level=1, HP=90/90, MP=90/90, Stamina=100, Class=Cleric(17748).
+        // The patcher uses these as the "needle" to find the live value slots.
+        // Override these if you recorded a fresh replay with different state.
+        //
+        // NOTE: Level=1 and stat=10 are generic values — the patcher will
+        // SAFETY ABORT any rule matching more than max_safe_hits=10 times.
+        // Required fix: anchored patterns (Tier-1.5 — see SESSION-END-STATE.md).
+        int32_t  captured_level       = 1;       // HUD confirmed
+        int32_t  captured_hp_current  = 90;      // HUD confirmed (not 100)
+        int32_t  captured_hp_max      = 90;      // HUD confirmed (not 100)
+        int32_t  captured_mp_current  = 90;      // HUD confirmed (not 100)
+        int32_t  captured_mp_max      = 90;      // HUD confirmed (not 100)
+        int32_t  captured_stamina_max = 100;     // HUD confirmed
+        int32_t  captured_gold        = 0;       // guess — needs verification
+        int32_t  captured_xp_current  = 0;       // guess — needs verification
+        int32_t  captured_str         = 10;      // guess — needs verification
+        int32_t  captured_dex         = 10;      // guess — needs verification
+        int32_t  captured_int_stat    = 10;      // guess — needs verification
+        int32_t  captured_vit         = 10;      // guess — needs verification
+        int32_t  captured_class_id    = 17748;   // Cleric (confirmed from existing logs)
+        int32_t  captured_race_id     = -1;      // unknown — disable by default
+
         // ── Session F: live-world integration ─────────────────────────
         // When true, GameServer spins up a LiveWorld alongside the legacy
         // handshake/replay path.  LiveWorld owns the Session/World/Emit
@@ -906,6 +1034,56 @@ public:
             if (!replay_data_->load(config_.replay_file)) {
                 spdlog::error("[GameServer] Failed to load replay, falling back to emulation");
                 replay_data_.reset();
+            }
+        }
+
+        // ── Tier-1 property patcher (2026-04-25) — run ONCE at startup ─
+        // Regardless of source (embedded bootstrap OR external replay file),
+        // replay_data_ is populated above.  Apply fixed-width property
+        // overrides NOW, before any client connects.  Runs once per server
+        // lifetime.  Each patch is a SAME-SIZE byte overwrite (int32→int32,
+        // float→float) so packet structure and bit alignment are preserved.
+        if (replay_data_) {
+            using aoc::protocol::tools::ReplayPropertyPatcher;
+            ReplayPropertyPatcher patcher;
+            auto add_i32 = [&](const char* name, int32_t cap, int32_t newv) {
+                if (newv >= 0 && newv != cap) {
+                    patcher.add_int32(name, cap, newv);
+                }
+            };
+            add_i32("character_level",    config_.captured_level,       config_.custom_level);
+            add_i32("character_hp_curr",  config_.captured_hp_current,  config_.custom_hp_current);
+            add_i32("character_hp_max",   config_.captured_hp_max,      config_.custom_hp_max);
+            add_i32("character_mp_curr",  config_.captured_mp_current,  config_.custom_mp_current);
+            add_i32("character_mp_max",   config_.captured_mp_max,      config_.custom_mp_max);
+            add_i32("character_stamina",  config_.captured_stamina_max, config_.custom_stamina_max);
+            add_i32("character_gold",     config_.captured_gold,        config_.custom_gold);
+            add_i32("character_xp_curr",  config_.captured_xp_current,  config_.custom_xp_current);
+            add_i32("character_str",      config_.captured_str,         config_.custom_str);
+            add_i32("character_dex",      config_.captured_dex,         config_.custom_dex);
+            add_i32("character_int",      config_.captured_int_stat,    config_.custom_int_stat);
+            add_i32("character_vit",      config_.captured_vit,         config_.custom_vit);
+            add_i32("character_class_id", config_.captured_class_id,    config_.custom_class_id);
+            if (config_.captured_race_id >= 0) {
+                add_i32("character_race_id", config_.captured_race_id, config_.custom_race_id);
+            }
+            if (patcher.enabled_rule_count() > 0) {
+                spdlog::warn("[GameServer][Tier1] applying {} property patch "
+                             "rule(s) to {} packets at startup...",
+                             patcher.enabled_rule_count(),
+                             replay_data_->packets.size());
+                auto reports = patcher.apply_all(replay_data_->packets);
+                std::string summary = ReplayPropertyPatcher::format_report(reports);
+                spdlog::warn("[GameServer][Tier1] patch report:\n{}", summary);
+                for (const auto& rep : reports) {
+                    if (rep.applied_count == 0) {
+                        spdlog::warn("[GameServer][Tier1] \"{}\" found 0 "
+                                     "matches. The captured_* value for this "
+                                     "field is wrong for your replay — no "
+                                     "effect in-game.",
+                                     rep.name);
+                    }
+                }
             }
         }
         // (allow_variable_name propagation removed — patcher is gone.)
@@ -3980,6 +4158,153 @@ private:
                          "(synthesizer will apply at emit time)",
                          profile.name);
         }
+
+        // ── M2.1 — NUL-padded CharacterName patch (REVERTED) ────────
+        //
+        // M2.2 variable-length attempt was BROKEN: my bunch-header
+        // decoder used stock UE5 SIP (high-bit continuation) but AoC
+        // uses INVERTED SIP (low-bit continuation per ue5_primitives.h).
+        // Every field offset I derived was wrong:
+        //   - thought ch=3, actually ch=8833
+        //   - thought bdb at bit 166, actually at bit 177
+        //   - thought bunch was non-partial, actually partial init
+        //   - 'RandomChar' at bit 1656 is in a LATER bunch entirely
+        // Writing "new bdb" at bit 166-178 corrupted the ChIndex SIP
+        // bytes, causing client parse drift → connection timeout.
+        //
+        // TODO M2.3: re-decode pkt#104 with correct AoC-SIP and
+        // identify which bunch actually contains 'RandomChar' + its
+        // true bdb offset.  Then build a correct variable-length patch.
+        //
+        // Until then: fall back to NUL-padded same-length patch
+        // (1-10 char names, renders as name + trailing NULs which
+        // UE5 string display truncates at first NUL).
+        //
+        // Wire format of the captured Name-update (from decode_pkt104_exact.py):
+        //
+        //   Bunch header (28 bits, starts at bit 152):
+        //     [1 bit]  bControl=0
+        //     [1 bit]  bIsReplicationPaused=1
+        //     [1 bit]  bReliable=0
+        //     [8 bit]  ChIndex SIP = 3  (for ch=3, 0x03)
+        //     [1 bit]  bHasPackageMapExports=0
+        //     [1 bit]  bHasMustBeMappedGUIDs=1
+        //     [1 bit]  bPartial=0
+        //     [14 bit] BunchDataBits = 4593  ← SerializeInt(16384), fixed 14 bits
+        //
+        //   Bunch 0 payload (4593 bits / ~574 bytes, starts at bit 180):
+        //     [bits 180..1615]  content-block routing preamble (1436 bits / 180 bytes)
+        //     [bits 1616..1623] cmd_index = 0x6A (1 byte, SIP for value 106)
+        //     [bits 1624..1655] FString.Length = 11 (4 bytes LE u32)
+        //     [bits 1648..1735] FString.ASCII = "RandomChar" (10 bytes)
+        //     [bits 1736..1743] FString.NUL = 0x00 (1 byte)
+        //     [bits 1744..4772] post-Name payload (more properties, ~378 bytes)
+        //
+        // Rewrite algorithm:
+        //   1. Scan pkt.raw for the 16-byte needle
+        //      [6A 0B 00 00 00] R a n d o m C h a r [00]
+        //   2. delta_bytes = new_name.size() - 10
+        //   3. Build new raw:
+        //        [0..i+1)               copy (prefix + bunch header + preamble + cmd=0x6A)
+        //        write 4-byte length LE = new_name.size() + 1
+        //        write new_name.size() ASCII bytes
+        //        write 1 NUL byte
+        //        [i+16..end)            copy (post-Name payload + bunch 1 + termination)
+        //   4. Update bdb at bit 166 width 14: new_bdb = 4593 + delta_bytes * 8
+        //   5. Update pkt.bunch_bits += delta_bytes * 8
+        //
+        // Per-bunch bdb location depends on ChIndex SIP width (8 bits for
+        // ch=3 → bdb at bit 166).  Since "RandomChar" only appears in
+        // pkt#104 (ch=3 confirmed by decode_pkt104_bunch_header.py), the
+        // hardcoded bit-166 offset is correct for all current patches.
+        //
+        // RISK MITIGATION: if the client has any checksum over the bunch
+        // payload, this rewrite will fail validation.  IDA RE agent is
+        // running in parallel to verify no such validation exists.
+        // If it does, we'll need to either (a) emit a fresh routed bunch
+        // natively or (b) compute + patch the checksum.
+        if (config_.disable_m21) {
+            spdlog::warn("[Replay] M2.1 RandomChar byte patcher DISABLED via "
+                         "--disable-m21 (V3 emit will run in isolation if enabled).");
+        }
+        if (!config_.disable_m21 && !config_.custom_name.empty() && replay_data_) {
+            // ── Accepted range ──
+            // Lower bound (4):  arbitrary safety — AoC's in-game minimum.
+            // Upper bound (16): user-requested maximum name length.
+            //
+            // Current implementation uses a FIXED-SIZE 15-byte FString slot
+            // (4 bytes StrLen=11 + 11 bytes "RandomChar\0") and only patches
+            // the 10 writable characters, NUL-padding shorter names.  The
+            // client displays the FString up to its first NUL, so names
+            // 4-10 chars render exactly as typed.
+            //
+            // For names 11-16 chars we cannot write into the 10-byte window
+            // without overrunning the NUL terminator at byte 216.  True
+            // variable-length support requires:
+            //   1. Identify the exact bunch containing "RandomChar" (we
+            //      parse 24 bunches via sc_bunch_parser.h but none of their
+            //      payload ranges covers bit 1656).
+            //   2. Expand/shrink the 15-byte slot, shift subsequent bits.
+            //   3. Recompute that bunch's BunchDataBits header field.
+            // Blocked on RE of UChannel::ReceivedRawBunch (IDA Pass 3).
+            //
+            // For now: names > 10 chars are TRUNCATED to first 10 chars
+            // (with a loud warning).  Names < 4 chars are rejected.
+            std::string target = config_.custom_name;
+            const size_t HARD_MIN = 4;
+            const size_t HARD_MAX = 16;
+            const size_t SLOT_LEN = 10;         // writable chars (slot minus NUL)
+
+            if (target.size() < HARD_MIN) {
+                spdlog::warn("[Replay] custom_name=\"{}\" ({} chars) too short. "
+                             "Minimum {} — skipping patch, HUD shows 'RandomChar'.",
+                             target, target.size(), HARD_MIN);
+                target.clear();   // disable patching
+            } else if (target.size() > HARD_MAX) {
+                spdlog::warn("[Replay] custom_name=\"{}\" ({} chars) too long. "
+                             "Maximum {} — skipping patch.",
+                             target, target.size(), HARD_MAX);
+                target.clear();
+            } else if (target.size() > SLOT_LEN) {
+                spdlog::warn("[Replay] custom_name=\"{}\" ({} chars) exceeds "
+                             "current 10-char FIXED-SLOT limit. Variable-length "
+                             "patch (11-16 chars) requires UChannel::ReceivedRawBunch "
+                             "RE (in progress — IDA Pass 3).  TRUNCATING to "
+                             "first {} chars for now.",
+                             target, target.size(), SLOT_LEN);
+                target.resize(SLOT_LEN);
+            }
+
+            if (!target.empty()) {
+                const uint8_t needle[16] = {
+                    0x6A, 0x0B, 0x00, 0x00, 0x00,
+                    'R','a','n','d','o','m','C','h','a','r', 0x00
+                };
+                uint8_t slot[SLOT_LEN];
+                std::memset(slot, 0, SLOT_LEN);
+                std::memcpy(slot, target.data(), target.size());
+                size_t patched_packets = 0;
+                for (auto& pkt : replay_data_->packets) {
+                    if (pkt.raw.size() < 16) continue;
+                    for (size_t i = 0; i + 16 <= pkt.raw.size(); ++i) {
+                        if (std::memcmp(pkt.raw.data() + i, needle, 16) == 0) {
+                            std::memcpy(pkt.raw.data() + i + 5, slot, SLOT_LEN);
+                            ++patched_packets;
+                        }
+                    }
+                }
+                if (patched_packets > 0) {
+                    spdlog::warn("[Replay] ★ Patched 'RandomChar' → \"{}\" "
+                                 "(NUL-padded to {} bytes) in {} replay "
+                                 "packet(s).  Variable-length 11-16 TBD.",
+                                 target, SLOT_LEN, patched_packets);
+                }
+            }
+        }
+        // Tier-1 property patcher moved to GameServer constructor (runs ONCE
+        // at startup on replay_data_ regardless of source — embedded or file).
+        // See ctor around line ~960 for the single-instance patcher block.
+
         // Phase M5.7 archetype-bit patching was disabled after it broke
         // HUD/hotbars/map; investigation log in docs/phase-m5-property-
         // decoding.md.  The live path builds the PlayerController bunch
@@ -4394,35 +4719,35 @@ private:
                      replay_data_->packets.size() - start_idx, start_idx, skip_count);
         spdlog::warn("[Replay]  Errors: {}", error_count);
 
-        // ── Native property-update emission (MISSING PIECE) ──────────────
-        // At this point the client has received every captured ActorOpen
-        // and property-update bunch from our capped replay window.  The
-        // captured session's character state (name="RandomChar", stats,
-        // appearance) is now mirrored on the client.
+        // ── Path X / V3 — synthetic property update bunch (2026-04-26) ──
+        // After replay finishes, emit a single bunch with property updates
+        // using the CORRECT content-block-framed wire format (per RE).
         //
-        // To override those values with OUR live state (custom_name, our
-        // HP/MP/Stamina), we now emit native property-update bunches.
-        // UE5 reliable-channel last-write-wins semantics: each emission
-        // replaces the corresponding captured value in the client's
-        // actor state.
+        // Knobs in config_.v3_*:
+        //   v3_emit_enabled  — must be true to fire
+        //   v3_target_channel — which channel hosts our PC (try 3 first)
+        //   v3_num_properties — class NumReplicated (try 256 first)
+        //   v3_reliable       — false safer for first iteration
+        //   v3_cmd_handle_*   — per-property handle (iterate to discover)
         //
-        // inject_custom_name_bunch() is defined below and was already
-        // built — we just weren't CALLING it.  That ends now.
-        if (!config_.custom_name.empty()) {
-            spdlog::warn("[Replay] ★★★ Emitting native Name update "
-                         "(override captured 'RandomChar' → '{}')",
-                         config_.custom_name);
-            bool name_ok = inject_custom_name_bunch(client_key, client_addr);
-            if (name_ok) {
-                spdlog::warn("[Replay] ★ Native Name update emitted");
-            } else {
-                spdlog::error("[Replay] ✗ Native Name update FAILED — "
-                              "client will keep seeing 'RandomChar'");
-            }
-        } else {
-            spdlog::info("[Replay] No custom_name set; skipping native "
-                         "Name override (HUD will show captured name)");
+        // V1/V2 (inject_custom_name_bunch) used wrong wire format.  V3
+        // uses bOutermostEnd + bIsChannelActor + NumPayloadBits framing
+        // per ProcessBunch RE.
+        if (config_.v3_emit_enabled) {
+            spdlog::warn("[Replay][V3] Firing synthetic property-update "
+                         "bunch (ch={} num_props={} reliable={})",
+                         config_.v3_target_channel,
+                         config_.v3_num_properties, config_.v3_reliable);
+            inject_v3_property_update(client_key, client_addr);
         }
+
+        // ── Native Name update emission (V1/V2 — DISABLED, kept for reference) ──
+        // The inject_custom_name_bunch() V1/V2 used a wrong format that
+        // bypassed the content-block routing.  Superseded by V3 above.
+        // Code remains for reference; not called.
+        // if (!config_.custom_name.empty()) {
+        //     inject_custom_name_bunch(client_key, client_addr);  // disabled
+        // }
 
         spdlog::warn("[Replay]  Entering post-replay keepalive loop — session will stay alive.");
         spdlog::warn("[Replay] ========================================");
@@ -4532,6 +4857,193 @@ private:
             return true;
         }
         spdlog::warn("[Replay] inject_custom_name_bunch: send_to_client failed");
+        return false;
+    }
+
+    /// Path X / V3 — inject a synthetic property-update bunch using the
+    /// CORRECT content-block-framed wire format (per RE 2026-04-26).
+    ///
+    /// Wire format (vs. earlier V1/V2 which were wrong):
+    ///   Bunch header (PropertyUpdateBunchBuilder writes)
+    ///   [1 bit bOutermostEnd=0][1 bit bIsChannelActor=1]
+    ///   [SIP NumPayloadBits][Inner bunch:]
+    ///     for each prop: [SerializeInt(NumProps) cmd_handle][SIP NumBits][value bits]
+    ///   [1 bit bOutermostEnd=1]   ← end marker
+    ///
+    /// Knobs from config_.v3_*:
+    ///   v3_target_channel       — which channel hosts our PC
+    ///   v3_num_properties       — class NumReplicated (for cmd_handle bit width)
+    ///   v3_reliable             — bunch reliability flag
+    ///   v3_cmd_handle_*         — cmd_handle for each property
+    ///
+    /// Returns true on successful send.
+    bool inject_v3_property_update(const std::string& client_key,
+                                    const sockaddr_in& client_addr) {
+        aoc::protocol::emit::PropertyUpdateBunchBuilder b;
+        b.set_channel(config_.v3_target_channel);
+        b.set_reliable(config_.v3_reliable);
+        b.set_has_mbg(config_.v3_has_mbg);
+        // EMPIRICAL: every captured ch=3 PlayerState (GUID 7193) update sets
+        // bIsRepPaused=1.  Auto-set when targeting a subobject — overridable
+        // via --v3-rep-paused for testing other configurations.
+        const bool auto_rp = (config_.v3_subobject_guid != 0);
+        b.set_is_rep_paused(config_.v3_rep_paused_override >= 0
+                            ? (config_.v3_rep_paused_override != 0)
+                            : auto_rp);
+        b.set_use_modern_inner_format(config_.v3_use_modern_format);
+
+        // Determine ChSeq if reliable
+        uint32_t chseq = 0;
+        {
+            std::lock_guard<std::mutex> lk(client_mu_);
+            auto it = clients_.find(client_key);
+            if (it == clients_.end()) return false;
+            ClientState& cs = it->second;
+            if (config_.v3_reliable) {
+                chseq = cs.reliable_seq;
+                cs.reliable_seq = (cs.reliable_seq + 1) & 0xFFF;
+            }
+        }
+        b.set_ch_sequence(chseq);
+
+        // Open V3 content block: either targeting the channel's root actor,
+        // or a subobject (PlayerState etc.) addressed by SIP NetGUID.
+        if (config_.v3_subobject_guid != 0) {
+            b.v3_begin_content_block_subobject(config_.v3_subobject_guid,
+                                               config_.v3_num_properties);
+        } else {
+            b.v3_begin_content_block_channel_actor(config_.v3_num_properties);
+        }
+
+        int props_added = 0;
+
+        // ── TEST MODE OVERRIDE ───────────────────────────────────────────
+        // When v3_test_mode is set, IGNORE all other property config and
+        // emit a single known property whose client-side effect is highly
+        // visible.  Used to isolate "does V3 wire format work at all?"
+        // from "does Name specifically trigger HUD update?"
+        const std::string& effective_name = config_.v3_custom_name.empty()
+            ? config_.custom_name
+            : config_.v3_custom_name;
+        if (config_.v3_test_mode == "spectator") {
+            // bIsSpectator at cmd_handle=3 (verified-from-code: PlayerState
+            // PropertyLinks pos 3 in CPF_Net subset).  1-bit bool.
+            b.v3_add_property_bool(3, true);
+            ++props_added;
+            spdlog::warn("[Replay][V3] TEST MODE: spectator (handle=3 bool=true)");
+        } else if (config_.v3_test_mode == "score") {
+            // Score at cmd_handle=1 (verified-from-code).  32-bit int32.
+            b.v3_add_property_int32(1, 99999);
+            ++props_added;
+            spdlog::warn("[Replay][V3] TEST MODE: score (handle=1 int32=99999)");
+        } else if (config_.v3_test_mode == "pvpoptin") {
+            // bRemovePVPOptInProtection at cmd_handle=1 on UAoCStatsComponent.
+            // VERIFIED-FROM-CODE: GUID 7193 = UAoCStatsComponent (binary RE,
+            // see RE-AOC-CLASSES.md).  Handle 1 = bRemovePVPOptInProtection
+            // (RepNotify bool).  If V3 modern format works end-to-end, this
+            // bunch reaches the property handler and OnRep_RemovePVPOptInProtection
+            // fires.  Effect may or may not be visible depending on PVP state.
+            b.v3_add_property_bool(1, true);
+            ++props_added;
+            spdlog::warn("[Replay][V3] TEST MODE: pvpoptin (handle=1 bool=true on UAoCStatsComponent)");
+        } else {
+            // Default path — Name update via existing v3_cmd_handle_name + effective_name.
+            if (!effective_name.empty() && config_.v3_cmd_handle_name != 0) {
+                b.v3_add_property_fstring(config_.v3_cmd_handle_name,
+                                          effective_name);
+                ++props_added;
+            }
+        }
+
+        // Level/HP/Gold updates — ONLY in default mode (when test_mode is
+        // empty).  In test_mode we want JUST the one test property, isolated.
+        if (config_.v3_test_mode.empty()) {
+            // Level update (only if custom_level >= 0)
+            if (config_.custom_level >= 0 && config_.v3_cmd_handle_level != 0) {
+                b.v3_add_property_int32(config_.v3_cmd_handle_level,
+                                        config_.custom_level);
+                ++props_added;
+            }
+
+            // Health updates (cast to float — captured stats are float per GAS)
+            if (config_.custom_hp_current >= 0 && config_.v3_cmd_handle_health != 0) {
+                b.v3_add_property_float(config_.v3_cmd_handle_health,
+                                        static_cast<float>(config_.custom_hp_current));
+                ++props_added;
+            }
+            if (config_.custom_hp_max >= 0 && config_.v3_cmd_handle_max_health != 0) {
+                b.v3_add_property_float(config_.v3_cmd_handle_max_health,
+                                        static_cast<float>(config_.custom_hp_max));
+                ++props_added;
+            }
+
+            // Gold (int32)
+            if (config_.custom_gold >= 0 && config_.v3_cmd_handle_gold != 0) {
+                b.v3_add_property_int32(config_.v3_cmd_handle_gold,
+                                        config_.custom_gold);
+                ++props_added;
+            }
+        }
+
+        if (props_added == 0) {
+            spdlog::info("[Replay][V3] No properties to emit (all custom_*=-1 or cmd_handle=0)");
+            return false;
+        }
+
+        // Close content block + finalize bunch
+        b.v3_end_content_block();
+        b.v3_finish_bunch();
+
+        // Build the bunch
+        aoc::protocol::emit::BunchWriter bunch;
+        size_t bunch_bits = b.build(bunch);
+        if (bunch_bits == 0) {
+            spdlog::warn("[Replay][V3] Empty bunch produced");
+            return false;
+        }
+
+        // Wrap in UDP packet (same as inject_custom_name_bunch)
+        uint8_t buf[1024] = {};
+        size_t  off = 0;
+
+        std::lock_guard<std::mutex> lk(client_mu_);
+        auto it = clients_.find(client_key);
+        if (it == clients_.end()) return false;
+        ClientState& cs = it->second;
+
+        write_sc_packet_prefix(buf, sizeof(buf), off, cs, /*handshake=*/false);
+        ue5::write_bits(buf, sizeof(buf), off, 1,    1);   // bHasPacketInfo
+        ue5::write_bits(buf, sizeof(buf), off, 1023, 10);  // jitter=max
+        ue5::write_bits(buf, sizeof(buf), off, 0,    1);   // bHasServerFrameTime
+
+        for (size_t i = 0; i < bunch_bits; ++i) {
+            int bit = (bunch.data()[i >> 3] >> (i & 7)) & 1;
+            ue5::write_bits(buf, sizeof(buf), off, bit, 1);
+        }
+
+        size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
+        uint16_t pkt_seq = cs.out_seq;
+        cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
+
+        int sent = send_to_client(buf, pkt_len, client_addr);
+        if (sent > 0) {
+            const std::string target_desc = (config_.v3_subobject_guid != 0)
+                ? fmt::format("ch={} subobj_guid={}", config_.v3_target_channel,
+                              config_.v3_subobject_guid)
+                : fmt::format("ch={} root", config_.v3_target_channel);
+            const bool effective_rp = (config_.v3_rep_paused_override >= 0)
+                ? (config_.v3_rep_paused_override != 0) : auto_rp;
+            spdlog::warn("[Replay][V3] ★ Injected property-update bunch: "
+                         "seq={} {}B bunch={}bits target=[{}] reliable={} "
+                         "rep_paused={} mbg={} num_props={} cmd_name={} "
+                         "props_added={} test_mode='{}'",
+                         pkt_seq, pkt_len, bunch_bits, target_desc,
+                         config_.v3_reliable, effective_rp, config_.v3_has_mbg,
+                         config_.v3_num_properties, config_.v3_cmd_handle_name,
+                         props_added, config_.v3_test_mode);
+            return true;
+        }
+        spdlog::warn("[Replay][V3] send_to_client failed");
         return false;
     }
 

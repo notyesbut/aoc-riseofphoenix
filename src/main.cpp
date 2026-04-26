@@ -207,6 +207,84 @@ int main(int argc, char* argv[]) {
         "is ignored (replay sends the captured name).  Default = empty "
         "(native mode falls back to 'PlayerOne').");
 
+    // ── Tier-1 property overrides (replay-mode byte patches) ─────────
+    // All default to -1 (skip).  See docs/TIER-1-PROPERTY-PATCHER.md.
+    int32_t custom_level       = -1;
+    int32_t custom_hp_current  = -1;
+    int32_t custom_hp_max      = -1;
+    int32_t custom_mp_current  = -1;
+    int32_t custom_mp_max      = -1;
+    int32_t custom_stamina_max = -1;
+    int32_t custom_gold        = -1;
+    int32_t custom_xp_current  = -1;
+    int32_t custom_str         = -1;
+    int32_t custom_dex         = -1;
+    int32_t custom_int         = -1;
+    int32_t custom_vit         = -1;
+    int32_t custom_class_id    = -1;
+    int32_t custom_race_id     = -1;
+    app.add_option("--custom-level",       custom_level,       "Character level override (-1=skip, 1-60)");
+    app.add_option("--custom-hp",          custom_hp_current,  "Current HP override");
+    app.add_option("--custom-hp-max",      custom_hp_max,      "Max HP override");
+    app.add_option("--custom-mp",          custom_mp_current,  "Current MP override");
+    app.add_option("--custom-mp-max",      custom_mp_max,      "Max MP override");
+    app.add_option("--custom-stamina",     custom_stamina_max, "Max Stamina override");
+    app.add_option("--custom-gold",        custom_gold,        "Gold override");
+    app.add_option("--custom-xp",          custom_xp_current,  "Current XP override");
+    app.add_option("--custom-str",         custom_str,         "STR stat override");
+    app.add_option("--custom-dex",         custom_dex,         "DEX stat override");
+    app.add_option("--custom-int",         custom_int,         "INT stat override");
+    app.add_option("--custom-vit",         custom_vit,         "VIT stat override");
+    app.add_option("--custom-class-id",    custom_class_id,    "Class ID override (17748=Cleric captured)");
+    app.add_option("--custom-race-id",     custom_race_id,     "Race ID override (captured_race_id must be set first)");
+
+    // Captured-value overrides (only needed if your replay file has
+    // different starting state than the defaults).
+    int32_t cap_level    = -1;
+    int32_t cap_hp_max   = -1;
+    int32_t cap_gold     = -1;
+    int32_t cap_class_id = -1;
+    int32_t cap_race_id  = -1;
+    app.add_option("--captured-level",    cap_level,    "Override default captured level value (1)");
+    app.add_option("--captured-hp-max",   cap_hp_max,   "Override default captured hp_max (100)");
+    app.add_option("--captured-gold",     cap_gold,     "Override default captured gold (0)");
+    app.add_option("--captured-class-id", cap_class_id, "Override default captured class (17748=Cleric)");
+    app.add_option("--captured-race-id",  cap_race_id,  "Override default captured race (-1=disabled)");
+
+    // ── Path X / V3 — synthetic property emit (2026-04-26) ────────────
+    bool     v3_emit                  = false;
+    bool     disable_m21              = false;
+    uint32_t v3_target_channel        = 3;
+    uint32_t v3_num_properties        = 256;
+    bool     v3_reliable              = false;
+    bool     v3_has_mbg               = true;     // empirical: capture sets this
+    int32_t  v3_rep_paused            = -1;       // -1=auto, 0=force off, 1=force on
+    bool     v3_use_modern_format     = true;     // true=modern (no NumBits), false=legacy
+    std::string v3_test_mode          = "";        // "" / "spectator" / "score" / "pvpoptin"
+    uint32_t v3_subobject_guid        = 0;       // 0 = target channel root, !=0 = subobject
+    uint32_t v3_cmd_name              = 0x6A;   // observed in pkt#104
+    uint32_t v3_cmd_level             = 28;
+    uint32_t v3_cmd_health            = 0;
+    uint32_t v3_cmd_max_health        = 0;
+    uint32_t v3_cmd_gold              = 0;
+    std::string v3_name_override = "";
+    app.add_flag  ("--v3-emit",            v3_emit,            "Path X: enable synthetic property-update bunch after replay");
+    app.add_flag  ("--disable-m21",        disable_m21,        "Skip M2.1 RandomChar byte patcher (lets V3 prove itself in isolation)");
+    app.add_option("--v3-name",            v3_name_override,   "V3: separate name for V3 emit (overrides --custom-name in V3 only; useful for proving V3 vs M2.1)");
+    app.add_option("--v3-channel",         v3_target_channel,  "V3: target channel (default 3 = PC)");
+    app.add_option("--v3-subobject-guid",  v3_subobject_guid,  "V3: SIP NetGUID of subobject to update (0=target channel root). Empirical: ch=3 PC has subobj GUID 7193 (likely PlayerState).");
+    app.add_option("--v3-num-properties",  v3_num_properties,  "V3: NumProperties for cmd_handle SerializeInt width (default 256)");
+    app.add_flag  ("--v3-reliable",        v3_reliable,        "V3: send bunch reliable (false = fire-and-forget)");
+    app.add_option("--v3-has-mbg",         v3_has_mbg,         "V3: bHasMustBeMappedGUIDs header bit (default 1; capture sets this on all ch=3 updates)");
+    app.add_option("--v3-rep-paused",      v3_rep_paused,      "V3: bIsReplicationPaused override (-1=auto: 1 if subobj else 0; 0=always 0; 1=always 1). Empirical: ch=3 GUID-7193 always uses 1.");
+    app.add_option("--v3-modern-format",   v3_use_modern_format,"V3: inner property format (1=modern: no NumBits; 0=legacy: SIP NumBits). Per RE: modern path doesn't read NumBits.");
+    app.add_option("--v3-test-mode",       v3_test_mode,       "V3: test mode override. ''=normal Name update, 'spectator'=set bIsSpectator=true (visible: HUD vanishes), 'score'=set Score=99999 (may not be visible)");
+    app.add_option("--v3-cmd-name",        v3_cmd_name,        "V3: cmd_handle for CharacterName (default 0x6A)");
+    app.add_option("--v3-cmd-level",       v3_cmd_level,       "V3: cmd_handle for Level (default 28)");
+    app.add_option("--v3-cmd-health",      v3_cmd_health,      "V3: cmd_handle for Health (default 0 = skip)");
+    app.add_option("--v3-cmd-max-health",  v3_cmd_max_health,  "V3: cmd_handle for MaxHealth (default 0 = skip)");
+    app.add_option("--v3-cmd-gold",        v3_cmd_gold,        "V3: cmd_handle for Gold (default 0 = skip)");
+
     bool native_mode = false;
     app.add_flag("--native", native_mode,
         "Path B: run in AUTHORITATIVE-SERVER mode.  Instead of replaying "
@@ -399,6 +477,45 @@ int main(int argc, char* argv[]) {
         gs_config.replay_file  = replay_file;        // empty = normal, else replay mode
         gs_config.replay_max_packets = replay_max_packets;
         gs_config.custom_name = custom_name;          // Path B: char name for native mode
+
+        // ── Tier-1 property overrides wired from CLI ─────────────────
+        gs_config.custom_level        = custom_level;
+        gs_config.custom_hp_current   = custom_hp_current;
+        gs_config.custom_hp_max       = custom_hp_max;
+        gs_config.custom_mp_current   = custom_mp_current;
+        gs_config.custom_mp_max       = custom_mp_max;
+        gs_config.custom_stamina_max  = custom_stamina_max;
+        gs_config.custom_gold         = custom_gold;
+        gs_config.custom_xp_current   = custom_xp_current;
+        gs_config.custom_str          = custom_str;
+        gs_config.custom_dex          = custom_dex;
+        gs_config.custom_int_stat     = custom_int;
+        gs_config.custom_vit          = custom_vit;
+        gs_config.custom_class_id     = custom_class_id;
+        gs_config.custom_race_id      = custom_race_id;
+        if (cap_level    >= 0) gs_config.captured_level    = cap_level;
+        if (cap_hp_max   >= 0) gs_config.captured_hp_max   = cap_hp_max;
+        if (cap_gold     >= 0) gs_config.captured_gold     = cap_gold;
+        if (cap_class_id >= 0) gs_config.captured_class_id = cap_class_id;
+        if (cap_race_id  >= 0) gs_config.captured_race_id  = cap_race_id;
+
+        // ── Path X / V3 wiring ──
+        gs_config.v3_emit_enabled         = v3_emit;
+        gs_config.disable_m21             = disable_m21;
+        gs_config.v3_custom_name          = v3_name_override;
+        gs_config.v3_target_channel       = v3_target_channel;
+        gs_config.v3_subobject_guid       = v3_subobject_guid;
+        gs_config.v3_num_properties       = v3_num_properties;
+        gs_config.v3_reliable             = v3_reliable;
+        gs_config.v3_has_mbg              = v3_has_mbg;
+        gs_config.v3_rep_paused_override  = v3_rep_paused;
+        gs_config.v3_use_modern_format    = v3_use_modern_format;
+        gs_config.v3_test_mode            = v3_test_mode;
+        gs_config.v3_cmd_handle_name      = v3_cmd_name;
+        gs_config.v3_cmd_handle_level     = v3_cmd_level;
+        gs_config.v3_cmd_handle_health    = v3_cmd_health;
+        gs_config.v3_cmd_handle_max_health= v3_cmd_max_health;
+        gs_config.v3_cmd_handle_gold      = v3_cmd_gold;
         gs_config.native_mode = native_mode;          // Path B: authoritative-server flow
         gs_config.use_embedded_bootstrap = use_embedded_bootstrap;
         gs_config.generator_config = generator_config; // Phase D1 allowlist
