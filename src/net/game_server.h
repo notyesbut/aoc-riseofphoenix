@@ -678,6 +678,49 @@ struct ClientState {
     uint8_t  custom_field[6] = {};  // constant per session, from IntrepidExtData[0:6]
     bool     custom_field_captured = false;
 
+    // ── Per-channel outgoing reliable chSeq tracker (Phase B.0e2, 2026-04-27)
+    //
+    // We need this because cs.reliable_seq above is a SINGLE counter advanced
+    // by ch=0 control bunches.  Spliced bunches on other channels (e.g., ch=3
+    // for the PC) carry their own captured chSeq values inside the bunch
+    // payload.  When we want to send a NATIVE bunch on ch=3 (e.g., the
+    // ClientAckUpdateLevelVisibility ack), it must use a chSeq that's
+    // contiguous with what the splice has already shipped — otherwise the
+    // client classifies it as out-of-window (>1024 bunches from
+    // InReliable[ch]) and closes with NMT_Close.
+    //
+    // Updated by send_captured_packet (post-build parse) and any native send
+    // path that emits a reliable bunch on a non-control channel.
+    // Map key = ChIndex; value = LAST chSeq we sent on that channel.
+    std::unordered_map<uint32_t, uint16_t> last_outgoing_reliable_chseq;
+
+    // ── SULV ACK queue (Phase B.0e2, 2026-04-27) ──────────────────────────
+    //
+    // SULV (ServerUpdateLevelVisibility) RPCs arrive from the client during
+    // the bootstrap splice phase.  Sending the ACK immediately would race
+    // the splice (which still has more ch=3 reliable bunches to ship), and
+    // we'd have to "reserve" a chSeq value that conflicts with future
+    // captured chSeq values baked into the spliced bunches.  Instead we
+    // queue ACKs here; drain after WorldBootstrap === complete fires.
+    struct PendingSulvAck {
+        std::string  package_name;       // extracted from SULV payload
+        uint32_t     triggering_ch_idx;  // logging only
+    };
+    std::vector<PendingSulvAck> pending_sulv_acks;
+    bool world_bootstrap_complete = false;
+
+    // ── Phase B.0p4 (2026-04-28 PM) — reactive native ClientRestart ──
+    // Set true by send_bunch_packet when it ships pkt#78 (PawnEmitter path)
+    // — this is the moment NetGUID 88 (the captured Pawn) becomes resolvable
+    // on the client.  Until this flag is set, any reactive ClientRestart we
+    // emit would arrive before the client knows about the Pawn → it would
+    // call AcknowledgePossession(NULL).
+    bool pkt78_emitted = false;
+    // Set true the first time we successfully ship a native ClientRestart
+    // RPC for this client.  Idempotent guard so we don't keep re-sending
+    // every time the client retries SNLW.
+    bool reactive_clientrestart_sent = false;
+
     void init_sequences(int16_t server_seq, int16_t client_seq) {
         out_seq     = server_seq & SEQ_MASK;
         // UE5 InitSequence: InAckSeq = IncomingSequence - 1
@@ -1700,6 +1743,15 @@ private:
             ue5::write_bits(buf, sizeof(buf), off, bit, 1);
         }
 
+        // ── EXTRA SENTINEL BIT (AoC PacketHandler requirement) ──
+        // Phase B.0p5 (2026-04-27 morning) — bug found via GUID88-SCAN.
+        // PawnEmitter splices captured pkt#78 via this function.  Without
+        // the sentinel bit, AoC's PacketHandler reports "0's in last byte"
+        // 3ms after emission and silently drops the packet — meaning the
+        // Pawn ActorOpen never reaches the actor channel.  Same fix as
+        // send_keepalive (~5659), send_ch0_reliable_payload (~1781), and
+        // send_client_restart_native (~2000).
+        ue5::write_bits(buf, sizeof(buf), off, 1, 1);
         size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
         uint16_t sent_seq = cs.out_seq;
         cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
@@ -1708,6 +1760,19 @@ private:
         if (sent > 0) {
             spdlog::info("[GameServer] send_bunch_packet: seq={} {}B "
                          "({} bunch bits)", sent_seq, pkt_len, bunch_bits);
+            // Phase B.0p4 (2026-04-28 PM) — flag pkt#78 emission so the
+            // SNLW reactive handler knows NetGUID 88 is now registered on
+            // the client and a native ClientRestart can be safely fired.
+            // pkt#78's bunch stream is 4725 bits in v3 (bunch[0]+bunch[2]).
+            // PawnEmitter is the only caller that ships exactly that many
+            // bits, so use it as a fingerprint.  If pkt#78 size changes
+            // again, update this constant.
+            constexpr size_t kPkt78BunchBits_v3 = 4725;
+            if (bunch_bits == kPkt78BunchBits_v3) {
+                cs.pkt78_emitted = true;
+                spdlog::info("[GameServer] (pkt#78 emission flagged on '{}' — "
+                             "reactive ClientRestart now eligible)", client_key);
+            }
             return true;
         }
         spdlog::warn("[GameServer] send_bunch_packet: send failed");
@@ -1772,6 +1837,13 @@ private:
             int bit = (bunch_buf[i >> 3] >> (i & 7)) & 1;
             ue5::write_bits(buf, sizeof(buf), off, bit, 1);
         }
+        // ── EXTRA SENTINEL BIT (AoC requirement, see send_keepalive ~5659) ──
+        // AoC client's PacketHandler expects an extra '1' bit BEFORE the
+        // standard add_termination.  Without it the handler misprocesses
+        // and reports "Received packet with 0's in last byte" → fault →
+        // DisconnectCountdown.  Splice/captured packets bring this bit in
+        // their payload; native packets must add it explicitly.
+        ue5::write_bits(buf, sizeof(buf), off, 1, 1);
         size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
         const uint16_t sent_seq = cs.out_seq;
         cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
@@ -1806,6 +1878,142 @@ private:
         auto existing = native_pc_allocator_.get_block(client_key);
         if (existing.is_valid()) return existing;
         return native_pc_allocator_.allocate_player_block(client_key);
+    }
+
+    /// Walk an OUTGOING (S>C) packet's bunches and update
+    /// cs.last_outgoing_reliable_chseq with the highest chSeq seen per
+    /// channel.  S>C bunch header layout (from send_client_ack_good_move
+    /// and friends):
+    ///   bControl(1) + bIsRepPaused(1) + bReliable(1) + ChIdx(SIP)
+    ///   + bExports(1) + bGuids(1) + bPartial(1)
+    ///   + ChSeq(12) IF bReliable
+    ///   + BunchDataBits(13)
+    ///   + payload bits
+    /// This is best-effort: if parsing fails midway, we stop scanning.
+    /// Called after every send_captured_packet so we know what chSeq the
+    /// spliced bytes carried.  Used by send_client_ack_update_level_visibility
+    /// to pick the next contiguous chSeq for native ch=3 sends.
+    void scan_outgoing_packet_chseq(ClientState& cs,
+                                     const uint8_t* buf, size_t pkt_len) {
+        if (pkt_len < 8) return;
+        // Strip termination + skip outer header + notify + custom field + pkt_info
+        size_t eff_bits = ::ue5::strip_termination(buf, pkt_len);
+        // Outer header (38 bits) + Notify (32 packed + N×32 history) + custom (48) + pkt_info (12)
+        // Read packed_header first to know history count
+        size_t off = 38;
+        if (off + 32 > eff_bits) return;
+        uint32_t packed = static_cast<uint32_t>(::ue5::read_bits(buf, pkt_len, off, 32));
+        uint32_t hist_count = (packed & 0xF) + 1;
+        if (off + hist_count * 32 > eff_bits) return;
+        for (uint32_t i = 0; i < hist_count; ++i)
+            ::ue5::read_bits(buf, pkt_len, off, 32);
+        // AoC custom field (48 bits)
+        if (off + ClientState::CUSTOM_FIELD_BITS > eff_bits) return;
+        off += ClientState::CUSTOM_FIELD_BITS;
+        // PacketInfo per AoC layout (matches build_replay_packet, lines 5158-5166):
+        //   has_pkt_info (1)
+        //   IF has_pkt_info: jitter (10)
+        //   has_srv_frame (1)        ← UNCONDITIONAL after the optional jitter
+        //   IF has_srv_frame: frame_time (8)
+        // Earlier iteration of this scanner had has_srv_frame nested INSIDE
+        // has_pkt_info which caused 10-bit misalignment for packets that
+        // happened to have has_pkt_info=0 — symptom was ch=3 chSeq tracker
+        // reading 1978 from misaligned bits in the 09:54 test.
+        if (off + 1 > eff_bits) return;
+        bool has_pkt_info = ::ue5::read_bits(buf, pkt_len, off, 1) != 0;
+        if (has_pkt_info) {
+            if (off + 10 > eff_bits) return;
+            ::ue5::read_bits(buf, pkt_len, off, 10);  // jitter
+        }
+        if (off + 1 > eff_bits) return;
+        bool has_srv = ::ue5::read_bits(buf, pkt_len, off, 1) != 0;
+        if (has_srv) {
+            if (off + 8 > eff_bits) return;
+            ::ue5::read_bits(buf, pkt_len, off, 8);  // server frame time
+        }
+
+        // Walk bunches
+        int bunch_idx = 0;
+        while (off + 20 <= eff_bits && bunch_idx < 32) {
+            ++bunch_idx;
+            size_t bunch_start = off;
+            bool b_ctrl = ::ue5::read_bits(buf, pkt_len, off, 1) != 0;
+            // S>C bunches we generate don't write bOpen/bClose (we only ever
+            // write bCtrl=0 for non-control), but spliced captured bunches
+            // MIGHT have ctrl/open/close set.  Handle both.
+            bool b_open = false, b_close = false;
+            if (b_ctrl) {
+                if (off + 2 > eff_bits) return;
+                b_open  = ::ue5::read_bits(buf, pkt_len, off, 1) != 0;
+                b_close = ::ue5::read_bits(buf, pkt_len, off, 1) != 0;
+                if (b_close) {
+                    // ── PM14 (2026-04-28) — variable-length CloseReason ──
+                    // Per RE of sub_144230D50 line 330: AOC reads
+                    //   (*a2->vtable[50])(a2, &v167, 15)
+                    // i.e. SerializeInt(MAX=15) which is variable 1-4 bits
+                    // (typically 4 bits for values 0-7, 3 bits for 7-14).
+                    // Prior fixed 3-bit read mis-aligned by 1 bit when bClose=1
+                    // appeared in spliced PC chain bunches → CNSF cascade.
+                    if (off + 4 > eff_bits) return;
+                    (void)::ue5::read_serialize_int(buf, pkt_len, off, 15);
+                }
+            }
+            if (off + 2 > eff_bits) return;
+            ::ue5::read_bits(buf, pkt_len, off, 1);  // bIsRepPaused
+            bool b_reliable = ::ue5::read_bits(buf, pkt_len, off, 1) != 0;
+            uint32_t ch_idx = static_cast<uint32_t>(::ue5::read_sip(buf, pkt_len, off));
+            if (off + 3 > eff_bits) return;
+            ::ue5::read_bits(buf, pkt_len, off, 1);  // bExports
+            ::ue5::read_bits(buf, pkt_len, off, 1);  // bGuids
+            bool b_partial = ::ue5::read_bits(buf, pkt_len, off, 1) != 0;
+            uint16_t ch_seq = 0;
+            if (b_reliable) {
+                // ── Phase B.0p9 (2026-04-28 PM9) — ChSeq is 10-bit ──
+                // AOC encodes ChSeq via serialize_int(value, 1024), which
+                // reads/writes ceil(log2(1024)) = 10 bits.  Reading 12 bits
+                // here previously consumed 2 extra bits that belonged to the
+                // following ChName.bIsHardcoded + SIP fields, corrupting our
+                // tracker and any downstream native send that read it.
+                if (off + 10 > eff_bits) return;
+                ch_seq = static_cast<uint16_t>(::ue5::read_bits(buf, pkt_len, off, 10));
+                // Update tracker.
+                //
+                // ── Phase B.0p10 (2026-04-28 PM10) — first-touch fix ──
+                // PM9's modulo-aware "later than" check used a half-window
+                // (512) to avoid treating wrap-around as advancement.  But
+                // that test rejected the FIRST seen value when cur==0 and
+                // ch_seq>=512.  Captured PC chain bunches start at ch_seq=954
+                // (10-bit), so cur stayed at 0 and our native ClientRestart
+                // emitted at chSeq=1 instead of 958, landing far before the
+                // client's InRel[3]=957 → bunch buffered indefinitely.
+                //
+                // Fix: treat cur==0 as uninitialized (default-init from
+                // unordered_map operator[]).  Real chSeq values for ch>=3
+                // start at the captured PC chain's chSeq=954 in our session,
+                // so 0 is unambiguous as "not yet seen".  For ch=0 control
+                // channel, we don't use this tracker (send_ch0_reliable_payload
+                // uses cs.reliable_seq directly).
+                auto& cur = cs.last_outgoing_reliable_chseq[ch_idx];
+                if (cur == 0) {
+                    cur = ch_seq;
+                } else {
+                    uint16_t diff = (ch_seq - cur) & 0x3FF;
+                    if (diff > 0 && diff < 512) {
+                        cur = ch_seq;
+                    }
+                }
+            }
+            if (off + 13 > eff_bits) return;
+            uint32_t bunch_data_bits =
+                static_cast<uint32_t>(::ue5::read_bits(buf, pkt_len, off, 13));
+            // Skip payload — we don't care about bunch contents here
+            if (off + bunch_data_bits > eff_bits) return;
+            off += bunch_data_bits;
+            // Sanity break — if a bunch advanced us 0 bits, abort
+            if (off == bunch_start) return;
+            // Suppress unused warnings
+            (void)b_open; (void)b_partial;
+        }
     }
 
     bool send_captured_packet(const std::string& client_key,
@@ -1854,8 +2062,63 @@ private:
             return false;
         }
 
+        // ── Phase B.0p4 (2026-04-27 morning) ──────────────────────────
+        // NetGUID-88 collision detector (per UPackageMapClient::SerializeNewActor RE).
+        //
+        // The captured Pawn (pkt#78) uses NetGUID ObjectId=88 (BARE form
+        // SIP(88)+0x2a flag).  The client's PackageMap caches a mapping
+        // NetGUID → class.  If any earlier packet exports NetGUID 88 to
+        // a different class, pkt#78's spawn fails silently (the
+        // sub_144285F10 NOT_IN_CACHE / class-mismatch path).
+        //
+        // Scan every spliced packet's raw bytes for the SIP(88)=0xb0 byte
+        // pattern and the inline u64 ObjectId=88 pattern.  Log every hit
+        // so we can correlate with packet index.  One-time diagnostic;
+        // remove once the question is answered.
+        if (rpkt.bunch_bits > 0 && replay_idx <= 78) {
+            const uint8_t* d = rpkt.raw.data();
+            const size_t   n = rpkt.raw.size();
+            int sip_hits = 0;
+            int inline_hits = 0;
+            // SIP-encoded BARE NetGUID 88: byte = (88<<1)|0 = 0xb0
+            // Followed typically by the 0x2a flag byte.
+            for (size_t i = 0; i + 1 < n; ++i) {
+                if (d[i] == 0xb0 && d[i+1] == 0x2a) ++sip_hits;
+            }
+            // Inline 16-byte FIntrepidNetGUID with ObjectId=88 LE
+            // (the 8 ObjectId bytes are 58 00 00 00 00 00 00 00, then any
+            // ServerId+Randomizer follows).  Per sub_1413A6340 RE: hash key
+            // is the full 16 bytes, so different ServerId/Randomizer values
+            // would hash differently — useful to detect even non-overlapping
+            // ObjectId=88 exports that could still cause an ObjectId→FullGUID
+            // table conflict.
+            for (size_t i = 0; i + 15 < n; ++i) {
+                if (d[i]==0x58 && d[i+1]==0 && d[i+2]==0 && d[i+3]==0 &&
+                    d[i+4]==0 && d[i+5]==0 && d[i+6]==0 && d[i+7]==0) {
+                    ++inline_hits;
+                    spdlog::warn("[GUID88-SCAN]   inline at byte {} : "
+                                  "ServerId={} Randomizer={}",
+                                  i,
+                                  *reinterpret_cast<const uint32_t*>(&d[i+8]),
+                                  *reinterpret_cast<const uint32_t*>(&d[i+12]));
+                }
+            }
+            if (sip_hits || inline_hits) {
+                spdlog::warn("[GUID88-SCAN] replay_idx={} bunch_bits={}: "
+                              "SIP(0xb0+0x2a)={} | inline_88_xxxx={}",
+                              replay_idx, rpkt.bunch_bits, sip_hits, inline_hits);
+            }
+        }
+
         const uint16_t sent_seq = cs.out_seq;
         cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
+
+        // Phase B.0e2 (2026-04-27): scan the OUTGOING packet's bunches and
+        // update cs.last_outgoing_reliable_chseq so a later native send on
+        // the same channel (e.g., the SULV ack on ch=3) can use the correct
+        // next chSeq.
+        scan_outgoing_packet_chseq(cs, buf, pkt_len);
+
         int sent = send_to_client_impl(buf, pkt_len, addr);
         if (sent > 0) {
             spdlog::info("[GameServer] >> [SPLICE] replay_idx={} ({}B, "
@@ -1873,11 +2136,333 @@ private:
         return static_cast<uint32_t>(replay_data_->packets.size());
     }
 
+    // ───────────────────────────────────────────────────────────────────
+    //  on_world_bootstrap_complete — Phase B.0e2 (2026-04-27)
+    //
+    //  Called by WorldBootstrapEmitter::emit_all once it finishes walking
+    //  the plan.  We drain cs.pending_sulv_acks here, sending each queued
+    //  ACK with a chSeq taken from cs.last_outgoing_reliable_chseq[3] + 1
+    //  (which the post-build scanner has tracked across every spliced
+    //  ch=3 reliable bunch).
+    //
+    //  At this point cs.last_outgoing_reliable_chseq[3] reflects the
+    //  HIGHEST chSeq we shipped on ch=3 during splice.  Each ACK we send
+    //  bumps it by 1 and the next ACK uses the new value — so successive
+    //  ACKs are contiguous without gaps.
+    // ───────────────────────────────────────────────────────────────────
+    void on_world_bootstrap_complete(const std::string& client_key,
+                                       const sockaddr_in& addr) override {
+        std::lock_guard<std::mutex> lk(client_mu_);
+        auto it = clients_.find(client_key);
+        if (it == clients_.end()) return;
+        ClientState& cs = it->second;
+        cs.world_bootstrap_complete = true;
+
+        if (cs.pending_sulv_acks.empty()) {
+            spdlog::info("[GameServer] on_world_bootstrap_complete: no SULV "
+                          "acks queued — nothing to drain");
+            return;
+        }
+
+        uint16_t ch3_seq_seen = 0;
+        auto trk = cs.last_outgoing_reliable_chseq.find(3);
+        if (trk != cs.last_outgoing_reliable_chseq.end()) {
+            ch3_seq_seen = trk->second;
+        }
+        spdlog::warn("[GameServer] Draining {} pending SULV ACKs (ch=3 last "
+                      "outgoing chSeq={})",
+                      cs.pending_sulv_acks.size(), ch3_seq_seen);
+
+        // Move queue out so we can release the lock during sends (the send
+        // function takes the lock internally via cs reference; we already
+        // hold it, so we'll send under the same lock — that's OK).
+        auto queue = std::move(cs.pending_sulv_acks);
+        cs.pending_sulv_acks.clear();
+
+        for (const auto& ack : queue) {
+            // send_client_ack_update_level_visibility reads
+            // cs.last_outgoing_reliable_chseq[3] and bumps it for the next
+            // call, so successive ACKs pick contiguous chSeq values.
+            (void)send_client_ack_update_level_visibility(
+                cs, addr, client_key, ack.package_name, ack.triggering_ch_idx);
+        }
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    //  send_client_restart_native — Phase B.0p (2026-04-27)
+    //
+    //  CLEAN REWRITE using captured RE evidence.  Replaces the 20-variant
+    //  fuzz that overrode the captured ClientRestart with a synthetic
+    //  128-bit NetGUID nothing on the client side recognized.
+    //
+    //  Pawn parameter encoding (decoded from captured_pkt_78.bin bunch 2):
+    //    BARE format: SIP(ObjectId) + 0x2a flag byte
+    //    For ObjectId 88 (the captured Pawn): 1 byte SIP + 1 byte flag = 16 bits
+    //    NOT the 128-bit FIntrepidNetGUID inline form we'd been emitting.
+    //
+    //  When called from the NMT-DETECT reactive path, pass:
+    //    obj_id=88, server_id=ignored, randomizer=ignored
+    //  to reference the captured Pawn that pkt#78's splice already
+    //  registered in the client's PackageMap.
+    //
+    //  Bunch envelope (per sub_143F2A2A0/sub_143F2DA40 chain):
+    //    bControl=0, bIsRepPaused=0, bReliable=1, ChIdx=3 (PC channel),
+    //    bHasPME=0, bHasMBG=0, bPartial=0,
+    //    ChSeq (12-bit), ChName.bIsHardcoded=1 + EName=102 (NAME_Actor),
+    //    BunchDataBits (13-bit)
+    //
+    //  Content block + outer payload (per sub_1444E5420 + sub_1444E55B0):
+    //    [bHasRepLayout=0][bIsActor=1][SIP outer_payload_bits]
+    //    [outer payload {
+    //       [1 bit] header (skipped by sub_1444E5420 lines 21-28)
+    //       [SIP] handle+1 (0-based handle, 0 reserved as terminator)
+    //       [SIP] field_payload_bits = 16 (BARE NetGUID size)
+    //       [SIP(obj_id) + 0x2a] BARE Pawn NetGUID
+    //       [SIP] 0  ← REQUIRED end-of-fields terminator
+    //    }]
+    //  + extra '1' sentinel bit + add_termination (AoC PacketHandler
+    //    requirement, see send_keepalive ~5659).
     bool send_client_restart_native(const std::string& client_key,
                                       const sockaddr_in& addr,
                                       uint64_t pawn_obj_id,
                                       uint32_t pawn_server_id,
                                       uint32_t pawn_randomizer) override {
+        (void)pawn_server_id;     // BARE refs use only ObjectId
+        (void)pawn_randomizer;
+
+        std::lock_guard<std::mutex> lk(client_mu_);
+        auto it = clients_.find(client_key);
+        if (it == clients_.end()) return false;
+        if (it->second.phase < ClientState::CONNECTED) return false;
+        ClientState& cs = it->second;
+
+        // ── Phase B.0p11 (2026-04-28 PM11) — chSeq with safe floor past PC chain ──
+        //
+        // Previous attempts:
+        //   - PM7: hardcoded 2080 — gap from real session
+        //   - PM8: cs.last_outgoing_reliable_chseq[3]+1 — but tracker reads
+        //          12 bits, conflated chSeq with neighboring fields
+        //   - PM9: tracker reads 10 bits — correct, but also exposes that
+        //          scan_outgoing_packet_chseq only walks bunch[0] of each
+        //          packet (multi-bunch partial chains don't advance tracker)
+        //   - PM10: cur==0 first-touch fix — tracker advances on each spliced
+        //          packet's bunch[0], but stops at 955 because subsequent
+        //          bunches in pkt#22 (chSeq 956, 957) aren't tracked
+        //
+        // Live test PM10: ClientRestart fired at chSeq=955+1=956, conflicting
+        // with captured pkt#22 bunch[2] at chSeq=956 (same chSeq).  Client
+        // dropped one as duplicate.  Loading screen alternates between
+        // "Waiting for WP Streaming" (60s) and "No valid pawn" (recreated)
+        // — flashing 0-100% pattern.
+        //
+        // Fix (PM11): apply a SAFETY FLOOR.  Captured PC chain occupies
+        // chSeqs 954..957 (10-bit).  Continuation bunches in pkts 47-149
+        // span up to ~970-980.  Use floor of 1000 to clear all of them.
+        // Higher chSeqs in pkts 150-500 (deep splice) might wrap past 1023
+        // back into single digits, but the client's reliable-seq window
+        // tolerates wrap-back as forward via the half-window rule.
+        uint16_t last_ch3_seen = 0;
+        auto trk = cs.last_outgoing_reliable_chseq.find(3);
+        if (trk != cs.last_outgoing_reliable_chseq.end()) {
+            last_ch3_seen = trk->second;
+        }
+        constexpr uint16_t kMinChSeqForCR = 1000;  // safe floor past PC chain + continuations
+        uint16_t candidate = static_cast<uint16_t>((last_ch3_seen + 1u) & 0x3FFu);
+        // If candidate would land inside the captured chSeq window,
+        // jump forward to the safety floor.
+        if (candidate < kMinChSeqForCR) {
+            candidate = kMinChSeqForCR;
+        }
+        const uint32_t this_chseq_value = candidate;
+        // Bump tracker so subsequent ch=3 sends pick the next contiguous
+        // chSeq.  The send_bunch_packet path (used by SULV ack) does the
+        // same bookkeeping after its scan_outgoing_packet_chseq pass; we do
+        // it inline here because we're not going through that wrapper.
+        cs.last_outgoing_reliable_chseq[3] = static_cast<uint16_t>(this_chseq_value);
+
+        // ── Phase B.0p12 (2026-04-28 PM12) — handle FUZZ across sessions ──
+        //
+        // PM7-PM11: chSeq alignment fixes succeeded.  Bunch now reaches the
+        // client.  But handle=52 doesn't elicit any C>S Server* RPC response,
+        // meaning either it's out-of-bounds or it's a property (not RPC).
+        //
+        // PM12 strategy: rotate through candidate handles, one per session.
+        // Counter persists across reconnects (static thread_local).  After
+        // each test, user reconnects → next handle is tried.  Watch C>S for
+        // dispatch byte 0x76 (ServerAcknowledgePossession = SUCCESS) or
+        // 0x7E (ServerCheckClientPossession = handle right, Pawn ref wrong).
+        //
+        // Candidate list (priority order):
+        //   25, 26 — alphabetical pos in AOC Client* table (0/1 indexed)
+        //   27-32 — adjacent (AOC's 18 added Client* RPCs may shift handle)
+        //   50, 51, 53, 54, 55, 56 — if Server*=N preceding, then offset
+        //   22 — same as ServerNotifyLoadedWorld empirically
+        //   60, 65, 70 — far-out speculation
+        static constexpr uint16_t kHandleFuzzList[] = {
+            25, 26, 27, 28, 29, 30, 31, 32, 50, 51, 53, 54, 55, 56, 22, 60, 65, 70
+        };
+        static constexpr size_t kHandleFuzzCount =
+            sizeof(kHandleFuzzList) / sizeof(kHandleFuzzList[0]);
+        static thread_local size_t fuzz_idx = 0;
+        const uint16_t kFieldHandle = kHandleFuzzList[fuzz_idx % kHandleFuzzCount];
+        spdlog::warn("[FUZZ] ClientRestart attempt with handle={} "
+                      "(fuzz {} of {})",
+                      kFieldHandle,
+                      (fuzz_idx % kHandleFuzzCount) + 1,
+                      kHandleFuzzCount);
+        ++fuzz_idx;
+        const uint32_t wire_handle = static_cast<uint32_t>(kFieldHandle) + 1u;
+
+        auto sip_bit_count = [](uint32_t v) -> size_t {
+            if (v == 0) return 8;
+            size_t bits = 0;
+            while (v > 0) { bits += 8; v >>= 7; }
+            return bits;
+        };
+
+        // BARE NetGUID size: SIP(obj_id) + 0x2a flag byte
+        const size_t pawn_netguid_bits =
+            sip_bit_count(static_cast<uint32_t>(pawn_obj_id)) + 8;
+
+        const size_t handle_sip_bits     = sip_bit_count(wire_handle);
+        const size_t size_sip_bits       = sip_bit_count(static_cast<uint32_t>(pawn_netguid_bits));
+        const size_t terminator_sip_bits = 8;
+
+        const size_t outer_payload_bits = 1u                        // header
+                                        + handle_sip_bits
+                                        + size_sip_bits
+                                        + pawn_netguid_bits
+                                        + terminator_sip_bits;
+        const size_t outer_size_varint_bits =
+            sip_bit_count(static_cast<uint32_t>(outer_payload_bits));
+        const size_t total_bdb = 2 + outer_size_varint_bits + outer_payload_bits;
+
+        // ── Bunch envelope ───────────────────────────────────────────────
+        uint8_t bunch_buf[256] = {};
+        size_t bb = 0;
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bControl=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bIsRepPaused=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // bReliable=1
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 3);    // ChIdx=3 (PC)
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasPME=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasMBG=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bPartial=0
+
+        // ── Phase B.0p9 (2026-04-28 PM9) — ChSeq is 10-bit, not 12-bit ──
+        //
+        // Live-test PM8 fired ClientRestart at chSeq=1979 (from session
+        // tracker), but the client closed the connection with:
+        //   "Existing channel at index 3 with type \"Actor\" differs from
+        //    the incoming bunch's expected channel type, \"UInt32Property\""
+        //   Result=BunchWrongChannelType
+        //
+        // Root cause: ChSeq is encoded with serialize_int(value, 1024),
+        // which reads ceil(log2(1024)) = 10 bits — NOT 12 bits as previously
+        // written.  Captured PC chain pkt#22 bunch[0] hdr_bits=51 confirmed:
+        //   1 ctrl + 1 open + 1 close + 1 paused + 1 reliable
+        //   + 8 chidx + 1 exp + 1 mbg + 1 partial
+        //   + 10 chseq                                             ← 10-bit!
+        //   + 3 partial fields + 1 hardcoded + 8 SIP(102) + 13 bdb
+        //   = 51 bits  ✓
+        //
+        // Writing 12 bits caused a 2-bit overshoot.  The client read our
+        // chSeq as 10 bits (truncating) and then read the next 2 bits as
+        // ChName.bIsHardcoded + SIP-byte continue, which decoded to a
+        // garbage FName index that mapped to "UInt32Property" → channel
+        // type mismatch → connection closed.
+        const uint32_t this_chseq = this_chseq_value;
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                        this_chseq & 0x3FF, 10);                 // ChSeq 10-bit
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // ChName.bIsHardcoded=1
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 102);  // EName=102 NAME_Actor
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                        total_bdb, 13);                          // BunchDataBits
+
+        // ── Content block envelope ──
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasRepLayout=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // bIsActor=1
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb,
+                        static_cast<uint32_t>(outer_payload_bits));
+
+        // ── Outer payload ──
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // header
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, wire_handle);
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb,
+                        static_cast<uint32_t>(pawn_netguid_bits));
+
+        // Pawn parameter — BARE NetGUID
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb,
+                        static_cast<uint32_t>(pawn_obj_id));
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0x2a, 8); // flag byte
+
+        // End-of-fields terminator
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 0);
+
+        const size_t bunch_bits = bb;
+
+        // ── Wrap in UDP packet ──
+        uint8_t buf[1024] = {};
+        size_t off = 0;
+        write_sc_packet_prefix(buf, sizeof(buf), off, cs, /*handshake=*/false);
+        ue5::write_bits(buf, sizeof(buf), off, 1,    1);   // hasPktInfo
+        ue5::write_bits(buf, sizeof(buf), off, 1023, 10);  // jitter
+        ue5::write_bits(buf, sizeof(buf), off, 0,    1);   // hasFrameTime
+
+        for (size_t i = 0; i < bunch_bits; ++i) {
+            int bit = (bunch_buf[i >> 3] >> (i & 7)) & 1;
+            ue5::write_bits(buf, sizeof(buf), off, bit, 1);
+        }
+
+        // AoC PacketHandler sentinel + standard termination
+        ue5::write_bits(buf, sizeof(buf), off, 1, 1);
+        size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
+
+        const uint16_t sent_seq = cs.out_seq;
+        cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
+
+        int sent = send_to_client_impl(buf, pkt_len, addr);
+        if (sent > 0) {
+            spdlog::warn("[GameServer] >> ★ NATIVE ClientRestart "
+                          "(BARE pawn_netguid={} handle={} chSeq={} "
+                          "bunch_bits={} pkt={}B seq={})",
+                          pawn_obj_id, kFieldHandle, this_chseq,
+                          bunch_bits, pkt_len, sent_seq);
+            // Phase B.0p4 — flag the idempotent sentinel so the SNLW
+            // handler won't fire ANOTHER ClientRestart on the next SNLW
+            // retry.  This is crucial because PawnEmitter calls this
+            // function directly (right after pkt#78 ships) AND the SNLW
+            // detector may also call it later.  Whichever path fires
+            // first, the second one short-circuits via this flag.
+            cs.reactive_clientrestart_sent = true;
+            return true;
+        }
+        spdlog::warn("[GameServer] send_client_restart_native: send failed");
+        return false;
+    }
+
+    // ── REMOVED 2026-04-28 PM ──────────────────────────────────────────
+    // `send_client_restart_native_FUZZ_LEGACY` (~250 lines) was dead code:
+    //   - 20 hardcoded fuzz variants spanning 12 candidate handle values,
+    //     2 header-bit options
+    //   - Never called anywhere in the codebase (single grep hit was the
+    //     definition itself)
+    //   - Used a 128-bit FIntrepidNetGUID inline form for the Pawn
+    //     parameter that turned out to be wrong — the captured pkt#78
+    //     decode showed BARE form (SIP(ObjectId)+0x2a flag) is correct
+    //   - Phase B.0p (2026-04-27) added the clean version above
+    //     (`send_client_restart_native`) that uses the BARE form;
+    //     this fuzzer was kept "for reference" but now obsoleted.
+    //
+    // If we need to fuzz handle values again in the future, do it inside
+    // the clean function with a small loop, not by duplicating 250 lines.
+    [[deprecated("removed 2026-04-28 — use send_client_restart_native")]]
+    bool send_client_restart_native_FUZZ_LEGACY_REMOVED(const std::string&,
+                                      const sockaddr_in&,
+                                      uint64_t, uint32_t, uint32_t) {
+        return false;
+    }
+
+#if 0  // ── HISTORIC FUZZ BODY (NEVER COMPILED) — kept for documentation only ──
         // Road A — Phase B.0j (2026-04-26 — FORMAT CORRECTED).
         //
         // After RE'ing UActorChannel::ProcessBunch (sub_143F2A2A0),
@@ -1914,24 +2499,53 @@ private:
         //   - field_handle is FIXED-WIDTH via SerializeInt(value, max)
         //     — width = ceil(log2(max+1)), where max = group->Count
         //
-        // Validation: captured SNLW field_handle = 92 (read 9 bits at
-        // bit 18). Filtered RPC#62 + offset 30 = 92 ✓.  The offset
-        // ≈ number of UProperty fields registered before FUNC_Net
-        // functions in APlayerController's FieldExportGroup.
+        // Phase B.0o (2026-04-26 latest) — *** TOTAL FORMAT REWRITE ***.
         //
-        // For ClientRestart filtered RPC#26 → expected field_handle = 56.
-        // Fuzz around it in case offset is slightly different.
-        static constexpr uint32_t kFuzzIndices[] = {
-            56,   // Hypothesis: 26 + 30 offset = 56
-            55, 57, 58, 59, 60,
-            54, 53, 52, 51, 50,
-            // Backup wider range
-            46, 92, 26,
+        // After RE'ing sub_1444E5420 (Mode A entry) and the GOLDEN
+        // sub_1444E55B0 (the actual field iteration loop), the wire
+        // format is COMPLETELY DIFFERENT from anything we've tried:
+        //
+        //   ── inside the outer payload (after envelope+SIP size) ──
+        //   [1 bit]  header   ← skipped/discarded by sub_1444E5420 lines 21-28
+        //   ── per-field repeating block ──
+        //   [SIP]    handle_plus_one    ← 0 = end-of-fields TERMINATOR!
+        //                                   handle = wire_value - 1
+        //   [SIP]    payload_bits       ← size of next field's payload
+        //   [N bits] field_payload      ← e.g., 128 bits for FIntrepidNetGUID
+        //   ── repeat fields ──
+        //   [SIP]    0                  ← required terminator (1 byte 0x00)
+        //
+        // CRITICAL DECODING from sub_1444E55B0:
+        //   line 179: (*virt+408)(v13, &v90)   ← READ HANDLE via SIP
+        //   line 182: if (!v90) { v85=1; SUCCESS }  ← 0 = end
+        //   line 187: v24 = v90 - 1            ← handle is 1-BASED on wire!
+        //   line 189: bound check: v24 < group.Num()
+        //   line 225: (*virt+408)(v115, &v98)  ← READ payload_bits via SIP
+        //   line 248: sub_1414F3CC0(v107, v13, v98, 0) ← copy v98 bits
+        //
+        // We were sending fixed-width 9-bit handle. BOTH:
+        //   1. Wrong encoding (should be SIP, not fixed-width)
+        //   2. Missing the +1 offset (handle 0 = terminator!)
+        //   3. Missing the SIP(0) terminator at end
+        //   4. Maybe missing the 1-bit header at start
+        //
+        // No wonder the client silently drops every variant.
+        //
+        // For ClientRestart: handle is 0-based index into PC's group.
+        // Most likely values: 4..30 (RPCs typically near group start).
+        // Fuzz over reasonable handle values WITH and WITHOUT the
+        // 1-bit header to nail both axes.
+        struct FuzzVariant { bool has_header_bit; uint16_t handle; };
+        static constexpr FuzzVariant kFuzzVariants[] = {
+            // With 1-bit header (per sub_1444E5420 line 21-28 skip)
+            {true,  12}, {true,  26}, {true,  56}, {true,  92},
+            {true,   4}, {true,   8}, {true,  16}, {true,  30},
+            {true,  62}, {true,   2}, {true,   1}, {true,   0},
+            // Without 1-bit header (in case we're wrong about it)
+            {false, 12}, {false, 26}, {false, 56}, {false, 92},
+            {false,  4}, {false,  8}, {false, 16}, {false, 30},
         };
-        constexpr size_t kFuzzCount = sizeof(kFuzzIndices)/sizeof(kFuzzIndices[0]);
-        // Fixed-width bits for field_handle.  If APlayerController's
-        // group has 300+ fields, ceil(log2(301)) = 9.  Try 9.
-        static constexpr size_t kFieldHandleBits = 9;
+        constexpr size_t kFuzzCount = sizeof(kFuzzVariants)/sizeof(kFuzzVariants[0]);
 
         std::lock_guard<std::mutex> lk(client_mu_);
         auto it = clients_.find(client_key);
@@ -1966,19 +2580,25 @@ private:
         };
 
         for (size_t fi = 0; fi < kFuzzCount; ++fi) {
-            const uint32_t field_handle = kFuzzIndices[fi];
+            const uint16_t field_handle    = kFuzzVariants[fi].handle;
+            const bool     has_header_bit  = kFuzzVariants[fi].has_header_bit;
+            // Wire value is handle+1 (handle is 0-based; 0 = terminator)
+            const uint32_t wire_handle     = static_cast<uint32_t>(field_handle) + 1u;
 
-            // ── Compute sizes ──
+            // ── Compute sizes (sub_1444E55B0 format) ──
             // Inner field payload = Pawn NetGUID (128 bits)
             const size_t inner_field_payload_bits = 128;
-            const size_t inner_size_varint_bits = sip_bit_count(static_cast<uint32_t>(inner_field_payload_bits));
+            const size_t handle_sip_bits = sip_bit_count(wire_handle);
+            const size_t size_sip_bits   = sip_bit_count(static_cast<uint32_t>(inner_field_payload_bits));
+            const size_t terminator_sip_bits = 8;  // SIP(0) is 1 byte = 8 bits
 
-            // Outer content block payload = field_handle (9 bits)
-            //                             + SIP(inner_field_payload_bits)
-            //                             + inner_field_payload (128 bits)
-            const size_t outer_payload_bits = kFieldHandleBits
-                                            + inner_size_varint_bits
-                                            + inner_field_payload_bits;
+            // Outer content block payload (the "v98 bits" from RE):
+            //   [1 bit header (optional)] + [SIP handle+1] + [SIP size] + [128 payload] + [SIP 0 term]
+            const size_t outer_payload_bits = (has_header_bit ? 1u : 0u)
+                                            + handle_sip_bits
+                                            + size_sip_bits
+                                            + inner_field_payload_bits
+                                            + terminator_sip_bits;
             const size_t outer_size_varint_bits = sip_bit_count(static_cast<uint32_t>(outer_payload_bits));
 
             // Content block envelope: 2 bits + size_varint + outer payload
@@ -1996,8 +2616,10 @@ private:
             ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bPartial=0
 
             const uint32_t this_chseq = pc_ch_reliable_seq++;
+            // PM20 (2026-04-28): FIX — ChSeq is 10 bits, not 12.
+            // (Dead code: PM19 disabled the only caller — kept consistent.)
             ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
-                            this_chseq & 0xFFF, 12);                 // ChSeq (12-bit S>C)
+                            this_chseq & 0x3FF, 10);                 // ChSeq (10-bit)
             ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // ChName.bIsHardcoded=1
             ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 102);  // EName=102 (NAME_Actor)
 
@@ -2013,16 +2635,22 @@ private:
             ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb,
                             static_cast<uint32_t>(outer_payload_bits));
 
-            // ── Inner field block ──
-            // Field handle as FIXED-WIDTH 9 bits (per sub_143F2DC60 RE)
-            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
-                            field_handle & 0x1FF, kFieldHandleBits);
+            // ── Outer payload (sub_1444E5420 + sub_1444E55B0 format) ──
 
-            // Inner field payload size as SIP varint
+            // [1 bit] header (skipped by sub_1444E5420 lines 21-28)
+            // Optional per fuzz variant.
+            if (has_header_bit) {
+                ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1);
+            }
+
+            // [SIP] handle+1 (0-based handle, +1 because 0 = terminator)
+            ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb, wire_handle);
+
+            // [SIP] field payload bits (= 128 for FIntrepidNetGUID)
             ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb,
                             static_cast<uint32_t>(inner_field_payload_bits));
 
-            // ── Inner field payload — FIntrepidNetGUID (128 bits) ──
+            // [N bits] field payload — FIntrepidNetGUID (128 bits)
             for (int i = 0; i < 8; ++i) {
                 ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
                                 (pawn_obj_id >> (i * 8)) & 0xFF, 8);
@@ -2035,6 +2663,11 @@ private:
                 ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
                                 (pawn_randomizer >> (i * 8)) & 0xFF, 8);
             }
+
+            // [SIP] 0 terminator — REQUIRED per sub_1444E55B0 line 182
+            // (otherwise the loop never exits gracefully and the bunch
+            // is treated as malformed → silent drop)
+            ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb, 0);
 
             const size_t bunch_bits = bb;
 
@@ -2049,6 +2682,13 @@ private:
                 int bit = (bunch_buf[i >> 3] >> (i & 7)) & 1;
                 ue5::write_bits(buf, sizeof(buf), off, bit, 1);
             }
+            // ── EXTRA SENTINEL BIT (AoC requirement, see send_keepalive ~5659) ──
+            // AoC client's PacketHandler expects an extra '1' bit BEFORE the
+            // standard add_termination.  Without it the handler misprocesses
+            // and reports "Received packet with 0's in last byte" (the
+            // misleading default fault label).  Splice packets bring this
+            // bit in their captured payload; native packets must add it.
+            ue5::write_bits(buf, sizeof(buf), off, 1, 1);
             size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
             const uint16_t sent_seq = cs.out_seq;
             cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
@@ -2056,9 +2696,10 @@ private:
             int sent = send_to_client_impl(buf, pkt_len, addr);
             if (sent > 0) {
                 spdlog::warn("[GameServer] >> ★ NATIVE ClientRestart FUZZ "
-                              "[{}/{}]: field_handle={} chSeq={} bunch_bits={} pkt={}B seq={}",
-                              fi+1, kFuzzCount, field_handle, this_chseq,
-                              bunch_bits, pkt_len, sent_seq);
+                              "[{}/{}]: hdr_bit={} handle={} (wire={}) chSeq={} bunch_bits={} pkt={}B seq={}",
+                              fi+1, kFuzzCount,
+                              has_header_bit ? 1 : 0, field_handle, wire_handle,
+                              this_chseq, bunch_bits, pkt_len, sent_seq);
                 ++sent_ok;
             }
         }
@@ -2066,15 +2707,25 @@ private:
                       "(pawn obj={} srv={} rnd=0x{:08x})",
                       sent_ok, kFuzzCount, pawn_obj_id, pawn_server_id, pawn_randomizer);
         return sent_ok > 0;
-    }
+#endif  // ── END HISTORIC FUZZ BODY ──
 
     /// Send UDP packet to a client (original implementation, renamed so
     /// the IGameServerHost virtual above can call into it without
     /// creating a recursive cycle).
     int send_to_client_impl(const uint8_t* data, size_t len, const sockaddr_in& dest) {
-        if (len > 0 && data[len - 1] == 0) {
-            spdlog::error("[GameServer] BUG: ZERO LAST BYTE in outgoing packet! len={} last4=[{:02x} {:02x} {:02x} {:02x}]",
+        // Diagnostic: every outgoing packet logs last4 so we can correlate
+        // with client's "0's in last byte" warnings.
+        if (len > 0) {
+            spdlog::debug("[GameServer] SND len={} last4=[{:02x} {:02x} {:02x} {:02x}]",
                           len,
+                          len >= 4 ? data[len-4] : 0, len >= 3 ? data[len-3] : 0,
+                          len >= 2 ? data[len-2] : 0, data[len-1]);
+        }
+        if (len > 0 && data[len - 1] == 0) {
+            spdlog::error("[GameServer] BUG: ZERO LAST BYTE in outgoing packet! len={} last8=[{:02x} {:02x} {:02x} {:02x} {:02x} {:02x} {:02x} {:02x}]",
+                          len,
+                          len >= 8 ? data[len-8] : 0, len >= 7 ? data[len-7] : 0,
+                          len >= 6 ? data[len-6] : 0, len >= 5 ? data[len-5] : 0,
                           len >= 4 ? data[len-4] : 0, len >= 3 ? data[len-3] : 0,
                           len >= 2 ? data[len-2] : 0, data[len-1]);
             spdlog::error("[GameServer]   full hex: {}", ue5::hex_dump(data, len, 128));
@@ -2094,12 +2745,15 @@ private:
             char addr_buf[32] = {};
             inet_ntop(AF_INET, &dest.sin_addr, addr_buf, sizeof(addr_buf));
             spdlog::info("[GameServer] >> S>C #{} to {}:{} {}B "
-                         "first8=[{:02x} {:02x} {:02x} {:02x} {:02x} {:02x} {:02x} {:02x}]",
+                         "first8=[{:02x} {:02x} {:02x} {:02x} {:02x} {:02x} {:02x} {:02x}] "
+                         "last4=[{:02x} {:02x} {:02x} {:02x}]",
                          n, addr_buf, ntohs(dest.sin_port), sent,
                          len >= 1 ? data[0] : 0, len >= 2 ? data[1] : 0,
                          len >= 3 ? data[2] : 0, len >= 4 ? data[3] : 0,
                          len >= 5 ? data[4] : 0, len >= 6 ? data[5] : 0,
-                         len >= 7 ? data[6] : 0, len >= 8 ? data[7] : 0);
+                         len >= 7 ? data[6] : 0, len >= 8 ? data[7] : 0,
+                         len >= 4 ? data[len-4] : 0, len >= 3 ? data[len-3] : 0,
+                         len >= 2 ? data[len-2] : 0, data[len-1]);
         } else if (sent < 0) {
             spdlog::warn("[GameServer] >> S>C SEND FAILED (len={}, WSAGetLastError={})",
                          len,
@@ -2894,10 +3548,26 @@ private:
             b_open  = ue5::read_bits(data, data_len, b, 1) != 0;
             b_close = ue5::read_bits(data, data_len, b, 1) != 0;
             if (b_close) {
-                ue5::read_bits(data, data_len, b, 3); // CloseReason: fixed 3 bits
+                // ── PM14 (2026-04-28) — variable-length CloseReason ──
+                // Per RE of sub_144230D50 line 330: AOC reads
+                //   (*a2->vtable[50])(a2, &v167, 15)
+                // i.e. SerializeInt(MAX=15) which is variable 1-4 bits
+                // (typically 4 bits for values 0-7, 3 bits for 7-14).
+                // Prior fixed 3-bit read mis-aligned by 1 bit when bClose=1
+                // appeared in spliced bunches, cascading into CNSF.
+                (void)ue5::read_serialize_int(data, data_len, b, 15);
             }
         }
-        ue5::read_bits(data, data_len, b, 1); // bIsReplicationPaused (always present in C>S)
+        // bIsReplicationPaused — always present in C>S; just a flag on the
+        // bunch. Per RE of sub_144230D50 (UIntrepidNetConnection's bunch
+        // parser), this flag is read into v188 bit 2 and used as state, but
+        // it does NOT change subsequent bit positions. The 2026-04-27
+        // hypothesis that "paused triggers ChSeq" (Round-1) and "paused
+        // skips partial sub-flags" (Round-2) were both empirical pattern-
+        // matches that happened to fit math but contradict the binary.
+        // Reverted on 2026-04-28 after F5 of sub_144244900 / sub_1442453D0 /
+        // sub_144238C80 confirmed the bit reads.
+        bool b_paused      = ue5::read_bits(data, data_len, b, 1) != 0;
         bool b_reliable    = ue5::read_bits(data, data_len, b, 1) != 0;
 
         // ChIndex (SerializeIntPacked)
@@ -2908,12 +3578,18 @@ private:
         bool b_guids   = ue5::read_bits(data, data_len, b, 1) != 0;
         bool b_partial = ue5::read_bits(data, data_len, b, 1) != 0;
 
-        // ChSequence if reliable (10 bits — C>S direction; S>C uses 12-bit)
+        // ChSequence: 10 bits when bReliable. Confirmed via F5 of
+        // sub_144230D50 line 590: `if ((v54 & 8) != 0)` where v54 bit 3 IS
+        // bReliable. bIsReplicationPaused (v188 bit 2) is NOT in this check.
         uint16_t ch_seq = 0;
         if (b_reliable && b + 10 <= eff_bits)
             ch_seq = static_cast<uint16_t>(ue5::read_bits(data, data_len, b, 10));
 
-        // Partial sub-fields (3 bits when partial)
+        // Partial sub-fields: 3 bits when bPartial (when modern engine
+        // version). Confirmed via F5: lines 596-663 of sub_144230D50 read
+        // bPartialInitial, bPartialCustomExportsFinal (gated by v168 = engine
+        // version >= 36), and bPartialFinal. bIsReplicationPaused does NOT
+        // gate this read.
         bool b_partial_init = false;
         if (b_partial && b + 3 <= eff_bits) {
             b_partial_init = ue5::read_bits(data, data_len, b, 1) != 0;
@@ -2921,8 +3597,8 @@ private:
             ue5::read_bits(data, data_len, b, 1); // bPartialFinal
         }
 
-        spdlog::info("[GameServer]   Bunch: ctrl={} open={} close={} reliable={} ch={} exp={} guid={} partial={} chSeq={}",
-                     b_ctrl, b_open, b_close, b_reliable,
+        spdlog::info("[GameServer]   Bunch: ctrl={} open={} close={} reliable={} paused={} ch={} exp={} guid={} partial={} chSeq={}",
+                     b_ctrl, b_open, b_close, b_reliable, b_paused,
                      ch_idx, b_exports, b_guids, b_partial, ch_seq);
 
         // ChName — C>S format: bHardcoded flag + packed int, sent when (bReliable || bOpen) && !partial-continuation
@@ -3179,36 +3855,80 @@ private:
                             // spliced pkt#78, but that requires bit-level decode
                             // we haven't done yet.  If function index 31 is right,
                             // the client will at least process the bunch.
-                            static std::mutex client_restart_mu;
-                            static std::unordered_set<std::string> client_restart_sent;
+                            // ── Phase B.0p4 (2026-04-28 PM) ──────────────
+                            // REACTIVE EMIT RE-ENABLED.
+                            //
+                            // Splice-only test (B.0p3) confirmed the
+                            // captured pkt#134 splice does NOT trigger
+                            // AcknowledgePossession on the client — the
+                            // client receives the Pawn (it sends
+                            // ServerMove on ch=3) but its
+                            // AcknowledgedPawn pointer stays null,
+                            // causing the "AAoCPlayerController - No
+                            // valid pawn" loading-screen loop.
+                            //
+                            // The pkt#78 v3 fix (skip ch=0 bunch[1])
+                            // means NetGUID 88 is now correctly
+                            // registered on the client.  Once we've
+                            // shipped pkt#78 (cs.pkt78_emitted=true) it's
+                            // safe to fire a fresh native ClientRestart
+                            // referencing NetGUID 88 — the client's
+                            // PackageMap can resolve it and
+                            // AcknowledgePossession() will fire,
+                            // populating AcknowledgedPawn.
+                            //
+                            // Idempotent per-client via
+                            // cs.reactive_clientrestart_sent so we don't
+                            // re-emit on every SNLW retry.
                             if (client_key && client_addr_for_reactive) {
-                                bool already_sent = false;
+                                bool should_emit = false;
                                 {
-                                    std::lock_guard<std::mutex> lk(client_restart_mu);
-                                    already_sent = !client_restart_sent.insert(*client_key).second;
+                                    std::lock_guard<std::mutex> lk(client_mu_);
+                                    auto cit = clients_.find(*client_key);
+                                    if (cit != clients_.end()) {
+                                        ClientState& cs = cit->second;
+                                        if (cs.pkt78_emitted &&
+                                            !cs.reactive_clientrestart_sent) {
+                                            should_emit = true;
+                                            cs.reactive_clientrestart_sent = true;
+                                        } else if (!cs.pkt78_emitted) {
+                                            spdlog::info("[NMT-DETECT] reactive "
+                                                "ClientRestart deferred — pkt#78 "
+                                                "not yet emitted (NetGUID 88 not "
+                                                "registered on client)");
+                                        } else {
+                                            spdlog::debug("[NMT-DETECT] reactive "
+                                                "ClientRestart already sent — "
+                                                "ignoring SNLW retry");
+                                        }
+                                    }
                                 }
-                                if (!already_sent) {
-                                    spdlog::warn("[NMT-DETECT] → emitting NATIVE "
-                                                  "ClientRestart (fn_idx=31) reactively");
-                                    // Placeholder Pawn NetGUID — same as captured PC for now
-                                    bool ok = send_client_restart_native(
-                                        *client_key,
-                                        *client_addr_for_reactive,
-                                        /*obj_id=*/   10341530ULL,
-                                        /*server_id=*/60,
-                                        /*randomizer=*/1860730596U);
-                                    spdlog::warn("[NMT-DETECT] → native ClientRestart "
-                                                  "emit result: {}",
-                                                  ok ? "SUCCESS" : "FAILED");
-                                } else {
-                                    spdlog::info("[NMT-DETECT] (already emitted "
-                                                  "ClientRestart for {}, suppressing "
-                                                  "duplicate)", *client_key);
+                                if (should_emit) {
+                                    // ── PM19 (2026-04-28) — native ClientRestart DISABLED ──
+                                    //
+                                    // Per PM18 RE: AOC's IntrepidNetConnection has
+                                    // (UNetConn+240) & 1 set, which means S→C reliable
+                                    // bunches use a DIFFERENT wire format than stock UE5:
+                                    //   - ChSeq is COMPUTED by client (not on wire)
+                                    //   - field handles are SerializeInt(MAX=field_count),
+                                    //     not SerializeIntPacked
+                                    //
+                                    // Our send_client_restart_native uses stock UE5 format
+                                    // (10-bit ChSeq + SIP handle). This produces 18 phantom
+                                    // bits on wire that the AOC client treats as part of
+                                    // the bunch payload, causing cursor desync within the
+                                    // bunch and downstream bunch-header overflow / CNSF.
+                                    //
+                                    // Disabling lets us isolate splice-only behavior. If
+                                    // CNSF goes away, this confirms the native bunch was
+                                    // the source. We then need to rewrite the encoder to
+                                    // match AOC's wire format before re-enabling.
+                                    spdlog::warn("[NMT-DETECT] → reactive emit DISABLED "
+                                        "(PM19) — pure splice mode for diagnostic test");
+                                    (void)client_addr_for_reactive;  // unused
+                                    // Note: cs.reactive_clientrestart_sent is already true,
+                                    // so subsequent SNLW retries won't re-enter this block.
                                 }
-                            } else {
-                                spdlog::warn("[NMT-DETECT] → cannot emit "
-                                              "ClientRestart: missing client_key or "
-                                              "client_addr context");
                             }
                         }
                     }
@@ -3310,6 +4030,15 @@ private:
                             // first 5 then count silently.
                             static std::atomic<int> sulv_count{0};
                             int n = ++sulv_count;
+                            std::string pkg_name;
+                            {
+                                size_t tend = std::min(off_gen + 64, payload_bytes.size());
+                                for (size_t k = off_gen; k < tend; ++k) {
+                                    char c = static_cast<char>(payload_bytes[k]);
+                                    if (c == 0 || c < 32 || c >= 127) break;
+                                    pkg_name += c;
+                                }
+                            }
                             if (n <= 5) {
                                 std::string tail;
                                 size_t tend = std::min(off_gen + 64, payload_bytes.size());
@@ -3324,6 +4053,106 @@ private:
                             } else if ((n % 50) == 0) {
                                 spdlog::info("[NMT-DETECT] ServerUpdateLevelVisibility "
                                               "received: {} total so far", n);
+                            }
+
+                            // ── Phase B.0e3 (Option B-lite, 2026-04-27) ──────
+                            // QUEUE the ACK instead of sending immediately.
+                            // Reason: SULVs arrive DURING the WorldBootstrap
+                            // splice phase.  The splice ships captured ch=3
+                            // reliable bunches with specific chSeq values
+                            // (e.g., 413..~440 for the PC ActorOpen chain).
+                            // If we send a native ACK on ch=3 mid-splice, we
+                            // either collide with a future captured chSeq or
+                            // overshoot the 1024-bunch reliable window
+                            // (caused NMT_Close in the 09:32 test).
+                            //
+                            // Proper fix: push to cs.pending_sulv_acks here,
+                            // drain in maybe_drain_sulv_ack_queue() once
+                            // WorldBootstrap === complete fires.  At drain
+                            // time we use cs.last_outgoing_reliable_chseq[3] + 1
+                            // (which the post-build scanner has updated based
+                            // on every spliced ch=3 reliable bunch).
+                            //
+                            // Limit to first N to bound queue size while we
+                            // iterate on the wire format correctness.
+                            // ── Phase B.0e4 (2026-04-27 11:45) — RE-ENABLED ──
+                            // After IDA F5 of sub_144441E00 (the exec thunk)
+                            // and sub_14174A370 (FFrame stepper), confirmed:
+                            //   - Locals layout: PackageName(8) + TxnId(4) + bool(4) = 16B
+                            //   - Param order matches our PropertyArray decode
+                            //   - Exec thunk reads from Locals — wire→Locals
+                            //     conversion happens in the bunch parser before
+                            //     the exec runs (so wire format = whatever the
+                            //     parser expects)
+                            //
+                            // Scanner alignment bug FIXED (has_srv_frame now
+                            // read UNCONDITIONALLY).  Stub payload has
+                            // bClientAckCanMakeVisible=true (the critical flag).
+                            //
+                            // Re-enabling for empirical iteration.  Two unknowns
+                            // remain — funcId dispatch (currently 0 placeholder)
+                            // and exact wire encoding.  Each test iteration
+                            // narrows this.  See triage matrix in the
+                            // [S>C] STUB log line for what to look for.
+                            // ── Phase B.0e8 (2026-04-27 16:05) — DISABLED AGAIN ──
+                            // Re-enabling CALV stub at 15:55 BROKE the timeout
+                            // fix from 15:38.  Test result: "Connection to the
+                            // Realm timed out" dialog returned.  Hypothesis:
+                            // byte 0x0E (wire_idx 7) does NOT dispatch to
+                            // ClientAckUpdateLevelVisibility — it dispatches
+                            // to a different RPC (likely ClientAckTimeDilation
+                            // at pos 1 with NumParms=2 ParmsSize=8) which
+                            // mis-parses our 16-byte param payload, corrupting
+                            // internal state, setting *(a2+88) → timeout.
+                            //
+                            // Re-enabled 2026-04-28 after binary RE confirmed:
+                            //   - sub_144238C80 emits soft-close (recoverable),
+                            //     so a wrong wire_idx won't kill the connection
+                            //   - wire_idx 7 (= dispatch byte 0x0E) is the
+                            //     correct CALV index per alphabetical position
+                            //     in Client* RPC table + 5 reserved
+                            //   - parser is bit-accurate vs UIntrepidNetConnection
+                            // Bumped queue cap to 50 to allow more in-flight
+                            // ACKs (was 10) — the WP streaming needs an ACK per
+                            // tile, and the client sends ~10-20 tiles per session.
+                            constexpr bool kSendSulvAckStub = true;
+                            constexpr int  kSulvAckMaxQueue = 50;
+                            if (kSendSulvAckStub && n <= kSulvAckMaxQueue
+                                && client_key && client_addr_for_reactive) {
+                                std::lock_guard<std::mutex> lk(client_mu_);
+                                auto it = clients_.find(*client_key);
+                                if (it != clients_.end()
+                                    && it->second.phase >= ClientState::HANDSHAKE_COMPLETE) {
+                                    ClientState& cs = it->second;
+                                    cs.pending_sulv_acks.push_back(
+                                        ClientState::PendingSulvAck{ pkg_name, ch_idx });
+                                    spdlog::info("[NMT-DETECT]   queued SULV ACK #{} "
+                                                  "(pkg='{}' triggering_ch={}); queue depth now {}",
+                                                  n, pkg_name, ch_idx,
+                                                  cs.pending_sulv_acks.size());
+
+                                    // Phase B.0e5 (2026-04-27 14:45) — drain
+                                    // immediately if WorldBootstrap already
+                                    // completed.  The on_world_bootstrap_complete
+                                    // hook fires once at end of bootstrap, so any
+                                    // SULVs queued AFTER that point would otherwise
+                                    // sit unacked.  Test 14:39 logs show 5+ such
+                                    // SULVs queued post-bootstrap with no drain.
+                                    if (cs.world_bootstrap_complete) {
+                                        spdlog::info("[NMT-DETECT]   bootstrap "
+                                                      "already complete — draining "
+                                                      "{} ack(s) inline",
+                                                      cs.pending_sulv_acks.size());
+                                        auto queue = std::move(cs.pending_sulv_acks);
+                                        cs.pending_sulv_acks.clear();
+                                        for (const auto& ack : queue) {
+                                            (void)send_client_ack_update_level_visibility(
+                                                cs, *client_addr_for_reactive,
+                                                *client_key, ack.package_name,
+                                                ack.triggering_ch_idx);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -3646,15 +4475,17 @@ private:
             ue5::read_bits(data, byte_len, pos, 1); // bHasMustMap
             bool bPartial = ue5::read_bits(data, byte_len, pos, 1) != 0;
 
-            // ChSequence — 12 bits, only for reliable bunches.
+            // ChSequence — 10 bits via SerializeInt(MAX=1024), only for reliable bunches.
+            // PM20 (2026-04-28): FIX — was 12 bits, but PM14 RE of sub_144230D50
+            // line 1441 confirmed SerializeInt(MAX=1024) = 10 bits.
             // IMPORTANT: record the position TENTATIVELY and only commit it
             // after ChName parsing succeeds.  If ChName decodes as garbage
             // (invalid SaveNum, string too long, etc.) the parser has drifted
             // into a data payload — discard this position and stop scanning.
             size_t chseq_pos  = pos;
-            bool   has_chseq  = bReliable && (pos + 12 <= bunch_bits);
+            bool   has_chseq  = bReliable && (pos + 10 <= bunch_bits);
             if (has_chseq)
-                ue5::read_bits(data, byte_len, pos, 12); // skip ChSequence (commit later)
+                ue5::read_bits(data, byte_len, pos, 10); // skip ChSequence (commit later)
 
             if (bPartial) {
                 ue5::read_bits(data, byte_len, pos, 1); // bPartialInitial
@@ -4664,6 +5495,56 @@ private:
             }
         }
 
+        // ── PM18 (2026-04-28) — bit-level diff diagnostic ──
+        //
+        // To prove or refute the cursor-desync hypothesis, compare our
+        // re-emit's bunch bits against the captured packet's bunch bits
+        // at the SAME relative offset.  If they differ at bit-i, our
+        // prefix has shifted the bunch by some amount → cursor desync
+        // on the client side → CNSF.
+        //
+        // Compares the FIRST min(bunch_bits, 64) bits and logs first diff.
+        if (rpkt.bunch_bits > 0 && rpkt.bunch_start_bit > 0) {
+            const size_t our_bunch_start = off - rpkt.bunch_bits;
+            const size_t cap_bunch_start = rpkt.bunch_start_bit;
+            // First sanity: prefix bit count must match captured.
+            if (our_bunch_start != cap_bunch_start) {
+                spdlog::warn("[REPLAY-DIAG] PREFIX BIT COUNT MISMATCH: "
+                             "our_prefix={} cap_prefix={} delta={} "
+                             "(hist={} pktInfo={} srvFrame={}) — bunch alignment shifted!",
+                             our_bunch_start, cap_bunch_start,
+                             static_cast<int64_t>(our_bunch_start) -
+                                 static_cast<int64_t>(cap_bunch_start),
+                             rpkt.hist_count,
+                             static_cast<int>(rpkt.has_pkt_info),
+                             static_cast<int>(rpkt.has_srv_frame));
+            }
+            // PM18b: check ALL bunch bits, not just first 64.
+            const size_t cmp_bits = rpkt.bunch_bits;
+            bool aligned_match = true;
+            size_t first_diff_bit = 0;
+            for (size_t i = 0; i < cmp_bits; ++i) {
+                size_t pos1 = our_bunch_start + i;
+                size_t pos2 = cap_bunch_start + i;
+                uint64_t b1 = ue5::read_bits(buf, buf_cap, pos1, 1);
+                uint64_t b2 = ue5::read_bits(rpkt.raw.data(), rpkt.raw.size(), pos2, 1);
+                if (b1 != b2) {
+                    aligned_match = false;
+                    first_diff_bit = i;
+                    break;
+                }
+            }
+            if (!aligned_match) {
+                spdlog::warn("[REPLAY-DIAG] re-emit BUNCH BIT MISMATCH at bit+{} of {}: "
+                             "our_bunch_start={} cap_bunch_start={} "
+                             "hist={} pktInfo={} srvFrame={}",
+                             first_diff_bit, rpkt.bunch_bits, our_bunch_start,
+                             cap_bunch_start, rpkt.hist_count,
+                             static_cast<int>(rpkt.has_pkt_info),
+                             static_cast<int>(rpkt.has_srv_frame));
+            }
+        }
+
         // ── Termination ────────────────────────────────────────────────
         // NO sentinel bit — captured bunch data already ends at eff_bits.
         // Adding a 1-bit sentinel here becomes valid data in UE5's eff_bits
@@ -5377,6 +6258,11 @@ private:
             ue5::write_bits(buf, sizeof(buf), off, bit, 1);
         }
 
+        // ── EXTRA SENTINEL BIT (AoC PacketHandler requirement, Phase B.0p5) ──
+        // Same fix as send_bunch_packet, send_ch0_reliable_payload, etc.
+        // Without it the client logs "0's in last byte" and silently drops
+        // the packet → Pawn name update never reaches the actor channel.
+        ue5::write_bits(buf, sizeof(buf), off, 1, 1);
         size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
 
         uint16_t pkt_seq = cs.out_seq;
@@ -5554,6 +6440,9 @@ private:
             ue5::write_bits(buf, sizeof(buf), off, bit, 1);
         }
 
+        // ── EXTRA SENTINEL BIT (AoC PacketHandler requirement, Phase B.0p5) ──
+        // Same fix as inject_custom_name_bunch / send_bunch_packet / etc.
+        ue5::write_bits(buf, sizeof(buf), off, 1, 1);
         size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
         uint16_t pkt_seq = cs.out_seq;
         cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
@@ -5691,6 +6580,216 @@ private:
         }
 
         ProxyLogger::instance().log_udp("S>C", key, buf, pkt_len, "ClientAckGoodMove");
+    }
+
+    /// Phase B (Option B-lite, 2026-04-27) — send ClientAckUpdateLevelVisibility
+    /// when client sends ServerUpdateLevelVisibility.  Without this ACK, the
+    /// client's World Partition Streaming subsystem never finalizes and the
+    /// loading screen loops forever.  Confirmed by Option C test 2026-04-27
+    /// (emu-20260427-085842.log + AOC.log).
+    ///
+    /// Per AOC IDA descriptor (off_14D29A088, decoded 2026-04-27):
+    ///   FunctionFlags = 0x01020CC2
+    ///                 = NetClient | Public | Event | Native
+    ///                 | NetReliable | Net | RequiredAPI
+    ///   NumParms = 3, ParmsSize = 16 bytes
+    ///   Owner   = AOC PC subclass (sub_1443F80C0 → AAOCPlayerController)
+    ///
+    /// CRITICAL flags vs ClientAckGoodMove:
+    ///   - bReliable=1 (FUNC_NetReliable was set in flags) ← MANDATORY
+    ///   - Channel = PC actor channel (ch=3 in our session, vs ch=19 voice
+    ///     for ClientAckGoodMove)
+    ///
+    /// Wire format (TENTATIVE — needs iteration; funcId/RPC dispatch
+    /// scheme not yet RE'd):
+    ///   Outer header  (38 bits): magic(32) + session_id(2) + client_id(3) + handshake(1)=0
+    ///   PacketNotify  (64 bits): packed_header(32) + history(32)=0xFFFFFFFF
+    ///   AoC field     (48 bits): custom_field[0..5]
+    ///   PacketInfo    (12 bits): hasPktInfo(1)=1 + jitter(10)=1023 + hasSrvFrame(1)=0
+    ///   Bunch header  (40 bits): bCtrl(1)=0 + bRepPaused(1)=0 + bReliable(1)=1
+    ///                            + ChIdx(8)=0x06[ch=3] + bExports(1)=0
+    ///                            + bGuids(1)=0 + bPartial(1)=0
+    ///                            + ChSeq(12) + BunchDataBits(13)
+    ///   Payload       (160 bits): funcId(32)=PLACEHOLDER + 16 bytes params
+    ///   Sentinel      (1 bit):   1
+    ///   Termination:  zero-pad to byte boundary
+    ///
+    /// Three iteration knobs we'll likely tune before this works:
+    ///   1. funcId — UE5 RPC dispatch ID (could be a 32-bit hash, an FName
+    ///      index, or a per-class FFieldNetCache index encoded as SIP).
+    ///   2. Param wire layout — most likely two 8-byte FNames (PackageName
+    ///      + FileName), but bool packing or implicit fields possible.
+    ///   3. Channel — ch=3 assumed; may need ch from the SULV that triggered
+    ///      this (the synthetic ch=8961+ channels carry the per-tile state).
+    ///
+    /// Returns true on successful sendto(); false on error or guard skip.
+    bool send_client_ack_update_level_visibility(
+            ClientState& cs, const sockaddr_in& client_addr,
+            const std::string& key, std::string_view package_name,
+            uint32_t triggering_ch_idx) {
+        // Throttle to avoid flooding if detector misfires
+        static std::atomic<int> ack_sent_count{0};
+        int n = ++ack_sent_count;
+
+        uint8_t buf[256] = {};
+        size_t off = 0;
+
+        // ── Packet prefix (outer header + notify + history + custom field)
+        write_sc_packet_prefix(buf, sizeof(buf), off, cs, /*handshake=*/false);
+
+        // ── PacketInfo ─────────────────────────────────────────────────
+        ue5::write_bits(buf, sizeof(buf), off, 1,    1);  // bHasPacketInfoPayload=1
+        ue5::write_bits(buf, sizeof(buf), off, 1023, 10); // JitterClockTimeMS=1023
+        ue5::write_bits(buf, sizeof(buf), off, 0,    1);  // bHasServerFrameTime=0
+
+        // ── S>C bunch header: ch=3 PC channel, RELIABLE ───────────────
+        ue5::write_bits(buf, sizeof(buf), off, 0, 1); // bControl=0
+        ue5::write_bits(buf, sizeof(buf), off, 0, 1); // bIsReplicationPaused=0
+        ue5::write_bits(buf, sizeof(buf), off, 1, 1); // bReliable=1 ← REQUIRED
+
+        // ChIndex=3 as SerializeIntPacked: single byte = (3<<1)|0 = 0x06
+        ue5::write_bits(buf, sizeof(buf), off, 0x06, 8); // ChIndex=3
+
+        ue5::write_bits(buf, sizeof(buf), off, 0, 1); // bExports=0
+        ue5::write_bits(buf, sizeof(buf), off, 0, 1); // bGuids=0
+        ue5::write_bits(buf, sizeof(buf), off, 0, 1); // bPartial=0
+
+        // ── ChSequence (10 bits, reliable on non-control channel) ─────
+        // PM20 (2026-04-28): FIX — ChSeq is 10 bits via SerializeInt(MAX=1024),
+        // not 12. PM14 confirmed this from sub_144230D50 line 1441. The 12-bit
+        // write here was leftover from before the 12→10 fix in PM9 (which
+        // updated send_client_restart_native and scan_outgoing_packet_chseq
+        // but missed this CALV STUB). Each CALV STUB had a 2-bit overshoot
+        // that cascaded into CNSF on the client (Size=0x68000000 / 0x13038334
+        // garbage FString lengths from misaligned ChName reads).
+        //
+        // Phase B.0e2 (2026-04-27): use the per-channel tracker instead of
+        // cs.reliable_seq (which is the ch=0 control channel counter).
+        constexpr uint32_t kPcChannel = 3;
+        uint16_t ch_seq;
+        auto trk_it = cs.last_outgoing_reliable_chseq.find(kPcChannel);
+        if (trk_it != cs.last_outgoing_reliable_chseq.end()) {
+            ch_seq = (trk_it->second + 1) & 0x3FF;  // 10-bit mask
+            if (ch_seq == 0) ch_seq = 1;
+            trk_it->second = ch_seq;
+        } else {
+            spdlog::warn("[S>C] ClientAckUpdateLevelVisibility: no chSeq "
+                          "tracker entry for ch=3 — falling back to "
+                          "cs.reliable_seq (likely WRONG)");
+            ch_seq = cs.reliable_seq;
+            cs.reliable_seq = ((cs.reliable_seq + 1) & 0x3FF);
+            if (cs.reliable_seq == 0) cs.reliable_seq = 1;
+        }
+        ue5::write_bits(buf, sizeof(buf), off, ch_seq, 10);  // 10-bit ChSeq
+
+        // BunchDataBits = 8 (dispatch byte) + 128 (16-byte params) = 136 bits
+        //
+        // BREAKTHROUGH (2026-04-27 14:55) — RE'd the AOC RPC dispatch from
+        // our own codebase's recognizer at line ~3735:
+        //
+        //   payload[0] = (wire_idx << 1) | 0  — single SIP byte for wire_idx < 128
+        //   wire_idx = alphabetical_position_in_RPC_list + 5_reserved
+        //
+        // Known wire indices (validated):
+        //   31 = ClientRestart                 (pos 26 + 5)
+        //   59 = ServerAcknowledgePossession   (pos 54 + 5)
+        //   67 = ServerNotifyLoadedWorld       (pos 62 + 5) → byte 0x86 ✓
+        //
+        // ClientAckUpdateLevelVisibility:
+        //   alphabetical pos in Client* RPCs = 2 (1-based)
+        //     [1]ClientAckTimeDilation
+        //     [2]ClientAckUpdateLevelVisibility  ← TARGET
+        //     [3]ClientAddTextureStreamingLoc
+        //     ... [26]ClientRestart [verified ✓] ...
+        //   wire_idx = 2 + 5 = 7
+        //   dispatch byte = (7 << 1) | 0 = 0x0E
+        //
+        // (NOTE: previous 32-bit placeholder funcId 0x0aa846e9 was speculative
+        // for ClientAckGoodMove — IDA binary search for those bytes FAILED, so
+        // the value was likely never validated.  AOC's true dispatch is the
+        // single byte form documented above.)
+        // BunchDataBits — computed dynamically from actual payload size.
+        //
+        // 2026-04-28 RE: Disassembled CALV's exec thunk @ 0x144441E00 in
+        // AOCClient-Win64-Shipping.exe.  The thunk reads 3 params via
+        // FProperty::NetSerializeItem dispatch:
+        //
+        //   Param 1: FNameProperty (sub_1417132A0 static class)
+        //            → wire format: bit-packed FName
+        //              [1 bit] bHardcoded
+        //              if hardcoded: SerializeIntPacked EName index
+        //              else:        [int32 len][N ASCII bytes][NUL][uint32 num]
+        //   Param 2: FStructProperty (sub_141739450) wrapping uint32
+        //            → wire format: 32 bits raw
+        //   Param 3: FBoolProperty (sub_1417127A0)
+        //            → wire format: 1 bit
+        //
+        // For our soft-form FName (package names are dynamic _Generated_/HASH
+        // tile paths, not in any EName table):
+        //   FName_bits = 1 + 32 + 8N + 8 + 32 = 73 + 8N
+        //     where N = pkg_name.length()
+        //
+        // Total param bits = (73 + 8N) + 32 + 1 = 106 + 8N
+        // Total bunch_data_bits (incl. dispatch byte) = 8 + 106 + 8N = 114 + 8N
+        const std::string pkg_str(package_name);
+        const uint32_t name_len_with_nul =
+            static_cast<uint32_t>(pkg_str.size()) + 1;
+        const uint32_t bunch_data_bits =
+            114u + 8u * static_cast<uint32_t>(pkg_str.size());
+        ue5::write_bits(buf, sizeof(buf), off, bunch_data_bits, 13);
+
+        // ── Payload: dispatch byte + 3 params per the exec thunk ───────
+        constexpr uint8_t kWireIdx_CALV = 7;
+        constexpr uint8_t kDispatchByte = (kWireIdx_CALV << 1) | 0;  // = 0x0E
+        // wire_idx 7 verified 2026-04-28 via direct binary RE:
+        //   Client* dispatch table base = 0x14AA557D0 (offset from observed
+        //   0x14AA55840 calibrated against ClientRestart at idx 31 verified
+        //   wire_idx 31).  Entry [7] @ 0x14AA55840 first qword points to
+        //   string "ClientAckUpdateLevelVisibility".
+        ue5::write_bits(buf, sizeof(buf), off, kDispatchByte, 8);
+
+        // ── Param 1: FName PackageName (soft form) ─────────────────────
+        // bHardcoded=0 → FString + uint32 Number suffix
+        ue5::write_bits(buf, sizeof(buf), off, 0u, 1);  // bHardcoded = 0 (soft)
+        ue5::write_bits(buf, sizeof(buf), off, name_len_with_nul, 32);
+        for (char c : pkg_str)
+            ue5::write_bits(buf, sizeof(buf), off,
+                            static_cast<uint8_t>(c), 8);
+        ue5::write_bits(buf, sizeof(buf), off, 0u, 8);   // NUL terminator
+        ue5::write_bits(buf, sizeof(buf), off, 0u, 32);  // FName Number suffix
+
+        // ── Param 2: uint32 TransactionId ──────────────────────────────
+        // We don't know the right TransactionId for the SULV that triggered
+        // us; AOC's exec thunk should accept any value (it's stored, not
+        // validated).  Use 0 as placeholder.
+        ue5::write_bits(buf, sizeof(buf), off, 0u, 32);
+
+        // ── Param 3: bool bClientAckCanMakeVisible (1 BIT, not 8) ──────
+        // CRITICAL: must be TRUE to grant permission to make level visible.
+        // FBoolProperty::NetSerializeItem reads exactly 1 bit (per binary
+        // RE — different from the in-memory C++ struct which uses 1 byte).
+        ue5::write_bits(buf, sizeof(buf), off, 1u, 1);
+
+        // ── Termination ────────────────────────────────────────────────
+        ue5::write_bits(buf, sizeof(buf), off, 1, 1); // sentinel
+        size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
+
+        uint16_t sent_seq = cs.out_seq;
+        cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
+
+        int sent = send_to_client(buf, pkt_len, client_addr);
+        if (sent > 0) {
+            spdlog::warn("[S>C] >> ClientAckUpdateLevelVisibility STUB #{} to {} "
+                         "({}B seq={} chSeq={} triggered_by_ch={} pkg='{}')",
+                         n, key, pkt_len, sent_seq, ch_seq, triggering_ch_idx, package_name);
+        } else {
+            spdlog::warn("[GameServer]    ClientAckUpdateLevelVisibility STUB send FAILED");
+            return false;
+        }
+
+        ProxyLogger::instance().log_udp("S>C", key, buf, pkt_len,
+                                         "ClientAckUpdateLevelVisibility-STUB");
+        return true;
     }
 
     /// Phase D2: Send a single generator-produced bunch to the client.

@@ -221,6 +221,19 @@ public:
                                               uint32_t pawn_server_id,
                                               uint32_t pawn_randomizer) = 0;
 
+    /// Phase B.0e2 (2026-04-27) — called by WorldBootstrapEmitter::emit_all
+    /// once it has finished walking the plan.  Lets the host drain any
+    /// queued post-bootstrap work — currently used to flush
+    /// cs.pending_sulv_acks now that all spliced ch=3 reliable bunches
+    /// have shipped (so cs.last_outgoing_reliable_chseq[3] is stable and
+    /// our ACK can use the next contiguous chSeq).
+    ///
+    /// Default no-op so existing hosts that don't need it can skip it.
+    virtual void on_world_bootstrap_complete(const std::string& client_key,
+                                              const sockaddr_in& addr) {
+        (void)client_key; (void)addr;
+    }
+
     // NOTE: richer client-state access (seq counters etc.) intentionally
     // omitted; when a phase needs it, we'll add narrow accessors.
 };

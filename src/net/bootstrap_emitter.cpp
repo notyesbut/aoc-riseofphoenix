@@ -71,26 +71,48 @@ bool BootstrapEmitter::emit_all(const sockaddr_in& client_addr) {
 // Investigation target: UControlChannel::ReceivedBunch case 3 in the
 // client binary.
 bool BootstrapEmitter::emit_aoc_opcode_3(const sockaddr_in& client_addr) {
-    // Placeholder — captured 42 bytes of pkt#0.  This is a reliable data
-    // bunch on ch=0 whose payload is opcode 3 + FString("50995344").
+    // Phase A.1 (2026-04-26) — REAL implementation. Builds the 14-byte
+    // payload that captured pkt#0 carries:
     //
-    // M1.1 SCAFFOLDING: we log but do NOT actually send this yet.  Reason:
-    //   the captured packet has session-specific bytes (custom_field,
-    //   ack_history, etc.) in its outer packet prefix.  Sending captured
-    //   bytes verbatim would desync with our live session's seq/ack state.
+    //   byte 0       : 0x03                   (AoC opcode 3)
+    //   bytes 1-4    : 0x09 0x00 0x00 0x00    (FString length = 9 LE u32)
+    //   bytes 5-12   : "50995344"             (8 ASCII chars)
+    //   byte 13      : 0x00                   (FString NUL terminator)
     //
-    //   For M1.1 DONE criterion we're only proving the emitter pipeline
-    //   exists.  The actual bytes are built in M1.1 (continued) once we
-    //   have:
-    //     (a) a reliable ch=0 bunch writer that takes our session's state
-    //     (b) confirmation of what opcode 3 requires (RE)
+    // The session string "50995344" is the captured value — semantic
+    // unknown until IDA RE confirms (likely build/session ID since it's
+    // 8 decimal digits). For Phase A.1 we replay the captured value;
+    // future iteration parameterizes from server state.
+    //
+    // The host's send_ch0_reliable_payload() handles all the bunch
+    // header construction (ChSeq, ChName=EName[255], BDB) using our
+    // live session's reliable_seq counter, so the ChSeq advances
+    // monotonically alongside our NMT bunches.
 
-    spdlog::warn("[BootstrapEmitter] emit_aoc_opcode_3 — STUB (M1.1 cont'd work)");
-    spdlog::warn("[BootstrapEmitter]   TODO: build reliable ch=0 bunch");
-    spdlog::warn("[BootstrapEmitter]   TODO: write opcode 3 + FString(session_id)");
-    spdlog::warn("[BootstrapEmitter]   See docs/native-bootstrap-sequence.md §2.1");
-    (void)client_addr;
-    return true;  // Non-fatal: test if client tolerates skipping this
+    static const std::string kSessionId = "50995344";  // captured value
+    const uint32_t save_num = static_cast<uint32_t>(kSessionId.size() + 1);
+
+    uint8_t payload[256] = {};
+    size_t off = 0;
+    payload[off++] = 0x03;                                  // opcode
+    payload[off++] = static_cast<uint8_t>(save_num & 0xFF); // FString len LE u32
+    payload[off++] = static_cast<uint8_t>((save_num >> 8) & 0xFF);
+    payload[off++] = static_cast<uint8_t>((save_num >> 16) & 0xFF);
+    payload[off++] = static_cast<uint8_t>((save_num >> 24) & 0xFF);
+    for (char c : kSessionId) payload[off++] = static_cast<uint8_t>(c);
+    payload[off++] = 0x00;  // NUL terminator
+
+    spdlog::warn("[BootstrapEmitter] emit_aoc_opcode_3: sending native ch=0 "
+                 "bunch (opcode 3 + session_id='{}', {}B payload)",
+                 kSessionId, off);
+    bool ok = host_.send_ch0_reliable_payload(client_key_, client_addr,
+                                                payload, off);
+    if (!ok) {
+        spdlog::error("[BootstrapEmitter] send_ch0_reliable_payload failed");
+        return false;
+    }
+    spdlog::warn("[BootstrapEmitter] ★ opcode-3 bunch sent natively");
+    return true;
 }
 
 bool BootstrapEmitter::emit_nmt_welcome_if_needed(const sockaddr_in& client_addr) {

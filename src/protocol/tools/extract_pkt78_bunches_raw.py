@@ -72,24 +72,142 @@ print(f"pkt#78: {len(bunches)} bunches, seq={parsed.get('seq')}")
 # bHasMustMap, bPartial, chSeq 10-bit, ch_name 8-bit, bdb 13-bit, ...).
 # For our pkt#78 bunch 0 (ch=85, has_exports=1, has_must_map=1), header ≈ 40-50 bits.
 
-# Let's just try start_bit = 127 (a reasonable guess) and adjust:
-FIRST_BUNCH_HEADER_BIT = 127   # EMPIRICAL — adjust after first runtime test if client NAKs
+# 2026-04-28 BUG FIX (v2): THE SECOND, CORRECT FIX.
+#
+# v1 (earlier today) discovered that the hardcoded 127 was wrong and used
+# `bunches[0].data_start - bunches[0].hdr_bits = 122` as the start.  v1
+# improved symptoms (no more CNSF / String-too-large / "No valid pawn") but
+# the world session still died after 9s with `BunchBadChannelIndex`.
+#
+# Investigation: phase1_parser's `data_start` is in INNER coordinates, NOT
+# RAW.  The parser strips OUTER_HDR_BITS = 38 (Magic + SessionID + ClientID
+# + HandshakeBit) before parsing inner content.  v1 used INNER value 122 as
+# if it were RAW position, so it actually read from RAW bit 122 — which is
+# 38 bits BEFORE the true bunch[0] header (RAW bit 160).
+#
+# Additionally, the parser FAILS to decode bunch[3] (returns None) — there's
+# 1203 unparsed bits (= 1 more bunch ~) after parser's last_bunch.end.  The
+# REPLAY FILE'S bunch_start_bit/bunch_bits values store the COMPLETE range,
+# so we should use those instead of the parser-derived end.
+#
+# Correct values for pkt#78:
+#   - True RAW start of bunch[0] header = INNER 122 + OUTER 38 = 160
+#   - Total bunch bits = 6364 (covers 4+ bunches)
+#   - Total bytes = ceil(6364/8) = 796
+#
+# Both match the file-stored bsb=160 / bb=6364 in replay_data.bin pkt#78.
+OUTER_HDR_BITS = 38  # Magic(32) + SessionID(2) + ClientID(3) + HandshakeBit(1)
 
-# End = data_start + bdb of last bunch
-last_b = bunches[-1]
-END_BIT = last_b['data_start'] + last_b['bunch_data_bits']
+# Authoritative source: the replay metadata (bunch_start_bit, bunch_bits)
+# stored alongside the raw bytes when the original capture was recorded.
+# These values are what `send_captured_packet` uses for the regular splice
+# path, and they capture ALL bunches in the packet (including any the
+# phase1 parser fails to decode).
+#
+# Read pkt#78 metadata from replay_data.bin.
+import sys as _sys, os as _os
+_DIST_RELEASE = _os.path.join(HERE, '..', '..', '..', 'dist', 'Release')
+_sys.path.insert(0, _os.path.join(_DIST_RELEASE, 'archive', 're_scripts'))
+from decode_pc_precise import read_replay
+_replay_pkts = read_replay(_os.path.join(_DIST_RELEASE, 'replay_data.bin'))
+_pkt78_meta = _replay_pkts[78]
+FIRST_BUNCH_HEADER_BIT = _pkt78_meta['bsb']         # = 160 (RAW)
+END_BIT                = _pkt78_meta['bsb'] + _pkt78_meta['bb']  # = 160 + 6364 = 6524
 
-print(f"Extracting bits [{FIRST_BUNCH_HEADER_BIT}..{END_BIT}) = {END_BIT - FIRST_BUNCH_HEADER_BIT} bits "
-      f"({(END_BIT - FIRST_BUNCH_HEADER_BIT + 7) // 8} bytes)")
+# Sanity-check parser's INNER position matches: bsb_file - OUTER == inner_b0
+inner_b0_parser = bunches[0]['data_start'] - bunches[0]['hdr_bits']
+inner_b0_file   = FIRST_BUNCH_HEADER_BIT - OUTER_HDR_BITS
+assert inner_b0_parser == inner_b0_file, (
+    f"parser INNER {inner_b0_parser} != file INNER {inner_b0_file} — "
+    "captured_pkt_78.bin and replay_data.bin[78] disagree"
+)
 
-# Extract bits LSB-first (same format as BunchWriter)
-total_bits = END_BIT - FIRST_BUNCH_HEADER_BIT
-out_bytes = bytearray((total_bits + 7) // 8)
-for i in range(total_bits):
-    src_bit = FIRST_BUNCH_HEADER_BIT + i
-    bit = (p[src_bit >> 3] >> (src_bit & 7)) & 1
-    if bit:
-        out_bytes[i >> 3] |= (1 << (i & 7))
+print(f"FIRST_BUNCH_HEADER_BIT (RAW) = {FIRST_BUNCH_HEADER_BIT}  "
+      f"(file bsb=160, INNER {inner_b0_file} + OUTER {OUTER_HDR_BITS})")
+print(f"END_BIT (RAW) = {END_BIT}  (file bsb+bb)")
+parser_end_bits = bunches[-1]['data_start'] + bunches[-1]['bunch_data_bits']
+print(f"  parser ended at INNER {parser_end_bits} = RAW {parser_end_bits + OUTER_HDR_BITS} "
+      f"(missed {END_BIT - (parser_end_bits + OUTER_HDR_BITS)} trailing bits — "
+      f"likely bunch[3] parser couldn't decode)")
+
+# 2026-04-28 BUG FIX (v3): SKIP bunch[1] (ch=0 control bunch).
+#
+# v2 (just minutes ago) used file's bsb=160/bb=6364 as authoritative range.
+# Live test showed client reaches IntrepidInitialize but then dies parsing
+# the ch=0 bunch in pkt#78 as a malformed NMT_Hello:
+#
+#   LogCore Error: "String is too large (Size: 1393285467, Max: 16777216)"
+#   LogNet  Error: "Failed to read control channel message 'Hello'"
+#   LogNet  Error: "UControlChannel::ReceivedBunch: Failed to read control channel message"
+#   UNetConnection::Close: Result=ControlChannelMessagePayloadFail
+#
+# Root cause: pkt#78's bunch[1] is the captured ch=0 control bunch from the
+# original session (likely a NMT_GameSpecific or session-specific opcode).
+# When we re-emit it AFTER the client has finished its handshake, the client
+# tries to parse the byte stream as NMT_Hello (since type byte = 0) and the
+# FString in the body reads as 1,393,285,467 bytes long → rejected.
+#
+# Fix: emit only bunch[0] (ch=85 GUIDExport — needed to register NetGUID 88's
+# class path) and bunch[2] (ch=114 Pawn ActorOpen — the actual pawn actor).
+# Skip bunch[1].
+#
+# Bunch positions in INNER coords:
+#   bunch[0] header at INNER 122, data 149-1763  (1642 bits header+data)
+#   bunch[1] header at INNER 1764, data 1791-2198 (435 bits) ← SKIP
+#   bunch[2] header at INNER 2199, data 2319-5281 (3083 bits)
+#   leftover INNER 5282-6485 (1204 bits) ← also skip — may be more ch=0 garbage
+#
+# Output: bunch[0] + bunch[2] = 1642 + 3083 = 4725 bits = 591 bytes
+SKIP_BUNCH_1 = True
+
+if SKIP_BUNCH_1:
+    # Compute INNER bit ranges from parser output
+    b0 = bunches[0]
+    b2 = bunches[2] if len(bunches) > 2 else None
+    if b2 is None:
+        raise RuntimeError("expected at least 3 bunches, got " + str(len(bunches)))
+    b0_start_inner = b0['data_start'] - b0['hdr_bits']
+    b0_end_inner   = b0['data_start'] + b0['bunch_data_bits']
+    b2_start_inner = b2['data_start'] - b2['hdr_bits']
+    b2_end_inner   = b2['data_start'] + b2['bunch_data_bits']
+    # Convert to RAW
+    b0_start_raw = b0_start_inner + OUTER_HDR_BITS
+    b0_end_raw   = b0_end_inner   + OUTER_HDR_BITS
+    b2_start_raw = b2_start_inner + OUTER_HDR_BITS
+    b2_end_raw   = b2_end_inner   + OUTER_HDR_BITS
+
+    bunch_0_bits = b0_end_raw - b0_start_raw
+    bunch_2_bits = b2_end_raw - b2_start_raw
+    total_bits = bunch_0_bits + bunch_2_bits
+
+    print(f"v3: SKIP bunch[1] (ch=0 control) — emit only bunch[0]+bunch[2]")
+    print(f"  bunch[0] (ch=85): RAW [{b0_start_raw}, {b0_end_raw})  = {bunch_0_bits} bits")
+    print(f"  bunch[2] (ch=114): RAW [{b2_start_raw}, {b2_end_raw}) = {bunch_2_bits} bits")
+    print(f"  total = {total_bits} bits ({(total_bits+7)//8} bytes)")
+
+    out_bytes = bytearray((total_bits + 7) // 8)
+    out_bit = 0
+    for src_bit in range(b0_start_raw, b0_end_raw):
+        bit = (p[src_bit >> 3] >> (src_bit & 7)) & 1
+        if bit:
+            out_bytes[out_bit >> 3] |= (1 << (out_bit & 7))
+        out_bit += 1
+    for src_bit in range(b2_start_raw, b2_end_raw):
+        bit = (p[src_bit >> 3] >> (src_bit & 7)) & 1
+        if bit:
+            out_bytes[out_bit >> 3] |= (1 << (out_bit & 7))
+        out_bit += 1
+    assert out_bit == total_bits
+else:
+    print(f"Extracting bits [{FIRST_BUNCH_HEADER_BIT}..{END_BIT}) = {END_BIT - FIRST_BUNCH_HEADER_BIT} bits "
+          f"({(END_BIT - FIRST_BUNCH_HEADER_BIT + 7) // 8} bytes)")
+    total_bits = END_BIT - FIRST_BUNCH_HEADER_BIT
+    out_bytes = bytearray((total_bits + 7) // 8)
+    for i in range(total_bits):
+        src_bit = FIRST_BUNCH_HEADER_BIT + i
+        bit = (p[src_bit >> 3] >> (src_bit & 7)) & 1
+        if bit:
+            out_bytes[i >> 3] |= (1 << (i & 7))
 
 OUT_BIN.write_bytes(out_bytes)
 print(f"Wrote {OUT_BIN} ({len(out_bytes)} bytes)")

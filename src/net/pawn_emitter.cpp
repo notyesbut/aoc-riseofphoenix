@@ -43,6 +43,58 @@ bool PawnEmitter::emit_captured(const sockaddr_in& client_addr) {
     }
     spdlog::warn("[PawnEmitter] ★ Pawn ActorOpen sent "
                  "(spliced ch=85 GUIDExport + ch=0 data + ch=114 Pawn ActorOpen)");
+
+    // Phase B.0p4 (2026-04-28 PM) — fire native ClientRestart RIGHT after
+    // pkt#78 ships.
+    //
+    // Background: with the v3 fix, pkt#78 carries the GUIDExport for
+    // NetGUID 88 + the Pawn ActorOpen.  Once the client processes pkt#78,
+    // NetGUID 88 is registered in its PackageMap and refers to a live
+    // APawn instance.  At that point we can validly send a ClientRestart
+    // RPC referencing NetGUID 88, and the client's
+    // APlayerController::ClientRestart_Implementation will:
+    //   1. Set Pawn = ResolvedPawn
+    //   2. Call AcknowledgePossession(Pawn)
+    //   3. Set AcknowledgedPawn = Pawn
+    //   4. Send ServerAcknowledgePossession back to us
+    //
+    // sub_146B00200's "AAoCPlayerController - No valid pawn" check reads
+    // AcknowledgedPawn — once non-null, the loading screen hides.
+    //
+    // We previously gated this on SNLW (ServerNotifyLoadedWorld) detection
+    // in the C>S handler, but the client only sends SNLW twice in our test
+    // session and BOTH arrived before pkt#78 was emitted (deferring
+    // forever).  Firing right after the pkt#78 send guarantees correct
+    // ordering: pkt#78 → ClientRestart → AcknowledgePossession.
+    //
+    // ── Phase B.0p13 (2026-04-28 PM13) — fuzz DISABLED, ClientRestart skipped ──
+    //
+    // PM12 fuzzed 18 candidate handles for ClientRestart RPC dispatch with
+    // BARE NetGUID payload.  ZERO C>S Server* response RPCs.  Conclusive
+    // proof: AOC does NOT use the field-handle-based ClientRestart RPC
+    // dispatch path for possession.
+    //
+    // AOC's possession appears to be PROPERTY-DRIVEN via PC.Pawn (or
+    // PawnPrivate, per allPawn includes.txt RE).  The captured PC chain
+    // (pkts 22-46) replicates PC.Pawn = NetGUID 88 and SHOULD trigger the
+    // pawn-ack handshake on the client.  If that's not happening, the
+    // remaining suspect is captured-packet bit-misalignment causing
+    // property replication to fail (CNSFs 1744830464 + 318997300 burst at
+    // IntrepidInitialize moment).
+    //
+    // NEXT INVESTIGATION (separate change):
+    //   1. Find which captured packet produces the 318997300 garbage
+    //      value when re-emitted (likely another splice with bit
+    //      misalignment similar to pkt#78 v1's bug).
+    //   2. Extract bunch_start_bit per-bunch (not just per-packet) so
+    //      partial-bunch chains splice cleanly.
+    //   3. OR construct PC.Pawn property update natively post-pkt#78
+    //      to force the client's OnRep_Pawn → ack handshake.
+    //
+    // For this build, pkt#78 ships and we don't fire a native ClientRestart
+    // — just rely on the captured property replication in pkts 22-46.
+    spdlog::info("[PawnEmitter] (PM13: native ClientRestart fuzz disabled — "
+                 "captured PC chain handles possession via Pawn property OnRep)");
     return true;
 }
 

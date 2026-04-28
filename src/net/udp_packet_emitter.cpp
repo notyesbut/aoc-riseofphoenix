@@ -278,9 +278,13 @@ void UdpPacketEmitter::wrap_and_send_with_state(const std::string& client_key,
         ::ue5::write_bits(buf.data(), buf.size(), off, bit, 1);
     }
 
-    // 7. Termination bit (UE5 PacketHandler convention: one '1' bit past
-    //    the last payload bit, then byte-align with zeros).
-    ::ue5::write_bits(buf.data(), buf.size(), off, 1u, 1);
+    // 7. AoC PacketHandler sentinel + termination bit.
+    //    Phase B.0p5 (2026-04-27): without the AoC sentinel bit BEFORE
+    //    the standard termination, the client logs "0's in last byte"
+    //    and silently drops the packet.  Same bug pattern as
+    //    send_bunch_packet, send_ch0_reliable_payload, etc.
+    ::ue5::write_bits(buf.data(), buf.size(), off, 1u, 1);  // AoC sentinel
+    ::ue5::write_bits(buf.data(), buf.size(), off, 1u, 1);  // UE5 termination
 
     // 8. Final byte length — round bit position up to byte boundary.
     size_t final_bytes = (off + 7) / 8;

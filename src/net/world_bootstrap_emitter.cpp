@@ -87,6 +87,12 @@ bool WorldBootstrapEmitter::emit_all(
                   "native={}/{} skipped={} ===",
                   emitted, splice_ok, splice_ok + splice_fail,
                   native_ok, native_ok + native_fail, skipped);
+
+    // Phase B.0e2 (2026-04-27) — let the host drain any post-bootstrap work
+    // (e.g., queued SULV ACKs that were deferred to avoid colliding with
+    // mid-splice captured chSeq values).  Default impl is a no-op.
+    host_.on_world_bootstrap_complete(client_key_, addr);
+
     return true;  // Soft errors don't abort the whole bootstrap
 }
 

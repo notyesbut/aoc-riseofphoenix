@@ -35,6 +35,33 @@
 // ============================================================================
 #include "net/world_bootstrap_emitter.h"
 
+// ── OPTION C — minimal plan for divergence-isolation test (2026-04-27) ──
+//
+// When 1, strips most post-PC-chain rows (47-77 and 79+) so the only
+// captured packets emitted are: pkt#0 (opcode 3), pkt#2 (NMT_Welcome),
+// pkt#22-46 (the full multi-fragment PC ActorOpen chain), pkt#78 (Pawn
+// ActorOpen via PawnEmitter).  Goal: prove or disprove that the
+// loading-screen loop is caused by post-spawn world replication
+// divergence (captured session opens different streamed sublevels than
+// our live session, since the captured player spawned in a different
+// world tile).
+//
+// Expected outcomes:
+//   * World renders empty + character visible at origin
+//     → divergence is the blocker; next step is a native
+//       ServerUpdateLevelVisibility responder (Option B).
+//   * Still loading-screen loop with a different failure signature
+//     → client expects a specific post-spawn property tick (HP, name,
+//       team, etc.); add a single targeted Splice row back and retest.
+//   * Disconnect shortly after pkt#78
+//     → channel stream starvation; Maintain loop must keep
+//       channels alive after Pawn open.
+//
+// Flip back to 0 to restore the full ~500-packet plan.
+#ifndef AOC_OPTION_C_MINIMAL
+#define AOC_OPTION_C_MINIMAL 1
+#endif
+
 namespace aoc { namespace net {
 
 const std::vector<PacketEmissionSpec> kDefaultBootstrapPlan = {
@@ -116,6 +143,27 @@ const std::vector<PacketEmissionSpec> kDefaultBootstrapPlan = {
     { 46, EmissionMode::Splice, "PARSE_FAIL #46",                  30 },
 
     // ── Phase 7: ch=4+ other actors (NPCs / environment) ────────────────
+#if AOC_OPTION_C_MINIMAL
+    // Option C strip — these are world actors that the captured player saw
+    // but our session may not have streamed yet.  Splicing causes channel
+    // namespace collisions and "Channel name serialization failed" warns.
+    { 47, EmissionMode::Skip, "OPTC strip: ch=4 actor begin", 5 },
+    { 48, EmissionMode::Skip, "OPTC strip: actor #48", 5 }, { 49, EmissionMode::Skip, "OPTC strip: actor #49", 5 },
+    { 50, EmissionMode::Skip, "OPTC strip: actor #50", 5 }, { 51, EmissionMode::Skip, "OPTC strip: actor #51", 5 },
+    { 52, EmissionMode::Skip, "OPTC strip: actor #52", 5 }, { 53, EmissionMode::Skip, "OPTC strip: actor #53", 5 },
+    { 54, EmissionMode::Skip, "OPTC strip: actor #54", 5 }, { 55, EmissionMode::Skip, "OPTC strip: actor #55", 5 },
+    { 56, EmissionMode::Skip, "OPTC strip: actor #56", 5 }, { 57, EmissionMode::Skip, "OPTC strip: actor #57", 5 },
+    { 58, EmissionMode::Skip, "OPTC strip: actor #58", 5 }, { 59, EmissionMode::Skip, "OPTC strip: actor #59", 5 },
+    { 60, EmissionMode::Skip, "OPTC strip: actor #60", 5 }, { 61, EmissionMode::Skip, "OPTC strip: actor #61", 5 },
+    { 62, EmissionMode::Skip, "OPTC strip: actor #62", 5 }, { 63, EmissionMode::Skip, "OPTC strip: actor #63", 5 },
+    { 64, EmissionMode::Skip, "OPTC strip: actor #64", 5 }, { 65, EmissionMode::Skip, "OPTC strip: actor #65", 5 },
+    { 66, EmissionMode::Skip, "OPTC strip: actor #66", 5 }, { 67, EmissionMode::Skip, "OPTC strip: actor #67", 5 },
+    { 68, EmissionMode::Skip, "OPTC strip: actor #68", 5 }, { 69, EmissionMode::Skip, "OPTC strip: actor #69", 5 },
+    { 70, EmissionMode::Skip, "OPTC strip: actor #70", 5 }, { 71, EmissionMode::Skip, "OPTC strip: actor #71", 5 },
+    { 72, EmissionMode::Skip, "OPTC strip: actor #72", 5 }, { 73, EmissionMode::Skip, "OPTC strip: actor #73", 5 },
+    { 74, EmissionMode::Skip, "OPTC strip: actor #74", 5 }, { 75, EmissionMode::Skip, "OPTC strip: actor #75", 5 },
+    { 76, EmissionMode::Skip, "OPTC strip: actor #76", 5 }, { 77, EmissionMode::Skip, "OPTC strip: actor #77", 5 },
+#else
     { 47, EmissionMode::Splice, "ch=4 actor begin", 30 },
     { 48, EmissionMode::Splice, "actor #48", 30 }, { 49, EmissionMode::Splice, "actor #49", 30 },
     { 50, EmissionMode::Splice, "actor #50", 30 }, { 51, EmissionMode::Splice, "actor #51", 30 },
@@ -132,6 +180,7 @@ const std::vector<PacketEmissionSpec> kDefaultBootstrapPlan = {
     { 72, EmissionMode::Splice, "actor #72", 30 }, { 73, EmissionMode::Splice, "actor #73", 30 },
     { 74, EmissionMode::Splice, "actor #74", 30 }, { 75, EmissionMode::Splice, "actor #75", 30 },
     { 76, EmissionMode::Splice, "actor #76", 30 }, { 77, EmissionMode::Splice, "actor #77", 30 },
+#endif // AOC_OPTION_C_MINIMAL
 
     // pkt#78 — Pawn ActorOpen.  PawnEmitter splices captured ch=85 +
     // ch=0 + ch=114 bunches as a 3-bunch stream.  Same wire content as
@@ -139,7 +188,215 @@ const std::vector<PacketEmissionSpec> kDefaultBootstrapPlan = {
     // and (eventually) will switch to a native build.
     { 78, EmissionMode::NativePawn78, "Pawn ActorOpen (PawnEmitter)", 30 },
 
+    // ── Phase 7.5: ClientRestart — Pawn-binding RPC (2026-04-27 BREAKTHROUGH) ──
+    //
+    // Per RE'd sub_144737700 (the timeout-state checker that triggers the
+    // "Connection to the Realm timed out" dialog when it returns 3): the
+    // dialog fires when a "pending failure" pointer is set at offset +88
+    // of the world/game-instance object.  That pointer gets set by the
+    // client when its internal "in-game ready" handshake doesn't complete
+    // — specifically, when ClientRestart never arrives to bind the Pawn
+    // to the PC.
+    //
+    // Captured pkt#134 IS that ClientRestart RPC (per memory notes from
+    // 2026-04-27).  Option C minimal stripped pkts 79-499, so pkt#134
+    // never went out.  Re-include it as a Splice — even in OPTC mode —
+    // and bridge across the gap with Skip rows.
+#if AOC_OPTION_C_MINIMAL
+    // Bridge pkts 79-133 — UPDATED 2026-04-27 16:30 from Skip to Splice.
+    //
+    // Test result with previous Skip bridge: streaming wait persists despite
+    // pkts 134-180 splicing successfully.  Hypothesis: pkts 79-133 contain
+    // initial Pawn property updates (location, rotation, transform) — without
+    // them, Pawn is at world origin, streaming sources query wrong tiles,
+    // streaming never marks "finished".
+    //
+    // Risk: chSeq divergence may resurface (this range was Skip originally
+    // because of chSeq issues pre-ClientRestart).  Now ClientRestart works,
+    // chSeq state may be more tolerant of these updates.
+    { 79, EmissionMode::Splice, "Pawn rep #79", 30 }, { 80, EmissionMode::Splice, "Pawn rep #80", 30 },
+    { 81, EmissionMode::Splice, "Pawn rep #81", 30 }, { 82, EmissionMode::Splice, "Pawn rep #82", 30 },
+    { 83, EmissionMode::Splice, "Pawn rep #83", 30 }, { 84, EmissionMode::Splice, "Pawn rep #84", 30 },
+    { 85, EmissionMode::Splice, "Pawn rep #85", 30 }, { 86, EmissionMode::Splice, "Pawn rep #86", 30 },
+    { 87, EmissionMode::Splice, "Pawn rep #87", 30 }, { 88, EmissionMode::Splice, "Pawn rep #88", 30 },
+    { 89, EmissionMode::Splice, "Pawn rep #89", 30 }, { 90, EmissionMode::Splice, "Pawn rep #90", 30 },
+    { 91, EmissionMode::Splice, "Pawn rep #91", 30 }, { 92, EmissionMode::Splice, "Pawn rep #92", 30 },
+    { 93, EmissionMode::Splice, "Pawn rep #93", 30 }, { 94, EmissionMode::Splice, "Pawn rep #94", 30 },
+    { 95, EmissionMode::Splice, "Pawn rep #95", 30 }, { 96, EmissionMode::Splice, "Pawn rep #96", 30 },
+    { 97, EmissionMode::Splice, "Pawn rep #97", 30 }, { 98, EmissionMode::Splice, "Pawn rep #98", 30 },
+    { 99, EmissionMode::Splice, "Pawn rep #99", 30 }, { 100, EmissionMode::Splice, "Pawn rep #100", 30 },
+    { 101, EmissionMode::Splice, "Pawn rep #101", 30 }, { 102, EmissionMode::Splice, "Pawn rep #102", 30 },
+    { 103, EmissionMode::Splice, "Pawn rep #103", 30 }, { 104, EmissionMode::Splice, "Pawn rep #104", 30 },
+    { 105, EmissionMode::Splice, "Pawn rep #105", 30 }, { 106, EmissionMode::Splice, "Pawn rep #106", 30 },
+    { 107, EmissionMode::Splice, "Pawn rep #107", 30 }, { 108, EmissionMode::Splice, "Pawn rep #108", 30 },
+    { 109, EmissionMode::Splice, "Pawn rep #109", 30 }, { 110, EmissionMode::Splice, "Pawn rep #110", 30 },
+    { 111, EmissionMode::Splice, "Pawn rep #111", 30 }, { 112, EmissionMode::Splice, "Pawn rep #112", 30 },
+    { 113, EmissionMode::Splice, "Pawn rep #113", 30 }, { 114, EmissionMode::Splice, "Pawn rep #114", 30 },
+    { 115, EmissionMode::Splice, "Pawn rep #115", 30 }, { 116, EmissionMode::Splice, "Pawn rep #116", 30 },
+    { 117, EmissionMode::Splice, "Pawn rep #117", 30 }, { 118, EmissionMode::Splice, "Pawn rep #118", 30 },
+    { 119, EmissionMode::Splice, "Pawn rep #119", 30 }, { 120, EmissionMode::Splice, "Pawn rep #120", 30 },
+    { 121, EmissionMode::Splice, "Pawn rep #121", 30 }, { 122, EmissionMode::Splice, "Pawn rep #122", 30 },
+    { 123, EmissionMode::Splice, "Pawn rep #123", 30 }, { 124, EmissionMode::Splice, "Pawn rep #124", 30 },
+    { 125, EmissionMode::Splice, "Pawn rep #125", 30 }, { 126, EmissionMode::Splice, "Pawn rep #126", 30 },
+    { 127, EmissionMode::Splice, "Pawn rep #127", 30 }, { 128, EmissionMode::Splice, "Pawn rep #128", 30 },
+    { 129, EmissionMode::Splice, "Pawn rep #129", 30 }, { 130, EmissionMode::Splice, "Pawn rep #130", 30 },
+    { 131, EmissionMode::Splice, "Pawn rep #131", 30 }, { 132, EmissionMode::Splice, "Pawn rep #132", 30 },
+    { 133, EmissionMode::Splice, "Pawn rep #133", 30 },
+    // ── pkt#134 — REDIRECTED 2026-04-28 PM (Phase B.0p4) ────────────────
+    // Originally: Splice the captured ClientRestart RPC.  Audit revealed:
+    //   1. The captured packet's bunches don't decode cleanly with our
+    //      parser (parser sees ch=15247 garbage at file's bsb=152).  The
+    //      client may receive it but get nothing useful.
+    //   2. Even if it decoded, its Pawn NetGUID was for the original
+    //      session's pawn, not ours.  AcknowledgePossession would fail.
+    //   3. PawnEmitter::emit_captured() now fires a clean native
+    //      ClientRestart immediately after pkt#78 ships, with NetGUID 88
+    //      bound to the captured pawn the client just registered.
+    //
+    // Sending the captured pkt#134 in addition to our native CR risks:
+    //   - Duplicate ClientRestart triggers AcknowledgePossession twice
+    //   - Malformed bytes cascade into surrounding bunches → CNSF
+    //
+    // Skip this packet.  If it turns out post-CR the client expects more
+    // data from this position, we'll re-enable as Splice OR build native.
+    { 134, EmissionMode::Skip, "★ ClientRestart — now native via PawnEmitter", 5 },
+
+    // ── Phase 7.6: Post-ClientRestart initial replication wave (pkts 135-149)
+    //
+    // After ClientRestart succeeds (timeout dialog elimination confirmed
+    // 2026-04-27 15:38), the client transitions to "active streaming" mode
+    // and requests many _Generated_/HASH tiles via SULV.  The captured
+    // server's response WAS pkts 135-149 — initial property replication
+    // for HP/MP/PlayerState/positions.  Without those, streaming subsystem
+    // polls but never marks "all done" → loading screen loops forever.
+    //
+    // Splice through 135-149 to deliver the replication wave.
+    { 135, EmissionMode::Splice, "post-CR replication #135", 30 },
+    { 136, EmissionMode::Splice, "post-CR replication #136", 30 },
+    { 137, EmissionMode::Splice, "post-CR replication #137", 30 },
+    { 138, EmissionMode::Splice, "post-CR replication #138", 30 },
+    { 139, EmissionMode::Splice, "post-CR replication #139", 30 },
+    { 140, EmissionMode::Splice, "post-CR replication #140", 30 },
+    { 141, EmissionMode::Splice, "post-CR replication #141", 30 },
+    { 142, EmissionMode::Splice, "post-CR replication #142", 30 },
+    { 143, EmissionMode::Splice, "post-CR replication #143", 30 },
+    { 144, EmissionMode::Splice, "post-CR replication #144", 30 },
+    { 145, EmissionMode::Splice, "post-CR replication #145", 30 },
+    { 146, EmissionMode::Splice, "post-CR replication #146", 30 },
+    { 147, EmissionMode::Splice, "post-CR replication #147", 30 },
+    { 148, EmissionMode::Splice, "post-CR replication #148", 30 },
+    { 149, EmissionMode::Splice, "post-CR replication #149", 30 },
+
+    // ── Phase 7.7: Extended replication (pkts 150-180) — 2026-04-27 16:15 ──
+    //
+    // After RE'ing CULSS exec thunk (sub_144444850) and discovering AOC's
+    // 7-param variant (vs stock UE5's 5-param), determined building native
+    // CULSS is high-risk: 7 unknowns (wire_idx, FName encoding, 4 bool
+    // values, mystery 5th param via sub_141712DD0, int LODIndex, bool).
+    //
+    // Captured server's pkts 150+ likely contain the CULSS calls and other
+    // streaming-completion data PERFECTLY ENCODED.  Splice them.
+    //
+    // chSeq risk: post-ClientRestart (15:38 fix), the captured chSeq state
+    // is now compatible with our session.  Earlier divergence theory may
+    // not apply to this range.
+    { 150, EmissionMode::Splice, "ext rep #150", 30 }, { 151, EmissionMode::Splice, "ext rep #151", 30 },
+    { 152, EmissionMode::Splice, "ext rep #152", 30 }, { 153, EmissionMode::Splice, "ext rep #153", 30 },
+    { 154, EmissionMode::Splice, "ext rep #154", 30 }, { 155, EmissionMode::Splice, "ext rep #155", 30 },
+    { 156, EmissionMode::Splice, "ext rep #156", 30 }, { 157, EmissionMode::Splice, "ext rep #157", 30 },
+    { 158, EmissionMode::Splice, "ext rep #158", 30 }, { 159, EmissionMode::Splice, "ext rep #159", 30 },
+    { 160, EmissionMode::Splice, "ext rep #160", 30 }, { 161, EmissionMode::Splice, "ext rep #161", 30 },
+    { 162, EmissionMode::Splice, "ext rep #162", 30 }, { 163, EmissionMode::Splice, "ext rep #163", 30 },
+    { 164, EmissionMode::Splice, "ext rep #164", 30 }, { 165, EmissionMode::Splice, "ext rep #165", 30 },
+    { 166, EmissionMode::Splice, "ext rep #166", 30 }, { 167, EmissionMode::Splice, "ext rep #167", 30 },
+    { 168, EmissionMode::Splice, "ext rep #168", 30 }, { 169, EmissionMode::Splice, "ext rep #169", 30 },
+    { 170, EmissionMode::Splice, "ext rep #170", 30 }, { 171, EmissionMode::Splice, "ext rep #171", 30 },
+    { 172, EmissionMode::Splice, "ext rep #172", 30 }, { 173, EmissionMode::Splice, "ext rep #173", 30 },
+    { 174, EmissionMode::Splice, "ext rep #174", 30 }, { 175, EmissionMode::Splice, "ext rep #175", 30 },
+    { 176, EmissionMode::Splice, "ext rep #176", 30 }, { 177, EmissionMode::Splice, "ext rep #177", 30 },
+    { 178, EmissionMode::Splice, "ext rep #178", 30 }, { 179, EmissionMode::Splice, "ext rep #179", 30 },
+    { 180, EmissionMode::Splice, "ext rep #180", 30 },
+
+    // ── Phase 7.8: Deep splice (pkts 181-500) — 2026-04-27 16:50 ─────────
+    //
+    // Per RE'd sub_1447AE890 (the IsStreamingFinished impl): the gate fires
+    // when ALL entries in array a1+184 pass sub_144789190 (per-cell ready).
+    // Client log shows persistent "1 QueuedPackages" — exactly ONE cell
+    // failing the ready check.
+    //
+    // Captured server's CULSS authorization for that cell is somewhere in
+    // pkts 181+.  Going DEEP — splice all the way to pkt#500.  Use lighter
+    // pacing (10ms) to stay under the 30s loading-screen-rebuild timer.
+    #define DEEP_SPLICE(N) { N, EmissionMode::Splice, "deep rep #" #N, 10 }
+    DEEP_SPLICE(181), DEEP_SPLICE(182), DEEP_SPLICE(183), DEEP_SPLICE(184), DEEP_SPLICE(185),
+    DEEP_SPLICE(186), DEEP_SPLICE(187), DEEP_SPLICE(188), DEEP_SPLICE(189), DEEP_SPLICE(190),
+    DEEP_SPLICE(191), DEEP_SPLICE(192), DEEP_SPLICE(193), DEEP_SPLICE(194), DEEP_SPLICE(195),
+    DEEP_SPLICE(196), DEEP_SPLICE(197), DEEP_SPLICE(198), DEEP_SPLICE(199), DEEP_SPLICE(200),
+    DEEP_SPLICE(201), DEEP_SPLICE(202), DEEP_SPLICE(203), DEEP_SPLICE(204), DEEP_SPLICE(205),
+    DEEP_SPLICE(206), DEEP_SPLICE(207), DEEP_SPLICE(208), DEEP_SPLICE(209), DEEP_SPLICE(210),
+    DEEP_SPLICE(211), DEEP_SPLICE(212), DEEP_SPLICE(213), DEEP_SPLICE(214), DEEP_SPLICE(215),
+    DEEP_SPLICE(216), DEEP_SPLICE(217), DEEP_SPLICE(218), DEEP_SPLICE(219), DEEP_SPLICE(220),
+    DEEP_SPLICE(221), DEEP_SPLICE(222), DEEP_SPLICE(223), DEEP_SPLICE(224), DEEP_SPLICE(225),
+    DEEP_SPLICE(226), DEEP_SPLICE(227), DEEP_SPLICE(228), DEEP_SPLICE(229), DEEP_SPLICE(230),
+    DEEP_SPLICE(231), DEEP_SPLICE(232), DEEP_SPLICE(233), DEEP_SPLICE(234), DEEP_SPLICE(235),
+    DEEP_SPLICE(236), DEEP_SPLICE(237), DEEP_SPLICE(238), DEEP_SPLICE(239), DEEP_SPLICE(240),
+    DEEP_SPLICE(241), DEEP_SPLICE(242), DEEP_SPLICE(243), DEEP_SPLICE(244), DEEP_SPLICE(245),
+    DEEP_SPLICE(246), DEEP_SPLICE(247), DEEP_SPLICE(248), DEEP_SPLICE(249), DEEP_SPLICE(250),
+    DEEP_SPLICE(251), DEEP_SPLICE(252), DEEP_SPLICE(253), DEEP_SPLICE(254), DEEP_SPLICE(255),
+    DEEP_SPLICE(256), DEEP_SPLICE(257), DEEP_SPLICE(258), DEEP_SPLICE(259), DEEP_SPLICE(260),
+    DEEP_SPLICE(261), DEEP_SPLICE(262), DEEP_SPLICE(263), DEEP_SPLICE(264), DEEP_SPLICE(265),
+    DEEP_SPLICE(266), DEEP_SPLICE(267), DEEP_SPLICE(268), DEEP_SPLICE(269), DEEP_SPLICE(270),
+    DEEP_SPLICE(271), DEEP_SPLICE(272), DEEP_SPLICE(273), DEEP_SPLICE(274), DEEP_SPLICE(275),
+    DEEP_SPLICE(276), DEEP_SPLICE(277), DEEP_SPLICE(278), DEEP_SPLICE(279), DEEP_SPLICE(280),
+    DEEP_SPLICE(281), DEEP_SPLICE(282), DEEP_SPLICE(283), DEEP_SPLICE(284), DEEP_SPLICE(285),
+    DEEP_SPLICE(286), DEEP_SPLICE(287), DEEP_SPLICE(288), DEEP_SPLICE(289), DEEP_SPLICE(290),
+    DEEP_SPLICE(291), DEEP_SPLICE(292), DEEP_SPLICE(293), DEEP_SPLICE(294), DEEP_SPLICE(295),
+    DEEP_SPLICE(296), DEEP_SPLICE(297), DEEP_SPLICE(298), DEEP_SPLICE(299), DEEP_SPLICE(300),
+    DEEP_SPLICE(301), DEEP_SPLICE(302), DEEP_SPLICE(303), DEEP_SPLICE(304), DEEP_SPLICE(305),
+    DEEP_SPLICE(306), DEEP_SPLICE(307), DEEP_SPLICE(308), DEEP_SPLICE(309), DEEP_SPLICE(310),
+    DEEP_SPLICE(311), DEEP_SPLICE(312), DEEP_SPLICE(313), DEEP_SPLICE(314), DEEP_SPLICE(315),
+    DEEP_SPLICE(316), DEEP_SPLICE(317), DEEP_SPLICE(318), DEEP_SPLICE(319), DEEP_SPLICE(320),
+    DEEP_SPLICE(321), DEEP_SPLICE(322), DEEP_SPLICE(323), DEEP_SPLICE(324), DEEP_SPLICE(325),
+    DEEP_SPLICE(326), DEEP_SPLICE(327), DEEP_SPLICE(328), DEEP_SPLICE(329), DEEP_SPLICE(330),
+    DEEP_SPLICE(331), DEEP_SPLICE(332), DEEP_SPLICE(333), DEEP_SPLICE(334), DEEP_SPLICE(335),
+    DEEP_SPLICE(336), DEEP_SPLICE(337), DEEP_SPLICE(338), DEEP_SPLICE(339), DEEP_SPLICE(340),
+    DEEP_SPLICE(341), DEEP_SPLICE(342), DEEP_SPLICE(343), DEEP_SPLICE(344), DEEP_SPLICE(345),
+    DEEP_SPLICE(346), DEEP_SPLICE(347), DEEP_SPLICE(348), DEEP_SPLICE(349), DEEP_SPLICE(350),
+    DEEP_SPLICE(351), DEEP_SPLICE(352), DEEP_SPLICE(353), DEEP_SPLICE(354), DEEP_SPLICE(355),
+    DEEP_SPLICE(356), DEEP_SPLICE(357), DEEP_SPLICE(358), DEEP_SPLICE(359), DEEP_SPLICE(360),
+    DEEP_SPLICE(361), DEEP_SPLICE(362), DEEP_SPLICE(363), DEEP_SPLICE(364), DEEP_SPLICE(365),
+    DEEP_SPLICE(366), DEEP_SPLICE(367), DEEP_SPLICE(368), DEEP_SPLICE(369), DEEP_SPLICE(370),
+    DEEP_SPLICE(371), DEEP_SPLICE(372), DEEP_SPLICE(373), DEEP_SPLICE(374), DEEP_SPLICE(375),
+    DEEP_SPLICE(376), DEEP_SPLICE(377), DEEP_SPLICE(378), DEEP_SPLICE(379), DEEP_SPLICE(380),
+    DEEP_SPLICE(381), DEEP_SPLICE(382), DEEP_SPLICE(383), DEEP_SPLICE(384), DEEP_SPLICE(385),
+    DEEP_SPLICE(386), DEEP_SPLICE(387), DEEP_SPLICE(388), DEEP_SPLICE(389), DEEP_SPLICE(390),
+    DEEP_SPLICE(391), DEEP_SPLICE(392), DEEP_SPLICE(393), DEEP_SPLICE(394), DEEP_SPLICE(395),
+    DEEP_SPLICE(396), DEEP_SPLICE(397), DEEP_SPLICE(398), DEEP_SPLICE(399), DEEP_SPLICE(400),
+    DEEP_SPLICE(401), DEEP_SPLICE(402), DEEP_SPLICE(403), DEEP_SPLICE(404), DEEP_SPLICE(405),
+    DEEP_SPLICE(406), DEEP_SPLICE(407), DEEP_SPLICE(408), DEEP_SPLICE(409), DEEP_SPLICE(410),
+    DEEP_SPLICE(411), DEEP_SPLICE(412), DEEP_SPLICE(413), DEEP_SPLICE(414), DEEP_SPLICE(415),
+    DEEP_SPLICE(416), DEEP_SPLICE(417), DEEP_SPLICE(418), DEEP_SPLICE(419), DEEP_SPLICE(420),
+    DEEP_SPLICE(421), DEEP_SPLICE(422), DEEP_SPLICE(423), DEEP_SPLICE(424), DEEP_SPLICE(425),
+    DEEP_SPLICE(426), DEEP_SPLICE(427), DEEP_SPLICE(428), DEEP_SPLICE(429), DEEP_SPLICE(430),
+    DEEP_SPLICE(431), DEEP_SPLICE(432), DEEP_SPLICE(433), DEEP_SPLICE(434), DEEP_SPLICE(435),
+    DEEP_SPLICE(436), DEEP_SPLICE(437), DEEP_SPLICE(438), DEEP_SPLICE(439), DEEP_SPLICE(440),
+    DEEP_SPLICE(441), DEEP_SPLICE(442), DEEP_SPLICE(443), DEEP_SPLICE(444), DEEP_SPLICE(445),
+    DEEP_SPLICE(446), DEEP_SPLICE(447), DEEP_SPLICE(448), DEEP_SPLICE(449), DEEP_SPLICE(450),
+    DEEP_SPLICE(451), DEEP_SPLICE(452), DEEP_SPLICE(453), DEEP_SPLICE(454), DEEP_SPLICE(455),
+    DEEP_SPLICE(456), DEEP_SPLICE(457), DEEP_SPLICE(458), DEEP_SPLICE(459), DEEP_SPLICE(460),
+    DEEP_SPLICE(461), DEEP_SPLICE(462), DEEP_SPLICE(463), DEEP_SPLICE(464), DEEP_SPLICE(465),
+    DEEP_SPLICE(466), DEEP_SPLICE(467), DEEP_SPLICE(468), DEEP_SPLICE(469), DEEP_SPLICE(470),
+    DEEP_SPLICE(471), DEEP_SPLICE(472), DEEP_SPLICE(473), DEEP_SPLICE(474), DEEP_SPLICE(475),
+    DEEP_SPLICE(476), DEEP_SPLICE(477), DEEP_SPLICE(478), DEEP_SPLICE(479), DEEP_SPLICE(480),
+    DEEP_SPLICE(481), DEEP_SPLICE(482), DEEP_SPLICE(483), DEEP_SPLICE(484), DEEP_SPLICE(485),
+    DEEP_SPLICE(486), DEEP_SPLICE(487), DEEP_SPLICE(488), DEEP_SPLICE(489), DEEP_SPLICE(490),
+    DEEP_SPLICE(491), DEEP_SPLICE(492), DEEP_SPLICE(493), DEEP_SPLICE(494), DEEP_SPLICE(495),
+    DEEP_SPLICE(496), DEEP_SPLICE(497), DEEP_SPLICE(498), DEEP_SPLICE(499), DEEP_SPLICE(500),
+    #undef DEEP_SPLICE
+#endif
+
     // ── Phase 8: Initial replication tick (HP/MP/PlayerState/positions) ──
+#if !AOC_OPTION_C_MINIMAL
     { 79, EmissionMode::Splice, "initial replication #79", 30 },
     { 80, EmissionMode::Splice, "actor #80", 30 }, { 81, EmissionMode::Splice, "actor #81", 30 },
     { 82, EmissionMode::Splice, "actor #82", 30 }, { 83, EmissionMode::Splice, "actor #83", 30 },
@@ -279,6 +536,7 @@ const std::vector<PacketEmissionSpec> kDefaultBootstrapPlan = {
     SPLICE_ROW(490), SPLICE_ROW(491), SPLICE_ROW(492), SPLICE_ROW(493), SPLICE_ROW(494),
     SPLICE_ROW(495), SPLICE_ROW(496), SPLICE_ROW(497), SPLICE_ROW(498), SPLICE_ROW(499),
     #undef SPLICE_ROW
+#endif // !AOC_OPTION_C_MINIMAL  (closes Phase 8/9/10 strip, opened above row #79)
 };
 
 }} // namespace aoc::net
