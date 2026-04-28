@@ -6682,6 +6682,28 @@ private:
         }
         ue5::write_bits(buf, sizeof(buf), off, ch_seq, 10);  // 10-bit ChSeq
 
+        // ── PM21 (2026-04-28) — MISSING ChName FIELD FIX ──
+        //
+        // Per PM14 RE of sub_144230D50 (UNetConnection::ReceivedRawPacket),
+        // when bReliable=1, the bunch header MUST include ChName immediately
+        // after ChSeq (and before BunchDataBits).  This was missing from the
+        // CALV STUB encoder — the client read 13 bits of "ChName" from what
+        // we wrote as BunchDataBits, then read garbage as the actual length,
+        // resulting in CNSF (BunchChannelNameFail).
+        //
+        // PM20 fix (12→10 ChSeq) shifted the alignment, changing the
+        // garbage value from 0x13038334 → 0x04C0040D, but the CNSF
+        // continued.  PM21 fix adds the missing ChName field:
+        //   [1 bit]  bIsHardcoded = 1
+        //   [SIP]    EName index = 102 (NAME_Actor)
+        // = 9 bits total.
+        //
+        // Compare to send_client_restart_native @ ~2370 which has this
+        // already.  The CALV STUB was assembled later (Phase B.0e2) and
+        // did not pick up the canonical bunch-header pattern.
+        ue5::write_bits(buf, sizeof(buf), off, 1, 1);  // ChName.bIsHardcoded=1
+        ue5::write_sip (buf, sizeof(buf), off, 102);   // EName=102 (NAME_Actor)
+
         // BunchDataBits = 8 (dispatch byte) + 128 (16-byte params) = 136 bits
         //
         // BREAKTHROUGH (2026-04-27 14:55) — RE'd the AOC RPC dispatch from
