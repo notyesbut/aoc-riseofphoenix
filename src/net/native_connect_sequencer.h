@@ -176,6 +176,19 @@ public:
     virtual aoc::protocol::PlayerNetGuidBlock allocate_player_block(
         const std::string& client_key) = 0;
 
+    /// PD2.3 (2026-05-05) — Get the customization JSON for the currently
+    /// selected character.  Used by AppearanceEmitter to populate
+    /// FCharacterCustomizationSaveData fields with real per-character
+    /// values instead of zero defaults.  Returns empty string when no
+    /// character is selected or no JSON could be extracted.
+    virtual std::string current_character_customization_json() const = 0;
+
+    /// PD3 (2026-05-05) — Get the currently-selected character's display
+    /// name (e.g. "MaxPayne").  Used by PlayerStateEmitter to populate
+    /// PlayerNamePrivate in the PlayerState ActorOpen / property update.
+    /// Returns empty string when no character is selected.
+    virtual std::string current_character_name() const = 0;
+
     /// Road A — Phase B.0 (2026-04-26) — splice a captured packet from
     /// loaded ReplayData and send it to the client with our session's
     /// outer header (seq/ack/PacketInfo).  Used by WorldBootstrapEmitter

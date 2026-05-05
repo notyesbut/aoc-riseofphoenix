@@ -51,6 +51,23 @@ public:
     /// only; richer property set in M1.2 continuation.
     bool emit_properties(const sockaddr_in& client_addr);
 
+    /// PM53 (2026-04-30) — Phase C: link PC.Pawn.
+    /// Sends a property-delta bunch on ch=3 carrying the Pawn NetGUID
+    /// reference.  Triggers `AAoCPlayerController::OnRep_Pawn` which
+    /// fires `AcknowledgePossession()` → camera attaches, input routes.
+    /// Must be called AFTER PlayerPawnEmitter::emit_open lands so the
+    /// Pawn NetGUID is registered in the client's PackageMap.
+    bool emit_pawn_link(const sockaddr_in& client_addr);
+
+    /// Phase D Step 3 Iter4 (2026-05-05) — link PC.PlayerState.
+    /// Sends a property-delta bunch on ch=3 carrying our minted PS NetGUID.
+    /// Triggers `OnRep_PlayerState` on the client → PC's nameplate widget
+    /// re-binds to our PS → PlayerNamePrivate update we sent on ch=21
+    /// becomes visible.  Must be called AFTER PlayerStateEmitter::emit_open
+    /// lands so the PS NetGUID is registered in the client's PackageMap.
+    /// Probe-gated via probe_player_state_emit.txt (same as PlayerStateEmitter).
+    bool emit_player_state_link(const sockaddr_in& client_addr);
+
 private:
     IGameServerHost& host_;
     std::string client_key_;

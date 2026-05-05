@@ -73,11 +73,13 @@ class IGameServerHost;
 
 /// What to do for each plan entry.
 enum class EmissionMode : uint8_t {
-    Skip,          ///< Don't emit (sentinel/keepalive).  Maintain covers it.
-    Splice,        ///< host_.send_captured_packet(replay_idx)
-    NativePc0,     ///< BootstrapEmitter::emit_aoc_opcode_3
-    NativePc22,    ///< PcEmitter::emit_open  (also emits Name property update)
-    NativePawn78,  ///< PawnEmitter::emit_captured (currently still spliced bytes)
+    Skip,            ///< Don't emit (sentinel/keepalive).  Maintain covers it.
+    Splice,          ///< host_.send_captured_packet(replay_idx)
+    NativePc0,       ///< BootstrapEmitter::emit_aoc_opcode_3
+    NativePc22,      ///< PcEmitter::emit_open  (also emits Name property update)
+    NativePawn78,    ///< PawnEmitter::emit_captured (Guard NPC — still spliced bytes)
+    NativePlayerPawn,///< PlayerPawnEmitter::emit_open — PM39 (2026-04-30) Phase 2.
+                     ///< Native player Pawn ActorOpen with minted NetGUID.
 };
 
 /// One entry in the bootstrap plan.

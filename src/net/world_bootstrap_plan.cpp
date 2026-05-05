@@ -86,61 +86,63 @@ const std::vector<PacketEmissionSpec> kDefaultBootstrapPlan = {
     { 19, EmissionMode::Skip, "filler #19", 5 }, { 20, EmissionMode::Skip, "filler #20", 5 },
     { 21, EmissionMode::Skip, "filler #21", 5 },
 
-    // ── Phase 3: PC ActorOpen + continuation ────────────────────────────
+    // ── Phase 3: PC ActorOpen — Path B2 Step 1 (PM35, 2026-04-29) ──────
     //
-    // 2026-04-26 Phase B.0a — pkt #22 is a 4-FRAGMENT partial bunch chain
-    // (pkts 22, 23, plus parts in 29-44).  All fragments share chSeq
-    // 1978..1981 on ch=3.  Earlier we set this to NativePc22, which
-    // opened ch=3 at chSeq=954 (PcEmitter's hardcoded value).  The
-    // splice rows that follow then sent captured chSeq=1979+ on the
-    // same channel — UE5 saw a 1024-bunch gap and buffered every
-    // following bunch as "future", waiting for the missing fragments
-    // to arrive.  Result: PC never finished spawning → no character →
-    // no terrain streaming → floating rocks.
+    // CHANGE: pkts 22-46 are now SKIPPED.  We replace the entire captured
+    // PC chain with a NATIVE emit (NativePc22).
     //
-    // Until we can natively emit the FULL multi-fragment PC chain
-    // (chSeq + content of all 4 bunches matching what the client
-    // expects), the safe move is to splice the entire PC bootstrap.
-    // The captured RandomChar's PC opens cleanly because all fragments
-    // are byte-identical to what the client originally received.
+    // Why: verbose UE5 net log proved the captured PC chain establishes
+    // session-specific NetGUIDs that don't exist in our session.  Captured
+    // pkts 45/46 emit unreliable property updates referencing the captured
+    // PC's subobjects (CombatInfo/AbilityComponent/StatsComponent w/ Outer
+    // 599490) which fail to resolve in our session → "InternalLoadObject
+    // loaded NULL" → property update reads garbage FString → CNSF.
     //
-    // Trade-off: we lose the "minted PC NetGUID" demonstration in the
-    // pure-native flow (the captured GUID 10341530 is what the client
-    // sees), but the world should load + character render.  M2.x will
-    // bring back native PC by emitting the full chain natively.
-    { 22, EmissionMode::Splice,     "PC ActorOpen (captured chain start)", 100 },
-    { 23, EmissionMode::Splice,     "PC continuation #1",                  30 },
+    // The earlier comment about chSeq mismatch (954 vs 1978) is still
+    // relevant but in this iteration we strip the captured tail from
+    // PcEmitter (no spliced 848 bits referencing dead NetGUIDs), and the
+    // 1024-bunch gap concern is addressed separately by the chSeq tracker
+    // already running across all reliable channels.
+    //
+    // STEP 1 SCOPE: just the ActorOpen — PC has DEFAULT initial property
+    // values (no Pawn ref, no PlayerState ref).  Step 2 will add the
+    // PC.Pawn property update so AcknowledgePossession can fire.
+    { 22, EmissionMode::NativePc22, "PC ActorOpen (B2 native, no captured tail)", 100 },
+    { 23, EmissionMode::Skip,       "PC continuation #1 (was splice)",            5 },
 
-    // ── Phase 4: Initial GUIDExports (ch=85 bundle + ch=2 + ch=30) ──────
-    { 24, EmissionMode::Splice, "ch=85 GUIDExport #1",          30 },
-    { 25, EmissionMode::Splice, "ch=2 GUIDExport + ch=30 close",30 },
-    { 26, EmissionMode::Splice, "ch=85 GUIDExport #2",          30 },
-    { 27, EmissionMode::Splice, "PARSE_FAIL / opaque",          30 },
-    { 28, EmissionMode::Splice, "ch=85 GUIDExport #3",          30 },
+    // ── Phase 4: skip captured GUIDExport chain ─────────────────────────
+    // These exported subobject NetGUIDs of the captured PC.  We're using
+    // our own PC, so these would just confuse the client.
+    { 24, EmissionMode::Skip, "B2-skip: ch=85 GUIDExport #1",          5 },
+    { 25, EmissionMode::Skip, "B2-skip: ch=2 GUIDExport + ch=30 close",5 },
+    { 26, EmissionMode::Skip, "B2-skip: ch=85 GUIDExport #2",          5 },
+    { 27, EmissionMode::Skip, "B2-skip: PARSE_FAIL / opaque",          5 },
+    { 28, EmissionMode::Skip, "B2-skip: ch=85 GUIDExport #3",          5 },
 
-    // ── Phase 5: Big PC partial stream (pkts #29-#44, ~75K bits) ────────
-    // PC's RepLayout tail + subobjects.  All splice — these are the
-    // hardest to decode (CustomDelta + AoC-specific UStruct bodies).
-    { 29, EmissionMode::Splice, "PC partial #29", 30 },
-    { 30, EmissionMode::Splice, "PC partial #30", 30 },
-    { 31, EmissionMode::Splice, "PC partial #31", 30 },
-    { 32, EmissionMode::Splice, "PC partial #32", 30 },
-    { 33, EmissionMode::Splice, "PC partial #33", 30 },
-    { 34, EmissionMode::Splice, "PC partial #34", 30 },
-    { 35, EmissionMode::Splice, "PC partial #35", 30 },
-    { 36, EmissionMode::Splice, "PC partial #36", 30 },
-    { 37, EmissionMode::Splice, "PC partial #37", 30 },
-    { 38, EmissionMode::Splice, "PC partial #38", 30 },
-    { 39, EmissionMode::Splice, "PC partial #39", 30 },
-    { 40, EmissionMode::Splice, "PC partial #40", 30 },
-    { 41, EmissionMode::Splice, "PC partial #41", 30 },
-    { 42, EmissionMode::Splice, "PC partial #42", 30 },
-    { 43, EmissionMode::Splice, "PC partial #43", 30 },
-    { 44, EmissionMode::Splice, "PC partial #44 (ch=0 ctrl tail)", 30 },
+    // ── Phase 5: skip captured PC partial stream (RepLayout tail) ───────
+    // These are the captured PC's property baseline — referencing the
+    // captured Pawn/PlayerState NetGUIDs.  Skipped.  Step 3+ will emit
+    // a native equivalent.
+    { 29, EmissionMode::Skip, "B2-skip: PC partial #29", 5 },
+    { 30, EmissionMode::Skip, "B2-skip: PC partial #30", 5 },
+    { 31, EmissionMode::Skip, "B2-skip: PC partial #31", 5 },
+    { 32, EmissionMode::Skip, "B2-skip: PC partial #32", 5 },
+    { 33, EmissionMode::Skip, "B2-skip: PC partial #33", 5 },
+    { 34, EmissionMode::Skip, "B2-skip: PC partial #34", 5 },
+    { 35, EmissionMode::Skip, "B2-skip: PC partial #35", 5 },
+    { 36, EmissionMode::Skip, "B2-skip: PC partial #36", 5 },
+    { 37, EmissionMode::Skip, "B2-skip: PC partial #37", 5 },
+    { 38, EmissionMode::Skip, "B2-skip: PC partial #38", 5 },
+    { 39, EmissionMode::Skip, "B2-skip: PC partial #39", 5 },
+    { 40, EmissionMode::Skip, "B2-skip: PC partial #40", 5 },
+    { 41, EmissionMode::Skip, "B2-skip: PC partial #41", 5 },
+    { 42, EmissionMode::Skip, "B2-skip: PC partial #42", 5 },
+    { 43, EmissionMode::Skip, "B2-skip: PC partial #43", 5 },
+    { 44, EmissionMode::Skip, "B2-skip: PC partial #44 (ch=0 ctrl tail)", 5 },
 
-    // ── Phase 6: PARSE_FAIL window (PC tail final fragment) ─────────────
-    { 45, EmissionMode::Splice, "PARSE_FAIL #45 (PC tail final?)", 30 },
-    { 46, EmissionMode::Splice, "PARSE_FAIL #46",                  30 },
+    // ── Phase 6: skip the PARSE_FAIL packets (CNSF source) ──────────────
+    { 45, EmissionMode::Skip, "B2-skip: PARSE_FAIL #45", 5 },
+    { 46, EmissionMode::Skip, "B2-skip: PARSE_FAIL #46 (CNSF source)", 5 },
 
     // ── Phase 7: ch=4+ other actors (NPCs / environment) ────────────────
 #if AOC_OPTION_C_MINIMAL
@@ -182,66 +184,110 @@ const std::vector<PacketEmissionSpec> kDefaultBootstrapPlan = {
     { 76, EmissionMode::Splice, "actor #76", 30 }, { 77, EmissionMode::Splice, "actor #77", 30 },
 #endif // AOC_OPTION_C_MINIMAL
 
-    // pkt#78 — Pawn ActorOpen.  PawnEmitter splices captured ch=85 +
-    // ch=0 + ch=114 bunches as a 3-bunch stream.  Same wire content as
-    // a Splice would produce, but goes through PawnEmitter's logging
-    // and (eventually) will switch to a native build.
-    { 78, EmissionMode::NativePawn78, "Pawn ActorOpen (PawnEmitter)", 30 },
+    // pkt#78 — PM45 (2026-04-30) — NATIVE PLAYER PAWN.
+    //
+    // Path Y commits: PM43 splice abandoned (session-bound captured state
+    // contamination), now emitting a fully-native player Pawn ActorOpen
+    // via PlayerPawnEmitter.  Mirrors PcEmitter's proven-clean ActorBuilder
+    // pattern.  Uses our session's minted NetGUID (block.player_pawn) for
+    // the actor and content-addressable hashes for class CDOs.
+    //
+    // Subobjects (per verbose log of working launch_all.bat):
+    //   BaseCharacterInfo:UPlayerInfo, CombatInfo:UPlayerCombatInfo,
+    //   OwnerInfo:UOwnerInfoComponent, BackpackComponent/EquipmentComponent/
+    //   QuestStorageComponent:UItemStorageComponent,
+    //   RewardStorageComponent:URewardStorageComponent,
+    //   "Character Appearance":UCharacterAppearanceComponent.
+    //
+    // Phase B scope: actor + 8 subobject channel opens with default
+    // properties (CDO-resolved on client).  Phase C will link PC.Pawn to
+    // this Pawn to fire AcknowledgePossession.  Phase D will add per-prop
+    // baselines as the client demands them.
+    { 78, EmissionMode::NativePlayerPawn,
+        "PM45: native player Pawn ActorOpen (replaces PM43 splice attempt)", 5 },
 
-    // ── Phase 7.5: ClientRestart — Pawn-binding RPC (2026-04-27 BREAKTHROUGH) ──
+    // ── PM37 (2026-04-29) — Path C Phase 1.5 / Option B: skip ALL captured world ──
     //
-    // Per RE'd sub_144737700 (the timeout-state checker that triggers the
-    // "Connection to the Realm timed out" dialog when it returns 3): the
-    // dialog fires when a "pending failure" pointer is set at offset +88
-    // of the world/game-instance object.  That pointer gets set by the
-    // client when its internal "in-game ready" handshake doesn't complete
-    // — specifically, when ClientRestart never arrives to bind the Pawn
-    // to the PC.
+    // PM36 confirmed the chSeq renumber works: captured bunches now FLOW
+    // (no longer queued).  But once flowing, the client tries to parse
+    // them — and a property update on Node_Villager_F_C references
+    // captured NetGUID 970 which doesn't exist in our session →
+    // "InternalLoadObject loaded NULL" → ContentBlockFail → connection
+    // killed ("Connection to the Realm timed out").
     //
-    // Captured pkt#134 IS that ClientRestart RPC (per memory notes from
-    // 2026-04-27).  Option C minimal stripped pkts 79-499, so pkt#134
-    // never went out.  Re-include it as a Splice — even in OPTC mode —
-    // and bridge across the gap with Skip rows.
+    // The captured world data references THOUSANDS of NetGUIDs that
+    // belong to the captured session.  We can't whack-a-mole every one.
+    //
+    // OPTION B: skip ALL captured packets after pkt 78.  Result:
+    //   - PC ActorOpen (pkt 22 native via PcEmitter) ✓
+    //   - Pawn ActorOpen-equivalent (pkt 78 via PawnEmitter — Guard NPC) ✓
+    //   - NO captured world data after pkt 78 ✓
+    //   - Empty world but stable connection
+    //
+    // Phase 2 (next) will add a native player Pawn emitter so we have
+    // a controllable character.  Phase 3 will link PC.Pawn → our Pawn.
+    //
+    // Once we have a stable foundation, future phases can add native
+    // NPCs / world content.  For now, stability > content.
+
+    // (Original comment kept for traceability — now superseded by Option B)
 #if AOC_OPTION_C_MINIMAL
-    // Bridge pkts 79-133 — UPDATED 2026-04-27 16:30 from Skip to Splice.
+    // Bridge pkts 79-133 — PM37: now SKIP (was Splice).
+    // Captured property updates reference dead NetGUIDs → ContentBlockFail.
+    { 79, EmissionMode::Skip, "PM37 OptB: skip captured Pawn rep #79",   5 }, { 80, EmissionMode::Skip, "PM37 OptB: #80",   5 },
+    { 81, EmissionMode::Skip, "PM37 OptB: #81",   5 }, { 82, EmissionMode::Skip, "PM37 OptB: #82",   5 },
+    { 83, EmissionMode::Skip, "PM37 OptB: #83",   5 }, { 84, EmissionMode::Skip, "PM37 OptB: #84",   5 },
+    { 85, EmissionMode::Skip, "PM37 OptB: #85",   5 }, { 86, EmissionMode::Skip, "PM37 OptB: #86",   5 },
+    { 87, EmissionMode::Skip, "PM37 OptB: #87",   5 }, { 88, EmissionMode::Skip, "PM37 OptB: #88",   5 },
+    // ── PM44 (2026-04-30) — PM43 splice ABANDONED, reverted to Skip ─────
+    // PM43 attempted to splice the captured ch=19 player Pawn partial bunch
+    // chain (pkts 89-93).  Live test (10:08) revealed the splice has the
+    // SAME fundamental flaw as PM36: captured packets are session-bound.
     //
-    // Test result with previous Skip bridge: streaming wait persists despite
-    // pkts 134-180 splicing successfully.  Hypothesis: pkts 79-133 contain
-    // initial Pawn property updates (location, rotation, transform) — without
-    // them, Pawn is at world origin, streaming sources query wrong tiles,
-    // streaming never marks "finished".
+    //   pkt 89 wire: bunch[0] = ch=3  Seq 991 (captured PC tail leak)
+    //                bunch[1] = ch=19 Seq 962 (Pawn open chunk 1)
+    //   client log:  "Queuing bunch with unreceived dependency: 991/954"
+    //                "Queuing bunch with unreceived dependency: 962/954"
+    //                "InternalLoadObject loaded NULL: NetGUID 10341538"
+    //                "InternalLoadObject loaded NULL: NetGUID 10341548"
+    //                "InternalLoadObject loaded NULL: NetGUID 10341550"
     //
-    // Risk: chSeq divergence may resurface (this range was Skip originally
-    // because of chSeq issues pre-ClientRestart).  Now ClientRestart works,
-    // chSeq state may be more tolerant of these updates.
-    { 79, EmissionMode::Splice, "Pawn rep #79", 30 }, { 80, EmissionMode::Splice, "Pawn rep #80", 30 },
-    { 81, EmissionMode::Splice, "Pawn rep #81", 30 }, { 82, EmissionMode::Splice, "Pawn rep #82", 30 },
-    { 83, EmissionMode::Splice, "Pawn rep #83", 30 }, { 84, EmissionMode::Splice, "Pawn rep #84", 30 },
-    { 85, EmissionMode::Splice, "Pawn rep #85", 30 }, { 86, EmissionMode::Splice, "Pawn rep #86", 30 },
-    { 87, EmissionMode::Splice, "Pawn rep #87", 30 }, { 88, EmissionMode::Splice, "Pawn rep #88", 30 },
-    { 89, EmissionMode::Splice, "Pawn rep #89", 30 }, { 90, EmissionMode::Splice, "Pawn rep #90", 30 },
-    { 91, EmissionMode::Splice, "Pawn rep #91", 30 }, { 92, EmissionMode::Splice, "Pawn rep #92", 30 },
-    { 93, EmissionMode::Splice, "Pawn rep #93", 30 }, { 94, EmissionMode::Splice, "Pawn rep #94", 30 },
-    { 95, EmissionMode::Splice, "Pawn rep #95", 30 }, { 96, EmissionMode::Splice, "Pawn rep #96", 30 },
-    { 97, EmissionMode::Splice, "Pawn rep #97", 30 }, { 98, EmissionMode::Splice, "Pawn rep #98", 30 },
-    { 99, EmissionMode::Splice, "Pawn rep #99", 30 }, { 100, EmissionMode::Splice, "Pawn rep #100", 30 },
-    { 101, EmissionMode::Splice, "Pawn rep #101", 30 }, { 102, EmissionMode::Splice, "Pawn rep #102", 30 },
-    { 103, EmissionMode::Splice, "Pawn rep #103", 30 }, { 104, EmissionMode::Splice, "Pawn rep #104", 30 },
-    { 105, EmissionMode::Splice, "Pawn rep #105", 30 }, { 106, EmissionMode::Splice, "Pawn rep #106", 30 },
-    { 107, EmissionMode::Splice, "Pawn rep #107", 30 }, { 108, EmissionMode::Splice, "Pawn rep #108", 30 },
-    { 109, EmissionMode::Splice, "Pawn rep #109", 30 }, { 110, EmissionMode::Splice, "Pawn rep #110", 30 },
-    { 111, EmissionMode::Splice, "Pawn rep #111", 30 }, { 112, EmissionMode::Splice, "Pawn rep #112", 30 },
-    { 113, EmissionMode::Splice, "Pawn rep #113", 30 }, { 114, EmissionMode::Splice, "Pawn rep #114", 30 },
-    { 115, EmissionMode::Splice, "Pawn rep #115", 30 }, { 116, EmissionMode::Splice, "Pawn rep #116", 30 },
-    { 117, EmissionMode::Splice, "Pawn rep #117", 30 }, { 118, EmissionMode::Splice, "Pawn rep #118", 30 },
-    { 119, EmissionMode::Splice, "Pawn rep #119", 30 }, { 120, EmissionMode::Splice, "Pawn rep #120", 30 },
-    { 121, EmissionMode::Splice, "Pawn rep #121", 30 }, { 122, EmissionMode::Splice, "Pawn rep #122", 30 },
-    { 123, EmissionMode::Splice, "Pawn rep #123", 30 }, { 124, EmissionMode::Splice, "Pawn rep #124", 30 },
-    { 125, EmissionMode::Splice, "Pawn rep #125", 30 }, { 126, EmissionMode::Splice, "Pawn rep #126", 30 },
-    { 127, EmissionMode::Splice, "Pawn rep #127", 30 }, { 128, EmissionMode::Splice, "Pawn rep #128", 30 },
-    { 129, EmissionMode::Splice, "Pawn rep #129", 30 }, { 130, EmissionMode::Splice, "Pawn rep #130", 30 },
-    { 131, EmissionMode::Splice, "Pawn rep #131", 30 }, { 132, EmissionMode::Splice, "Pawn rep #132", 30 },
-    { 133, EmissionMode::Splice, "Pawn rep #133", 30 },
+    // Root cause: a captured replay is a SESSION-BOUND transaction.  Its
+    // bunches reference (a) chSeq state advanced by skipped earlier bunches,
+    // (b) NetGUIDs minted by the captured server, (c) channel-index claims
+    // that conflict with our own session.  Splicing fragments leaks all
+    // three.  Legacy mode works because it replays the full closure.
+    //
+    // Path C Phase 2 will be NATIVE (PlayerPawnEmitter built from scratch
+    // using ActorBuilder + a correct PlayerPawn_C schema).  Replacing
+    // pawn_schema.cpp's NPC-shaped components with the verbose-log-confirmed
+    // 8-component player layout is the next milestone.
+    { 89, EmissionMode::Skip, "PM44: PM43 splice abandoned — see comment", 5 },
+    { 90, EmissionMode::Skip, "PM44: PM43 splice abandoned",                5 },
+    { 91, EmissionMode::Skip, "PM44: PM43 splice abandoned",                5 },
+    { 92, EmissionMode::Skip, "PM44: PM43 splice abandoned",                5 },
+    { 93, EmissionMode::Skip, "PM44: PM43 splice abandoned",                5 },
+    { 94, EmissionMode::Skip, "PM37 OptB: #94",   5 },
+    { 95, EmissionMode::Skip, "PM37 OptB: #95",   5 }, { 96, EmissionMode::Skip, "PM37 OptB: #96",   5 },
+    { 97, EmissionMode::Skip, "PM37 OptB: #97",   5 }, { 98, EmissionMode::Skip, "PM37 OptB: #98",   5 },
+    { 99, EmissionMode::Skip, "PM37 OptB: #99",   5 }, { 100, EmissionMode::Skip, "PM37 OptB: #100", 5 },
+    { 101, EmissionMode::Skip, "PM37 OptB: #101", 5 }, { 102, EmissionMode::Skip, "PM37 OptB: #102", 5 },
+    { 103, EmissionMode::Skip, "PM37 OptB: #103", 5 }, { 104, EmissionMode::Skip, "PM37 OptB: #104", 5 },
+    { 105, EmissionMode::Skip, "PM37 OptB: #105", 5 }, { 106, EmissionMode::Skip, "PM37 OptB: #106", 5 },
+    { 107, EmissionMode::Skip, "PM37 OptB: #107", 5 }, { 108, EmissionMode::Skip, "PM37 OptB: #108", 5 },
+    { 109, EmissionMode::Skip, "PM37 OptB: #109", 5 }, { 110, EmissionMode::Skip, "PM37 OptB: #110", 5 },
+    { 111, EmissionMode::Skip, "PM37 OptB: #111", 5 }, { 112, EmissionMode::Skip, "PM37 OptB: #112", 5 },
+    { 113, EmissionMode::Skip, "PM37 OptB: #113", 5 }, { 114, EmissionMode::Skip, "PM37 OptB: #114", 5 },
+    { 115, EmissionMode::Skip, "PM37 OptB: #115", 5 }, { 116, EmissionMode::Skip, "PM37 OptB: #116", 5 },
+    { 117, EmissionMode::Skip, "PM37 OptB: #117", 5 }, { 118, EmissionMode::Skip, "PM37 OptB: #118", 5 },
+    { 119, EmissionMode::Skip, "PM37 OptB: #119", 5 }, { 120, EmissionMode::Skip, "PM37 OptB: #120", 5 },
+    { 121, EmissionMode::Skip, "PM37 OptB: #121", 5 }, { 122, EmissionMode::Skip, "PM37 OptB: #122", 5 },
+    { 123, EmissionMode::Skip, "PM37 OptB: #123", 5 }, { 124, EmissionMode::Skip, "PM37 OptB: #124", 5 },
+    { 125, EmissionMode::Skip, "PM37 OptB: #125", 5 }, { 126, EmissionMode::Skip, "PM37 OptB: #126", 5 },
+    { 127, EmissionMode::Skip, "PM37 OptB: #127", 5 }, { 128, EmissionMode::Skip, "PM37 OptB: #128", 5 },
+    { 129, EmissionMode::Skip, "PM37 OptB: #129", 5 }, { 130, EmissionMode::Skip, "PM37 OptB: #130", 5 },
+    { 131, EmissionMode::Skip, "PM37 OptB: #131", 5 }, { 132, EmissionMode::Skip, "PM37 OptB: #132", 5 },
+    { 133, EmissionMode::Skip, "PM37 OptB: #133", 5 },
     // ── pkt#134 — REDIRECTED 2026-04-28 PM (Phase B.0p4) ────────────────
     // Originally: Splice the captured ClientRestart RPC.  Audit revealed:
     //   1. The captured packet's bunches don't decode cleanly with our
@@ -271,21 +317,21 @@ const std::vector<PacketEmissionSpec> kDefaultBootstrapPlan = {
     // polls but never marks "all done" → loading screen loops forever.
     //
     // Splice through 135-149 to deliver the replication wave.
-    { 135, EmissionMode::Splice, "post-CR replication #135", 30 },
-    { 136, EmissionMode::Splice, "post-CR replication #136", 30 },
-    { 137, EmissionMode::Splice, "post-CR replication #137", 30 },
-    { 138, EmissionMode::Splice, "post-CR replication #138", 30 },
-    { 139, EmissionMode::Splice, "post-CR replication #139", 30 },
-    { 140, EmissionMode::Splice, "post-CR replication #140", 30 },
-    { 141, EmissionMode::Splice, "post-CR replication #141", 30 },
-    { 142, EmissionMode::Splice, "post-CR replication #142", 30 },
-    { 143, EmissionMode::Splice, "post-CR replication #143", 30 },
-    { 144, EmissionMode::Splice, "post-CR replication #144", 30 },
-    { 145, EmissionMode::Splice, "post-CR replication #145", 30 },
-    { 146, EmissionMode::Splice, "post-CR replication #146", 30 },
-    { 147, EmissionMode::Splice, "post-CR replication #147", 30 },
-    { 148, EmissionMode::Splice, "post-CR replication #148", 30 },
-    { 149, EmissionMode::Splice, "post-CR replication #149", 30 },
+    { 135, EmissionMode::Skip, "PM37 OptB: skip post-CR rep #135", 5 },
+    { 136, EmissionMode::Skip, "PM37 OptB: #136", 5 },
+    { 137, EmissionMode::Skip, "PM37 OptB: #137", 5 },
+    { 138, EmissionMode::Skip, "PM37 OptB: #138", 5 },
+    { 139, EmissionMode::Skip, "PM37 OptB: #139", 5 },
+    { 140, EmissionMode::Skip, "PM37 OptB: #140", 5 },
+    { 141, EmissionMode::Skip, "PM37 OptB: #141", 5 },
+    { 142, EmissionMode::Skip, "PM37 OptB: #142", 5 },
+    { 143, EmissionMode::Skip, "PM37 OptB: #143", 5 },
+    { 144, EmissionMode::Skip, "PM37 OptB: #144", 5 },
+    { 145, EmissionMode::Skip, "PM37 OptB: #145", 5 },
+    { 146, EmissionMode::Skip, "PM37 OptB: #146", 5 },
+    { 147, EmissionMode::Skip, "PM37 OptB: #147", 5 },
+    { 148, EmissionMode::Skip, "PM37 OptB: #148", 5 },
+    { 149, EmissionMode::Skip, "PM37 OptB: #149", 5 },
 
     // ── Phase 7.7: Extended replication (pkts 150-180) — 2026-04-27 16:15 ──
     //
@@ -300,22 +346,22 @@ const std::vector<PacketEmissionSpec> kDefaultBootstrapPlan = {
     // chSeq risk: post-ClientRestart (15:38 fix), the captured chSeq state
     // is now compatible with our session.  Earlier divergence theory may
     // not apply to this range.
-    { 150, EmissionMode::Splice, "ext rep #150", 30 }, { 151, EmissionMode::Splice, "ext rep #151", 30 },
-    { 152, EmissionMode::Splice, "ext rep #152", 30 }, { 153, EmissionMode::Splice, "ext rep #153", 30 },
-    { 154, EmissionMode::Splice, "ext rep #154", 30 }, { 155, EmissionMode::Splice, "ext rep #155", 30 },
-    { 156, EmissionMode::Splice, "ext rep #156", 30 }, { 157, EmissionMode::Splice, "ext rep #157", 30 },
-    { 158, EmissionMode::Splice, "ext rep #158", 30 }, { 159, EmissionMode::Splice, "ext rep #159", 30 },
-    { 160, EmissionMode::Splice, "ext rep #160", 30 }, { 161, EmissionMode::Splice, "ext rep #161", 30 },
-    { 162, EmissionMode::Splice, "ext rep #162", 30 }, { 163, EmissionMode::Splice, "ext rep #163", 30 },
-    { 164, EmissionMode::Splice, "ext rep #164", 30 }, { 165, EmissionMode::Splice, "ext rep #165", 30 },
-    { 166, EmissionMode::Splice, "ext rep #166", 30 }, { 167, EmissionMode::Splice, "ext rep #167", 30 },
-    { 168, EmissionMode::Splice, "ext rep #168", 30 }, { 169, EmissionMode::Splice, "ext rep #169", 30 },
-    { 170, EmissionMode::Splice, "ext rep #170", 30 }, { 171, EmissionMode::Splice, "ext rep #171", 30 },
-    { 172, EmissionMode::Splice, "ext rep #172", 30 }, { 173, EmissionMode::Splice, "ext rep #173", 30 },
-    { 174, EmissionMode::Splice, "ext rep #174", 30 }, { 175, EmissionMode::Splice, "ext rep #175", 30 },
-    { 176, EmissionMode::Splice, "ext rep #176", 30 }, { 177, EmissionMode::Splice, "ext rep #177", 30 },
-    { 178, EmissionMode::Splice, "ext rep #178", 30 }, { 179, EmissionMode::Splice, "ext rep #179", 30 },
-    { 180, EmissionMode::Splice, "ext rep #180", 30 },
+    { 150, EmissionMode::Skip, "PM37 OptB: skip ext rep #150", 5 }, { 151, EmissionMode::Skip, "PM37 OptB: #151", 5 },
+    { 152, EmissionMode::Skip, "PM37 OptB: #152", 5 }, { 153, EmissionMode::Skip, "PM37 OptB: #153", 5 },
+    { 154, EmissionMode::Skip, "PM37 OptB: #154", 5 }, { 155, EmissionMode::Skip, "PM37 OptB: #155", 5 },
+    { 156, EmissionMode::Skip, "PM37 OptB: #156", 5 }, { 157, EmissionMode::Skip, "PM37 OptB: #157", 5 },
+    { 158, EmissionMode::Skip, "PM37 OptB: #158", 5 }, { 159, EmissionMode::Skip, "PM37 OptB: #159", 5 },
+    { 160, EmissionMode::Skip, "PM37 OptB: #160", 5 }, { 161, EmissionMode::Skip, "PM37 OptB: #161", 5 },
+    { 162, EmissionMode::Skip, "PM37 OptB: #162", 5 }, { 163, EmissionMode::Skip, "PM37 OptB: #163", 5 },
+    { 164, EmissionMode::Skip, "PM37 OptB: #164", 5 }, { 165, EmissionMode::Skip, "PM37 OptB: #165", 5 },
+    { 166, EmissionMode::Skip, "PM37 OptB: #166", 5 }, { 167, EmissionMode::Skip, "PM37 OptB: #167", 5 },
+    { 168, EmissionMode::Skip, "PM37 OptB: #168", 5 }, { 169, EmissionMode::Skip, "PM37 OptB: #169", 5 },
+    { 170, EmissionMode::Skip, "PM37 OptB: #170", 5 }, { 171, EmissionMode::Skip, "PM37 OptB: #171", 5 },
+    { 172, EmissionMode::Skip, "PM37 OptB: #172", 5 }, { 173, EmissionMode::Skip, "PM37 OptB: #173", 5 },
+    { 174, EmissionMode::Skip, "PM37 OptB: #174", 5 }, { 175, EmissionMode::Skip, "PM37 OptB: #175", 5 },
+    { 176, EmissionMode::Skip, "PM37 OptB: #176", 5 }, { 177, EmissionMode::Skip, "PM37 OptB: #177", 5 },
+    { 178, EmissionMode::Skip, "PM37 OptB: #178", 5 }, { 179, EmissionMode::Skip, "PM37 OptB: #179", 5 },
+    { 180, EmissionMode::Skip, "PM37 OptB: #180", 5 },
 
     // ── Phase 7.8: Deep splice (pkts 181-500) — 2026-04-27 16:50 ─────────
     //
@@ -324,10 +370,11 @@ const std::vector<PacketEmissionSpec> kDefaultBootstrapPlan = {
     // Client log shows persistent "1 QueuedPackages" — exactly ONE cell
     // failing the ready check.
     //
-    // Captured server's CULSS authorization for that cell is somewhere in
-    // pkts 181+.  Going DEEP — splice all the way to pkt#500.  Use lighter
-    // pacing (10ms) to stay under the 30s loading-screen-rebuild timer.
-    #define DEEP_SPLICE(N) { N, EmissionMode::Splice, "deep rep #" #N, 10 }
+    // PM37 (2026-04-29) Option B: was DEEP_SPLICE, now DEEP_SKIP.
+    // Every captured packet referencing captured-session NetGUIDs would
+    // hit ContentBlockFail like Node_Villager_F_C did in PM36.  Skip them
+    // all and reintroduce native equivalents only as we need them.
+    #define DEEP_SPLICE(N) { N, EmissionMode::Skip, "PM37 OptB: skip deep rep #" #N, 5 }
     DEEP_SPLICE(181), DEEP_SPLICE(182), DEEP_SPLICE(183), DEEP_SPLICE(184), DEEP_SPLICE(185),
     DEEP_SPLICE(186), DEEP_SPLICE(187), DEEP_SPLICE(188), DEEP_SPLICE(189), DEEP_SPLICE(190),
     DEEP_SPLICE(191), DEEP_SPLICE(192), DEEP_SPLICE(193), DEEP_SPLICE(194), DEEP_SPLICE(195),

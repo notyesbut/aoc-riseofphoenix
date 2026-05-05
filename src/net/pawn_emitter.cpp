@@ -25,8 +25,12 @@ PawnEmitter::PawnEmitter(IGameServerHost& host, const std::string& client_key)
     : host_(host), client_key_(client_key) {}
 
 bool PawnEmitter::emit_captured(const sockaddr_in& client_addr) {
+    // PM33 (2026-04-29): emit only bunch[2] (ch=114 reliable ctrl, the
+    // Pawn ActorOpen).  Verbose UE5 net log proved bunch[0] (ch=85
+    // unreliable update) caused "Received unreliable bunch before open"
+    // → cursor desync → CNSF.  See extract_pkt78_bunches_raw.py v4.
     spdlog::warn("[PawnEmitter] Emitting spliced pkt#78 bunch stream "
-                 "({} bits / {} bytes, 3 bunches)",
+                 "({} bits / {} bytes, ONLY bunch[2] = ch=114 Pawn ActorOpen)",
                  kCapturedPkt78BunchStreamBits,
                  kCapturedPkt78BunchStreamBytes);
 
@@ -42,7 +46,7 @@ bool PawnEmitter::emit_captured(const sockaddr_in& client_addr) {
         return false;
     }
     spdlog::warn("[PawnEmitter] ★ Pawn ActorOpen sent "
-                 "(spliced ch=85 GUIDExport + ch=0 data + ch=114 Pawn ActorOpen)");
+                 "(PM33: only ch=114 reliable ctrl bunch[2])");
 
     // Phase B.0p4 (2026-04-28 PM) — fire native ClientRestart RIGHT after
     // pkt#78 ships.

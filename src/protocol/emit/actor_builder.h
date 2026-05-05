@@ -98,6 +98,32 @@ struct EmitContext {
     const uint8_t* spliced_tail_bits = nullptr;
     size_t         spliced_tail_bit_count = 0;
 
+    /// Phase D Step 2.1 (2026-05-05) — Appearance payload override.
+    ///
+    /// When `appearance_payload_bit_count > 0`, the ActorBuilder REPLACES
+    /// the (empty) per-property payload of the subobject at index
+    /// `appearance_subobject_index` (default = 7, the 8th subobject =
+    /// CharacterAppearanceComponent in PlayerPawn's schema) with the
+    /// pre-serialized bits supplied here.
+    ///
+    /// The bits are produced by aoc::net::build_appearance_payload_bits
+    /// in `net/appearance_data.h`.  They contain a property-update wire
+    /// stream targeting `CharacterCustomization` and `bForceHideHeldItems`
+    /// — the two replicated properties on UCharacterAppearanceComponent
+    /// per the SDK dump (Dumper-7).
+    ///
+    /// Caller retains ownership of `appearance_payload_bits`.
+    /// Pass count=0 to keep the legacy (empty payload) behavior.
+    const uint8_t* appearance_payload_bits      = nullptr;
+    uint32_t       appearance_payload_bit_count = 0;
+    uint32_t       appearance_subobject_index   = 7;
+    /// PD2.1 — when true, ALSO wrap the appearance subobject in a V3
+    /// stably-named content block even if the payload is 0 bits.  Lets
+    /// us register the subobject's NetGUID with the client's PackageMap
+    /// without sending property data — relies on client falling back to
+    /// its locally-loaded lobby character data via OnRep_CharacterCustomization.
+    bool           appearance_force_v3_wrap     = false;
+
     /// Session B.2: ChName wire format.  Only serialized when
     /// `is_reliable || bOpen`.  Two modes matching UE5's
     /// UPackageMap::SerializeName:

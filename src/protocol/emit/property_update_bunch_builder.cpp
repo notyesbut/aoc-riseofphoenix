@@ -202,6 +202,555 @@ void PropertyUpdateBunchBuilder::v3_add_property_fstring(uint32_t cmd_handle,
     v3_inner_payload_.write_fstring_ansi(s);
 }
 
+void PropertyUpdateBunchBuilder::v3_add_property_netguid(uint32_t cmd_handle,
+                                                          uint64_t object_id,
+                                                          uint32_t server_id,
+                                                          uint32_t randomizer) {
+    if (!v3_block_open_) return;
+    v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+    if (!v3_use_modern_inner_format_) v3_inner_payload_.write_sip(128);
+    // FIntrepidNetworkGUID layout: 4 × uint32 LSB-first (matches sub_14141E960).
+    v3_inner_payload_.write_uint32(static_cast<uint32_t>(object_id));
+    v3_inner_payload_.write_uint32(static_cast<uint32_t>(object_id >> 32));
+    v3_inner_payload_.write_uint32(server_id);
+    v3_inner_payload_.write_uint32(randomizer);
+}
+
+void PropertyUpdateBunchBuilder::v3_add_rpc_handle_only(uint32_t cmd_handle) {
+    if (!v3_block_open_) return;
+    // PM68 probe: just the handle, no params.  Used to test whether the
+    // RPC function takes 0 parameters.  If Reader.IsError fires, function
+    // expects >0 params and we need to figure out the param size.
+    v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+}
+
+void PropertyUpdateBunchBuilder::v3_add_property_netguid_sip(uint32_t cmd_handle,
+                                                              uint64_t object_id,
+                                                              uint32_t server_id,
+                                                              uint32_t randomizer) {
+    if (!v3_block_open_) return;
+    // PM75 (2026-04-30) — SIP inner format observed in captured replay.
+    //
+    // Wire layout inside the V3 content block:
+    //   SIP(handle+1)         — 8 bits (when value < 128, single byte)
+    //   IntrepidNetGUID       — 128 bits (4 × uint32 LSB-first)
+    //   SIP(0)                — 8 bits terminator
+    //
+    // Total inner payload: 8 + 128 + 8 = 144 bits.
+    //
+    // The +1 offset on handle means handle 0 cannot exist, and SIP(0) is
+    // unambiguously the terminator.  Per PM6 RE: AOC's parser reads
+    // (handle+1, payload, 0) tuples until handle+1 == 0.
+    v3_inner_payload_.write_sip(cmd_handle + 1);
+    v3_inner_payload_.write_uint32(static_cast<uint32_t>(object_id));
+    v3_inner_payload_.write_uint32(static_cast<uint32_t>(object_id >> 32));
+    v3_inner_payload_.write_uint32(server_id);
+    v3_inner_payload_.write_uint32(randomizer);
+    v3_inner_payload_.write_sip(0);  // terminator
+}
+
+void PropertyUpdateBunchBuilder::v3_add_rpc_object_param(uint32_t cmd_handle,
+                                                          uint64_t object_id,
+                                                          uint32_t server_id,
+                                                          uint32_t randomizer,
+                                                          uint32_t param_num_bits,
+                                                          int32_t leading_null_bit,
+                                                          uint32_t trailing_pad_bits) {
+    if (!v3_block_open_) return;
+    // PM81+: flexible RPC object-reference encoder for SIP-value brute-force.
+    //   leading_null_bit:
+    //     -1 → no leading bit
+    //      0 → write a single 0 bit before the GUID
+    //      1 → write a single 1 bit before the GUID
+    //   trailing_pad_bits: extra zero bits after the GUID (0..32)
+    //
+    // The SIP value MUST equal the actual payload bits written:
+    //   (leading_null_bit != -1 ? 1 : 0) + 128 + trailing_pad_bits == param_num_bits
+    // (caller's responsibility — we just write what's requested)
+    v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+    v3_inner_payload_.write_sip(param_num_bits);
+    if (leading_null_bit == 0) v3_inner_payload_.write_bit(0);
+    else if (leading_null_bit == 1) v3_inner_payload_.write_bit(1);
+    v3_inner_payload_.write_uint32(static_cast<uint32_t>(object_id));
+    v3_inner_payload_.write_uint32(static_cast<uint32_t>(object_id >> 32));
+    v3_inner_payload_.write_uint32(server_id);
+    v3_inner_payload_.write_uint32(randomizer);
+    for (uint32_t i = 0; i < trailing_pad_bits; ++i) v3_inner_payload_.write_bit(0);
+}
+
+void PropertyUpdateBunchBuilder::v3_add_rpc_short_netguid(uint32_t cmd_handle,
+                                                            uint32_t netguid) {
+    if (!v3_block_open_) return;
+    // PM84-C: full AOC custom-mode RPC framing with debugger-confirmed
+    // NumBits=8 for value sub-reader.
+    //
+    // Wire layout:
+    //   [SerializeInt(cmd_handle, MAX)]   12 bits — function handle
+    //   [1 bit prefix = 0]                 1 bit  — consumed by sub_7FF6BD814D20
+    //   [SIP(1) = byte 0x02]               8 bits — field handle = 0 (first param)
+    //   [SIP(8) = byte 0x10]               8 bits — value sub-reader size
+    //   [SIP(netguid) = byte]              8 bits — NetGUID alias for our Pawn
+    //   [SIP(0) = byte 0x00]               8 bits — field-list terminator
+    //
+    // Total: 45 bits inner payload.
+    v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+    v3_inner_payload_.write_bit(0);              // 1-bit prefix
+    v3_inner_payload_.write_sip(1);              // SIP(field_handle+1) = SIP(1)
+    v3_inner_payload_.write_sip(8);              // SIP(NumBits = 8)
+    v3_inner_payload_.write_sip(netguid);        // 1 SIP byte = NetGUID alias
+    v3_inner_payload_.write_sip(0);              // SIP(0) terminator
+}
+
+void PropertyUpdateBunchBuilder::v3_add_rpc_object_param_aoc_custom(uint32_t cmd_handle,
+                                                                     uint64_t object_id,
+                                                                     uint32_t server_id,
+                                                                     uint32_t randomizer,
+                                                                     uint32_t value_num_bits) {
+    if (!v3_block_open_) return;
+    // PM83: AOC custom mode RPC param format.
+    // [SerializeInt(cmd_handle)] [1 bit prefix] [SIP(1)] [SIP(value_num_bits)]
+    //   [128-bit GUID, truncated to value_num_bits if needed] [SIP(0)]
+    v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+
+    // 1-bit prefix (consumed by sub_7FF6BD814D20 line 109 advance).  Value
+    // doesn't matter; AOC just increments PosBits.  Write 0.
+    v3_inner_payload_.write_bit(0);
+
+    // SIP(field_handle + 1) — first param at index 0 → SIP(1) = byte 0x02.
+    v3_inner_payload_.write_sip(1);
+
+    // SIP(field_size) — value bit count for sub-reader.
+    v3_inner_payload_.write_sip(value_num_bits);
+
+    // value bits — write 128-bit GUID, truncating to value_num_bits.
+    // We always write up to 128 bits of the GUID and zero-pad if needed.
+    const uint32_t total_value_bits = value_num_bits;
+    uint32_t bits_written = 0;
+
+    // Write low 32 bits of ObjectId
+    if (bits_written + 32 <= total_value_bits) {
+        v3_inner_payload_.write_uint32(static_cast<uint32_t>(object_id));
+        bits_written += 32;
+    } else if (bits_written < total_value_bits) {
+        // Partial — write bit-by-bit
+        uint32_t v = static_cast<uint32_t>(object_id);
+        for (uint32_t i = 0; bits_written < total_value_bits && i < 32; ++i) {
+            v3_inner_payload_.write_bit((v >> i) & 1);
+            ++bits_written;
+        }
+    }
+
+    // High 32 bits of ObjectId
+    if (bits_written + 32 <= total_value_bits) {
+        v3_inner_payload_.write_uint32(static_cast<uint32_t>(object_id >> 32));
+        bits_written += 32;
+    } else if (bits_written < total_value_bits) {
+        uint32_t v = static_cast<uint32_t>(object_id >> 32);
+        for (uint32_t i = 0; bits_written < total_value_bits && i < 32; ++i) {
+            v3_inner_payload_.write_bit((v >> i) & 1);
+            ++bits_written;
+        }
+    }
+
+    // ServerId
+    if (bits_written + 32 <= total_value_bits) {
+        v3_inner_payload_.write_uint32(server_id);
+        bits_written += 32;
+    } else if (bits_written < total_value_bits) {
+        for (uint32_t i = 0; bits_written < total_value_bits && i < 32; ++i) {
+            v3_inner_payload_.write_bit((server_id >> i) & 1);
+            ++bits_written;
+        }
+    }
+
+    // Randomizer
+    if (bits_written + 32 <= total_value_bits) {
+        v3_inner_payload_.write_uint32(randomizer);
+        bits_written += 32;
+    } else if (bits_written < total_value_bits) {
+        for (uint32_t i = 0; bits_written < total_value_bits && i < 32; ++i) {
+            v3_inner_payload_.write_bit((randomizer >> i) & 1);
+            ++bits_written;
+        }
+    }
+
+    // Zero-pad if value_num_bits > 128
+    while (bits_written < total_value_bits) {
+        v3_inner_payload_.write_bit(0);
+        ++bits_written;
+    }
+
+    // SIP(0) terminator for field loop.
+    v3_inner_payload_.write_sip(0);
+}
+
+void PropertyUpdateBunchBuilder::v3_add_rpc_pawn_param_aoc(uint32_t cmd_handle,
+                                                            uint64_t object_id,
+                                                            uint32_t server_id,
+                                                            uint32_t randomizer) {
+    if (!v3_block_open_) return;
+    // PM86 — RPC framing for APawn* param with leading null indicator.
+    //
+    // value_num_bits = 129 = 1 (bIsNullActor) + 128 (FIntrepidNetGUID).
+    // The null-indicator bit comes FIRST (AOC reads it before the GUID).
+    constexpr uint32_t kValueNumBits = 129;
+
+    // Function handle.
+    v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+
+    // 1-bit prefix (consumed by AOC-custom field iterator).
+    v3_inner_payload_.write_bit(0);
+
+    // SIP(field_handle + 1) — first param at field index 0.
+    v3_inner_payload_.write_sip(1);
+
+    // SIP(value_num_bits) — sub-reader size.
+    v3_inner_payload_.write_sip(kValueNumBits);
+
+    // ── Value payload (129 bits) ──
+    // bit 0: bIsNullActor = 0 (non-null).
+    v3_inner_payload_.write_bit(0);
+
+    // bits 1..128: FIntrepidNetGUID (ObjectId u64 LE + ServerId u32 LE + Randomizer u32 LE).
+    v3_inner_payload_.write_uint32(static_cast<uint32_t>(object_id));
+    v3_inner_payload_.write_uint32(static_cast<uint32_t>(object_id >> 32));
+    v3_inner_payload_.write_uint32(server_id);
+    v3_inner_payload_.write_uint32(randomizer);
+
+    // SIP(0) terminator for field loop.
+    v3_inner_payload_.write_sip(0);
+}
+
+void PropertyUpdateBunchBuilder::v3_add_rpc_pawn_param_brute(uint32_t cmd_handle,
+                                                              uint64_t object_id,
+                                                              uint32_t server_id,
+                                                              uint32_t randomizer,
+                                                              uint32_t value_num_bits,
+                                                              uint32_t leading_zero_bits) {
+    if (!v3_block_open_) return;
+
+    // Function handle.
+    v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+
+    // 1-bit prefix (consumed by AOC-custom field iterator).
+    v3_inner_payload_.write_bit(0);
+
+    // SIP(field_handle + 1) — first param at field index 0.
+    v3_inner_payload_.write_sip(1);
+
+    // SIP(value_num_bits) — sub-reader size.
+    v3_inner_payload_.write_sip(value_num_bits);
+
+    // ── Value payload ──
+    uint32_t bits_written = 0;
+
+    // Leading zero bits (e.g., 1-bit bIsNullActor=0, or 16-bit name idx=0).
+    const uint32_t lead = (leading_zero_bits > value_num_bits) ? value_num_bits
+                                                                : leading_zero_bits;
+    for (uint32_t i = 0; i < lead; ++i) {
+        v3_inner_payload_.write_bit(0);
+        ++bits_written;
+    }
+
+    // FIntrepidNetGUID — 128 bits as 4 little-endian uint32 lanes.
+    // Write only as many bits as we have room for (value_num_bits - lead).
+    auto write_u32_partial = [&](uint32_t v) {
+        for (uint32_t i = 0; i < 32 && bits_written < value_num_bits; ++i) {
+            v3_inner_payload_.write_bit((v >> i) & 1);
+            ++bits_written;
+        }
+    };
+    write_u32_partial(static_cast<uint32_t>(object_id));
+    write_u32_partial(static_cast<uint32_t>(object_id >> 32));
+    write_u32_partial(server_id);
+    write_u32_partial(randomizer);
+
+    // Zero-pad if value_num_bits > 128 + lead.
+    while (bits_written < value_num_bits) {
+        v3_inner_payload_.write_bit(0);
+        ++bits_written;
+    }
+
+    // SIP(0) field-list terminator.
+    v3_inner_payload_.write_sip(0);
+}
+
+void PropertyUpdateBunchBuilder::v3_add_rpc_pawn_param_bare(uint32_t cmd_handle,
+                                                             uint64_t object_id,
+                                                             uint32_t server_id,
+                                                             uint32_t randomizer,
+                                                             uint32_t value_num_bits,
+                                                             uint32_t leading_zero_bits) {
+    if (!v3_block_open_) return;
+    // PM89 — bare wire per IDA RE.
+    //
+    //   [SerializeInt(handle)]   13 bits
+    //   [1-bit prefix]            1 bit
+    //   [value_num_bits raw]      value_num_bits bits
+    //
+    // No SIP(field_handle+1), no SIP(value_num_bits), no SIP(0) terminator.
+
+    // Function handle.
+    v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+
+    // 1-bit prefix (consumed by param iterator advance per RE).
+    v3_inner_payload_.write_bit(0);
+
+    // ── Value payload ──
+    uint32_t bits_written = 0;
+    const uint32_t lead = (leading_zero_bits > value_num_bits) ? value_num_bits
+                                                                : leading_zero_bits;
+    for (uint32_t i = 0; i < lead; ++i) {
+        v3_inner_payload_.write_bit(0);
+        ++bits_written;
+    }
+
+    // FIntrepidNetGUID — 4 LE u32 lanes, truncated to remaining budget.
+    auto write_u32_partial = [&](uint32_t v) {
+        for (uint32_t i = 0; i < 32 && bits_written < value_num_bits; ++i) {
+            v3_inner_payload_.write_bit((v >> i) & 1);
+            ++bits_written;
+        }
+    };
+    write_u32_partial(static_cast<uint32_t>(object_id));
+    write_u32_partial(static_cast<uint32_t>(object_id >> 32));
+    write_u32_partial(server_id);
+    write_u32_partial(randomizer);
+
+    // Pad with zeros if value_num_bits > 128.
+    while (bits_written < value_num_bits) {
+        v3_inner_payload_.write_bit(0);
+        ++bits_written;
+    }
+}
+
+void PropertyUpdateBunchBuilder::v3_add_rpc_pawn_param_v2(uint32_t cmd_handle,
+                                                           uint64_t object_id,
+                                                           uint32_t server_id,
+                                                           uint32_t randomizer,
+                                                           uint32_t value_num_bits,
+                                                           uint32_t leading_zero_bits,
+                                                           uint32_t prefix_bits) {
+    if (!v3_block_open_) return;
+    // PM90 — wire = handle + N_prefix bits + value_num_bits raw.
+    //
+    // PM91 fix — per stock UE5 RepLayout::ReceivePropertiesForRPC source
+    // (Engine/Private/RepLayout.cpp:7135), each non-FBoolProperty param has a
+    // per-property "is present" bit that MUST be 1 for NetSerializeItem to
+    // fire.  We were writing 0, which made AOC skip the GUID read, leaving
+    // PosBits far short of MaxBits → Mismatch.
+    //
+    // Convention: the LAST prefix bit is the per-property flag (write 1).
+    // All earlier prefix bits are AOC custom-mode initial advances (write 0).
+
+    // Function handle.
+    v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+
+    // Prefix bits.  Last one = per-property flag = 1; earlier ones = 0.
+    for (uint32_t i = 0; i < prefix_bits; ++i) {
+        const bool is_last = (i + 1 == prefix_bits);
+        v3_inner_payload_.write_bit(is_last ? 1 : 0);
+    }
+
+    // Value payload.
+    uint32_t bits_written = 0;
+    const uint32_t lead = (leading_zero_bits > value_num_bits) ? value_num_bits
+                                                                : leading_zero_bits;
+    for (uint32_t i = 0; i < lead; ++i) {
+        v3_inner_payload_.write_bit(0);
+        ++bits_written;
+    }
+
+    auto write_u32_partial = [&](uint32_t v) {
+        for (uint32_t i = 0; i < 32 && bits_written < value_num_bits; ++i) {
+            v3_inner_payload_.write_bit((v >> i) & 1);
+            ++bits_written;
+        }
+    };
+    write_u32_partial(static_cast<uint32_t>(object_id));
+    write_u32_partial(static_cast<uint32_t>(object_id >> 32));
+    write_u32_partial(server_id);
+    write_u32_partial(randomizer);
+
+    while (bits_written < value_num_bits) {
+        v3_inner_payload_.write_bit(0);
+        ++bits_written;
+    }
+}
+
+void PropertyUpdateBunchBuilder::v3_add_rpc_pawn_param_field(uint32_t cmd_handle,
+                                                              uint64_t object_id,
+                                                              uint32_t server_id,
+                                                              uint32_t randomizer,
+                                                              uint32_t guid_bits,
+                                                              uint32_t leading_zero_bits) {
+    if (!v3_block_open_) return;
+    // PM92 — stock UE5 wire per ReadFieldHeaderAndPayload + ReceivePropertiesForRPC.
+    //
+    // PM93 augmentation: the per-prop bit is now controlled via the
+    // v3_perprop_bit_ member (set by set_perprop_bit() before calling).
+    //   true  → write per-prop=1 (stock UE5 RepLayout::ReceivePropertiesForRPC)
+    //   false → omit the bit (AOC custom-mode hypothesis: no per-prop for RPC params)
+    //
+    // Wire layout:
+    //   [SerializeInt(cmd_handle, MAX=4096)]   13 bits
+    //   [SIP(NumPayloadBits)]                  variable
+    //   [optional 1-bit per-prop flag = 1]     0 or 1 bit
+    //   [leading_zero_bits zero bits]
+    //   [128-bit FIntrepidNetGUID, truncated to guid_bits]
+
+    const uint32_t perprop_bits = v3_perprop_bit_ ? 1u : 0u;
+
+    // 1. Function handle.
+    v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+
+    // 2. Payload size SIP.
+    const uint32_t num_payload_bits = perprop_bits + leading_zero_bits + guid_bits;
+    v3_inner_payload_.write_sip(num_payload_bits);
+
+    // 3a. Per-property "is present" flag (if enabled).
+    if (perprop_bits) {
+        v3_inner_payload_.write_bit(1);
+    }
+
+    // 3b. Leading zero bits inside value (e.g. 1-bit bIsNullActor=0).
+    for (uint32_t i = 0; i < leading_zero_bits; ++i) {
+        v3_inner_payload_.write_bit(0);
+    }
+
+    // 3c. The FIntrepidNetGUID, truncated to guid_bits (128 max), then
+    // zero-pad up to guid_bits if guid_bits > 128 (so caller can include the
+    // ExportFlags byte at the end).
+    uint32_t bits_written = 0;
+    auto write_u32_partial = [&](uint32_t v) {
+        for (uint32_t i = 0; i < 32 && bits_written < guid_bits; ++i) {
+            v3_inner_payload_.write_bit((v >> i) & 1);
+            ++bits_written;
+        }
+    };
+    write_u32_partial(static_cast<uint32_t>(object_id));
+    write_u32_partial(static_cast<uint32_t>(object_id >> 32));
+    write_u32_partial(server_id);
+    write_u32_partial(randomizer);
+
+    // PM94 fix — zero-pad to fill the full guid_bits.  Without this, when
+    // guid_bits > 128 (e.g. 136 for AOC's GUID + ExportFlags), the SIP value
+    // declares more bits than we actually write, leaving the sub-reader's
+    // tail content undefined.
+    while (bits_written < guid_bits) {
+        v3_inner_payload_.write_bit(0);
+        ++bits_written;
+    }
+
+    // No SIP(0) terminator — stock UE5 detects end via GetBitsLeft() == 0.
+}
+
+void PropertyUpdateBunchBuilder::v3_add_rpc_pawn_param_aoc_intrepid(
+        uint32_t cmd_handle,
+        uint64_t object_id,
+        uint32_t server_id,
+        uint32_t randomizer,
+        uint32_t value_bits) {
+    if (!v3_block_open_) return;
+    // PM95 (2026-05-03) — AOC custom-mode field-loop wire format.
+    //
+    // Per F5 decomp of sub_7FF6BD814D20 (param deserializer entry) and
+    // sub_7FF6BD8155B0 (the field-loop reader called when AOC custom-mode flag
+    // at UNetConnection+0x240 bit 0 is set).
+    //
+    // Outer entry — sub_7FF6BD814D20:
+    //   if (UNetConnection+240 & 1) {
+    //     <consume 1-bit advance>
+    //     sub_7FF6BD8155B0(...)        // delegate to field-loop reader
+    //   } else {
+    //     // stock UE5 path — per-prop bit + NetSerializeItem
+    //   }
+    //
+    // Field-loop reader — sub_7FF6BD8155B0:
+    //   while (1) {
+    //     SIP(field_idx_plus_1) → v90
+    //     if (v90 == 0) break;          // 0 = terminator
+    //     uint32_t field_idx = v90 - 1; // wire is 1-based
+    //     SIP(field_size_bits) → v98
+    //     sub_7FF6BA823CC0(sub_sub_reader, reader, v98, 0);
+    //     NetSerializeItem(sub_sub_reader);   // sub-reader sized exactly v98 bits
+    //   }
+    //
+    // For ClientRestart(APawn* NewPawn) — single param at field index 0:
+    //   field_idx_plus_1 = 1   → SIP(1) = 1 byte
+    //   field_size_bits  = 136 → SIP(136) = 16 bits (>=128 needs 2 SIP bytes)
+    //   value           = 128-bit FIntrepidNetGUID + 8 zero ExportFlags bits
+    //   terminator      = SIP(0) = 1 byte
+    //
+    // Total inner (inside V3 content block):
+    //   SerializeInt(handle, 4096) = 13 bits
+    //   1-bit advance               =  1 bit
+    //   SIP(1)                      =  8 bits
+    //   SIP(value_bits)             =  8 or 16 bits depending on size
+    //   value_bits raw              =  N bits
+    //   SIP(0) terminator           =  8 bits
+    //
+    // value_bits is caller-controlled so we can probe alternate sizes:
+    //   136 — 128 NetGUID + 8 ExportFlags (most likely per InternalLoadObject)
+    //   128 — bare FIntrepidNetGUID
+    //   144 — 128 NetGUID + 16 (e.g. 8 ExportFlags + 8 pad)
+    //   137 — 128 NetGUID + 9 (FName-encoded ExportFlags)
+    //   80  — alternative compact form
+    //
+    // Within the value payload we write the FIntrepidNetGUID first (up to 128
+    // bits), then zero-pad to value_bits.  This matches InternalLoadObject's
+    // read order:  Ar << NetGUID (128 bits), then optional flags/pad.
+    if (value_bits == 0) return;
+
+    // 1. Function handle (RPC dispatch index inside V3 content block).
+    v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+
+    // 2. 1-bit advance (consumed by sub_7FF6BD814D20 line 109 before
+    //    delegating to sub_7FF6BD8155B0).  Value is don't-care.
+    v3_inner_payload_.write_bit(0);
+
+    // 3. SIP(field_idx + 1) — first param at field index 0 → SIP(1).
+    v3_inner_payload_.write_sip(1);
+
+    // 4. SIP(field_size_bits) — sub-sub-reader will be exactly this size.
+    v3_inner_payload_.write_sip(value_bits);
+
+    // 5. Value payload — FIntrepidNetGUID (128 bits) + zero-pad to value_bits.
+    uint32_t bits_written = 0;
+    auto write_u32_partial = [&](uint32_t v) {
+        for (uint32_t i = 0; i < 32 && bits_written < value_bits; ++i) {
+            v3_inner_payload_.write_bit((v >> i) & 1);
+            ++bits_written;
+        }
+    };
+    write_u32_partial(static_cast<uint32_t>(object_id));
+    write_u32_partial(static_cast<uint32_t>(object_id >> 32));
+    write_u32_partial(server_id);
+    write_u32_partial(randomizer);
+
+    // Zero-pad up to the SIP-declared sub-reader size.  Per InternalLoadObject
+    // (sub_7FF6BE3647B0): 128-bit GUID, then 8-bit ExportFlags read iff
+    // (ExportFlags & 1) == 0 — we satisfy both branches by writing 8 zero bits
+    // (ExportFlags = 0 → no extra subreads).  Any extra trailing bits are
+    // benign because GetBitsLeft() check happens at the OUTER param boundary,
+    // not inside the per-field sub-sub-reader (AOC seeks past unread bits).
+    while (bits_written < value_bits) {
+        v3_inner_payload_.write_bit(0);
+        ++bits_written;
+    }
+
+    // 6. SIP(0) terminator — exits the field loop in sub_7FF6BD8155B0.
+    v3_inner_payload_.write_sip(0);
+}
+
+void PropertyUpdateBunchBuilder::v3_add_terminator() {
+    if (!v3_block_open_) return;
+    // Field-list terminator: SerializeInt(0, MAX) — matches the field-handle
+    // encoding used by v3_add_property_*.  All zero bits, count determined
+    // by ceil_to_max_bits(v3_num_properties_).
+    v3_inner_payload_.write_serialize_int(0, v3_num_properties_);
+}
+
 void PropertyUpdateBunchBuilder::v3_end_content_block() {
     if (!v3_block_open_) return;
 
@@ -242,13 +791,22 @@ void PropertyUpdateBunchBuilder::v3_end_content_block() {
 }
 
 void PropertyUpdateBunchBuilder::v3_finish_bunch() {
-    // Append a content-block-end marker: 1 bit bOutermostEnd=1
-    // (sub_143F2C340 reads this bit; if set, the loop in ProcessBunch exits)
-    Blob b;
-    b.bit_count = 1;
-    b.bytes.assign(1, 0x01);   // single bit set (LSB-first)
-    queued_payloads_.push_back(std::move(b));
-    payload_bits_ += 1;
+    // PM97 (2026-05-03) — DO NOT append an end marker bit.
+    //
+    // PRIOR BEHAVIOR (caused post-possession connection drop after PM96 success):
+    //   We appended 1 bit (bOutermostEnd=1) hoping AOC would treat it as
+    //   "end of content blocks".  Per RE of sub_143F2C340 (AOC's
+    //   ReadContentBlockHeader), AOC ALWAYS reads 2 bits before deciding
+    //   (bOutermostEnd + bIsChannelActor).  Our 1-bit marker triggered
+    //   overflow on the second read → "Bunch.IsError() after reading actor bit"
+    //   → ContentBlockHeaderIsActorFail → connection close.
+    //
+    // The payload is now exactly the V3 content block size with no trailing
+    // marker.  After AOC processes the content block, GetBitsLeft = 0 and
+    // ProcessBunch's loop exits cleanly without firing ReadContentBlockHeader.
+    //
+    // (Stock UE5 worked with the 1-bit marker because its ReadContentBlockHeader
+    // returns immediately after reading bOutermostEnd=1.  AOC's variant doesn't.)
 }
 
 void PropertyUpdateBunchBuilder::add_raw_payload(const uint8_t* data,
@@ -292,8 +850,13 @@ void PropertyUpdateBunchBuilder::write_bunch_header(BunchWriter& out,
     out.write_bit(0);                                 // bPartial = 0 (key: non-partial)
 
     if (is_reliable_) {
-        const int chseq_bits = (channel_ == 0) ? 10 : 12;
-        out.write_bits(ch_sequence_, chseq_bits);
+        // PM54 (2026-04-30) — same 12→10 ChSeq fix as PM50 applied to
+        // actor_builder.cpp.  AOC client reads ChSeq as SerializeInt(MAX=1024)
+        // = 10 bits regardless of channel.  Writing 12 bits put 2 extra bits
+        // on the wire that drifted the client's ChName parser → CNSF.
+        // This is the SAME bug that caused PC.Pawn link CNSF at PM53 test
+        // (Size: 520251962 in client log around 13:13:47).
+        out.write_serialize_int(ch_sequence_, 1024);
     }
 
     // bPartial=0 → no sub-flags (bPartialInitial / bPartialFinal etc. skipped).

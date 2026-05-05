@@ -1,4 +1,21 @@
 # ──────────────────────────────────────────────────────────────────────────
+# Replay analysis outputs (large, regen-able from source binaries)
+# ──────────────────────────────────────────────────────────────────────────
+tools/replay_decoded.txt
+tools/replay_full_analysis.txt
+tools/replay_asset_paths.txt
+tools/replay_netguid_map.txt
+tools/replay_strings_all.txt
+tools/netguid_splice_plan.txt
+src/protocol/tools/replay_full.jsonl
+src/protocol/tools/ranger.jsonl
+src/protocol/tools/ranger_phase1.json
+src/protocol/tools/newnode.jsonl
+src/protocol/tools/newnode_aoc.jsonl
+src/protocol/tools/newnode_phase1.json
+src/protocol/tools/bard_login.jsonl
+
+# ──────────────────────────────────────────────────────────────────────────
 # Build outputs
 # ──────────────────────────────────────────────────────────────────────────
 build/

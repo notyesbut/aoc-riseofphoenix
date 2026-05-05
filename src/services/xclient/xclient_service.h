@@ -587,8 +587,20 @@ public:
     /// Return the name of the most recently created/selected character,
     /// or empty string if none.  Thread-safe read.  Used by GameServer
     /// to patch the replay with the live player's chosen name.
+    ///
+    /// PM38 (2026-04-30): now returns the LIVE player's character — i.e.,
+    /// whichever character was chosen via on_play() — rather than the
+    /// most-recently-created character.  This is correct for multi-
+    /// character accounts.  Falls back to characters_.back() if no
+    /// play() has happened yet (preserves prior single-char behaviour).
     std::string last_character_name() const {
         std::lock_guard<std::mutex> lk(chars_mutex_);
+        if (!current_play_character_id_.empty()) {
+            for (const auto& c : characters_) {
+                if (c.character_id == current_play_character_id_)
+                    return c.character_name;
+            }
+        }
         if (characters_.empty()) return "";
         return characters_.back().character_name;
     }
@@ -596,10 +608,42 @@ public:
     /// Return the archetype_id (class ID) of the most recently created /
     /// selected character, or 0 if none.  Thread-safe read.  Used by
     /// GameServer to patch the captured replay's class field.
+    ///
+    /// PM38 (2026-04-30): same fix as last_character_name above.
     uint64_t last_character_archetype_id() const {
         std::lock_guard<std::mutex> lk(chars_mutex_);
+        if (!current_play_character_id_.empty()) {
+            for (const auto& c : characters_) {
+                if (c.character_id == current_play_character_id_)
+                    return c.archetype_id;
+            }
+        }
         if (characters_.empty()) return 0;
         return characters_.back().archetype_id;
+    }
+
+    /// PD2.3 (2026-05-05) — Return the customization JSON blob for the
+    /// currently selected character (or last-created if no Play has fired
+    /// yet).  Returns empty string if no character exists or no JSON could
+    /// be extracted from the stored CreateCharacterInfo proto.
+    ///
+    /// This is the same JSON the lobby logs as "field100.1 customization"
+    /// and contains the full FCharacterCustomizationSaveData fields the
+    /// AppearanceEmitter needs (presetGuid, skinColorHue, headHair, etc.).
+    std::string last_character_customization_json() const {
+        std::lock_guard<std::mutex> lk(chars_mutex_);
+        const StoredCharacter* sc = nullptr;
+        if (!current_play_character_id_.empty()) {
+            for (const auto& c : characters_) {
+                if (c.character_id == current_play_character_id_) {
+                    sc = &c;
+                    break;
+                }
+            }
+        }
+        if (!sc && !characters_.empty()) sc = &characters_.back();
+        if (!sc) return std::string{};
+        return extract_customization_json(sc->create_info_raw);
     }
 
     /// Proxy mode: forward all traffic to real server and log everything
@@ -663,6 +707,12 @@ private:
     uint32_t session_id_ = 0;
     std::function<bool(const std::string&)> relay_callback_;
     std::vector<StoredCharacter> characters_;  // In-memory character store
+
+    // PM38 (2026-04-30) — character_id of the character the user picked
+    // via on_play().  Used by last_character_name() etc. to return the
+    // ACTIVE play character (not just the latest created).  Reset to
+    // empty when on_play_end() fires so subsequent reads fall back.
+    std::string current_play_character_id_;
     mutable std::mutex chars_mutex_;           // guards characters_
 
     // ── Phase B — Character persistence ──────────────────────────────────
@@ -1451,6 +1501,22 @@ private:
     void on_play(const ics_common::MessageWrapper& in, Stream* s) {
         ics_xclient::PlayRequest req; req.ParseFromString(in.message_data());
         spdlog::info("[XClient] Play char='{}' world='{}'", req.character_id(), req.world_id());
+
+        // PM38 (2026-04-30) — record which character is going into the
+        // game session.  last_character_name() and friends now resolve
+        // to THIS character (rather than the most-recently-created one).
+        // Look up the character to also log a friendly name for the op.
+        {
+            std::lock_guard<std::mutex> lk(chars_mutex_);
+            current_play_character_id_ = req.character_id();
+            for (const auto& c : characters_) {
+                if (c.character_id == req.character_id()) {
+                    spdlog::info("[XClient] >> on_play: selecting '{}' (archetype={} race={} gender={})",
+                                  c.character_name, c.archetype_id, c.race_name, c.gender_name);
+                    break;
+                }
+            }
+        }
 
         // Generate token early so it's available for all phases
         auto token = generate_msg_uuid();

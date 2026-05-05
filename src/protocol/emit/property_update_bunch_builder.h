@@ -254,6 +254,281 @@ public:
     /// Add an FString (ANSI) property update.  Length-prefixed + NUL-terminated.
     void v3_add_property_fstring(uint32_t cmd_handle, const std::string& s);
 
+    /// PM53 (2026-04-30) — Phase C: add a NetGUID (FIntrepidNetworkGUID,
+    /// 128 bits = 4×u32) property update.  Used for Pawn, PlayerState,
+    /// and other actor-reference properties on UE5 ObjectProperty fields.
+    /// Wire format mirrors `write_intrepid_guid`: ObjLo, ObjHi, Srv, Rnd
+    /// each as 32 bits LSB-first.
+    void v3_add_property_netguid(uint32_t cmd_handle,
+                                  uint64_t object_id,
+                                  uint32_t server_id,
+                                  uint32_t randomizer);
+
+    /// PM68 (2026-04-30) — Phase C: RPC call with NO parameters (zero-arg).
+    /// Writes just the handle bits.  Used for probing whether a function
+    /// takes 0 params (clean exit) vs N>0 params (Reader.IsError).
+    void v3_add_rpc_handle_only(uint32_t cmd_handle);
+
+    /// PM75 (2026-04-30) — SIP-based inner format from captured replay RE.
+    /// AOC's actual wire format inside the V3 content block is:
+    ///   SIP(handle+1) + 128-bit IntrepidNetGUID + SIP(0) terminator
+    /// NOT SerializeInt(handle, MAX) like our other v3_add_property_* methods.
+    /// This matches the format observed in the captured replay's 174-bit
+    /// bunches with NumPayloadBits=156 on Channel 3 (PC).
+    /// Use this for property updates (e.g., setting Pawn property to trigger
+    /// OnRep_Pawn → AcknowledgePossession).
+    void v3_add_property_netguid_sip(uint32_t cmd_handle,
+                                       uint64_t object_id,
+                                       uint32_t server_id,
+                                       uint32_t randomizer);
+
+    /// PM81 (2026-05-02) — Phase C: RPC object-reference param with EXPLICIT
+    /// SIP(NumBits) prefix and optional null-indicator bit.
+    ///
+    /// Wire format (always — independent of MODERN/LEGACY content block):
+    ///   [SerializeInt(cmd_handle, MAX)]    field handle
+    ///   [SIP(param_num_bits)]              per-RPC-param SIP prefix
+    ///   [optional 1 bit "non-null" = 1]    if include_null_bit
+    ///   [4 × uint32 LSB-first]             128-bit FIntrepidNetGUID
+    ///
+    /// Why a separate method from v3_add_property_netguid:
+    /// AOC's `ReceivePropertiesForRPC` ALWAYS reads SIP(NumBits) per RPC
+    /// param, regardless of content-block format.  The SIP value must
+    /// match the actual bits APawn* deserialization will consume.
+    ///
+    /// PM79 (LEGACY content block, no null bit, SIP=128) → Mismatch
+    /// PM80 (MODERN content block, no SIP, no null bit) → Mismatch
+    /// PM81 attempt: SIP=129, include_null_bit=true (1-bit non-null +
+    /// 128-bit GUID = 129 total bits).  Hypothesis from log analysis.
+    /// PM81+: leading_null_bit: -1=none, 0=write '0', 1=write '1'.
+    ///        trailing_pad_bits: 0..32 zero bits after the 128-bit GUID.
+    /// SIP value must equal: (leading_null_bit != -1 ? 1 : 0) + 128 + trailing_pad_bits.
+    void v3_add_rpc_object_param(uint32_t cmd_handle,
+                                  uint64_t object_id,
+                                  uint32_t server_id,
+                                  uint32_t randomizer,
+                                  uint32_t param_num_bits,
+                                  int32_t leading_null_bit,
+                                  uint32_t trailing_pad_bits);
+
+    /// PM84 (2026-05-03) — DEBUGGER-CONFIRMED wire format for AOC ClientRestart.
+    ///
+    /// Breakpoint at sub_7FF6BD263E80 confirmed AOC sizes the bit reader for
+    /// ClientRestart's APawn* param to EXACTLY 8 bits = 1 SIP byte.
+    ///
+    /// Wire format:
+    ///   [SerializeInt(cmd_handle, MAX)]       12 bits — function handle
+    ///   [SIP-encoded netguid = 1 byte]         8 bits — APawn* reference
+    ///
+    /// Total inner bits: 20.  No extra framing, no terminator.
+    ///
+    /// The `netguid` value should be the AOC PackageMap's short alias for
+    /// the target Pawn — typically a small sequential value (1, 2, 3, ...).
+    /// The exact alias is assigned at Pawn registration; for our minted
+    /// Pawn (= first dynamic actor), try 1 first, then 2, 3 if Mismatch.
+    void v3_add_rpc_short_netguid(uint32_t cmd_handle, uint32_t netguid);
+
+    /// PM83 (2026-05-02) — AOC CUSTOM MODE per-field RPC param format.
+    ///
+    /// RE'd from sub_7FF6BD814D20 + sub_7FF6BD8155B0 in AOC client binary:
+    ///   [SerializeInt(cmd_handle, MAX)]   — function handle (outer)
+    ///   [1 bit prefix]                     — consumed by sub_7FF6BD814D20 line 109
+    ///   [SIP(field_handle + 1)]            — per-field handle (line 179)
+    ///   [SIP(field_size)]                  — per-field bit count (line 225)
+    ///   [field_size bits]                  — value bits (sub-reader)
+    ///   [SIP(0)]                           — field-list terminator
+    ///
+    /// For ClientRestart(APawn* NewPawn) — single param at field index 0:
+    ///   field_handle = 0, so we write SIP(1).
+    ///
+    /// `value_num_bits` is the SIZE in bits of the value payload (AOC copies
+    /// this many bits to a sub-reader for APawn* deserialization).  Try 128
+    /// (full FIntrepidNetGUID), 80 (SIP-encoded GUID per our values), 32
+    /// (standard UE5 NetGUID size), etc.
+    void v3_add_rpc_object_param_aoc_custom(uint32_t cmd_handle,
+                                             uint64_t object_id,
+                                             uint32_t server_id,
+                                             uint32_t randomizer,
+                                             uint32_t value_num_bits);
+
+    /// PM86 (2026-05-03) — APawn* RPC param with leading bIsNullActor bit.
+    ///
+    /// PM85 sent a 128-bit raw FIntrepidNetGUID as the param value and AOC
+    /// still fired Mismatch.  PM79 had already tried the same.  Per UE5
+    /// FObjectProperty::NetSerializeItem convention (and the comment block
+    /// at pc_emitter.cpp lines 569-571), the param value is laid out as:
+    ///
+    ///   [1 bit bIsNullActor]   — 0 = non-null, 1 = null
+    ///   [128 bit FIntrepidNetGUID]   — read iff bIsNullActor == 0
+    ///
+    /// Total = 129 bits.  This helper emits the AOC-custom RPC framing with
+    /// value_num_bits=129 and writes the 1-bit non-null indicator BEFORE the
+    /// 128-bit GUID (the existing _aoc_custom helper writes any pad after,
+    /// which puts the indicator at the wrong offset for AOC's reader).
+    ///
+    /// Wire layout:
+    ///   [SerializeInt(cmd_handle, MAX=4096)]   13 bits
+    ///   [1 bit prefix]                          1 bit
+    ///   [SIP(1) = field_handle+1]               8 bits
+    ///   [SIP(129) = value_num_bits]            16 bits
+    ///   [1 bit bIsNullActor = 0]                1 bit
+    ///   [128 bit FIntrepidNetGUID]            128 bits
+    ///   [SIP(0) = field-list terminator]        8 bits
+    ///   ──────────────────────────────────
+    ///   Total inner = 175 bits.
+    void v3_add_rpc_pawn_param_aoc(uint32_t cmd_handle,
+                                    uint64_t object_id,
+                                    uint32_t server_id,
+                                    uint32_t randomizer);
+
+    /// PM87 (2026-05-03) — brute-force probe for unknown value_num_bits.
+    ///
+    /// Like v3_add_rpc_pawn_param_aoc but with caller-controlled total size
+    /// and number of leading zero bits.  Used to fire multiple probes in a
+    /// single bunch, each testing a different hypothesis for AOC's expected
+    /// FObjectProperty wire size.
+    ///
+    /// Wire layout:
+    ///   [SerializeInt(cmd_handle, MAX=4096)]   13 bits
+    ///   [1 bit prefix = 0]                      1 bit
+    ///   [SIP(field_handle+1) = SIP(1)]          8 bits
+    ///   [SIP(value_num_bits)]               8 or 16 bits
+    ///   [leading_zero_bits zero bits]
+    ///   [128 bit FIntrepidNetGUID, truncated to (value_num_bits - leading_zero_bits)]
+    ///   [SIP(0) field-list terminator]          8 bits
+    ///
+    /// Special cases:
+    ///   value_num_bits = 0  →  no value bits, no leading bits, just framing
+    ///   leading_zero_bits >= value_num_bits  →  all zeros, no GUID
+    void v3_add_rpc_pawn_param_brute(uint32_t cmd_handle,
+                                      uint64_t object_id,
+                                      uint32_t server_id,
+                                      uint32_t randomizer,
+                                      uint32_t value_num_bits,
+                                      uint32_t leading_zero_bits);
+
+    /// PM89 (2026-05-03) — BARE-WIRE RPC param.  Per IDA dump of
+    /// sub_7FF6BD814D20 (param deserializer): AOC iterates over the
+    /// UFunction's STATIC param descriptors and calls NetSerializeItem on
+    /// each, passing the body reader directly with no per-param SIP framing.
+    /// The Mismatch comparison at sub_7FF6BD263E80+0x7A7 checks that the
+    /// body reader's PosBits exactly matches MaxBits (= our V3 NumPayloadBits).
+    ///
+    /// So the correct wire format is just:
+    ///   [SerializeInt(handle, MAX=4096)]   13 bits
+    ///   [1 bit prefix] (consumed by param iterator)
+    ///   [raw value bits]                   N bits, written by APawn*
+    ///                                      NetSerializeItem
+    ///   ───────────────────────────────────
+    ///   Total inner = 14 + N bits
+    ///
+    /// Caller specifies total raw value bits (typical N values to test):
+    ///   128  — raw FIntrepidNetGUID
+    ///   129  — 1-bit null + 128-bit GUID
+    ///   144  — 16-bit name-idx + 128-bit GUID
+    ///   137  —  9-bit AOC ENameIdx + 128-bit GUID
+    ///
+    /// leading_zero_bits = how many of the N value bits are leading zeros
+    /// before the GUID payload (e.g. 1 for null indicator, 16 for name idx).
+    void v3_add_rpc_pawn_param_bare(uint32_t cmd_handle,
+                                     uint64_t object_id,
+                                     uint32_t server_id,
+                                     uint32_t randomizer,
+                                     uint32_t value_num_bits,
+                                     uint32_t leading_zero_bits);
+
+    /// PM90 (2026-05-03) — bare wire with caller-controlled prefix-bit count.
+    ///
+    /// Stock UE5 source confirms:
+    ///   FObjectPropertyBase::NetSerializeItem → Map->SerializeObject(Ar, ...)
+    ///   UPackageMapClient::SerializeObject → InternalLoadObject (load path)
+    ///   InternalLoadObject reads:  Ar << NetGUID  (just the GUID)
+    ///                              NET_CHECKSUM_OR_END  (NO-OP in Shipping)
+    ///                              (ExportFlags only if IsDefault() — not our case)
+    ///
+    /// → Stock UE5 wire = ONLY the NetGUID.  No leading bit, no trailing.
+    /// → AOC custom: 128-bit raw FIntrepidNetGUID, no framing.
+    ///
+    /// This helper allows toggling the optional "1-bit prefix" we previously
+    /// always emitted (which IDA suggested was a 1-bit advance, but stock UE5
+    /// has no such bit on the wire).
+    ///
+    ///   prefix_bits = 0  →  handle(13) + 128-bit GUID         = 141 bits
+    ///   prefix_bits = 1  →  handle(13) + 1bit + 128-bit GUID  = 142 bits
+    void v3_add_rpc_pawn_param_v2(uint32_t cmd_handle,
+                                   uint64_t object_id,
+                                   uint32_t server_id,
+                                   uint32_t randomizer,
+                                   uint32_t value_num_bits,
+                                   uint32_t leading_zero_bits,
+                                   uint32_t prefix_bits);
+
+    /// PM92 (2026-05-03) — STOCK UE5 ReadFieldHeaderAndPayload format.
+    ///
+    /// Per Engine/Private/DataChannel.cpp:5174 ReadFieldHeaderAndPayload:
+    ///   const int32 RepIndex = Bunch.ReadInt( ClassCache->GetMaxIndex() );
+    ///   uint32 NumPayloadBits = 0;
+    ///   Bunch.SerializeIntPacked( NumPayloadBits );
+    ///   OutPayload.SetData( Bunch, NumPayloadBits );
+    ///
+    /// Then RepLayout::ReceivePropertiesForRPC reads from OutPayload.  For
+    /// each non-FBoolProperty param:
+    ///   if (Reader.ReadBit())  // per-prop "is present" flag
+    ///       SerializeProperties_r → NetSerializeItem
+    ///
+    /// And finally Reader.GetBitsLeft() must == 0 → MaxBits set by SIP must
+    /// equal what params consume.
+    ///
+    /// Wire layout for ClientRestart(APawn* NewPawn):
+    ///   [SerializeInt(handle, MAX=4096)]   13 bits
+    ///   [SIP(NumPayloadBits = 129)]        16 bits  (129 ≥ 128 → 2 SIP bytes)
+    ///   [1-bit per-prop flag = 1]           1 bit   (must be true to read)
+    ///   [128-bit FIntrepidNetGUID]        128 bits  (NetSerializeItem)
+    ///   ─────────────────────────────────
+    ///   Total inner                        158 bits
+    ///
+    /// `payload_num_bits` should be 1 + GUID_bits.  Caller specifies
+    /// guid_bits (typically 128) to stay flexible.
+    void v3_add_rpc_pawn_param_field(uint32_t cmd_handle,
+                                      uint64_t object_id,
+                                      uint32_t server_id,
+                                      uint32_t randomizer,
+                                      uint32_t guid_bits,
+                                      uint32_t leading_zero_bits);
+
+    /// PM95 (2026-05-03) — AOC custom-mode wire per IDA decomp of
+    /// sub_7FF6BD8155B0 (the field-loop reader called when AOC custom flag is set).
+    ///
+    /// Inside the sub-reader, AOC reads:
+    ///   [1-bit advance]               (consumed by sub_7FF6BD814D20)
+    ///   [SIP(field_idx + 1)]          (loop iteration: 0 = terminator)
+    ///   [SIP(field_size in bits)]     (reads K = bits in sub-sub-reader)
+    ///   [K bits of value]             (NetSerializeItem reads from sub-sub-reader)
+    ///   [SIP(0)]                       (terminator on next loop)
+    ///
+    /// For ClientRestart's APawn* param:
+    ///   field_idx = 0 → wire = 1 (1 SIP byte)
+    ///   field_size = 136 (128 NetGUID + 8 ExportFlags)
+    ///   value = 128-bit FIntrepidNetGUID + 8 zero bits
+    ///   terminator = 0 (1 SIP byte)
+    ///
+    /// Total in sub-reader = 1 + 8 + 16 + 136 + 8 = 169 bits.
+    void v3_add_rpc_pawn_param_aoc_intrepid(uint32_t cmd_handle,
+                                             uint64_t object_id,
+                                             uint32_t server_id,
+                                             uint32_t randomizer,
+                                             uint32_t value_bits);
+
+    /// Add a field-list terminator inside the current content block.
+    /// Per PM6 RE of captured ch=3 bunches: AOC's parser reads inner
+    /// (handle, value) pairs in a loop, expecting handle=0 (encoded via
+    /// SerializeInt(0, MAX)) as the terminator.  Without it, the parser
+    /// reads leftover bits from the trailing payload and fails with
+    /// "Invalid replicated field 0" or similar.
+    /// PM67 (2026-04-30): added to fix Phase C ClientInitializeCharacter
+    /// which was correctly RPC-dispatched but trailing-bit-misparsed.
+    void v3_add_terminator();
+
     /// Close the current content block and emit it as a queued payload.
     void v3_end_content_block();
 
@@ -310,7 +585,12 @@ private:
     uint32_t      v3_subobject_netguid_ = 0;  // only used when !channel_actor
     uint32_t      v3_num_properties_ = 256;   // class NumReplicated, for SerializeInt
     bool          v3_use_modern_inner_format_ = true;  // 2026-04-26: skip SIP NumBits per RE
+    bool          v3_perprop_bit_ = true;     // PM93: write 1-bit per-prop flag in v3_add_rpc_pawn_param_field
     BunchWriter   v3_inner_payload_;          // accumulating inner bunch bits
+
+public:
+    void set_perprop_bit(bool v) { v3_perprop_bit_ = v; }
+private:
 
     /// Write the bunch header for a non-partial, non-control reliable
     /// data bunch.  Caller supplies the pre-computed BunchDataBits value.

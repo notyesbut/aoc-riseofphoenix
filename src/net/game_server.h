@@ -1265,6 +1265,30 @@ public:
         character_archetype_provider_ = std::move(fn);
     }
 
+    /// PD2.3 (2026-05-05) — Optional: provider returning the customization
+    /// JSON blob (~5 KB) for the currently selected character.  Used by
+    /// AppearanceEmitter to populate FCharacterCustomizationSaveData fields
+    /// from real per-character data instead of zero defaults.
+    /// When unset or returning empty string, AppearanceEmitter falls back
+    /// to defaults (which produces an empty mesh).
+    void set_customization_json_provider(std::function<std::string()> fn) {
+        customization_json_provider_ = std::move(fn);
+    }
+
+    /// PD2.3 — Read-side accessor used by AppearanceEmitter via IGameServerHost.
+    std::string current_character_customization_json() const {
+        return customization_json_provider_ ? customization_json_provider_()
+                                             : std::string{};
+    }
+
+    /// PD3 (2026-05-05) — Read-side accessor for the currently-selected
+    /// character name.  Reuses the existing character_name_provider_
+    /// (already wired to xclient_service.last_character_name() in main.cpp).
+    std::string current_character_name() const override {
+        return character_name_provider_ ? character_name_provider_()
+                                         : std::string{};
+    }
+
     bool enable_relay(const std::string& target) {
         if (relay_active_.load()) {
             spdlog::info("[GameServer] Relay already active, updating target: {}", target);
@@ -1405,6 +1429,8 @@ private:
     // live player's chosen character name (empty if none).
     std::function<std::string()> character_name_provider_;
     std::function<uint64_t()>    character_archetype_provider_;
+    // PD2.3: optional provider for the current character's customization JSON
+    std::function<std::string()> customization_json_provider_;
 
     // ── Session 3: Multiplayer NetGUID allocator (shared across all
     //    connected clients).  Each player's actors are assigned a unique
@@ -1698,6 +1724,21 @@ private:
         return send_to_client_impl(buf, n, addr);
     }
     const std::string& custom_name() const override {
+        // PM38 (2026-04-30) — prefer the LIVE character name set by the
+        // user when they picked a character (XClient on_play tracks the
+        // active character_id; provider returns that character's name).
+        // Falls back to --custom-name CLI arg only if no character is
+        // active yet (early-handshake or test harnesses).
+        //
+        // The provider returns a fresh std::string each call, so we
+        // cache it in a thread-local static to give a stable reference
+        // for the duration of this call site.  Callers that need a
+        // const std::string& shouldn't outlive the function context.
+        if (character_name_provider_) {
+            thread_local std::string cached;
+            cached = character_name_provider_();
+            if (!cached.empty()) return cached;
+        }
         return config_.custom_name;
     }
     bool send_keepalive_for(const std::string& client_key,
@@ -2045,6 +2086,19 @@ private:
             return true;  // not an error, just nothing to send
         }
 
+        // ── PM29 (2026-04-29) — REVERTED ──────────────────────────────
+        // Tested skip of replay_idx=241 — CNSF still occurred 378ms later
+        // at frame 9 with same Size=0x68000000.  Pkt241 NOT the trigger.
+        // Skip removed.  See PM30 below for actual investigation.
+
+        // ── PM34 (2026-04-29) — REVERTED in PM35 ─────────────────────
+        // PM34 had a single-pkt skip for replay_idx=46.  PM35 (Path B2
+        // Step 1) replaces the entire captured PC chain (replay_idx
+        // 22-46) with native emit via PcEmitter, so the per-pkt skip
+        // is now redundant — the world_bootstrap_plan.cpp marks all
+        // those entries as Skip mode and they never reach this fn.
+        // Keeping the comment for traceability.
+
         std::lock_guard<std::mutex> lk(client_mu_);
         auto it = clients_.find(client_key);
         if (it == clients_.end()) return false;
@@ -2152,11 +2206,56 @@ private:
     // ───────────────────────────────────────────────────────────────────
     void on_world_bootstrap_complete(const std::string& client_key,
                                        const sockaddr_in& addr) override {
+        // ── PM27 (2026-04-29) — DEADLOCK FIX ──
+        //
+        // PM26 called send_client_restart_native while holding client_mu_,
+        // but that function ALSO takes client_mu_, causing a deadlock that
+        // froze the server.  Fix: capture state under lock, RELEASE the
+        // lock, fire native CR (which takes the lock internally), then
+        // re-acquire to drain SULV ACKs as before.
+        bool should_fire_cr = false;
+        uint16_t tracker_ch3 = 0;
+        {
+            std::lock_guard<std::mutex> lk(client_mu_);
+            auto it = clients_.find(client_key);
+            if (it == clients_.end()) return;
+            ClientState& cs = it->second;
+            cs.world_bootstrap_complete = true;
+
+            if (cs.pkt78_emitted && !cs.reactive_clientrestart_sent) {
+                cs.reactive_clientrestart_sent = true;
+                should_fire_cr = true;
+                auto trk = cs.last_outgoing_reliable_chseq.find(3);
+                if (trk != cs.last_outgoing_reliable_chseq.end()) {
+                    tracker_ch3 = trk->second;
+                }
+            }
+        } // ← LOCK RELEASED HERE
+
+        // Fire native CR WITHOUT holding the lock
+        if (should_fire_cr) {
+            spdlog::warn("[POST-BOOTSTRAP] firing 6 Pawn candidates "
+                         "(tracker[ch=3]={}, exact tracker+1 = {})",
+                         tracker_ch3,
+                         (uint16_t)((tracker_ch3 + 1) & 0x3FF));
+            for (int i = 0; i < 6; ++i) {
+                bool ok = send_client_restart_native(
+                    client_key, addr,
+                    /*pawn_obj_id=*/0,    // overridden by pawn_idx fuzz
+                    /*pawn_server_id=*/0,
+                    /*pawn_randomizer=*/0);
+                if (!ok) {
+                    spdlog::warn("[POST-BOOTSTRAP] native CR send #{} FAILED", i+1);
+                    break;
+                }
+            }
+        }
+
+        // Now do the original SULV drain (re-acquire lock)
         std::lock_guard<std::mutex> lk(client_mu_);
         auto it = clients_.find(client_key);
         if (it == clients_.end()) return;
         ClientState& cs = it->second;
-        cs.world_bootstrap_complete = true;
 
         if (cs.pending_sulv_acks.empty()) {
             spdlog::info("[GameServer] on_world_bootstrap_complete: no SULV "
@@ -2186,6 +2285,171 @@ private:
             (void)send_client_ack_update_level_visibility(
                 cs, addr, client_key, ack.package_name, ack.triggering_ch_idx);
         }
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    //  send_client_initialize_character_native — PM28 (2026-04-29)
+    //
+    //  AOC's actual possession path is via ClientInitializeCharacter, NOT
+    //  ClientRestart.  Per PM28 RE of UFunction reflection data at
+    //  0x14B6F5408, the signature is:
+    //    void ClientInitializeCharacter(FName CharacterName);
+    //
+    //  This function builds and sends the bunch on PC's ch=3 reliable,
+    //  matching the canonical PM21 envelope (10-bit ChSeq + ChName + 13-bit BDB).
+    //
+    //  wire_handle: alphabetical position in PC's Client* table + 5 reserved.
+    //  We don't know the exact position; fuzzed via the static counter.
+    //
+    //  Called when we recognize incoming ServerRequestInitializeCharacter.
+    // ───────────────────────────────────────────────────────────────────
+    bool send_client_initialize_character_native(
+            const std::string& client_key,
+            const sockaddr_in& addr,
+            const std::string& character_name) {
+        std::lock_guard<std::mutex> lk(client_mu_);
+        auto it = clients_.find(client_key);
+        if (it == clients_.end()) return false;
+        if (it->second.phase < ClientState::CONNECTED) return false;
+        ClientState& cs = it->second;
+
+        // Use exact tracker+1 (no floor — see PM26 reasoning)
+        uint16_t last_ch3_seen = 0;
+        auto trk = cs.last_outgoing_reliable_chseq.find(3);
+        if (trk != cs.last_outgoing_reliable_chseq.end()) {
+            last_ch3_seen = trk->second;
+        }
+        uint16_t this_chseq = static_cast<uint16_t>((last_ch3_seen + 1u) & 0x3FFu);
+        if (this_chseq == 0) this_chseq = 1;
+        cs.last_outgoing_reliable_chseq[3] = this_chseq;
+
+        // PM28 — fuzz wire_handle for ClientInitializeCharacter.
+        // Best guesses based on alphabetical position in PC's Client* table:
+        // ClientInitializeCharacter is between ClientHeadersUpToDate and
+        // ClientReceiveStoragePayload alphabetically.
+        // PM7 noted Client* table has 72 entries with +5 reserved offset.
+        static constexpr uint16_t kCICFuzzList[] = {
+            // Mid-alphabet candidates — most likely range
+            18, 19, 20, 21, 22, 23, 24, 25,
+            // Wider range for safety
+            13, 14, 15, 16, 17, 26, 27, 28, 29, 30
+        };
+        static thread_local size_t cic_fuzz_idx = 0;
+        const uint16_t kFieldHandle = kCICFuzzList[
+            cic_fuzz_idx % (sizeof(kCICFuzzList)/sizeof(kCICFuzzList[0]))];
+        ++cic_fuzz_idx;
+        const uint32_t wire_handle = static_cast<uint32_t>(kFieldHandle);
+
+        spdlog::warn("[CIC-FUZZ] ClientInitializeCharacter attempt with "
+                     "wire_handle={} CharacterName='{}'",
+                     wire_handle, character_name);
+
+        auto sip_bit_count = [](uint32_t v) -> size_t {
+            if (v == 0) return 8;
+            size_t bits = 0;
+            while (v > 0) { bits += 8; v >>= 7; }
+            return bits;
+        };
+
+        // FName CharacterName encoding (soft form per CALV PM21):
+        //   [1]  bHardcoded = 0
+        //   [32] FString length (incl NUL)
+        //   [N*8] ASCII chars
+        //   [8] NUL
+        //   [32] FName Number suffix = 0
+        const uint32_t name_len_with_nul =
+            static_cast<uint32_t>(character_name.size()) + 1;
+        const size_t fname_bits = 1 + 32 + 8 * character_name.size() + 8 + 32;
+
+        const size_t handle_sip_bits = sip_bit_count(wire_handle);
+        const size_t param_size_bits_value = fname_bits;
+        const size_t size_sip_bits = sip_bit_count(
+            static_cast<uint32_t>(param_size_bits_value));
+        const size_t terminator_sip_bits = 8;
+
+        const size_t outer_payload_bits = 1u                    // header bit
+                                        + handle_sip_bits
+                                        + size_sip_bits
+                                        + param_size_bits_value
+                                        + terminator_sip_bits;
+        const size_t outer_size_varint_bits = sip_bit_count(
+            static_cast<uint32_t>(outer_payload_bits));
+        const size_t total_bdb = 2 + outer_size_varint_bits + outer_payload_bits;
+
+        // ── Bunch envelope (canonical PM21 pattern) ──
+        uint8_t bunch_buf[512] = {};
+        size_t bb = 0;
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bControl=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bIsRepPaused=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // bReliable=1
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 3);    // ChIdx=3 (PC)
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasPME=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasMBG=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bPartial=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                        this_chseq & 0x3FF, 10);                 // ChSeq 10-bit
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // ChName.bHardcoded=1
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 102);  // EName=NAME_Actor
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                        static_cast<uint32_t>(total_bdb), 13);   // BunchDataBits
+
+        // ── Content block envelope ──
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasRepLayout=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // bIsActor=1
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb,
+                        static_cast<uint32_t>(outer_payload_bits));
+
+        // ── Outer payload ──
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // header
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, wire_handle);
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb,
+                        static_cast<uint32_t>(param_size_bits_value));
+
+        // ── Param payload: FName CharacterName (soft form) ──
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1);  // bHardcoded = 0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                        name_len_with_nul, 32);
+        for (char c : character_name)
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                            static_cast<uint8_t>(c), 8);
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 8);   // NUL
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 32);  // FName Number
+
+        // ── End-of-fields terminator ──
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 0);
+
+        const size_t bunch_bits = bb;
+
+        // ── Wrap in UDP packet ──
+        uint8_t buf[1024] = {};
+        size_t off = 0;
+        write_sc_packet_prefix(buf, sizeof(buf), off, cs, /*handshake=*/false);
+        ue5::write_bits(buf, sizeof(buf), off, 1,    1);   // hasPktInfo
+        ue5::write_bits(buf, sizeof(buf), off, 1023, 10);  // jitter
+        ue5::write_bits(buf, sizeof(buf), off, 0,    1);   // hasFrameTime
+
+        for (size_t i = 0; i < bunch_bits; ++i) {
+            int bit = (bunch_buf[i >> 3] >> (i & 7)) & 1;
+            ue5::write_bits(buf, sizeof(buf), off, bit, 1);
+        }
+
+        // AoC PacketHandler sentinel + termination
+        ue5::write_bits(buf, sizeof(buf), off, 1, 1);
+        size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
+
+        const uint16_t sent_seq = cs.out_seq;
+        cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
+
+        int sent = send_to_client_impl(buf, pkt_len, addr);
+        if (sent > 0) {
+            spdlog::warn("[GameServer] >> ★ NATIVE ClientInitializeCharacter "
+                          "(name='{}' wire_handle={} chSeq={} bunch_bits={} "
+                          "pkt={}B seq={})",
+                          character_name, wire_handle, this_chseq,
+                          bunch_bits, pkt_len, sent_seq);
+            return true;
+        }
+        return false;
     }
 
     // ───────────────────────────────────────────────────────────────────
@@ -2227,8 +2491,8 @@ private:
                                       uint64_t pawn_obj_id,
                                       uint32_t pawn_server_id,
                                       uint32_t pawn_randomizer) override {
-        (void)pawn_server_id;     // BARE refs use only ObjectId
-        (void)pawn_randomizer;
+        // PM23 (2026-04-28): use FULL FIntrepidNetGUID (128 bits), not BARE.
+        // (Prior `(void)` annotations removed - we now use these fields.)
 
         std::lock_guard<std::mutex> lk(client_mu_);
         auto it = clients_.find(client_key);
@@ -2261,18 +2525,28 @@ private:
         // Higher chSeqs in pkts 150-500 (deep splice) might wrap past 1023
         // back into single digits, but the client's reliable-seq window
         // tolerates wrap-back as forward via the half-window rule.
+        // ── PM26 (2026-04-29) — REMOVE chSeq floor, use exact tracker+1 ──
+        //
+        // PM11's `kMinChSeqForCR=1000` floor was assumed to "clear" the PC
+        // chain.  But UE5 reliable channels are STRICTLY contiguous.  If
+        // client's InReliable[3] is at 985 and we send chSeq=1000, the
+        // client QUEUES our bunch waiting for chSeq 986-999 that never
+        // arrive — bunch sits in queue forever, never executed.
+        //
+        // This explains why ALL native CR attempts in PM7-PM25 silently
+        // failed (queued, not processed).  The fix: use exact tracker+1,
+        // NO floor.
+        //
+        // The tracker advances correctly for every bunch we ship (after
+        // the PM26 multi-bunch tracker fix in scan_outgoing_packet_chseq).
         uint16_t last_ch3_seen = 0;
         auto trk = cs.last_outgoing_reliable_chseq.find(3);
         if (trk != cs.last_outgoing_reliable_chseq.end()) {
             last_ch3_seen = trk->second;
         }
-        constexpr uint16_t kMinChSeqForCR = 1000;  // safe floor past PC chain + continuations
+        // Use exact next-in-sequence chSeq.  Wrap at 1024 (10-bit).
         uint16_t candidate = static_cast<uint16_t>((last_ch3_seen + 1u) & 0x3FFu);
-        // If candidate would land inside the captured chSeq window,
-        // jump forward to the safety floor.
-        if (candidate < kMinChSeqForCR) {
-            candidate = kMinChSeqForCR;
-        }
+        if (candidate == 0) candidate = 1;  // never use 0 (reserved for unreliable)
         const uint32_t this_chseq_value = candidate;
         // Bump tracker so subsequent ch=3 sends pick the next contiguous
         // chSeq.  The send_bunch_packet path (used by SULV ack) does the
@@ -2311,7 +2585,69 @@ private:
                       (fuzz_idx % kHandleFuzzCount) + 1,
                       kHandleFuzzCount);
         ++fuzz_idx;
-        const uint32_t wire_handle = static_cast<uint32_t>(kFieldHandle) + 1u;
+        // ── PM23 (2026-04-28) — wire_handle uses CALV +5 reserved offset ──
+        //
+        // PM22 retest with wire_handle = kFieldHandle + 1 (for handle=25,
+        // wire_handle=26) elicited NO ServerAcknowledgePossession from client.
+        // The bunch was clean (no CNSF) but possession didn't trigger.
+        //
+        // Comparison with CALV (which works after PM21 fix):
+        //   CALV (alphabetical pos 2 1-indexed): wire_idx = 2 + 5 = 7
+        //   Dispatch byte = (7<<1)|0 = 0x0E
+        //
+        // ClientRestart (alphabetical pos 26 1-indexed = 25 0-indexed):
+        //   wire_idx = 26 + 5 = 31
+        //   Our kFieldHandle is 0-indexed alphabetical pos.
+        //   Therefore wire_handle = kFieldHandle + 6 (= +1 to make 1-indexed +5 reserved)
+        //
+        // For the default fuzz handle 25: wire_handle = 25 + 6 = 31 (matches PM7 prediction)
+        const uint32_t wire_handle = static_cast<uint32_t>(kFieldHandle) + 6u;
+
+        // ── PM24 (2026-04-29) — Pawn NetGUID candidates from packet scan ──
+        //
+        // PM18-PM23 RE confirmed AOC NetGUID is 128 bits (sub_14141E960
+        // reads 4× uint32 raw, sub_14426F930 cache hash uses 16 bytes).
+        // Layout: {ObjectId u64, ServerId u32, Randomizer u32}.
+        //
+        // scan_actor_opens_pm24.py extracted NetGUIDs from all 1377 actor
+        // opens in replay_data.bin.  The PC is at pkt 22 ch=3 with:
+        //   ObjectId u64 = 0x2254786600000006
+        //   ServerId u32 = 0x613FAFEB
+        //   Randomizer u32 = 0
+        //
+        // The Pawn's NetGUID is one of the SUBSEQUENT actor opens.  Strong
+        // candidate: pkt 62 ch=14 (40 pkts after PC, biggest BDB=7329 bits).
+        //
+        // Cycle through candidates via thread_local fuzz_idx; each test
+        // session = one attempt.  Server-restart advances to next candidate.
+        struct PawnGuidCandidate {
+            const char* label;
+            uint64_t object_id;
+            uint32_t server_id;
+            uint32_t randomizer;
+        };
+        static constexpr PawnGuidCandidate kPawnCandidates[] = {
+            // Top candidate first (large BDB suggests Pawn-class actor)
+            {"pkt62 ch=14",       0xF47BBB2E0000000Eull, 0xDAB716DCu, 0u},
+            {"pkt120 ch=24",      0xDD17764200000012ull, 0x39690C62u, 0u},
+            {"pkt127 ch=28",      0x4005739A00000010ull, 0x87269152u, 0u},
+            {"pkt136 ch=32",      0xECAC96D604000000ull, 0x28ADD85Au, 0u},
+            {"pkt144 ch=36",      0x4EC4561E00000010ull, 0x8BC3F1CEu, 0u},
+            // Reference: PC's own NetGUID (not Pawn, but for sanity check)
+            {"PC pkt22 ch=3",     0x2254786600000006ull, 0x613FAFEBu, 0u},
+        };
+        static constexpr size_t kPawnCandidateCount =
+            sizeof(kPawnCandidates) / sizeof(kPawnCandidates[0]);
+        static thread_local size_t pawn_idx = 0;
+        const auto& pawn_cand = kPawnCandidates[pawn_idx % kPawnCandidateCount];
+        // Override caller-provided values with our candidate
+        pawn_obj_id = pawn_cand.object_id;
+        pawn_server_id = pawn_cand.server_id;
+        pawn_randomizer = pawn_cand.randomizer;
+        spdlog::warn("[PAWN-FUZZ] Trying Pawn candidate '{}' "
+                     "(obj=0x{:016x} srv=0x{:08x} rnd=0x{:08x})",
+                     pawn_cand.label, pawn_obj_id, pawn_server_id, pawn_randomizer);
+        ++pawn_idx;
 
         auto sip_bit_count = [](uint32_t v) -> size_t {
             if (v == 0) return 8;
@@ -2320,9 +2656,18 @@ private:
             return bits;
         };
 
-        // BARE NetGUID size: SIP(obj_id) + 0x2a flag byte
-        const size_t pawn_netguid_bits =
-            sip_bit_count(static_cast<uint32_t>(pawn_obj_id)) + 8;
+        // ── PM23 (2026-04-28) — FULL FIntrepidNetGUID (128 bits) ──
+        //
+        // PM22 retest with BARE NetGUID (16 bits = SIP+flag byte) elicited NO
+        // possession ack. Per PM15 RE of sub_14141E960 (AOC NetGUID reader),
+        // the wire format is 4× uint32 raw = 128 bits / 16 bytes:
+        //   { ObjectId u64 @0..7,
+        //     ServerId u32 @8..11,
+        //     Randomizer u32 @12..15 }
+        //
+        // For NetGUID 88: bytes = 58 00 00 00 00 00 00 00 | 00 00 00 00 | 00 00 00 00.
+        // The BARE encoding was a guess from PM7 that never validated.
+        constexpr size_t pawn_netguid_bits = 128;
 
         const size_t handle_sip_bits     = sip_bit_count(wire_handle);
         const size_t size_sip_bits       = sip_bit_count(static_cast<uint32_t>(pawn_netguid_bits));
@@ -2390,10 +2735,20 @@ private:
         ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb,
                         static_cast<uint32_t>(pawn_netguid_bits));
 
-        // Pawn parameter — BARE NetGUID
-        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb,
-                        static_cast<uint32_t>(pawn_obj_id));
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0x2a, 8); // flag byte
+        // ── PM23 (2026-04-28) — FULL FIntrepidNetGUID (128 bits) ──
+        // Pawn parameter — write 4× uint32 raw matching sub_14141E960.
+        //
+        // Layout (each 32-bit field LE in stream order):
+        //   bytes 0-3:  ObjectId low 32 bits
+        //   bytes 4-7:  ObjectId high 32 bits
+        //   bytes 8-11: ServerId
+        //   bytes 12-15: Randomizer
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                        static_cast<uint32_t>(pawn_obj_id & 0xFFFFFFFFu), 32);  // ObjectId LSB
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                        static_cast<uint32_t>((pawn_obj_id >> 32) & 0xFFFFFFFFu), 32); // ObjectId MSB
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, pawn_server_id, 32); // ServerId
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, pawn_randomizer, 32); // Randomizer
 
         // End-of-fields terminator
         ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 0);
@@ -2423,9 +2778,11 @@ private:
         int sent = send_to_client_impl(buf, pkt_len, addr);
         if (sent > 0) {
             spdlog::warn("[GameServer] >> ★ NATIVE ClientRestart "
-                          "(BARE pawn_netguid={} handle={} chSeq={} "
+                          "(FULL FIntrepidNetGUID obj={} srv={} rnd={} "
+                          "kFieldHandle={} wire_handle={} chSeq={} "
                           "bunch_bits={} pkt={}B seq={})",
-                          pawn_obj_id, kFieldHandle, this_chseq,
+                          pawn_obj_id, pawn_server_id, pawn_randomizer,
+                          kFieldHandle, wire_handle, this_chseq,
                           bunch_bits, pkt_len, sent_seq);
             // Phase B.0p4 — flag the idempotent sentinel so the SNLW
             // handler won't fire ANOTHER ClientRestart on the next SNLW
@@ -3904,31 +4261,74 @@ private:
                                     }
                                 }
                                 if (should_emit) {
-                                    // ── PM19 (2026-04-28) — native ClientRestart DISABLED ──
-                                    //
-                                    // Per PM18 RE: AOC's IntrepidNetConnection has
-                                    // (UNetConn+240) & 1 set, which means S→C reliable
-                                    // bunches use a DIFFERENT wire format than stock UE5:
-                                    //   - ChSeq is COMPUTED by client (not on wire)
-                                    //   - field handles are SerializeInt(MAX=field_count),
-                                    //     not SerializeIntPacked
-                                    //
-                                    // Our send_client_restart_native uses stock UE5 format
-                                    // (10-bit ChSeq + SIP handle). This produces 18 phantom
-                                    // bits on wire that the AOC client treats as part of
-                                    // the bunch payload, causing cursor desync within the
-                                    // bunch and downstream bunch-header overflow / CNSF.
-                                    //
-                                    // Disabling lets us isolate splice-only behavior. If
-                                    // CNSF goes away, this confirms the native bunch was
-                                    // the source. We then need to rewrite the encoder to
-                                    // match AOC's wire format before re-enabling.
-                                    spdlog::warn("[NMT-DETECT] → reactive emit DISABLED "
-                                        "(PM19) — pure splice mode for diagnostic test");
-                                    (void)client_addr_for_reactive;  // unused
-                                    // Note: cs.reactive_clientrestart_sent is already true,
-                                    // so subsequent SNLW retries won't re-enter this block.
+                                    // ── PM26 (2026-04-29) — DEFER to post-bootstrap ──
+                                    // Native CR now fires from on_world_bootstrap_complete
+                                    // where tracker is stable.  See PM26 notes there.
+                                    // Reset the flag so the post-bootstrap handler can fire.
+                                    {
+                                        std::lock_guard<std::mutex> lk(client_mu_);
+                                        auto cit = clients_.find(*client_key);
+                                        if (cit != clients_.end())
+                                            cit->second.reactive_clientrestart_sent = false;
+                                    }
+                                    spdlog::info("[NMT-DETECT] reactive emit DEFERRED "
+                                        "(PM26) — native CR will fire post-bootstrap");
+                                    (void)client_addr_for_reactive;
+                                    goto pm26_skip_old_fire;
                                 }
+                                if (false) {
+                                    // ── PM25 (legacy, never reached after PM26) — kept for ref ──
+                                    //
+                                    // The pawn_idx fuzz in send_client_restart_native cycles
+                                    // through 6 NetGUID candidates from scan_actor_opens_pm24.py.
+                                    // PM24 single-fire test #1 (pkt62 ch=14) didn't trigger
+                                    // possession.  Rather than restart server 5 more times,
+                                    // fire all 6 in rapid succession from this single SNLW
+                                    // detection.  The right NetGUID will trigger
+                                    // ServerAcknowledgePossession; wrong ones are silently
+                                    // dropped by the client.
+                                    //
+                                    // KNOWN CONCERN — replay vs native chSeq conflict:
+                                    //   PM11 used kMinChSeqForCR=1000 to skip past PC chain
+                                    //   (chSeq 954-985).  But UE5 reliable channels need
+                                    //   STRICTLY contiguous chSeq.  If our 1000 jumps over
+                                    //   986-999, the client queues our bunch waiting for the
+                                    //   missing chSeq values that never arrive → never processed.
+                                    //
+                                    //   This may be why ALL native CR attempts in PM7-PM24
+                                    //   silently failed (queued, not processed).
+                                    //
+                                    //   The send_client_restart_native function still uses
+                                    //   the floor; for now we assume the client tolerates the
+                                    //   gap (or that we're past 1000 anyway by SNLW time).
+                                    //   If this fuzz fails, next step is to revise chSeq logic
+                                    //   to use exact tracker+1 with all-bunches walking.
+                                    //
+                                    // Fire all 6 candidates (loop in send_client_restart_native
+                                    // wraps via pawn_idx % count; each call advances pawn_idx).
+                                    spdlog::warn("[NMT-DETECT] → reactive emit ENABLED "
+                                        "(PM25) — firing ALL 6 Pawn NetGUID candidates rapidly");
+                                    bool any_sent = false;
+                                    for (int i = 0; i < 6; ++i) {
+                                        bool ok = send_client_restart_native(
+                                            *client_key,
+                                            *client_addr_for_reactive,
+                                            /*pawn_obj_id=*/0,    // overridden by pawn_idx fuzz
+                                            /*pawn_server_id=*/0,
+                                            /*pawn_randomizer=*/0);
+                                        if (ok) any_sent = true;
+                                        // Small spdlog buffer flush between sends
+                                    }
+                                    if (!any_sent) {
+                                        spdlog::warn("[NMT-DETECT] reactive "
+                                            "ClientRestart all sends FAILED");
+                                        std::lock_guard<std::mutex> lk(client_mu_);
+                                        auto cit = clients_.find(*client_key);
+                                        if (cit != clients_.end())
+                                            cit->second.reactive_clientrestart_sent = false;
+                                    }
+                                }
+                                pm26_skip_old_fire:;
                             }
                         }
                     }
@@ -3960,7 +4360,7 @@ private:
                     // payload.  Conservative match: bunch_data_bits in
                     // 8-50 range AND first byte == 0x7E.
                     if (b_reliable && ch_idx == 3 && !b_partial && !b_exports
-                        && bunch_data_bits >= 8 && bunch_data_bits <= 256
+                        && bunch_data_bits >= 8 && bunch_data_bits <= 16384
                         && payload_bytes.size() >= 1) {
                         const uint8_t fb = payload_bytes[0];
                         // Decode varint byte → wire index → RPC name (per table)
@@ -3969,18 +4369,43 @@ private:
                         const uint32_t wire_idx = fb >> 1;
                         const char* rpc_name = nullptr;
                         bool is_success = false, is_fail = false;
+                        bool is_request_init_char = false;  // PM28
                         switch (wire_idx) {
-                        case 59: rpc_name = "ServerAcknowledgePossession (★ SUCCESS — ClientRestart worked!)"; is_success = true; break;
-                        case 60: rpc_name = "ServerBlockPlayer"; break;
-                        case 61: rpc_name = "ServerCamera"; break;
-                        case 62: rpc_name = "ServerChangeName"; break;
-                        case 63: rpc_name = "ServerCheckClientPossession (Pawn ref wrong, fn_idx RIGHT)"; is_fail = true; break;
-                        case 64: rpc_name = "ServerCheckClientPossessionReliable (Pawn wrong, retry)"; is_fail = true; break;
-                        case 65: rpc_name = "ServerExecRPC"; break;
-                        case 66: rpc_name = "ServerMutePlayer"; break;
-                        case 67: rpc_name = "ServerNotifyLoadedWorld (retry — ClientRestart NOT recognized)"; break;
-                        case 68: rpc_name = "ServerPause"; break;
-                        case 69: rpc_name = "ServerRestartPlayer"; break;
+                        // PM107 (2026-05-04) — wire_idx=111 confirmed via IDA RE of
+                        // AOC PlayerController function table at 0x14aa41c18 (16-byte
+                        // stride): index 111 = ServerAcknowledgePossession.  Original
+                        // guess at case 59 was unverified.  Empirical confirmation:
+                        // captured logs show wire_idx=111 firing chSeq immediately after
+                        // ClientRestart RPC (handle=45) reaches the client, which is the
+                        // exact UE5 possession-handshake response.
+                        case 111: rpc_name = "ServerAcknowledgePossession (★ SUCCESS — ClientRestart worked!)"; is_success = true; break;
+                        // ── stale guesses kept for diagnostic context (likely wrong) ──
+                        case 59: rpc_name = "?? wire_idx=59 (was: ServerAcknowledgePossession; superseded by 111)"; break;
+                        case 60: rpc_name = "?? wire_idx=60 (was: ServerBlockPlayer guess)"; break;
+                        case 61: rpc_name = "?? wire_idx=61 (was: ServerCamera guess)"; break;
+                        case 62: rpc_name = "?? wire_idx=62 (was: ServerChangeName guess)"; break;
+                        case 63: rpc_name = "?? wire_idx=63 (was: ServerCheckClientPossession guess)"; break;
+                        case 64: rpc_name = "?? wire_idx=64 (was: ServerCheckClientPossessionReliable guess)"; break;
+                        case 65: rpc_name = "?? wire_idx=65 (was: ServerExecRPC guess)"; break;
+                        case 66: rpc_name = "?? wire_idx=66 (was: ServerMutePlayer guess)"; break;
+                        case 67: rpc_name = "ServerNotifyLoadedWorld (empirical — chSeq pattern + 834-bit shape)"; break;
+                        case 68: rpc_name = "?? wire_idx=68 (was: ServerPause guess)"; break;
+                        case 69: rpc_name = "?? wire_idx=69 (was: ServerRestartPlayer guess)"; break;
+                        // Neighbouring slots from the empirically-correct table at
+                        // 0x14aa41c18 (1-indexed entry 112, 113, 114 for these):
+                        case 112: rpc_name = "ServerBlockPlayer"; break;
+                        case 113: rpc_name = "ServerCamera"; break;
+                        case 110: rpc_name = "SendToConsole"; break;
+                        // PM28 (2026-04-29) — recognize potential RequestInitializeCharacter
+                        // candidates.  Exact wire_idx unknown; we fuzz a small range.
+                        // Strong candidates based on alphabetical position + 5_reserved offset:
+                        //   ServerRequestInitializeCharacter expected to be a server RPC
+                        //   somewhere in 70-90 wire_idx range (alphabetical R-).
+                        case 75: rpc_name = "?? wire_idx=75 (large RPC — possibly ServerRequestInitializeCharacter)"; is_request_init_char = true; break;
+                        case 70: case 71: case 72: case 73: case 74:
+                        case 76: case 77: case 78: case 79: case 80:
+                        case 81: case 82: case 83: case 84: case 85:
+                            rpc_name = "?? possible Server* character RPC"; is_request_init_char = (bunch_data_bits > 200); break;
                         default: break;
                         }
                         if (is_success) {
@@ -3992,12 +4417,64 @@ private:
                                           "Pawn NetGUID we sent doesn't resolve. Need captured Pawn GUID.",
                                           rpc_name, ch_seq, bunch_data_bits, fb);
                         } else if (rpc_name) {
-                            spdlog::warn("[NMT-DETECT] small ch=3 RPC: {} (chSeq={} bdb={} byte=0x{:02x})",
-                                          rpc_name, ch_seq, bunch_data_bits, fb);
+                            spdlog::warn("[NMT-DETECT] {} (chSeq={} bdb={} byte=0x{:02x} wire_idx={})",
+                                          rpc_name, ch_seq, bunch_data_bits, fb, wire_idx);
                         } else {
                             spdlog::info("[NMT-DETECT] unrecognized ch=3 RPC (chSeq={} bdb={} "
                                           "first_byte=0x{:02x} → wire_idx={}) — RPC not in table",
                                           ch_seq, bunch_data_bits, fb, wire_idx);
+                        }
+
+                        // ── PM28 (2026-04-29) — extract FName CharacterName for response ──
+                        if (is_request_init_char && client_key && client_addr_for_reactive
+                            && payload_bytes.size() >= 8) {
+                            // Try to extract the FName parameter that follows the dispatch byte.
+                            // Wire format (CALV-style soft FName):
+                            //   [8 bits] dispatch byte
+                            //   [1 bit]  bHardcoded
+                            //   if !bHardcoded:
+                            //     [32 bits] FString length (incl NUL)
+                            //     [N×8] ASCII chars
+                            //     [8 bits] NUL
+                            //     [32 bits] FName Number suffix
+                            //   else:
+                            //     [SIP] EName index
+                            std::string extracted_name;
+                            bool extracted = false;
+                            // Read after dispatch byte at bit-offset 8 of payload
+                            size_t pp = bunch_data_start + 8;
+                            const size_t pend = bunch_data_start + bunch_data_bits;
+                            if (pp + 1 <= pend) {
+                                bool b_hard = ::ue5::read_bits(data, data_len, pp, 1) != 0;
+                                if (!b_hard && pp + 32 <= pend) {
+                                    int32_t slen = static_cast<int32_t>(
+                                        ::ue5::read_bits(data, data_len, pp, 32));
+                                    if (slen > 0 && slen <= 64 && pp + (size_t)slen * 8 <= pend) {
+                                        for (int i = 0; i < slen - 1; ++i) {  // skip trailing NUL
+                                            char c = static_cast<char>(
+                                                ::ue5::read_bits(data, data_len, pp, 8));
+                                            if (c >= 0x20 && c <= 0x7e) extracted_name += c;
+                                        }
+                                        if (!extracted_name.empty()) extracted = true;
+                                    }
+                                }
+                            }
+                            if (extracted) {
+                                spdlog::warn("[PM28] ★★ Recognized RequestInitializeCharacter — "
+                                             "CharacterName='{}' (from C>S wire_idx={})",
+                                             extracted_name, wire_idx);
+                                // Fire ClientInitializeCharacter response with the extracted name
+                                std::string keystr = *client_key;
+                                sockaddr_in addr_copy = *client_addr_for_reactive;
+                                std::string name_copy = extracted_name;
+                                // Don't hold any locks — release will be done in caller path
+                                send_client_initialize_character_native(
+                                    keystr, addr_copy, name_copy);
+                            } else {
+                                spdlog::info("[PM28] possible RequestInitializeCharacter "
+                                             "(wire_idx={} bdb={}) but couldn't extract FName",
+                                             wire_idx, bunch_data_bits);
+                            }
                         }
                     }
 
@@ -5446,6 +5923,70 @@ private:
         }
     }
 
+    /// PM36 (2026-04-29) — Path C Phase 1: renumber captured chSeq values
+    /// to be consecutive with our session's per-channel tracker.
+    ///
+    /// Inputs:
+    ///   buf, buf_cap       — packet buffer being built
+    ///   bunch_start_bit    — absolute bit offset where bunches begin
+    ///   bunch_bits         — bunch data length
+    ///   cs                 — ClientState (carries last_outgoing_reliable_chseq)
+    ///
+    /// Walks all reliable bunches via find_chseq_offsets(), patches each
+    /// chSeq with cs.last_outgoing_reliable_chseq[ch] + 1.  Updates the
+    /// tracker so subsequent bunches on the same ch are contiguous.
+    void patch_replay_chseq(uint8_t* buf, size_t buf_cap,
+                            size_t bunch_start_bit, size_t bunch_bits,
+                            ClientState& cs) {
+        if (bunch_bits == 0) return;
+
+        // Extract bunch bits into a byte-aligned temp buffer for find_chseq_offsets.
+        const size_t bunch_bytes = (bunch_bits + 7) / 8;
+        std::vector<uint8_t> tmp(bunch_bytes, 0);
+        for (size_t i = 0; i < bunch_bits; ++i) {
+            size_t src = bunch_start_bit + i;
+            uint64_t bit = ue5::read_bits(buf, buf_cap, src, 1);
+            if (bit) tmp[i >> 3] |= static_cast<uint8_t>(1u << (i & 7));
+        }
+
+        // Locate chSeq positions (relative to tmp / bunch start).
+        auto patches = find_chseq_offsets(tmp.data(), tmp.size(), bunch_bits);
+
+        // Apply each patch: assign consecutive chseq from our tracker.
+        int num_patched = 0;
+        for (const auto& p : patches) {
+            if (p.skip) continue;
+
+            uint32_t ch = p.ch_index;
+            auto& tracker = cs.last_outgoing_reliable_chseq[ch];
+
+            uint16_t new_chseq;
+            if (tracker == 0) {
+                // First reliable bunch we've ever sent on this channel.
+                // Start from in_reliable_base + 1 (matches PcEmitter open
+                // pattern: ch=3 opens at base+1, then ch=3 increments by 1
+                // per subsequent reliable bunch).
+                new_chseq = static_cast<uint16_t>((cs.in_reliable_base + 1) & 0x3FF);
+                if (new_chseq == 0) new_chseq = 1;  // never assign 0 (uninit sentinel)
+            } else {
+                new_chseq = static_cast<uint16_t>((tracker + 1) & 0x3FF);
+                if (new_chseq == 0) new_chseq = 1;
+            }
+            tracker = new_chseq;
+
+            // Patch in our buffer at absolute bit offset.  ChSeq is 10 bits
+            // (PM20 confirmed via RE of sub_144230D50).
+            size_t abs_off = bunch_start_bit + p.bit_offset;
+            ue5::patch_bits(buf, buf_cap, abs_off, new_chseq, 10);
+            ++num_patched;
+        }
+
+        if (num_patched > 0) {
+            spdlog::debug("[chSeq-renumber] patched {} of {} chseqs",
+                          num_patched, patches.size());
+        }
+    }
+
     size_t build_replay_packet(uint8_t* buf, size_t buf_cap,
                                const ReplayPacketInfo& rpkt,
                                ClientState& cs) {
@@ -5474,7 +6015,8 @@ private:
             ue5::write_bits(buf, buf_cap, off, rpkt.frame_time, 8);
         }
 
-        // ── Bunch data (verbatim from original capture) ────────────────
+        // ── Bunch data (originally verbatim; PM36 Phase 1 — patched) ───
+        size_t our_bunch_start = off;  // remember bit offset for patcher
         if (rpkt.bunch_bits > 0 && rpkt.bunch_start_bit > 0) {
             const uint8_t* orig = rpkt.raw.data();
             size_t orig_len = rpkt.raw.size();
@@ -5493,6 +6035,41 @@ private:
                 uint64_t bit = ue5::read_bits(orig, orig_len, src, 1);
                 ue5::write_bits(buf, buf_cap, off, static_cast<uint32_t>(bit), 1);
             }
+        }
+
+        // ── PM36 (2026-04-29) — Path C Phase 1: chSeq RENUMBER ─────────
+        //
+        // Captured bunches reference chSeq values from THEIR session's
+        // per-channel counters.  In NATIVE mode (PcEmitter opens ch=3 at
+        // chSeq=954, then captured world data references chSeq=955+
+        // assuming captured pkts 22-46 ran), the renumber makes captured
+        // bunches contiguous with our native emits → flushes client queue.
+        //
+        // ── PM41 (2026-04-30) — GATE TO NATIVE MODE ONLY ───────────────
+        //
+        // The legacy replay path (launch_all.bat, no --native flag) ALIGNS
+        // our session's out_seq to the captured initSeq via
+        //   "[Replay] Overriding initial_seq=14265 (in_reliable_base=1977)"
+        // This makes captured chSeq values flow naturally without renumber.
+        //
+        // PM36's unconditional renumber BROKE legacy replay because it
+        // overwrote those captured-aligned chSeq values with new sequential
+        // ones starting from (in_reliable_base+1) & 0x3FF = 954.  Captured
+        // expected 1978; client received 954 → 1024-bunch gap → buffered
+        // forever or dropped → world never populates.
+        //
+        // Gate: only renumber when --no-replay-loop is set (native mode).
+        // In legacy mode (disable_replay_loop=false), preserve captured
+        // chSeq values so the replay's initSeq alignment works as designed.
+        //
+        // Side effects (native mode only):
+        //   - REPLAY-DIAG bit-mismatch is EXPECTED here (we intentionally
+        //     differ from captured).  REPLAY-DIAG below will warn but
+        //     it's no longer fatal information.
+        //   - cs.last_outgoing_reliable_chseq advances for each ch touched.
+        if (rpkt.bunch_bits > 0 && config_.disable_replay_loop) {
+            patch_replay_chseq(buf, buf_cap, our_bunch_start,
+                               rpkt.bunch_bits, cs);
         }
 
         // ── PM18 (2026-04-28) — bit-level diff diagnostic ──
@@ -5535,13 +6112,18 @@ private:
                 }
             }
             if (!aligned_match) {
-                spdlog::warn("[REPLAY-DIAG] re-emit BUNCH BIT MISMATCH at bit+{} of {}: "
-                             "our_bunch_start={} cap_bunch_start={} "
-                             "hist={} pktInfo={} srvFrame={}",
-                             first_diff_bit, rpkt.bunch_bits, our_bunch_start,
-                             cap_bunch_start, rpkt.hist_count,
-                             static_cast<int>(rpkt.has_pkt_info),
-                             static_cast<int>(rpkt.has_srv_frame));
+                // PM36 — bit mismatches are now EXPECTED for reliable bunches
+                // because patch_replay_chseq overwrote captured chSeq values.
+                // We log at debug level (not warn) so the signal isn't lost
+                // but the noise doesn't drown the log.
+                spdlog::debug("[REPLAY-DIAG] re-emit BUNCH BIT MISMATCH at bit+{} of {}: "
+                              "our_bunch_start={} cap_bunch_start={} "
+                              "hist={} pktInfo={} srvFrame={} "
+                              "(expected: chSeq renumber active)",
+                              first_diff_bit, rpkt.bunch_bits, our_bunch_start,
+                              cap_bunch_start, rpkt.hist_count,
+                              static_cast<int>(rpkt.has_pkt_info),
+                              static_cast<int>(rpkt.has_srv_frame));
             }
         }
 
@@ -5557,7 +6139,152 @@ private:
         // PHASE 2c: verbose bunch logging (no-op unless config enables it).
         log_replay_packet_bunches(rpkt, cs.out_seq);
 
+        // ── PM30 (2026-04-29) — CNSF FORENSIC SCANNER ─────────────────
+        // Walk every bunch in the just-built packet using the same parser
+        // the AOC client uses (sub_144230D50 + sub_14168B8D0 path).  When
+        // we hit a bunch whose ChName field has bIsHardcoded=0 (soft FName)
+        // and FString length > 0x1000000 (16MB UE max), we found the bunch
+        // that triggers CNSF.  Log replay_idx + bunch number + bit position
+        // so we can cross-reference with the client error.
+        //
+        // PM32: disabled by default — switched to UE5 verbose net logging
+        // for ground truth from the client side.  Re-enable by setting
+        // kForensicEnabled = true.
+        constexpr bool kForensicEnabled = false;
+        if (kForensicEnabled)
+            cnsf_forensic_scan(buf, pkt_len, rpkt);
+
         return pkt_len;
+    }
+
+    /// PM30 — CNSF forensic scanner.  Parses each bunch in the just-built
+    /// packet and flags any with bIsHardcoded=0 + FString length > 16MB.
+    /// This identifies the exact bunch the client will choke on.
+    void cnsf_forensic_scan(const uint8_t* buf, size_t pkt_len,
+                             const ReplayPacketInfo& rpkt) {
+        // bunch_data area: starts at bunch_start_bit, length bunch_bits
+        const size_t bunch_start = rpkt.bunch_start_bit;
+        const size_t bunch_bits  = rpkt.bunch_bits;
+        if (bunch_bits == 0 || pkt_len * 8 < bunch_start + bunch_bits)
+            return;
+
+        size_t pos = bunch_start;
+        const size_t end_bit = bunch_start + bunch_bits;
+        int bunch_idx = 0;
+
+        auto serialize_int = [&](uint32_t max_val, size_t& p) -> uint32_t {
+            if (max_val <= 1) return 0;
+            uint32_t v = 0, mask = 1;
+            while (v + mask < max_val && mask != 0) {
+                if (p >= end_bit) return v;
+                if (ue5::read_bits(buf, pkt_len, p, 1)) v |= mask;
+                mask <<= 1;
+            }
+            return v;
+        };
+
+        auto sip = [&](size_t& p) -> uint32_t {
+            uint32_t v = 0;
+            int sh = 0;
+            for (int i = 0; i < 5; ++i) {
+                if (p + 8 > end_bit) return v;
+                uint32_t b = static_cast<uint32_t>(
+                    ue5::read_bits(buf, pkt_len, p, 8));
+                v |= ((b >> 1) & 0x7F) << sh;
+                if (!(b & 1)) break;
+                sh += 7;
+            }
+            return v;
+        };
+
+        while (pos + 20 < end_bit && bunch_idx < 30) {
+            size_t bunch_bit_start = pos;
+            bool bControl = ue5::read_bits(buf, pkt_len, pos, 1) != 0;
+            bool bOpen = false, bClose = false;
+            if (bControl) {
+                bOpen  = ue5::read_bits(buf, pkt_len, pos, 1) != 0;
+                bClose = ue5::read_bits(buf, pkt_len, pos, 1) != 0;
+                if (bClose) (void)serialize_int(15, pos); // CloseReason
+            }
+            (void)ue5::read_bits(buf, pkt_len, pos, 1); // bIsRepPaused
+            bool bReliable = ue5::read_bits(buf, pkt_len, pos, 1) != 0;
+            // ChIndex via SerializeIntPacked (SIP) — per actual decompile of
+            // sub_144230D50 line 391 (vtable[408]) when engine_ver >= 3.
+            // This matches our find_chseq_offsets and incoming C>S parser
+            // (game_server.h line 3878 + 4870-4878).
+            // PM14 memory said SerializeInt(MAX=1024) which was a wrong RE.
+            uint32_t ch_idx = sip(pos);
+            if (ch_idx > 16383) break; // drift
+            (void)ue5::read_bits(buf, pkt_len, pos, 1); // bHasPME
+            (void)ue5::read_bits(buf, pkt_len, pos, 1); // bHasMBG
+            bool bPartial = ue5::read_bits(buf, pkt_len, pos, 1) != 0;
+            // PM32 — verbose-logging path: the forensic scanner cannot
+            // converge from the wire alone.  We're switching to client-
+            // side ground truth via UE5 verbose net logging.  The
+            // scanner is left in place but disabled to keep server log
+            // clean while we test.  Re-enable kForensicEnabled to debug
+            // wire-level issues again.
+            uint32_t ch_seq = 0;
+            if (bReliable) {
+                if (pos + 10 > end_bit) break;
+                ch_seq = static_cast<uint32_t>(
+                    ue5::read_bits(buf, pkt_len, pos, 10));
+            }
+            bool bPartialInitial = false;
+            if (bPartial) {
+                if (pos + 3 > end_bit) break;
+                bPartialInitial = ue5::read_bits(buf, pkt_len, pos, 1) != 0;
+                (void)ue5::read_bits(buf, pkt_len, pos, 1); // bPartialCEF
+                (void)ue5::read_bits(buf, pkt_len, pos, 1); // bPartialFinal
+            }
+            bool has_chname = (bReliable || bOpen) &&
+                              (!bPartial || bPartialInitial);
+            if (has_chname) {
+                if (pos + 1 > end_bit) break;
+                bool bHardcoded = ue5::read_bits(buf, pkt_len, pos, 1) != 0;
+                if (!bHardcoded) {
+                    if (pos + 32 > end_bit) break;
+                    uint32_t len = static_cast<uint32_t>(
+                        ue5::read_bits(buf, pkt_len, pos, 32));
+                    // The CNSF threshold per UE5 = 16MB (0x1000000)
+                    if (len > 0x1000000) {
+                        spdlog::error(
+                            "[PM30-CNSF] ★★★ FOUND IT! "
+                            "bunch_idx={} ch={} ctrl={} open={} close={} "
+                            "reliable={} chSeq={} partial={} pInit={} "
+                            "bHardcoded=0 FString_len=0x{:08x} ({}) "
+                            "@ bit {} (rel {})",
+                            bunch_idx, ch_idx, bControl, bOpen, bClose,
+                            bReliable, ch_seq, bPartial, bPartialInitial,
+                            len, len, bunch_bit_start,
+                            bunch_bit_start - bunch_start);
+                    }
+                    // We can't read the chars / Number here without losing
+                    // bunch alignment, so just bail out of this packet
+                    // (the rest of bunches are unreachable anyway since
+                    // the client would close on this bad name).
+                    return;
+                } else {
+                    (void)sip(pos); // EName index
+                }
+            }
+            // BunchDataBits — fixed 13 bits (matches existing parser at 3933)
+            if (pos + 13 > end_bit) break;
+            uint32_t bdb = static_cast<uint32_t>(
+                ue5::read_bits(buf, pkt_len, pos, 13));
+            if (bdb > 8191) break; // drift
+            if (pos + bdb > end_bit) {
+                // Bunch claims more bits than packet has — this would also
+                // confuse the client.  Log it.
+                spdlog::warn(
+                    "[PM30-OVERFLOW] bunch_idx={} ch={} bdb={} "
+                    "remaining={} (packet has insufficient bits)",
+                    bunch_idx, ch_idx, bdb, end_bit - pos);
+                break;
+            }
+            pos += bdb;
+            ++bunch_idx;
+        }
     }
 
     /// Replay thread: sends captured S>C packets with adjusted headers.

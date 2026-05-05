@@ -557,6 +557,13 @@ int main(int argc, char* argv[]) {
         game_server->set_character_archetype_provider([&xclient_service]() {
             return xclient_service.last_character_archetype_id();
         });
+        // PD2.3 (2026-05-05): pipe the customization JSON through to
+        // AppearanceEmitter so the visible character mesh is built from
+        // the player's actual lobby selection (skin/hair/eye/etc) rather
+        // than zero defaults.
+        game_server->set_customization_json_provider([&xclient_service]() {
+            return xclient_service.last_character_customization_json();
+        });
         if (local_game) {
             spdlog::warn("LOCAL-GAME mode: relay available on-demand via PlayReply intercept");
         }

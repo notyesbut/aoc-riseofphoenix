@@ -157,8 +157,29 @@ print(f"  parser ended at INNER {parser_end_bits} = RAW {parser_end_bits + OUTER
 #   bunch[2] header at INNER 2199, data 2319-5281 (3083 bits)
 #   leftover INNER 5282-6485 (1204 bits) ← also skip — may be more ch=0 garbage
 #
-# Output: bunch[0] + bunch[2] = 1642 + 3083 = 4725 bits = 591 bytes
+# 2026-04-29 PM33 BUG FIX (v4): SKIP bunch[0] AND bunch[1].
+#
+# Verbose UE5 net log (LogNetTraffic VeryVerbose) at PacketId 14314 (= our
+# pkt#78 emit) showed:
+#   "Unreliable Bunch, Channel 85: Size 3.4+201.9"
+#   "Received unreliable bunch before open (Channel 85 Current Sequence 953)"
+#   "String is too large (Size: 1744830464, Max: 16777216)"
+#   "Channel name serialization failed."
+#
+# The captured header itself confirms bunch[0] is ctrl=0 open=0 reliable=0 —
+# i.e., an unreliable property update on ch=85, NOT a GUIDExport channel-
+# open as PM3 memory mistakenly assumed.  In the original session ch=85
+# was opened by EARLIER reliable bunches (the verbose log later shows the
+# real open at PacketId 14506, ChSequence 954).  We never replay those
+# earlier ch=85 packets, so when our pkt#78 ships bunch[0] at PacketId
+# 14314 the channel doesn't exist yet on the client → "before open" →
+# parser cursor desync into bunch[2]'s ChName → CNSF.
+#
+# Output: only bunch[2] = 3083 bits = 386 bytes.
+# bunch[2] (ch=114, ctrl=1, reliable=1) is the actual reliable control
+# bunch we need for the Pawn ActorOpen.
 SKIP_BUNCH_1 = True
+SKIP_BUNCH_0 = True  # ← v4 (PM33): drop unreliable ch=85 update
 
 if SKIP_BUNCH_1:
     # Compute INNER bit ranges from parser output
@@ -178,26 +199,45 @@ if SKIP_BUNCH_1:
 
     bunch_0_bits = b0_end_raw - b0_start_raw
     bunch_2_bits = b2_end_raw - b2_start_raw
-    total_bits = bunch_0_bits + bunch_2_bits
 
-    print(f"v3: SKIP bunch[1] (ch=0 control) — emit only bunch[0]+bunch[2]")
-    print(f"  bunch[0] (ch=85): RAW [{b0_start_raw}, {b0_end_raw})  = {bunch_0_bits} bits")
-    print(f"  bunch[2] (ch=114): RAW [{b2_start_raw}, {b2_end_raw}) = {bunch_2_bits} bits")
-    print(f"  total = {total_bits} bits ({(total_bits+7)//8} bytes)")
+    out_bytes = bytearray()
+    out_bit_count = 0
 
-    out_bytes = bytearray((total_bits + 7) // 8)
-    out_bit = 0
-    for src_bit in range(b0_start_raw, b0_end_raw):
-        bit = (p[src_bit >> 3] >> (src_bit & 7)) & 1
-        if bit:
-            out_bytes[out_bit >> 3] |= (1 << (out_bit & 7))
-        out_bit += 1
-    for src_bit in range(b2_start_raw, b2_end_raw):
-        bit = (p[src_bit >> 3] >> (src_bit & 7)) & 1
-        if bit:
-            out_bytes[out_bit >> 3] |= (1 << (out_bit & 7))
-        out_bit += 1
-    assert out_bit == total_bits
+    if SKIP_BUNCH_0:
+        print(f"v4 (PM33): SKIP bunch[0] (ch=85 unreliable) AND bunch[1] (ch=0 ctrl) "
+              f"— emit only bunch[2]")
+        print(f"  bunch[2] (ch=114 reliable ctrl): RAW [{b2_start_raw}, {b2_end_raw}) "
+              f"= {bunch_2_bits} bits")
+        total_bits = bunch_2_bits
+        out_bytes = bytearray((total_bits + 7) // 8)
+        out_bit = 0
+        for src_bit in range(b2_start_raw, b2_end_raw):
+            bit = (p[src_bit >> 3] >> (src_bit & 7)) & 1
+            if bit:
+                out_bytes[out_bit >> 3] |= (1 << (out_bit & 7))
+            out_bit += 1
+        assert out_bit == total_bits
+        print(f"  total = {total_bits} bits ({(total_bits+7)//8} bytes)")
+    else:
+        total_bits = bunch_0_bits + bunch_2_bits
+        print(f"v3: SKIP bunch[1] (ch=0 control) — emit bunch[0]+bunch[2]")
+        print(f"  bunch[0] (ch=85): RAW [{b0_start_raw}, {b0_end_raw})  = {bunch_0_bits} bits")
+        print(f"  bunch[2] (ch=114): RAW [{b2_start_raw}, {b2_end_raw}) = {bunch_2_bits} bits")
+        print(f"  total = {total_bits} bits ({(total_bits+7)//8} bytes)")
+
+        out_bytes = bytearray((total_bits + 7) // 8)
+        out_bit = 0
+        for src_bit in range(b0_start_raw, b0_end_raw):
+            bit = (p[src_bit >> 3] >> (src_bit & 7)) & 1
+            if bit:
+                out_bytes[out_bit >> 3] |= (1 << (out_bit & 7))
+            out_bit += 1
+        for src_bit in range(b2_start_raw, b2_end_raw):
+            bit = (p[src_bit >> 3] >> (src_bit & 7)) & 1
+            if bit:
+                out_bytes[out_bit >> 3] |= (1 << (out_bit & 7))
+            out_bit += 1
+        assert out_bit == total_bits
 else:
     print(f"Extracting bits [{FIRST_BUNCH_HEADER_BIT}..{END_BIT}) = {END_BIT - FIRST_BUNCH_HEADER_BIT} bits "
           f"({(END_BIT - FIRST_BUNCH_HEADER_BIT + 7) // 8} bytes)")

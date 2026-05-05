@@ -1,0 +1,294 @@
+Captured pkt#78 PlayerPawn ActorOpen — subobject extraction
+================================================================================
+
+Total stream:  5160 bits (645 bytes)
+bunch[2]:      2077-5160 (3083 bits)
+bunch[2] header: 120 bits
+bunch[2] payload: bit 2197 - 5160
+
+
+──── Subobject 0: BaseCharacterInfo ────
+  start_bit: 2207 (rel bunch2=130, rel payload=10)
+  sub_guid: 966617837620717760302 (SIP-encoded)
+  V3 header bits: 91
+  payload bits: 101
+  total block bits: 192 (24 bytes)
+  ── Full block bytes (V3 header + payload), 24B ──
+    0x75, 0xf5, 0x26, 0xc7, 0x46, 0xf6, 0xd5, 0x14, 0x36, 0x47, 0x57, 0x26,
+    0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x55, 0x26,
+  ── Payload-only bytes, 13B ──
+    0xe4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0xa0, 0xca,
+    0x04,
+
+──── Subobject 1: CombatInfo ────
+  start_bit: 2401 (rel bunch2=324, rel payload=204)
+  sub_guid: 122575417 (SIP-encoded)
+  V3 header bits: 43
+  payload bits: 25
+  total block bits: 68 (9 bytes)
+  ── Full block bytes (V3 header + payload), 9B ──
+    0xcd, 0xa5, 0xcd, 0xd1, 0x95, 0xb9, 0xd1, 0x31, 0x05,
+  ── Payload-only bytes, 4B ──
+    0x37, 0x3a, 0xa6, 0x00,
+
+──── Subobject 2: OwnerInfo ────
+  start_bit: 2473 (rel bunch2=396, rel payload=276)
+  sub_guid: 59 (SIP-encoded)
+  V3 header bits: 19
+  payload bits: 25
+  total block bits: 44 (6 bytes)
+  ── Full block bytes (V3 header + payload), 6B ──
+    0xd9, 0x95, 0xb1, 0x01, 0x00, 0x00,
+  ── Payload-only bytes, 4B ──
+    0x36, 0x00, 0x00, 0x00,
+
+──── Subobject 3: BackpackComponent ────
+  start_bit: 2654 (rel bunch2=577, rel payload=457)
+  sub_guid: 134843 (SIP-encoded)
+  V3 header bits: 35
+  payload bits: 25
+  total block bits: 60 (8 bytes)
+  ── Full block bytes (V3 header + payload), 8B ──
+    0xdd, 0xed, 0x40, 0x94, 0xb9, 0x13, 0x00, 0x00,
+  ── Payload-only bytes, 4B ──
+    0x77, 0x02, 0x00, 0x00,
+
+──── Subobject 4: EquipmentComponent ────
+  start_bit: 2805 (rel bunch2=728, rel payload=608)
+  sub_guid: 16 (SIP-encoded)
+  V3 header bits: 19
+  payload bits: 0
+  total block bits: 19 (3 bytes)
+  ── Full block bytes (V3 header + payload), 3B ──
+    0x81, 0x04, 0x00,
+  ── Payload-only bytes, 0B ──
+
+
+──── Subobject 5: QuestStorageComponent ────
+  start_bit: 2849 (rel bunch2=772, rel payload=652)
+  sub_guid: 14028676272 (SIP-encoded)
+  V3 header bits: 51
+  payload bits: 24
+  total block bits: 75 (10 bytes)
+  ── Full block bytes (V3 header + payload), 10B ──
+    0x85, 0xcd, 0x95, 0x0d, 0xa1, 0x85, 0xc9, 0x85, 0x8d, 0x01,
+  ── Payload-only bytes, 3B ──
+    0xb9, 0xb0, 0x31,
+
+──── Subobject 6: RewardStorageComponent ────
+  start_bit: 2929 (rel bunch2=852, rel payload=732)
+  sub_guid: 7346 (SIP-encoded)
+  V3 header bits: 27
+  payload bits: 18
+  total block bits: 45 (6 bytes)
+  ── Full block bytes (V3 header + payload), 6B ──
+    0x95, 0xc9, 0x25, 0xb9, 0x99, 0x1d,
+  ── Payload-only bytes, 3B ──
+    0x37, 0xb3, 0x03,
+
+──── Subobject 7: CharacterAppearanceComponent ────
+  start_bit: 2993 (rel bunch2=916, rel payload=796)
+  sub_guid: 58 (SIP-encoded)
+  V3 header bits: 19
+  payload bits: 126
+  total block bits: 145 (19 bytes)
+  ── Full block bytes (V3 header + payload), 19B ──
+    0xd1, 0xe5, 0xbf, 0x9a, 0x32, 0x77, 0x02, 0x00, 0x00, 0x00, 0x00, 0xf0,
+    0x00, 0x00, 0x00, 0x90, 0xfb, 0xa1, 0x01,
+  ── Payload-only bytes, 16B ──
+    0x57, 0x53, 0xe6, 0x4e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00,
+    0x00, 0x72, 0x3f, 0x34,
+
+──── Subobject 8: slot8 ────
+  start_bit: 3142 (rel bunch2=1065, rel payload=945)
+  sub_guid: 1053 (SIP-encoded)
+  V3 header bits: 27
+  payload bits: 25
+  total block bits: 52 (7 bytes)
+  ── Full block bytes (V3 header + payload), 7B ──
+    0xed, 0x40, 0x94, 0xb9, 0x13, 0x00, 0x00,
+  ── Payload-only bytes, 4B ──
+    0x77, 0x02, 0x00, 0x00,
+
+──── Subobject 9: slot9 ────
+  start_bit: 3281 (rel bunch2=1204, rel payload=1084)
+  sub_guid: 3 (SIP-encoded)
+  V3 header bits: 27
+  payload bits: 2
+  total block bits: 29 (4 bytes)
+  ── Full block bytes (V3 header + payload), 4B ──
+    0x19, 0x2c, 0x00, 0x00,
+  ── Payload-only bytes, 1B ──
+    0x00,
+
+──── Subobject 10: slot10 ────
+  start_bit: 3324 (rel bunch2=1247, rel payload=1127)
+  sub_guid: 116 (SIP-encoded)
+  V3 header bits: 19
+  payload bits: 107
+  total block bits: 126 (16 bytes)
+  ── Full block bytes (V3 header + payload), 16B ──
+    0xa1, 0xb7, 0x36, 0xb1, 0x30, 0xba, 0x24, 0x37, 0xb3, 0x37, 0x00, 0xde,
+    0xd3, 0xf8, 0x5c, 0x14,
+  ── Payload-only bytes, 14B ──
+    0x26, 0x16, 0x46, 0x97, 0xe4, 0x66, 0xf6, 0x06, 0xc0, 0x7b, 0x1a, 0x9f,
+    0x8b, 0x02,
+
+──── Subobject 11: slot11 ────
+  start_bit: 3558 (rel bunch2=1481, rel payload=1361)
+  sub_guid: 134843 (SIP-encoded)
+  V3 header bits: 35
+  payload bits: 25
+  total block bits: 60 (8 bytes)
+  ── Full block bytes (V3 header + payload), 8B ──
+    0xdd, 0xed, 0x40, 0x94, 0xb9, 0x13, 0x00, 0x00,
+  ── Payload-only bytes, 4B ──
+    0x77, 0x02, 0x00, 0x00,
+
+──── Subobject 12: slot12 ────
+  start_bit: 3753 (rel bunch2=1676, rel payload=1556)
+  sub_guid: 7099 (SIP-encoded)
+  V3 header bits: 27
+  payload bits: 25
+  total block bits: 52 (7 bytes)
+  ── Full block bytes (V3 header + payload), 7B ──
+    0xdd, 0xb9, 0x95, 0xc9, 0x25, 0xb9, 0x09,
+  ── Payload-only bytes, 4B ──
+    0xb9, 0x24, 0x37, 0x01,
+
+──── Subobject 13: slot13 ────
+  start_bit: 3809 (rel bunch2=1732, rel payload=1612)
+  sub_guid: 55 (SIP-encoded)
+  V3 header bits: 27
+  payload bits: 67
+  total block bits: 94 (12 bytes)
+  ── Full block bytes (V3 header + payload), 12B ──
+    0xbd, 0x01, 0x34, 0x8c, 0x71, 0xc1, 0xab, 0x32, 0x77, 0x02, 0x00, 0x00,
+  ── Payload-only bytes, 9B ──
+    0x31, 0x2e, 0x78, 0x55, 0xe6, 0x4e, 0x00, 0x00, 0x00,
+
+──── Subobject 14: slot14 ────
+  start_bit: 3974 (rel bunch2=1897, rel payload=1777)
+  sub_guid: 134843 (SIP-encoded)
+  V3 header bits: 35
+  payload bits: 25
+  total block bits: 60 (8 bytes)
+  ── Full block bytes (V3 header + payload), 8B ──
+    0xdd, 0xed, 0x40, 0x94, 0xb9, 0x13, 0x00, 0x00,
+  ── Payload-only bytes, 4B ──
+    0x77, 0x02, 0x00, 0x00,
+
+──── Subobject 15: slot15 ────
+  start_bit: 4125 (rel bunch2=2048, rel payload=1928)
+  sub_guid: 16 (SIP-encoded)
+  V3 header bits: 19
+  payload bits: 0
+  total block bits: 19 (3 bytes)
+  ── Full block bytes (V3 header + payload), 3B ──
+    0x81, 0x04, 0x00,
+  ── Payload-only bytes, 0B ──
+
+
+──── Subobject 16: slot16 ────
+  start_bit: 4169 (rel bunch2=2092, rel payload=1972)
+  sub_guid: 118315184 (SIP-encoded)
+  V3 header bits: 43
+  payload bits: 88
+  total block bits: 131 (17 bytes)
+  ── Full block bytes (V3 header + payload), 17B ──
+    0x85, 0x8d, 0xad, 0xc1, 0x85, 0x8d, 0xad, 0x0d, 0xbd, 0xb5, 0xc1, 0xbd,
+    0xb9, 0x95, 0xb9, 0xd1, 0x01,
+  ── Payload-only bytes, 11B ──
+    0xb1, 0xb5, 0xa1, 0xb7, 0x36, 0xb8, 0x37, 0xb7, 0x32, 0x37, 0x3a,
+
+──── Subobject 17: slot17 ────
+  start_bit: 4309 (rel bunch2=2232, rel payload=2112)
+  sub_guid: 73 (SIP-encoded)
+  V3 header bits: 19
+  payload bits: 19
+  total block bits: 38 (5 bytes)
+  ── Full block bytes (V3 header + payload), 5B ──
+    0x49, 0x36, 0x39, 0x09, 0x2b,
+  ── Payload-only bytes, 3B ──
+    0x27, 0x61, 0x05,
+
+──── Subobject 18: slot18 ────
+  start_bit: 4454 (rel bunch2=2377, rel payload=2257)
+  sub_guid: 134843 (SIP-encoded)
+  V3 header bits: 35
+  payload bits: 25
+  total block bits: 60 (8 bytes)
+  ── Full block bytes (V3 header + payload), 8B ──
+    0xdd, 0xed, 0x40, 0x94, 0xb9, 0x13, 0x00, 0x00,
+  ── Payload-only bytes, 4B ──
+    0x77, 0x02, 0x00, 0x00,
+
+──── Subobject 19: slot19 ────
+  start_bit: 4601 (rel bunch2=2524, rel payload=2404)
+  sub_guid: 3 (SIP-encoded)
+  V3 header bits: 27
+  payload bits: 4
+  total block bits: 31 (4 bytes)
+  ── Full block bytes (V3 header + payload), 4B ──
+    0x19, 0x4c, 0x00, 0x00,
+  ── Payload-only bytes, 1B ──
+    0x00,
+
+──── Subobject 20: slot20 ────
+  start_bit: 4643 (rel bunch2=2566, rel payload=2446)
+  sub_guid: 5928 (SIP-encoded)
+  V3 header bits: 27
+  payload bits: 23
+  total block bits: 50 (7 bytes)
+  ── Full block bytes (V3 header + payload), 7B ──
+    0x45, 0x71, 0x75, 0x69, 0x70, 0x6d, 0x01,
+  ── Payload-only bytes, 3B ──
+    0x0d, 0xae, 0x2d,
+
+──── Subobject 21: slot21 ────
+  start_bit: 4716 (rel bunch2=2639, rel payload=2519)
+  sub_guid: 116 (SIP-encoded)
+  V3 header bits: 19
+  payload bits: 107
+  total block bits: 126 (16 bytes)
+  ── Full block bytes (V3 header + payload), 16B ──
+    0xa1, 0xb7, 0x36, 0xb8, 0x37, 0xb7, 0x32, 0x37, 0x3a, 0x80, 0x93, 0x6c,
+    0x72, 0x12, 0x57, 0x26,
+  ── Payload-only bytes, 14B ──
+    0x06, 0xf7, 0xe6, 0x56, 0xe6, 0x46, 0x07, 0x70, 0x92, 0x4d, 0x4e, 0xe2,
+    0xca, 0x04,
+
+──── Subobject 22: slot22 ────
+  start_bit: 4942 (rel bunch2=2865, rel payload=2745)
+  sub_guid: 134843 (SIP-encoded)
+  V3 header bits: 35
+  payload bits: 25
+  total block bits: 60 (8 bytes)
+  ── Full block bytes (V3 header + payload), 8B ──
+    0xdd, 0xed, 0x40, 0x94, 0xb9, 0x13, 0x00, 0x00,
+  ── Payload-only bytes, 4B ──
+    0x77, 0x02, 0x00, 0x00,
+
+──── Subobject 23: slot23 ────
+  start_bit: 5093 (rel bunch2=3016, rel payload=2896)
+  sub_guid: 48 (SIP-encoded)
+  V3 header bits: 19
+  payload bits: 0
+  total block bits: 19 (3 bytes)
+  ── Full block bytes (V3 header + payload), 3B ──
+    0x81, 0x05, 0x00,
+  ── Payload-only bytes, 0B ──
+
+
+
+================================================================================
+USAGE:
+  The 'Full block bytes' include the V3 header — splice these
+  directly into a bunch payload as a complete content block.
+
+  The 'Payload-only bytes' are what UCharacterAppearanceComponent's
+  OnRep_CharacterCustomization will receive — useful for analyzing
+  what fields the captured server actually replicated.
+
+  Subobject 7 (CharacterAppearanceComponent) is the one we want
+  to splice for visible character mesh.

@@ -45,18 +45,30 @@ namespace aoc { namespace protocol {
 
 /// Per-player NetGUID block.  Returned to the caller after allocation
 /// so they can pass specific GUIDs into the actor builders.
+///
+/// PM52 (2026-04-30) — STRIDE BY 2 (even ObjectIds only).
+///   AOC's UE5 client treats bit 0 of the NetGUID's ObjectId as a flag:
+///     bit 0 = 0  → bare dynamic reference (just 128 bits, no path data)
+///     bit 0 = 1  → inline-export reference (followed by outer GUID + path)
+///   When the parser sees an "inline-export" GUID with no inline data
+///   following, it raises an archive error → SerializeNewActor fails.
+///   PC at base+0 worked because base 0x01000000 is even.  Pawn at
+///   base+1 (= 0x01000001, odd) failed with "archive error parsing
+///   NetGUID" + IsDynamic:0.  Striding by 2 keeps every slot even.
+///   Block size 256 / stride 2 = 128 dynamic actors per player — still
+///   plenty.
 struct PlayerNetGuidBlock {
-    uint64_t base                 = 0;   // First GUID in the block
+    uint64_t base                 = 0;   // First GUID in the block (even)
     uint64_t player_controller    = 0;   // base + 0
-    uint64_t pawn                 = 0;   // base + 1
-    uint64_t player_state         = 0;   // base + 2
-    uint64_t ability_component    = 0;   // base + 3
-    uint64_t stats_component      = 0;   // base + 4
-    uint64_t alignment_component  = 0;   // base + 5
-    uint64_t combat_component     = 0;   // base + 6
-    uint64_t base_character_info  = 0;   // base + 7
-    uint64_t interact_info        = 0;   // base + 8
-    // + room for future growth up to kBlockSize-1
+    uint64_t pawn                 = 0;   // base + 2
+    uint64_t player_state         = 0;   // base + 4
+    uint64_t ability_component    = 0;   // base + 6
+    uint64_t stats_component      = 0;   // base + 8
+    uint64_t alignment_component  = 0;   // base + 10
+    uint64_t combat_component     = 0;   // base + 12
+    uint64_t base_character_info  = 0;   // base + 14
+    uint64_t interact_info        = 0;   // base + 16
+    // + room for future growth: 128 - 9 used = 119 free slots × stride 2
 
     bool is_valid() const { return base != 0; }
 };
@@ -89,17 +101,18 @@ public:
             return {};
         }
 
+        // PM52: stride by 2 to keep ObjectId bit 0 = 0 (bare-dynamic flag).
         PlayerNetGuidBlock block;
         block.base                 = base;
         block.player_controller    = base + 0;
-        block.pawn                 = base + 1;
-        block.player_state         = base + 2;
-        block.ability_component    = base + 3;
-        block.stats_component      = base + 4;
-        block.alignment_component  = base + 5;
-        block.combat_component     = base + 6;
-        block.base_character_info  = base + 7;
-        block.interact_info        = base + 8;
+        block.pawn                 = base + 2;
+        block.player_state         = base + 4;
+        block.ability_component    = base + 6;
+        block.stats_component      = base + 8;
+        block.alignment_component  = base + 10;
+        block.combat_component     = base + 12;
+        block.base_character_info  = base + 14;
+        block.interact_info        = base + 16;
 
         {
             std::lock_guard<std::mutex> lk(mu_);

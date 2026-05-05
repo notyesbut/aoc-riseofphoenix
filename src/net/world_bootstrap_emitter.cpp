@@ -12,6 +12,10 @@
 #include "net/bootstrap_emitter.h"
 #include "net/pc_emitter.h"
 #include "net/pawn_emitter.h"
+#include "net/player_pawn_emitter.h"        // PM39 (2026-04-30) Phase 2
+#include "net/player_pawn_splicer.h"         // PM106 (2026-05-04) Phase D Step 2.2
+#include "net/appearance_emitter.h"          // PM103 (2026-05-04) Phase D Step 2
+#include "net/player_state_emitter.h"        // PD3 (2026-05-05) Phase D Step 3
 
 #ifdef _WIN32
 #  include <winsock2.h>
@@ -140,6 +144,104 @@ bool WorldBootstrapEmitter::dispatch_one(const sockaddr_in& addr,
     case EmissionMode::NativePawn78: {
         PawnEmitter pe(host_, client_key_);
         return pe.emit_captured(addr);
+    }
+
+    case EmissionMode::NativePlayerPawn: {
+        // PM39 (2026-04-30) — Path C Phase 2: native player Pawn ActorOpen.
+        // Distinct from NativePawn78 above (which spliced a captured Guard
+        // NPC).  This emits a fresh Pawn actor on its own channel with a
+        // server-minted NetGUID for the connected player.
+        PlayerPawnEmitter ppe(host_, client_key_);
+        if (!ppe.emit_open(addr)) return false;
+
+        // ── PM106 (2026-05-04) — Phase D Step 2.2: pkt#78 verbatim splice ──
+        //
+        // Ship the captured pkt#78 (full 3-bunch inner stream, 5160 bits)
+        // AFTER our synthetic PlayerPawnEmitter has opened the player Pawn
+        // channel.  This registers the captured archetype + level paths in
+        // the client's PackageMap and creates a SECOND pawn (NetGUID 54)
+        // alongside our minted one (NetGUID 16777218).
+        //
+        // Goal: validate that the captured pawn appears with a visible
+        // mesh (proves AOC mesh assembly works given the right replicated
+        // data).  If yes, next step is to either possess the captured pawn
+        // OR rewrite the captured Pawn NetGUID to match our minted one.
+        //
+        // Gated on probe_pkt78_splice.txt (default disabled).  Failure is
+        // non-fatal — possession still works via the synthetic path.
+        //
+        // We send the splice BEFORE the PC.Pawn link below so the splice's
+        // ch=0 control message bunch doesn't compete with our PC channel
+        // updates that follow.  ch=85 GUIDExport carries the archetype
+        // path registration that the synthetic Pawn already emitted, but
+        // duplicate registrations are harmless to the client's PackageMap.
+        PlayerPawnSplicer pps(host_, client_key_);
+        if (!pps.emit_captured_stream(addr)) {
+            spdlog::warn("[WorldBootstrap] pkt#78 splice failed "
+                         "(non-fatal — synthetic path still active)");
+        }
+
+        // ── PM53 (2026-04-30) — Phase C: link PC.Pawn → AcknowledgePossession ──
+        //
+        // Now that the Pawn actor is registered on the client (RegisterNetGUID
+        // confirmed in test logs at line 3999, channel 19 IsDynamic:1), we send
+        // a property update on the PC channel telling the client our PC's
+        // .Pawn = <our minted Pawn NetGUID>.  Client's OnRep_Pawn then fires
+        // AcknowledgePossession() — camera attaches, input routes, player is
+        // in-world and controllable.
+        //
+        // Failure here is non-fatal: Pawn channel is open, just orphaned from
+        // the PC.  Log warn and proceed; user will iterate cmd_handle if needed.
+        PcEmitter pc(host_, client_key_);
+        if (!pc.emit_pawn_link(addr)) {
+            spdlog::warn("[WorldBootstrap] PC.Pawn link emission failed "
+                         "(non-fatal — Pawn channel is open but unpossessed)");
+        }
+
+        // PM103 (2026-05-04) — Phase D Step 2: appearance seed (Option A test).
+        //
+        // Fire the AppearanceEmitter AFTER possession completes.  Currently
+        // sends a near-no-op bunch (single ForceHideHeldItems=1 property at
+        // a placeholder handle).  Goal: prove the property update pipeline
+        // reaches CharacterAppearanceComponent end-to-end.  If this bunch
+        // is accepted without errors, we have the infrastructure to send
+        // real appearance data once we extract the property RepIndices and
+        // struct layouts from the captured replay (Phase D Step 2.1).
+        //
+        // Failure here is non-fatal — possession is already complete.
+        AppearanceEmitter app(host_, client_key_);
+        if (!app.emit_default_seed(addr)) {
+            spdlog::warn("[WorldBootstrap] Appearance seed emission failed "
+                         "(non-fatal — possession is already established)");
+        }
+
+        // Phase D Step 3 (2026-05-05) — PlayerState emission.
+        //
+        // After possession + appearance, emit the PlayerState ActorOpen
+        // carrying real character identity (PlayerName, CharacterArchetype,
+        // etc.) so the client's mesh assembler sees who the player is.
+        // Probe-gated; default disabled (no-op success).
+        //
+        // Iter2: ActorOpen on ch=21 chSeq=954 (just channel registration).
+        // Iter3: PlayerName property update on ch=21 chSeq=955 immediately
+        //        after the open lands.
+        PlayerStateEmitter ps(host_, client_key_);
+        if (!ps.emit_open(addr)) {
+            spdlog::warn("[WorldBootstrap] PlayerState ActorOpen failed "
+                         "(non-fatal)");
+        }
+        if (!ps.emit_player_name(addr)) {
+            spdlog::warn("[WorldBootstrap] PlayerName update failed "
+                         "(non-fatal)");
+        }
+        // Iter4: link PC.PlayerState → our minted PS NetGUID so the
+        // nameplate widget re-binds to OUR PS (where we sent PlayerName).
+        // Reuses pc but only fires when probe_player_state_emit.txt = 1.
+        if (!pc.emit_player_state_link(addr)) {
+            spdlog::warn("[WorldBootstrap] PC.PlayerState link failed "
+                         "(non-fatal)");
+        }
+        return true;
     }
     }
 

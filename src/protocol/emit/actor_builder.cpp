@@ -15,6 +15,7 @@
 #include "protocol/emit/intrepid_netguid.h"
 #include "protocol/emit/package_map_exporter.h"
 #include <algorithm>
+#include <cstdio>   // PM112: probe_v3_subobjects.txt parsing (FILE/fscanf)
 #include <cstring>
 #include <spdlog/spdlog.h>
 
@@ -133,13 +134,26 @@ void write_bunch_header(BunchWriter& out, const EmitContext& ctx,
     out.write_bit(ctx.has_mbg_value ? 1 : 0);
     out.write_bit(ctx.is_partial ? 1 : 0);
 
-    // ChSequence — canonical AoC format (matches sc_bunch_parser.h and
-    // the captured pkt#22 where ch=3 ChSeq=1978 requires 12 bits):
-    //   ch=0 (NMT control): 10 bits
-    //   ch>0 (actor chans): 12 bits (raw, not SerializeInt)
+    // ── PM50 (2026-04-30) — ChSeq 12→10 bit fix ──────────────────────────
+    //
+    // Bug found by diff_pc_bunch.py: client reads ChSeq as 10 bits via
+    // SerializeInt(MAX=1024), confirmed by PM14 RE of sub_144230D50 line
+    // 1441.  We were writing 12 bits → 2 extra bits drift the client's
+    // bit cursor → ChName.bIsHardcoded reads from a wrong position → the
+    // 32-bit SaveNum read returns garbage → CNSF cascade.
+    //
+    // PM20 (2026-04-28) fixed this in send_client_restart_native and
+    // scan_outgoing_packet_chseq + CALV STUB, but missed write_bunch_header
+    // here.  This is the root cause of "empty world with floating rocks"
+    // for every native session since PM35: PC ActorOpen has been silently
+    // CNSF'ing on the client → no actor channels ever opened → world
+    // streams via LoadMap but no PC, no Pawn, nothing.
+    //
+    // Old comment about "ch=3 ChSeq=1978 requires 12 bits" was wrong —
+    // 1978 wraps to 1978 & 0x3FF = 954 in 10 bits, which is what client
+    // sees.  10-bit ChSeq always works.
     if (ctx.is_reliable) {
-        const int chseq_bits = (ctx.channel == 0) ? 10 : 12;
-        out.write_bits(ctx.ch_sequence, chseq_bits);
+        out.write_serialize_int(ctx.ch_sequence, 1024);
     }
 
     // Partial sub-flags (only if partial) — 3 bits AoC extension:
@@ -262,29 +276,64 @@ size_t write_serialize_new_actor(BunchWriter& out, const ActorRuntime& runtime,
     }
 
     // bSerializeRotation
+    //
+    // PM102 (2026-05-04) — fix wire format to match UE5 stock
+    // FRotator::SerializeCompressed (NOT a custom 1-bit-per-axis form).
+    //
+    // UE5 per axis:
+    //   [1 bit bShortPitch]                  ALWAYS written
+    //   if (bShortPitch) [16 bits Pitch]     full uint16
+    //   else             [ 8 bits Pitch]     int8 truncated
+    //
+    // For zero rotation: 3 × (1 + 8) = 27 bits.
+    // For non-zero with |value| > 127: 1 + 16 = 17 bits per axis.
+    //
+    // Caller passes pitch/yaw/roll as int16 already (already truncated to
+    // UE5 quantized representation: world degrees * 65536 / 360 → int16).
+    auto write_compressed_short = [&](int16_t v) {
+        const bool b_short = (v < -128 || v > 127);
+        out.write_bit(b_short ? 1 : 0);
+        if (b_short) {
+            out.write_uint16(static_cast<uint16_t>(v));
+        } else {
+            // int8 cast through uint8 to preserve bit pattern
+            const uint8_t v8 = static_cast<uint8_t>(static_cast<int8_t>(v));
+            for (int i = 0; i < 8; ++i)
+                out.write_bit((v8 >> i) & 1);
+        }
+    };
     const bool has_rot = runtime.serialize_rotation ||
                           runtime.spawn_rotation.pitch != 0 ||
                           runtime.spawn_rotation.yaw   != 0 ||
                           runtime.spawn_rotation.roll  != 0;
     out.write_bit(has_rot ? 1 : 0);
     if (has_rot) {
-        // Compressed-short per axis: 1-bit flag + optional 16-bit value
-        out.write_bit(runtime.spawn_rotation.pitch != 0 ? 1 : 0);
-        if (runtime.spawn_rotation.pitch != 0)
-            out.write_uint16(static_cast<uint16_t>(runtime.spawn_rotation.pitch));
-        out.write_bit(runtime.spawn_rotation.yaw != 0 ? 1 : 0);
-        if (runtime.spawn_rotation.yaw != 0)
-            out.write_uint16(static_cast<uint16_t>(runtime.spawn_rotation.yaw));
-        out.write_bit(runtime.spawn_rotation.roll != 0 ? 1 : 0);
-        if (runtime.spawn_rotation.roll != 0)
-            out.write_uint16(static_cast<uint16_t>(runtime.spawn_rotation.roll));
+        write_compressed_short(runtime.spawn_rotation.pitch);
+        write_compressed_short(runtime.spawn_rotation.yaw);
+        write_compressed_short(runtime.spawn_rotation.roll);
     }
 
-    // bSerializeScale — not serialized for MVP
+    // bSerializeScale — flag bit; if true, writes vector data (we don't
+    // support setting non-default scale yet).  Setting to true without
+    // writing the data caused PM100's bug.
     out.write_bit(runtime.serialize_scale ? 1 : 0);
+    if (runtime.serialize_scale) {
+        // Stock UE5 uses FVector_NetQuantize10 for scale (same as location).
+        // Default scale is (1, 1, 1).  Encode as packed vector with 24-bit/axis.
+        // Caller must populate runtime.scale_scaled_x/y/z (not yet wired);
+        // for now, write three packed-vector zeros so we don't drift.
+        write_packed_vector(out, 0, 0, 0, 24);
+    }
 
-    // bSerializeVelocity — not serialized for MVP
+    // bSerializeVelocity — flag bit + optional packed vector.
+    // PM100's bug: setting flag=1 without writing vector data caused 75+
+    // bit drift on the wire.  Now writes proper packed vector when enabled.
     out.write_bit(runtime.serialize_velocity ? 1 : 0);
+    if (runtime.serialize_velocity) {
+        // Default zero velocity (Pawn at rest).  When movement replication
+        // is implemented, runtime.velocity_scaled_xyz will be populated.
+        write_packed_vector(out, 0, 0, 0, 20);  // velocity uses ~20 bit max
+    }
 
     return out.bit_pos() - start;
 }
@@ -308,6 +357,77 @@ void emit_handle_stream_entry(uint32_t handle,
     out.write_sip(num_bits);
     // Copy the rendered bits into `out`.
     out.write_bit_range(tmp.data(), 0, num_bits);
+}
+
+/// Write a V3 subobject CREATION content block — registers a NEW dynamic
+/// subobject on the channel's actor, with its class identified via NetGUID.
+///
+/// PM111 path: bStablyNamed=0 + SIP class_guid.  AOC's parser does NOT
+/// like this format (PM111 test failed silently → no possession ack →
+/// loading screen loop).  Kept here as opt-in for diagnostic comparison.
+void write_v3_subobject_creation_dynamic(BunchWriter& out,
+                                           uint64_t sub_guid,
+                                           uint64_t class_guid,
+                                           const uint8_t* payload_bits,
+                                           uint32_t num_payload_bits) {
+    out.write_bit(0);                         // bOutermostEnd
+    out.write_bit(0);                         // bIsChannelActor (=0 → subobject)
+    out.write_sip(sub_guid);                  // subobject NetGUID
+    out.write_bit(0);                         // bStablyNamed = 0 (dynamic)
+    out.write_sip(class_guid);                // class CDO NetGUID
+    out.write_sip(num_payload_bits);
+    if (num_payload_bits > 0 && payload_bits != nullptr) {
+        out.write_bit_range(payload_bits, 0, num_payload_bits);
+    }
+}
+
+/// Write a V3 STABLY-NAMED subobject content block (PM118 — captured-format).
+///
+/// PM118 (2026-05-04) — corrected via PCAP analysis of captured ranger
+/// respawn (`aoc_ranger_respawn_home_point_j_20260205_230233.pcap`).  Real
+/// captured ActorOpen content block bit-level dump:
+///
+///   bit 127: bHasRepLayout = 1   (explicit-size form; NumPayloadBits follows)
+///   bit 128: bIsActor      = 0
+///   bits 129..144: sub_guid SIP64 = 0x3FFD → val=8190 dyn=1 (16 bits)
+///   bit 145: bStablyNamed  = 1   (skip class_guid)
+///   bits 146..153: NumPayloadBits SIP = 79 (8 bits)
+///   bits 154..232: 79 bits payload (RepLayout: SIP handle then cmd payload)
+///
+/// PRIOR ATTEMPTS THAT FAILED:
+/// - PM114: SIP sub_guid + wrong bit-0 (=bOutermostEnd=0 instead of
+///          bHasRepLayout=1) → ContentBlockFail
+/// - PM115: 128-bit FIntrepidNetGUID for sub_guid → ContentBlockHeaderObjFail
+///   (my prior RE agent was wrong; real captured format uses SIP64)
+///
+/// CORRECT WIRE FORMAT (PM118):
+///   [1 bit  bHasRepLayout = 1]    ← was 0 in PM114 (wrong)
+///   [1 bit  bIsActor      = 0]
+///   [SIP64  sub_guid]              ← variable-length packed int, NOT 128b
+///   [1 bit  bStablyNamed  = 1]
+///   [SIP    NumPayloadBits]
+///   [<NumPayloadBits> bits payload]
+///
+/// For our session-minted sub_guid 16777219 (NetGUID > 2^21): SIP64 encodes
+/// in 5 bytes (40 bits).  Total per block: 2 + 40 + 1 + 8 = ~51 bits + payload.
+/// 8 components × 51 = ~408 bits → bunch ~3419 bits (under 8192 cap).
+///
+/// `sub_guid` is a plain uint64 here (NOT FIntrepidNetGUID).  Stably-named
+/// resolution on the receiving client looks up the subobject by name on
+/// the actor's BP CDO (auto-instantiated when SerializeNewActor opened the
+/// channel) — no PackageMap pre-registration required.
+void write_v3_subobject_stably_named(BunchWriter& out,
+                                       uint64_t sub_guid,
+                                       const uint8_t* payload_bits,
+                                       uint32_t num_payload_bits) {
+    out.write_bit(1);                         // bHasRepLayout = 1 (PM118 fix)
+    out.write_bit(0);                         // bIsActor = 0 (subobject)
+    out.write_sip(sub_guid);                  // SIP64 sub_guid (variable)
+    out.write_bit(1);                         // bStablyNamed = 1
+    out.write_sip(num_payload_bits);          // SIP NumPayloadBits
+    if (num_payload_bits > 0 && payload_bits != nullptr) {
+        out.write_bit_range(payload_bits, 0, num_payload_bits);
+    }
 }
 
 /// Write the content block for the actor root or one subobject.
@@ -528,6 +648,35 @@ size_t ActorBuilder::build_spawn(const schema::ActorSchema& schema,
                              schema.root_properties, runtime.root_values);
 
         // 3. Per-component content blocks
+        //
+        // Modes, gated by `probe_v3_subobjects.txt`:
+        //
+        //   "0" or absent → legacy per-property stream only (PM107 baseline,
+        //                   possession works, no body)
+        //   "1"           → PM111 dynamic-class form (bStablyNamed=0 + class_guid
+        //                   as SIP) — known broken: ContentBlockFail
+        //   "2"           → PM114 stably-named form with SIP sub_guid — also
+        //                   broken with ContentBlockFail (wrong sub_guid type)
+        //   "3"           → PM115 stably-named form with 128b FIntrepidNetGUID
+        //                   sub_guid + correct field order (NumPayloadBits
+        //                   before bStablyNamed).  Per RE of sub_143F2C340.
+        int v3_mode = 0;
+        if (std::FILE* fp = std::fopen("probe_v3_subobjects.txt", "r")) {
+            std::fscanf(fp, "%d", &v3_mode);
+            std::fclose(fp);
+        }
+
+        // Helper to derive a per-subobject FIntrepidNetGUID from the actor's.
+        // Pattern: ObjectId = actor.ObjectId + (ci + 1), ServerId same as
+        // actor, Randomizer = derived hash so the value is stable.
+        auto rnd_for = [](uint64_t obj) -> uint32_t {
+            uint64_t h = obj * 0x9E3779B97F4A7C15ULL;
+            h ^= (h >> 33);
+            h *= 0xFF51AFD7ED558CCDULL;
+            h ^= (h >> 33);
+            return static_cast<uint32_t>(h);
+        };
+
         for (size_t ci = 0; ci < schema.components.size(); ++ci) {
             const auto& comp = schema.components[ci];
             std::unordered_map<uint32_t, SchemaValue> comp_vals;
@@ -538,9 +687,115 @@ size_t ActorBuilder::build_spawn(const schema::ActorSchema& schema,
                     comp_vals[prop.handle] = it->second;
                 }
             }
-            uint64_t subobj_guid = runtime.actor_netguid + ci + 1;
-            write_content_block(payload, /*is_actor=*/false, subobj_guid,
+            uint64_t subobj_obj_id = runtime.actor_netguid + ci + 1;
+
+            // Render the per-property payload first (empty in Phase 1)
+            BunchWriter prop_payload(128);
+            write_content_block(prop_payload, /*is_actor=*/false, subobj_obj_id,
                                  comp.properties, comp_vals);
+            uint32_t payload_bits =
+                static_cast<uint32_t>(prop_payload.bit_pos());
+
+            // ── Phase D Step 2.1 (2026-05-05) — Appearance payload override ──
+            //
+            // When the caller (PlayerPawnEmitter) supplied a pre-serialized
+            // FCharacterCustomizationSaveData payload AND we're emitting the
+            // CharacterAppearanceComponent subobject (ci == appearance_subobject_index),
+            // REPLACE the empty payload with the supplied bits.
+            //
+            // The bits encode a UE5 property-update stream targeting the two
+            // replicated fields (CharacterCustomization, bForceHideHeldItems).
+            // When the client receives this V3 content block:
+            //   1. ReadContentBlockHeader resolves `subobj_obj_id` to the
+            //      live UCharacterAppearanceComponent on the spawned Pawn
+            //   2. ReadContentBlockPayload reads NumPayloadBits worth of bits
+            //   3. FRepLayout::ReceiveProperties processes the property updates
+            //   4. OnRep_CharacterCustomization fires → mesh assembles
+            //
+            // This is what makes the visible character body appear in-world
+            // (replacing the floating "Player" nameplate from the empty path).
+            if (ci == ctx.appearance_subobject_index
+                && ctx.appearance_payload_bit_count > 0
+                && ctx.appearance_payload_bits != nullptr) {
+                prop_payload.reset();
+                prop_payload.write_bit_range(ctx.appearance_payload_bits,
+                                              0,
+                                              ctx.appearance_payload_bit_count);
+                payload_bits = ctx.appearance_payload_bit_count;
+                spdlog::warn("[ActorBuilder] PD2.1 — CharacterAppearance subobject "
+                              "(ci={}) using supplied payload: {} bits",
+                              ci, payload_bits);
+            }
+
+            // PD2.1 (2026-05-05) — when this is the appearance subobject AND
+            // we have a payload to deliver, ALWAYS wrap it in a V3 stably-
+            // named content block (regardless of v3_mode).  Without the
+            // V3 header the client interprets the bits as actor-root
+            // properties → garbage parse → connection timeout.
+            const bool is_appearance_with_payload =
+                (ci == ctx.appearance_subobject_index &&
+                 ((ctx.appearance_payload_bit_count > 0 &&
+                   ctx.appearance_payload_bits != nullptr)
+                  || ctx.appearance_force_v3_wrap));
+
+            if (v3_mode == 3 || is_appearance_with_payload) {
+                // PM118 — captured-format wire: SIP64 sub_guid (NOT 128-bit
+                // FIntrepidNetGUID), bHasRepLayout=1, bStablyNamed=1.
+                // Per PCAP decode of captured ranger respawn ActorOpen.
+                (void)rnd_for;
+                write_v3_subobject_stably_named(payload, subobj_obj_id,
+                                                  prop_payload.data(), payload_bits);
+            } else if (v3_mode == 1 && comp.class_netguid != 0) {
+                write_v3_subobject_creation_dynamic(payload, subobj_obj_id,
+                                                      comp.class_netguid,
+                                                      prop_payload.data(), payload_bits);
+            } else {
+                // Mode 0 (and unsupported modes 2): append legacy property
+                // bits as-is (no V3 header)
+                if (payload_bits > 0) {
+                    payload.write_bit_range(prop_payload.data(), 0, payload_bits);
+                }
+            }
+        }
+
+        // PM120 (2026-05-04) — PROPER trailing actor-root content block.
+        //
+        // PM119 wrote only [bHasRepLayout=0][bIsActor=1] (2 bits) — but per
+        // F5 decomp of UActorChannel::ReadContentBlockPayload (sub_7FF6BD25DA40),
+        // the caller ALWAYS reads SIP NumPayloadBits via vtable+408 AFTER
+        // ReadContentBlockHeader returns, regardless of the bHasRepLayout
+        // value.  Our 2-bit-only PM119 trailing block ran the parser past
+        // the end of the bunch on the NumPayloadBits read → bunch overflow →
+        // IsError set → close reason 91 (ContentBlockPayloadBitsFail) but
+        // chained-up to 90 (ContentBlockHeaderFail) before it reached us.
+        //
+        // PM120 fix: write [bHasRepLayout=0][bIsActor=1][SIP NumPayloadBits=0]
+        // = 10 bits.  The parser reads our explicit-zero NumPayloadBits, the
+        // payload-skip helper consumes 0 bits, the bunch ends exactly there,
+        // the bunch-loop's "while bits_left > 0" check terminates cleanly.
+        //
+        // Without the trailing block the bunch ends right after the N
+        // subobject content blocks — the loop tries one more ReadContent-
+        // BlockHeader call, hits end-of-bunch on the bHasRepLayout bit
+        // read → close reason 79 → propagated.  So the trailing block IS
+        // required, just bigger than I thought.
+        // PD2.1 (2026-05-05) — also emit trailing block when ANY subobject
+        // got V3-wrapped via the appearance override path.  Otherwise the
+        // parser hits bunch overflow on the next ReadContentBlockHeader call.
+        const bool need_trailing =
+            (v3_mode == 3) ||
+            ((ctx.appearance_payload_bit_count > 0 &&
+              ctx.appearance_payload_bits != nullptr &&
+              ctx.appearance_subobject_index < schema.components.size())
+             ||
+             (ctx.appearance_force_v3_wrap &&
+              ctx.appearance_subobject_index < schema.components.size()));
+
+        if (need_trailing && !schema.components.empty()) {
+            payload.write_bit(0);              // bHasRepLayout = 0
+            payload.write_bit(1);              // bIsActor = 1 (ACTOR ROOT)
+            payload.write_sip(0);              // SIP NumPayloadBits = 0
+            // No payload bytes after — NumPayloadBits=0 means zero-bit payload.
         }
     }
 

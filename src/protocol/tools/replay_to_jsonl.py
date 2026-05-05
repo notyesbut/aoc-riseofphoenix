@@ -1,28 +1,53 @@
-#!/usr/bin/env python3
-"""Convert replay_data.bin into the JSONL format phase3_walker expects."""
-import sys, os, json
-DIST_RELEASE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            '..', '..', '..', 'dist', 'Release')
-sys.path.insert(0, os.path.abspath(DIST_RELEASE))
-from decode_pc_precise import read_replay
+import re
 
+INPUT_FILE = r"C:\Users\xmaxt\Desktop\IDADEC\new\strong_xor_candidates.txt"
 
-def main():
-    out_path = sys.argv[1] if len(sys.argv) > 1 else 'replay_as_jsonl.jsonl'
-    replay = os.path.join(DIST_RELEASE, 'replay_data.bin')
-    pkts = read_replay(replay)
-    with open(out_path, 'w', encoding='utf-8') as f:
-        for i, p in enumerate(pkts):
-            obj = {
-                'hex': p['raw'].hex(),
-                'dir': 'S>C',
-                'ts': '',
-                'seq': p['seq'],
-                'line': i,
-            }
-            f.write(json.dumps(obj) + '\n')
-    print(f"Wrote {len(pkts)} packets to {out_path}")
+FUNC_WINDOW = 0x200
 
+def parse_address(line):
+    # Find any long hex chunk (IDA-style safe)
+    matches = re.findall(r'\b[0-9A-Fa-f]{8,16}\b', line)
+    if not matches:
+        return None
 
-if __name__ == '__main__':
-    main()
+    # Take the longest match (best chance it's the address)
+    best = max(matches, key=len)
+
+    return int(best, 16)
+
+with open(INPUT_FILE, "r", errors="ignore") as f:
+    lines = f.readlines()
+
+addresses = []
+
+for line in lines:
+    addr = parse_address(line)
+    if addr:
+        addresses.append(addr)
+
+print(f"[+] Extracted addresses: {len(addresses)}")
+
+if not addresses:
+    print("Still no addresses found — file is not parsable.")
+    exit()
+
+addresses = sorted(set(addresses))
+
+clusters = []
+current = [addresses[0]]
+
+for addr in addresses[1:]:
+    if addr - current[-1] <= FUNC_WINDOW:
+        current.append(addr)
+    else:
+        clusters.append(current)
+        current = [addr]
+
+clusters.append(current)
+
+clusters.sort(key=lambda x: len(x), reverse=True)
+
+print("\nTop XOR clusters:\n")
+
+for i, c in enumerate(clusters[:20]):
+    print(f"{i+1}. Count={len(c)} | 0x{c[0]:X} - 0x{c[-1]:X}")

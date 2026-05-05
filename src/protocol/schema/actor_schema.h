@@ -83,6 +83,20 @@ struct PropertySchema {
 struct ComponentSchema {
     std::string class_name;             // "CharacterInformationComponent"
     std::string default_blueprint_path; // path the client has pre-loaded
+
+    // PM111 (2026-05-04) — for native subobject registration in V3 content
+    // blocks.  When non-empty, the actor builder emits an InternalLoadObject
+    // for this class path in the package map exports + a V3 subobject content
+    // block targeting the minted sub_guid with this class_guid.
+    //
+    // Example: "/Script/GameSystemsPlugin.CharacterAppearanceComponent"
+    std::string class_path;
+
+    // Content-addressable NetGUID for the class CDO.  Filled in by the
+    // emitter when class_path is non-empty (deterministic hash of the path
+    // string — same hash on every server/client).
+    uint64_t class_netguid = 0;
+
     std::vector<PropertySchema> properties;
 };
 

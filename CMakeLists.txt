@@ -126,6 +126,21 @@ set(SERVER_SOURCES
     src/net/pc_emitter.cpp
     # Path B — M1.4.b Pawn emitter (spliced captured pkt#78 bunch stream)
     src/net/pawn_emitter.cpp
+    # PM39 (2026-04-30) — Path C Phase 2: native player Pawn ActorOpen
+    src/net/player_pawn_emitter.cpp
+    # PM106 (2026-05-04) — Phase D Step 2.2: pkt#78 verbatim splice for
+    # 8-subobject PlayerPawn ActorOpen (alongside synthetic emit_open)
+    src/net/player_pawn_splicer.cpp
+    # Phase D Step 2 (2026-05-04) — Appearance property update emitter
+    src/net/appearance_emitter.cpp
+    # Phase D Step 2.1 (2026-05-05) — Customization JSON parser + UE5 wire serializer
+    # Uses Dumper-7 SDK layout to produce the exact bytes the client's
+    # OnRep_CharacterCustomization expects.
+    src/net/appearance_data.cpp
+    # Phase D Step 3 (2026-05-05) — PlayerState ActorOpen emitter
+    # Carries character identity (PlayerName/Archetype) so mesh assembler
+    # has the data it needs.  Probe-gated, default disabled.
+    src/net/player_state_emitter.cpp
     # Road A — Phase B.0: WorldBootstrapEmitter — single driver of the
     # post-NMT bootstrap stream (replaces the hybrid+native parallel-thread
     # model with one ordered plan that mixes splice + native emission).
