@@ -1,52 +1,102 @@
 # AoC-RiseOfPhoenix
 
-A private, educational reverse-engineering project targeting the networking
-layer of Ashes of Creation's Unreal Engine 5 game client.  Currently a
-replay-based emulator with an in-progress native synthesis pipeline.
+**A community reverse-engineering project to keep the Ashes of Creation client alive.**
 
-> ⚠️ **INTERNAL / TEAM USE ONLY.**  This codebase reverse-engineers the
-> wire protocol of an unreleased MMO.  Do not distribute, do not
-> publish publicly, do not use to operate a service for third parties.
-> See [LICENSE](./LICENSE) for the full terms.
+After the Alpha-2 servers were shut down, the AoC client became unable to connect to anything — a fully-functional Unreal Engine 5 MMO frontend with no backend to talk to. This project rebuilds the network layer from the outside: parsing captured replays, disassembling the client binary, and synthesizing a UE5-compatible server that the retail client can log into and load the world from.
+
+It's an educational, non-commercial effort. No game assets are redistributed. No live Intrepid service is touched. Everything happens against a local loopback.
 
 ---
 
-## What this repo does today
+## Status
 
-- **Replay-based emulator**: a stack of three servers (`auth_server`,
-  `aoc_server`, `tether_server`) plus a `launcher` that a retail AoC client
-  connects to instead of Intrepid's live servers.  The AoC client logs in,
-  loads the world, and plays back a captured session as a local character.
-- **Reverse-engineered wire format**: validated bit-level decoders and
-  encoders for UE5 bunch framing, AoC's `FIntrepidNetworkGUID`, the
-  RepLayout property-stream format, and the per-property dispatch pipeline.
-- **Phase II scaffolding**: `ReplayMutator` + `RepLayout` codec layer,
-  with 148 tests covering primitive FProperty types and captured-packet
-  round-trip.
+| Phase | What works |
+|---|---|
+| Handshake | StatelessConnect, NMT, IntrepidNetDriver custom flags |
+| Login | Auth server, character select, lobby transitions |
+| World load | `LoadMap` to `/Game/Levels/Verra_World_Master`, World Partition initializes |
+| Spawn | PC + Pawn + PlayerState replicated, NetGUIDs registered, real Riverlands coordinates |
+| Possession | `ClientRestart` RPC dispatched, `ServerAcknowledgePossession` flows back |
+| Rendering | Verra terrain visible (HLOD level), player nameplate at correct location |
 
-## What this repo **does not** do (yet)
+| Currently broken / WIP |
+|---|
+| 60-second client timeout (no continuous actor data — fix in progress) |
+| Streaming cells unload after loading screen drops (HLOD-only view) |
+| No visible character mesh — appearance replication needs more work |
+| No movement reconciliation — `ServerMove` parsed but not echoed |
+| Single-player only — multi-client testing is ahead of us |
 
-- **Custom character names**: `RandomChar` is hardcoded by the captured
-  replay.  Length-changing mutations of the captured packets break the
-  partial-bunch reassembly — see [`docs/phase-ii-postmortem.md`](./docs/phase-ii-postmortem.md).
-- **Live multiplayer**: the current server is essentially a tape-player.
-  Phase III (see roadmap) introduces real per-client actor synthesis.
-- **Any authoritative game logic**: no combat, no NPCs, no persistence
-  beyond a basic account/character table.
+**TL;DR:** you can connect, log in, possess your character, and look around Verra for ~60 seconds before the client disconnects. Body mesh and detailed world streaming are the next blockers.
 
 ---
 
-## Quickstart
+## What's actually in this repo
+
+This is **not** a complete game server. It's a wire-format emulator. There's no combat, no NPCs with AI, no quests, no economy, no persistence beyond a local SQLite-style account record. What it has is:
+
+- A **C++ networking stack** that speaks UE5 / IntrepidNetDriver wire protocol (handshake, packet notify, bunches, NetGUID exports, RepLayout property streams).
+- An **actor synthesis pipeline** (`ActorBuilder`, `PropertyUpdateBunchBuilder`, per-class emitters in `src/net/*_emitter.cpp`) that constructs PC / Pawn / PlayerState ActorOpen bunches from schema definitions.
+- A **PC-tail splice mechanism** that takes the captured PC ActorOpen's RepLayout property tail and substitutes its captured per-session NetGUIDs with our minted ones at the correct bit offsets — the only way to get the PC's initial property state correct without a full RepLayout decoder.
+- A **NetGUID allocator** (`src/protocol/net_guid_allocator.h`) that hands fresh dynamic GUID blocks per connecting client.
+- **Reverse-engineering tooling** (`src/protocol/tools/`): Python decoders for captured replays, IDA scripts for client binary analysis, fixture extractors, a YLPR replay format walker.
+- **Captured-replay fixtures** (`src/net/captured_*.h`): bit-perfect snippets of the original AoC server's wire output, used as ground truth.
+
+If you're here to bring up a populated game server, this isn't that yet. If you're here to study UE5 networking, AoC's specific protocol customizations, or to contribute to making the above happen — welcome.
+
+---
+
+## How it was figured out
+
+Three sources, layered:
+
+1. **Disassembly of the AoC client binary** (`AOCClient-Win64-Shipping.exe`). UE5 functions exposed through symbol names (`InternalLoadObject`, `ReadContentBlockHeader`, `ServerAcknowledgePossession`, etc.) gave us the entry points. Following the call graph from there mapped the parser pipeline, the `FIntrepidNetGUID` 128-bit struct, the AoC custom flags at `UNetConnection+0x240`, and the RPC dispatch table on `APlayerController`.
+2. **Captured-replay analysis** of pre-shutdown sessions. The replays are unencrypted at the wire level for some captures and AES-GCM encrypted for others. Plaintext captures (notably the YLPR-format `replay_data.bin`) give us byte-for-byte ground truth of how the original server framed bunches and which static NetGUIDs the client expected.
+3. **Empirical probe iteration** for things we couldn't read off either source. The codebase has a probe-driven test harness — change one wire bit, rebuild, reconnect, watch the client's NetTraffic logs for "Mismatch read" or "Invalid field" errors. Most RPC handle indices and a few wire-format ambiguities were resolved this way.
+
+The full RE catalog is in [`docs/`](./docs/) — including a per-function map, the `FIntrepidNetGUID` byte layout, the bunch parser flow, and the V3 stably-named content-block layout (PM118).
+
+---
+
+## Architecture overview
+
+```
+                  ┌─────────────────────────────────┐
+                  │   AoC-Client (Win64-Shipping)   │
+                  │     (the only thing we don't    │
+                  │      build — retail client)     │
+                  └────────────┬────────────────────┘
+                               │ UDP, IntrepidNetDriver wire protocol
+                               │
+                  ┌────────────┴────────────────────┐
+                  │   eossdk_proxy.dll              │   (intercepts EOSSDK
+                  │   (replaces real EOSSDK at      │    calls, redirects
+                  │    runtime via DLL substitution)│    auth → loopback)
+                  └────────────┬────────────────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        │                      │                      │
+   ┌────┴──────┐         ┌─────┴─────┐         ┌──────┴──────┐
+   │ launcher  │         │ tether    │         │ aoc_server  │
+   │ (auth +   │         │ (dummy    │         │ (NetDriver, │
+   │  realm    │         │  XClient/ │         │  emit       │
+   │  list)    │         │  ICS svc) │         │  pipeline)  │
+   └───────────┘         └───────────┘         └─────────────┘
+```
+
+The aoc_server is where 95% of the interesting work happens: parsing incoming bunches, allocating NetGUIDs, constructing ActorOpen bunches, dispatching RPCs back to the client.
+
+---
+
+## Building
 
 ### Prerequisites
 
 - **Windows 10/11 x64**
-- **Visual Studio 2022** with *Desktop development with C++* workload
+- **Visual Studio 2022** with the *Desktop development with C++* workload
 - **CMake 3.22+**
 - **vcpkg** (manifest mode supported via `vcpkg.json`) — set `VCPKG_ROOT`
-  env var to your vcpkg install directory
-- **A local copy of the retail AoC game client** (at
-  `C:\Ashes of Creation\Game` by default; override with `GAME_ROOT` env var)
+- A local installation of the **retail AoC game client** (the binary, not the source — Intrepid never released source). Default expected path: `C:\Ashes of Creation\Game`. Override with the `GAME_ROOT` env var.
 - **Git**
 
 ### Build
@@ -55,7 +105,7 @@ replay-based emulator with an in-progress native synthesis pipeline.
 # From repo root:
 .\scripts\build.ps1 -Configure          # first-time CMake configure
 .\scripts\build.ps1                     # subsequent builds
-.\scripts\build.ps1 -Test               # build + run all unit tests
+.\scripts\build.ps1 -Test               # build + run unit tests
 ```
 
 Output binaries land in `dist\Release\`.
@@ -63,22 +113,22 @@ Output binaries land in `dist\Release\`.
 ### Run
 
 ```powershell
-# Deploy the EOSSDK stub (one-time — replaces the real DLL in the game
+# Deploy the EOSSDK proxy (one-time — replaces the real DLL in the game
 # folder; keeps a backup as EOSSDK_real.dll):
 .\scripts\build_eossdk_proxy.bat
 
-# Stage replay data and start the full stack:
+# Stage replay fixtures and start the full stack:
 .\scripts\launch_all.bat
 ```
 
-On login, use `test222 / test` or register a new account via the launcher.
+On login, use `test222 / test` or register a new account through the launcher.
 
 ### Run tests only
 
 ```powershell
-dist\Release\test_replayout_codecs.exe       # 94 primitive-codec tests
-dist\Release\test_replay_mutator.exe         # 40 mutation round-trip tests
-dist\Release\test_pkt104_round_trip.exe      # 14 pkt#104 FString tests
+dist\Release\test_replayout_codecs.exe       # primitive-codec tests
+dist\Release\test_replay_mutator.exe         # mutation round-trip tests
+dist\Release\test_pkt104_round_trip.exe      # captured FString round-trip
 ```
 
 ---
@@ -92,26 +142,14 @@ AoC-RiseOfPhoenix/
 │   ├── launcher_main.cpp                # launcher entry point
 │   ├── tether_server_main.cpp           # tether_server entry point
 │   ├── eossdk_proxy.cpp                 # stub EOSSDK DLL replacement
-│   ├── net/                             # NetDriver + game_server glue
+│   ├── net/                             # NetDriver, emitters, splice fixtures
 │   ├── protocol/
 │   │   ├── wire/                        # bit-level readers / primitives
 │   │   ├── bootstrap/                   # replay loading + PC-spawn parser
-│   │   ├── emit/
-│   │   │   ├── actor_builder.*          # bunch-framing emitter
-│   │   │   ├── bunch_writer.h           # bit writer primitive
-│   │   │   ├── package_map_exporter.*   # NetGUID export section
-│   │   │   ├── intrepid_netguid.h       # AoC 128-bit NetGUID struct
-│   │   │   ├── replay_mutator.*         # FString mutation library
-│   │   │   └── replayout/               # Phase II: RepLayout codec layer
-│   │   │       ├── catalog.*            # ClassCatalog data
-│   │   │       ├── encoder.h/cpp        # central dispatch
-│   │   │       ├── decoder.h/cpp        #  "       "
-│   │   │       └── encoders/            # per-FProperty-type codecs
+│   │   ├── emit/                        # ActorBuilder, BunchWriter, RepLayout codec
 │   │   ├── schema/                      # actor/PC/pawn schema registry
 │   │   ├── actors/                      # actor metadata
-│   │   └── tools/                       # RE artefacts: IDA scripts +
-│   │                                    #   Python decoders + captured
-│   │                                    #   packet fixtures
+│   │   └── tools/                       # RE artefacts (Python + C++ + IDA scripts)
 │   ├── services/                        # auth, launcher, tether, xclient
 │   ├── generators/                      # bunch-content generators
 │   ├── world/                           # LiveWorld simulation layer
@@ -119,54 +157,92 @@ AoC-RiseOfPhoenix/
 │   └── tools/                           # C++ test executables
 ├── proto/                               # protobuf / gRPC definitions
 ├── config/                              # runtime JSON configs
-├── certs/                               # SSL certificates for auth server
+├── certs/                               # SSL certs for auth server
 ├── fixtures/
-│   └── replay_data.bin                  # captured S>C replay stream (7.4 MB)
-├── scripts/
-│   ├── build.ps1                        # CMake + MSBuild driver
-│   ├── build_eossdk_proxy.bat           # stub EOSSDK DLL
-│   └── launch_all.bat                   # start the full stack
-├── docs/
-│   ├── PROJECT-OVERVIEW.md              # ★ single consolidated entry point
-│   ├── architecture.md                  # layered component overview
-│   ├── wire-format.md                   # consolidated wire-format RE
-│   ├── phase-ii-postmortem.md           # why replay-mutation failed
-│   ├── phase-iii-roadmap.md             # live-synthesis plan
-│   ├── re-*.md                          # per-class RE catalogs + binary analysis
-│   ├── *.md                             # other reference docs (auth-server-plan, etc.)
-│   └── archive/                         # historical session notes
+│   └── replay_data.bin                  # captured S>C replay (~7.4 MB, plaintext)
+├── scripts/                             # build / launch helpers
+├── docs/                                # RE catalogs, architecture, roadmap
 ├── CMakeLists.txt
 ├── vcpkg.json
-├── README.md
-├── LICENSE
-└── CONTRIBUTING.md
+└── README.md
 ```
 
 ---
 
-## Getting oriented — if you're new to the team
+## Where to start reading
 
-**Start here**: [`docs/PROJECT-OVERVIEW.md`](./docs/PROJECT-OVERVIEW.md) — single consolidated entry point covering the full project: current state, 4-layer architecture, complete RE catalog (wire format, ~12 RE'd UE5 functions, class metadata, bootstrap analysis), build/run pointers, and the Phase A/B/C roadmap.
+If you want to understand the project end-to-end:
 
-Then drill into the canonical references it links to:
+1. **[`docs/PROJECT-OVERVIEW.md`](./docs/PROJECT-OVERVIEW.md)** — single consolidated entry point: current state, architecture, RE catalog, roadmap.
+2. **[`docs/architecture.md`](./docs/architecture.md)** — 10,000-ft component layout.
+3. **[`docs/wire-format.md`](./docs/wire-format.md)** — authoritative wire-format spec.
+4. **[`docs/phase-ii-postmortem.md`](./docs/phase-ii-postmortem.md)** — what didn't work and why (replay-mutation approach).
+5. **[`docs/phase-iii-roadmap.md`](./docs/phase-iii-roadmap.md)** — active roadmap.
 
-1. **[`docs/architecture.md`](./docs/architecture.md)** — 10 000-ft component layout.
-2. **[`docs/wire-format.md`](./docs/wire-format.md)** — authoritative wire-format spec.
-3. **[`docs/phase-ii-postmortem.md`](./docs/phase-ii-postmortem.md)** — what didn't work and why. Avoid re-treading.
-4. **[`docs/phase-iii-roadmap.md`](./docs/phase-iii-roadmap.md)** — active roadmap.
-5. **[`CONTRIBUTING.md`](./CONTRIBUTING.md)** — coding conventions, test policy, commit style.
+Then look at:
 
-For deeper reference data (per-class catalogs, IDA function maps, captured-packet decode walkthroughs), see the rest of `docs/`. Historical session notes are archived under `docs/archive/`.
+- `src/protocol/emit/actor_builder.cpp` — the ActorOpen bunch construction. Lots of inline comments referencing PM (Progress Milestone) numbers — each one corresponds to a specific RE finding.
+- `src/net/pc_emitter.cpp`, `src/net/player_pawn_emitter.cpp` — per-class emit logic.
+- `src/protocol/wire/ue5_primitives.h` — the bit-level primitives (`SerializeIntPacked`, `read_bits`, etc.).
 
-Then poke at the test suites in `src/tools/test_*.cpp` — they're small and show exactly how the emit/decode pipeline composes.
+---
+
+## Roadmap (rough)
+
+| Milestone | Description |
+|---|---|
+| ✅ M1 | Handshake, login, character select |
+| ✅ M2 | World load, possession, terrain visible |
+| 🚧 PM148 | Continuous actor traffic to defeat the 60s client timeout |
+| ⏭ PM149 | Live `ServerMove` parsing → server-side position tracking |
+| ⏭ PM150 | `ClientUpdateLevelStreamingStatus` for cell keepalive (full-detail world) |
+| ⏭ PM151 | `CharacterAppearanceComponent` replication → visible body mesh |
+| ⏭ PM152 | First multi-client smoke test |
+| ⏭ Phase IV | Schema-driven RepLayout for actors beyond PC/Pawn/PS (NPCs, items) |
+
+PM = "Progress Milestone." Each is a discrete RE / wire-format unblock. The codebase has ~150 of these tagged in commit messages and source comments.
+
+---
+
+## Contributing
+
+Welcome — both code and RE findings. Some areas where help is especially valuable:
+
+- **Wire-format gaps**: anything in the `[ReadContentBlockHeader] (skipped)` log paths is fertile ground. Probe iteration to map RPC handle indices is also useful.
+- **Disassembly cross-references**: matching Python decoder output against IDA pseudocode for AoC's RepLayout customizations.
+- **Captured-replay analysis**: extracting more property fixtures from the YLPR / pcap captures.
+- **Documentation**: every PM in commit history that doesn't have a `docs/re-*.md` companion is a candidate.
+
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for coding conventions, test policy, and commit-message style.
+
+When opening a PR or issue, please:
+- Reference the relevant PM number(s) if applicable
+- Attach captured wire bytes / log excerpts for any RE claim
+- Don't include any AoC game assets, art, audio, or proprietary data — only your own analysis output
+
+---
+
+## Acknowledgments
+
+- The original Ashes of Creation team at **Intrepid Studios** for building the game we want to keep usable.
+- The **Unreal Engine** team — most of the network protocol is stock UE5 with documented public source.
+- Everyone in the AoC community who contributed packet captures, observations, and RE notes — without those, none of the static NetGUID values or wire-format details would have been recoverable post-shutdown.
 
 ---
 
 ## Legal / Responsible Use
 
-This project exists for **private educational reverse-engineering** only.
-It does not distribute Intrepid Studios' game content, does not enable
-unauthorized access to Intrepid's live services, and should never be run
-against anything other than a local loopback instance.  See [LICENSE](./LICENSE).
+This project is **educational reverse-engineering**, distributed without warranty for research purposes:
 
-If Intrepid Studios contacts the repo owner, everything stops.
+- **No game assets are included or redistributed.** You bring your own copy of the retail AoC client.
+- **No live Intrepid service is contacted.** Everything runs against a local loopback. The EOSSDK proxy explicitly redirects auth calls *away* from real Epic / Intrepid services.
+- **No proprietary content is decompiled or republished** — only network wire protocol, which is observable on any local UDP socket.
+- **This is not affiliated with, endorsed by, or in any way authorized by Intrepid Studios.** "Ashes of Creation" is a trademark of Intrepid Studios. We're fans, not infringers.
+
+If Intrepid Studios reaches out with a takedown request or any concern about this project's existence, the repo will be archived and we'll move on. The goal is preservation of technical knowledge, not antagonism.
+
+See [LICENSE](./LICENSE) for the full terms.
+
+---
+
+*Released under the MIT License (or whatever the LICENSE file says — check that, it overrides this paragraph).*
