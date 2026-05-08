@@ -42,6 +42,7 @@ This is **not** a complete game server. It's a wire-format emulator. There's no 
 - **Reverse-engineering tooling** (`src/protocol/tools/`): Python decoders for captured replays, IDA scripts for client binary analysis, fixture extractors, a YLPR replay format walker.
 - **Captured-replay fixtures** (`src/net/captured_*.h` and `fixtures/replay_data.bin`): bit-perfect snippets of the original AoC server's wire output, used as ground truth.
 - **IDA Pro decompilation dumps** (`docs/ida-dumps/`): ~350 raw RE artifacts — Hex-Rays pseudocode for individual functions, keyword-driven topic analyses (NetGUID, PackageMap, bunch parser, RPC tables), and working notes. This is the research substrate the wire-format work is built on. Every `sub_XXXXXXXX` or `0xXXXXXXXX` reference in source comments has a matching `.txt` in there.
+- **AoC client SDK dump** (`docs/aoc-sdk/`): full Dumper-7 output for the Alpha-2 client (engine `5.6.0-438018+++game+jvs_game_rel-AOC`). Contains the C++ class hierarchy, property offsets, function signatures, GObjects table, and IDA name mappings. Lets you cross-reference any class/property mentioned in source comments without re-running the dumper yourself.
 
 If you're here to bring up a populated game server, this isn't that yet. If you're here to study UE5 networking, AoC's specific protocol customizations, or to contribute to making the above happen — welcome.
 
@@ -165,7 +166,10 @@ AoC-RiseOfPhoenix/
 │   └── replay_data.bin                  # captured S>C replay (~7.4 MB, plaintext)
 ├── scripts/                             # build / launch helpers
 ├── docs/                                # RE catalogs, architecture, roadmap
-│   └── ida-dumps/                       # ~350 raw IDA Pro decomp artifacts
+│   ├── ida-dumps/                       # ~350 raw IDA Pro decomp artifacts
+│   └── aoc-sdk/                         # Dumper-7 SDK output (~136 MB,
+│                                        #   2,000+ files; full client UClass
+│                                        #   hierarchy + property offsets)
 ├── CMakeLists.txt
 ├── vcpkg.json
 └── README.md
