@@ -30,9 +30,9 @@ HERE = Path(__file__).parent
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
 # ── Read the existing PM109 substituted stream ──
-SUBST_HEADER = Path(r'C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation'
+SUBST_HEADER = Path(r'<REPO_ROOT>'
                      r'\src\net\captured_pkt78_substituted_stream.h')
-FULL_HEADER = Path(r'C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation'
+FULL_HEADER = Path(r'<REPO_ROOT>'
                     r'\src\net\captured_pkt78_full_stream.h')
 
 
@@ -140,7 +140,7 @@ def main():
     print('  ✓ bunch[2] start matches at new offset 1642')
 
     # ── Generate the C++ header ──
-    out_path = Path(r'C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation'
+    out_path = Path(r'<REPO_ROOT>'
                      r'\src\net\captured_pkt78_v3_substituted_stream.h')
     print(f'\nWriting {out_path}')
     with open(out_path, 'w', encoding='utf-8', newline='\n') as f:

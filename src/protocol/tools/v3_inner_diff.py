@@ -8,7 +8,7 @@ If it doesn't walk, our format is wrong and we have a deeper RE gap."""
 import struct, sys, io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-PATH = r"C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation\dist\Release\replay_data.bin"
+PATH = r"<REPO_ROOT>\dist\Release\replay_data.bin"
 
 def rb(buf, off, n=1):
     v = 0

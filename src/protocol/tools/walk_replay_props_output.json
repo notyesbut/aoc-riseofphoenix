@@ -1,5 +1,5 @@
 {
-  "replay_file": "C:\\Users\\xmaxt\\source\\repos\\AshesOfCreation\\AshesOfCreation\\dist\\Release\\replay_data.bin",
+  "replay_file": "<REPO_ROOT>\\dist\\Release\\replay_data.bin",
   "packets_processed": 29010,
   "bunches_processed": 717,
   "bunches_failed": 44,

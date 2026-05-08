@@ -17,7 +17,7 @@ import idaapi
 import idautils
 import idc
 
-OUT_PATH = r"C:\Users\xmaxt\Desktop\aocpc_step2.txt"
+OUT_PATH = r"<HOME>\Desktop\aocpc_step2.txt"
 
 # AAoCPlayerController-specific property names + their confirmed addresses
 # (extracted from the strings dump — these are in .rdata).

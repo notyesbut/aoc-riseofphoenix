@@ -298,7 +298,7 @@ def main():
               f'{"OK" if ok else "MISMATCH"}')
 
     # ── Output C++ header ──
-    out_path = Path(r'C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation\src\net'
+    out_path = Path(r'<REPO_ROOT>\src\net'
                      r'\captured_pc_tail_substituted.h')
     print(f'\nWriting {out_path}')
     with open(out_path, 'w', encoding='utf-8', newline='\n') as f:

@@ -96,7 +96,7 @@ int main() {
 
     // Load the captured reassembled bunch payload (608 bytes, 4864 bits).
     const std::string fixture_path =
-        "C:\\Users\\xmaxt\\source\\repos\\AshesOfCreation\\AshesOfCreation\\"
+        "<REPO_ROOT>\\"
         "src\\protocol\\tools\\captured_pc_spawn_reassembled.bin";
     auto captured = read_binary(fixture_path);
     if (captured.empty()) {

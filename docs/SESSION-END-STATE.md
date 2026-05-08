@@ -137,7 +137,7 @@ Example:
 2. G → 143F2F820 → Enter
 3. F5 (decompile)
 4. Ctrl+A, Ctrl+C in pseudocode pane
-5. Paste into C:\Users\xmaxt\Desktop\New Text Document (6).txt (OVERWRITE)
+5. Paste into <HOME>\Desktop\New Text Document (6).txt (OVERWRITE)
 6. Save
 7. ALSO: File → Script file → src/protocol/tools/ida_dump_bunch_func.idc (already set to 0x143F2F820)
 8. Paste the raw dump into same or different file and tell me where it is

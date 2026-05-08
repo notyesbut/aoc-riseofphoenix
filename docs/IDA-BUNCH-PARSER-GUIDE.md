@@ -26,7 +26,7 @@
 4. Script runs for ~30 seconds. Watch the Output window (bottom) for progress lines like `[+] SerializeIntPacked (THE SIP function)`.
 5. When it says `DONE`, find the output at:
    ```
-   C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation\dist\Release\ida_bunch_parser_hunt.txt
+   <REPO_ROOT>\dist\Release\ida_bunch_parser_hunt.txt
    ```
 6. **Paste the ENTIRE content of that file back to me** (open in Notepad, Ctrl+A, Ctrl+C, paste).
 
@@ -82,7 +82,7 @@ After Pass 1 identifies 2-3 interesting function addresses, run this script PER 
 4. In IDA: **File → Script file…** → select `ida_dump_bunch_func.idc`
 5. Output is appended to:
    ```
-   C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation\dist\Release\ida_bunch_func_<EA>.txt
+   <REPO_ROOT>\dist\Release\ida_bunch_func_<EA>.txt
    ```
 6. Paste the content back to me.
 

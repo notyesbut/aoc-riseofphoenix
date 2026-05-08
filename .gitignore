@@ -1,4 +1,19 @@
 # ──────────────────────────────────────────────────────────────────────────
+# Secrets / private keys — NEVER commit these
+# ──────────────────────────────────────────────────────────────────────────
+certs/*.key
+certs/*.pem
+certs/server.crt
+certs/ca.crt
+certs/*.srl
+certs/*.csr
+*.p12
+*.pfx
+.env
+.env.local
+secrets.json
+
+# ──────────────────────────────────────────────────────────────────────────
 # Replay analysis outputs (large, regen-able from source binaries)
 # ──────────────────────────────────────────────────────────────────────────
 tools/replay_decoded.txt

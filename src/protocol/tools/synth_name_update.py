@@ -160,7 +160,7 @@ ref_data, ref_bits = synth_variant_d("RandomChar")
 dump('REFERENCE: variant_D with Name="RandomChar" (should match captured)', ref_data, ref_bits)
 
 # Extract the captured pkt#104 region from bit 1592 to 1744 for comparison
-FIX_PATH = r'C:\Users\xmaxt\source\repos\AoC-RiseOfPhoenix\src\protocol\tools\captured_pkt_104.bin'
+FIX_PATH = r'<HOME>\source\repos\AoC-RiseOfPhoenix\src\protocol\tools\captured_pkt_104.bin'
 with open(FIX_PATH, 'rb') as f:
     pkt104 = f.read()
 

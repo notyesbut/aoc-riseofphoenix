@@ -1354,7 +1354,7 @@ corrections take precedence where they conflict with earlier sections.*
 
 Local UE5 5.7 source is available at:
 
-    C:\Users\xmaxt\Documents\UnrealEngine-release
+    <HOME>\Documents\UnrealEngine-release
 
 When any session needs to verify UE5 semantics (e.g. exact FBitReader behavior,
 SerializeInt edge cases, UNetDriver's connection handling, FRepLayout internals),

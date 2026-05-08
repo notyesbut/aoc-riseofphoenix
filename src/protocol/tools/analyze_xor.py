@@ -1,6 +1,6 @@
 import re
 
-path = r"C:\Users\xmaxt\Desktop\IDADEC\new\strong_xor_candidates.txt"
+path = r"<IDA_DUMPS>\new\strong_xor_candidates.txt"
 
 with open(path, "r", encoding="utf-8", errors="ignore") as f:
     data = f.read()

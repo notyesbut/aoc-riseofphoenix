@@ -145,7 +145,7 @@ v, b = read_bit(buf, b);   print(f"    end marker   = {v}")
 print("\n" + "=" * 72)
 print("CAPTURED pkt#30 ch=3 update — bit-aligned header decode")
 print("=" * 72)
-PATH = r"C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation\dist\Release\replay_data.bin"
+PATH = r"<REPO_ROOT>\dist\Release\replay_data.bin"
 with open(PATH, 'rb') as f:
     data = f.read()
 

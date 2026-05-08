@@ -10,7 +10,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # ── Output directory ────────────────────────────────────────────────────────
-set(AOC_DIST_ROOT "C:/Users/xmaxt/source/repos/AshesOfCreation/AshesOfCreation/dist" CACHE PATH
+set(AOC_DIST_ROOT "<REPO_ROOT>/dist" CACHE PATH
     "Canonical output root: binaries land in <AOC_DIST_ROOT>/<config>/")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG          "${AOC_DIST_ROOT}/Debug")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE        "${AOC_DIST_ROOT}/Release")

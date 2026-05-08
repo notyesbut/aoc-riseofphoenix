@@ -1,4 +1,4 @@
-python "C:\Users\xmaxt\Documents\Lineage 2 OFF PROJECT\packet_sniffer.py"
+python "<HOME>\Documents\Lineage 2 OFF PROJECT\packet_sniffer.py"
 
 
 

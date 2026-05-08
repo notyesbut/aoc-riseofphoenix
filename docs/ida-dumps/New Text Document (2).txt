@@ -1,4 +1,4 @@
-$ head -50 "C:/Users/xmaxt/source/repos/AshesOfCreation/AshesOfCreation/dist/Release/re_scan_deep.txt"; echo "---"; head -30 "C:/Users/xmaxt/source/repos/AshesOfCreation/AshesOfCreation/dist/Release/re_scan_full.txt"
+$ head -50 "<REPO_ROOT>/dist/Release/re_scan_deep.txt"; echo "---"; head -30 "<REPO_ROOT>/dist/Release/re_scan_full.txt"
 ================================================================================
   Spawn_Respawn
 ================================================================================

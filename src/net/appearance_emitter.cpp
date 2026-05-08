@@ -224,7 +224,7 @@ bool AppearanceEmitter::emit_seed(const sockaddr_in& client_addr,
 
     // ── 2026-05-05 SDK-verified RE result (UCharacterAppearanceComponent) ──
     //
-    // Source: C:\Users\xmaxt\Desktop\SDKONLINEFIND\GameSystemsPlugin_classes.hpp
+    // Source: <HOME>\Desktop\SDKONLINEFIND\GameSystemsPlugin_classes.hpp
     //   line 17811 (UCharacterAppearanceComponent), 17720 (UBaseModularAppearanceComponent)
     //         + Engine_classes.hpp line 897 (UActorComponent base class).
     //

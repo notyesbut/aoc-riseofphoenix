@@ -289,7 +289,7 @@ inline bool parse(const uint8_t* data, size_t len, HandshakePacket& pkt) {
 
 /// ── Intrepid custom extension data for Challenge/Ack packets ─────────
 ///
-/// MITM relay capture (2026-02-18, server ec2-18.223.41.103:7229) reveals
+/// MITM relay capture (2026-02-18, against the live realm server) reveals
 /// the REAL AoC server Challenge is 153 bytes (not 72!).  After the
 /// standard UE5 header (43 bytes = magic + session + client + hs + versions
 /// + secretId + timestamp + cookie), the server echoes the Intrepid

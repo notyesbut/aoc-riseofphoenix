@@ -22,7 +22,7 @@ from phase1_parser import parse_packet, read_bit
 from walk_replay_props import load_packets, REPLAY
 from reassemble_and_extract_appearance import reassemble_partials
 
-OUR_BUNCH = Path(r'C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation\dist\Release\our_pc_bunch.bin')
+OUR_BUNCH = Path(r'<REPO_ROOT>\dist\Release\our_pc_bunch.bin')
 
 
 def main():

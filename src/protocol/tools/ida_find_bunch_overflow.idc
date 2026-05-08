@@ -142,7 +142,7 @@ static main()
     auto fp, out_path;
     auto a_bhover, a_rbfail, a_dc, a_rl, a_br, a_pmc;
 
-    out_path = "C:\\Users\\xmaxt\\source\\repos\\AshesOfCreation\\AshesOfCreation\\dist\\Release\\ida_bunch_overflow_hunt.txt";
+    out_path = "<REPO_ROOT>\\dist\\Release\\ida_bunch_overflow_hunt.txt";
     fp = fopen(out_path, "w");
     if (fp == 0)
     {

@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
-DUMP = Path(r'C:\Users\xmaxt\Desktop\AOCClient-Win64-Shipping.exe.asm')
+DUMP = Path(r'<HOME>\Desktop\AOCClient-Win64-Shipping.exe.asm')
 
 TARGETS = [
     'sub_7FF6BD25F820',        # emits "Invalid replicated field"

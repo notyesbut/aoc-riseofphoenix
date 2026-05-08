@@ -10,7 +10,7 @@ Includes ChName parsing for OPEN bunches (the v1 scanner missed this).
 import sys, struct, os
 
 REPLAY_FILE = sys.argv[1] if len(sys.argv) > 1 else \
-    r"C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation\dist\Release\replay_data.bin"
+    r"<REPO_ROOT>\dist\Release\replay_data.bin"
 
 MAGIC = 0x52504C59
 

@@ -21,8 +21,10 @@ if not defined MSBUILD (
 echo Found MSBuild: %MSBUILD%
 echo.
 
-:: Build launcher.vcxproj in Release|x64
-set SLN=C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation\build\x64\launcher.vcxproj
+:: Build launcher.vcxproj in Release|x64 (paths relative to this script)
+set REPO_ROOT=%~dp0
+if "%REPO_ROOT:~-1%"=="\" set REPO_ROOT=%REPO_ROOT:~0,-1%
+set SLN=%REPO_ROOT%\build\x64\launcher.vcxproj
 echo Building: %SLN%
 "%MSBUILD%" "%SLN%" /p:Configuration=Release /p:Platform=x64 /v:minimal /nologo
 
@@ -35,5 +37,5 @@ if errorlevel 1 (
 
 echo.
 echo Build succeeded.
-echo Output: C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation\dist\Release\launcher.exe
+echo Output: %REPO_ROOT%\dist\Release\launcher.exe
 endlocal

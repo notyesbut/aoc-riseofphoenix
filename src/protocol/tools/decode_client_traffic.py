@@ -16,7 +16,7 @@ Usage: python decode_client_traffic.py [server_log_path]
 import sys, os, re
 
 LOG_PATH = sys.argv[1] if len(sys.argv) > 1 else \
-    r"C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation\dist\Release\logs\emu-20260427-164816.log"
+    r"<REPO_ROOT>\dist\Release\logs\emu-20260427-164816.log"
 
 # Known wire_idx -> RPC name table (from our recognizer)
 WIRE_IDX_NAMES = {

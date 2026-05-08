@@ -335,8 +335,9 @@ bool PcEmitter::emit_open(const sockaddr_in& client_addr) {
         if (dumped.compare_exchange_strong(expected, true)) {
             const size_t byte_count = (bits + 7) / 8;
             const char* paths[] = {
-                "C:/Users/xmaxt/source/repos/AshesOfCreation/AshesOfCreation/dist/Release/our_pc_bunch.bin",
-                "/tmp/our_pc_bunch.bin",
+                "dist/Release/our_pc_bunch.bin",  // relative to cwd at launch
+                "our_pc_bunch.bin",                // fallback
+                "/tmp/our_pc_bunch.bin",           // unix fallback
             };
             for (const char* p : paths) {
                 FILE* f = std::fopen(p, "wb");

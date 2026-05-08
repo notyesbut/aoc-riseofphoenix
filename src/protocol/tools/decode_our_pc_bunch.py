@@ -18,7 +18,7 @@ sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
 from phase1_parser import decode_bunch_data, read_bit, read_bits_le
 
-OUR_BUNCH = Path(r'C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation\dist\Release\our_pc_bunch.bin')
+OUR_BUNCH = Path(r'<REPO_ROOT>\dist\Release\our_pc_bunch.bin')
 
 
 def main():

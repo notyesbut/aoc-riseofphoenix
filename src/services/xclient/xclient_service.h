@@ -1137,11 +1137,11 @@ private:
                 log_wrapper_detail("SERVER>>", msg);
                 ProxyLogger::instance().log("xclient", "S>C", count, msg);
 
-                // â”€â”€ Intercept PlayReply to rewrite connection address â”€â”€â”€â”€
-                // The real server returns something like:
-                //   game_connection_string = "ec2-18-223-41-103.us-east-2.compute.amazonaws.com:7229"
-                // We need to replace it with our local address so the client
-                // connects through our UDP relay proxy.
+                // ── Intercept PlayReply to rewrite connection address ────
+                // The real server returns an AWS EC2 hostname for the realm
+                // server (something like "ec2-X-Y-Z-W.region.compute.amazonaws.com:7229").
+                // We replace it with our loopback so the client connects
+                // through our local UDP relay proxy.
                 if (msg.message_type_name() == "ics_xclient.PlayReply") {
                     ics_xclient::PlayReply prep;
                     if (prep.ParseFromString(msg.message_data()) &&

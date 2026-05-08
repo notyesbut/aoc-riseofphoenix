@@ -46,7 +46,7 @@ from pathlib import Path
 HERE = Path(__file__).parent
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
-SUBST_HEADER = Path(r'C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation'
+SUBST_HEADER = Path(r'<REPO_ROOT>'
                      r'\src\net\captured_pkt78_substituted_stream.h')
 
 
@@ -167,7 +167,7 @@ def main():
 
     # Generate the C++ header
     SUBSTITUTED_BITS = 4749
-    out_path = Path(r'C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation'
+    out_path = Path(r'<REPO_ROOT>'
                      r'\src\net\captured_pkt78_v3_channel_substituted_stream.h')
     print(f'\nWriting {out_path}')
     with open(out_path, 'w', encoding='utf-8', newline='\n') as f:

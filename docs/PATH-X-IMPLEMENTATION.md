@@ -89,7 +89,7 @@ matched pkt#22's PME-section start and got rejected.
 ### Step 1: Rebuild server (you must close ALL server windows first)
 
 ```
-cd C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation
+cd <REPO_ROOT>
 powershell -File build_server.ps1
 ```
 

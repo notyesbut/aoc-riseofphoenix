@@ -114,7 +114,7 @@ static main()
 {
     auto fp, out_path;
 
-    out_path = "C:\\Users\\xmaxt\\source\\repos\\AshesOfCreation\\AshesOfCreation\\dist\\Release\\ida_bunch_parser_hunt.txt";
+    out_path = "<REPO_ROOT>\\dist\\Release\\ida_bunch_parser_hunt.txt";
     fp = fopen(out_path, "w");
     if (fp == 0)
     {

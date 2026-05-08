@@ -2,7 +2,8 @@
 
 static main()
 {
-    auto output_path = "C:\\Users\\xmaxt\\Desktop\\IDADEC\\new\\strong_xor_candidates.txt";
+    // Edit per-machine: where IDA should write its findings
+    auto output_path = "<IDA_DUMPS>/new/strong_xor_candidates.txt";
     auto file = fopen(output_path, "w");
 
     if (file == 0)

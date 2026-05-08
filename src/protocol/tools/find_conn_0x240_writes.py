@@ -34,7 +34,7 @@ Usage
     python find_conn_0x240_writes.py path\\to\\AOCClient-Win64-Shipping.exe.asm
 
 Output: prints summary to stdout and writes detailed hits to
-        C:\\Users\\xmaxt\\Desktop\\IDADEC\\new\\conn_0x240_writes.txt
+        <IDA_DUMPS>/new/conn_0x240_writes.txt
 """
 
 import re
@@ -44,8 +44,8 @@ from collections import Counter
 from pathlib import Path
 
 
-DEFAULT_ASM = Path(r"C:\Users\xmaxt\Desktop\AOCClient-Win64-Shipping.exe.asm")
-DEFAULT_OUT = Path(r"C:\Users\xmaxt\Desktop\IDADEC\new\conn_0x240_writes.txt")
+DEFAULT_ASM = Path(r"<HOME>\Desktop\AOCClient-Win64-Shipping.exe.asm")
+DEFAULT_OUT = Path(r"<IDA_DUMPS>\new\conn_0x240_writes.txt")
 
 
 # Match any RMW or store to [reg + 0x240].

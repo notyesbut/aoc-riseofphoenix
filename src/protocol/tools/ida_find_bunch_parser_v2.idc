@@ -151,7 +151,7 @@ static main()
     auto out_path, fp;
     auto a_bhover, a_rbfail, a_dc, a_br, a_rl, a_pmc;
 
-    out_path = "C:\\Users\\xmaxt\\source\\repos\\AshesOfCreation\\AshesOfCreation\\dist\\Release\\ida_bunch_parser_hunt_v2.txt";
+    out_path = "<REPO_ROOT>\\dist\\Release\\ida_bunch_parser_hunt_v2.txt";
     fp = fopen(out_path, "w");
     if (fp == 0)
     {

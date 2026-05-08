@@ -25,7 +25,7 @@ Source change: `src/net/game_server.h` line ~3256-3286 — replaced the `send_cl
 - Decoder used: `src/protocol/tools/decode_pkt78.py` + a one-shot inline script using `phase1_parser.parse_packet`.
 
 ### 🎯 GOLD-MINE binary finding (Gap B mostly mapped)
-From `C:\Users\xmaxt\Desktop\random finding.txt` we confirmed AoC has a **second packet protocol parallel to UE5 bunches**:
+From `<HOME>\Desktop\random finding.txt` we confirmed AoC has a **second packet protocol parallel to UE5 bunches**:
 
 ```
 UDP :7777
@@ -316,7 +316,7 @@ No git commit yet. We can commit tomorrow after verifying the disabled-fuzz test
 ## Quick references for tomorrow
 
 - Latest server log (last test, before disable): `dist/Release/logs/emu-20260427-000808.log`
-- Latest client log: `C:\Users\xmaxt\AppData\Local\AOC\Saved\Logs\AOC.log`
+- Latest client log: `<HOME>\AppData\Local\AOC\Saved\Logs\AOC.log`
 - Pawn fixture: `src/protocol/tools/captured_pkt_78.bin`
 - Pawn bunch stream (3 bunches, ready to splice): `src/net/captured_pkt78_bunch_stream.h`
 - Decoder used today: `src/protocol/tools/decode_pkt78.py` (note: BUNCH_START hardcoded to 152, but actual is 127 from `parse_packet`; use parse_packet directly)

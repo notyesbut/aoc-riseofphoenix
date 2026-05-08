@@ -1,6 +1,6 @@
 import re
 
-INPUT_FILE = r"C:\Users\xmaxt\Desktop\IDADEC\new\strong_xor_candidates.txt"
+INPUT_FILE = r"<IDA_DUMPS>\new\strong_xor_candidates.txt"
 
 FUNC_WINDOW = 0x200
 

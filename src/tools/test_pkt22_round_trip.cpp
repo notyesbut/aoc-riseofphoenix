@@ -78,7 +78,7 @@ constexpr size_t BUFFER_BITS         = 4864;   // total bits in the file
 constexpr uint32_t DEADBEEF          = 0xDEADBEEF;
 
 constexpr const char* FIXTURE_PATH =
-    "C:\\Users\\xmaxt\\source\\repos\\AshesOfCreation\\AshesOfCreation\\"
+    "<REPO_ROOT>\\"
     "src\\protocol\\tools\\captured_pc_spawn_reassembled.bin";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────

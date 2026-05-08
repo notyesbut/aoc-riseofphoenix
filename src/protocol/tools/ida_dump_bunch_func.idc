@@ -163,7 +163,7 @@ static main()
     if (func_name == "")
         func_name = form("sub_%X", func_ea);
 
-    out_path = form("C:\\Users\\xmaxt\\source\\repos\\AshesOfCreation\\AshesOfCreation\\dist\\Release\\ida_bunch_func_%X.txt", func_ea);
+    out_path = form("<REPO_ROOT>\\dist\\Release\\ida_bunch_func_%X.txt", func_ea);
     fp = fopen(out_path, "w");
     if (fp == 0)
     {

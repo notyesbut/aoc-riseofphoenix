@@ -1,6 +1,6 @@
 # SerializeNewActor — Phase 3 decoding notes
 
-Source: `C:/Users/xmaxt/Documents/UnrealEngine-release/Engine/Source/Runtime/Engine/Private/PackageMapClient.cpp`
+Source: `<HOME>/Documents/UnrealEngine-release/Engine/Source/Runtime/Engine/Private/PackageMapClient.cpp`
 (UE 5.7, function `UPackageMapClient::SerializeNewActor`, line 491+)
 
 ## Canonical format (reading order)

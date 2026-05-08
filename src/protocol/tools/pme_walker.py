@@ -20,7 +20,7 @@ Find what NetGUID 7193 (subobject reference on ch=3) actually maps to.
 import struct, sys, io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-PATH = r"C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation\dist\Release\replay_data.bin"
+PATH = r"<REPO_ROOT>\dist\Release\replay_data.bin"
 
 def rb(buf, off, n=1):
     v = 0

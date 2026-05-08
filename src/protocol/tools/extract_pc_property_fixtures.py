@@ -27,7 +27,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 sys.path.insert(0, str(HERE.parent.parent.parent / 'tools'))
 import replay_decoder as rd
 
-REPLAY = Path('C:/Users/xmaxt/source/repos/AshesOfCreation/AshesOfCreation/dist/Release/replay_data.bin')
+REPLAY = Path('<REPO_ROOT>/dist/Release/replay_data.bin')
 
 print(f"Loading {REPLAY}")
 replay = rd.load_replay(str(REPLAY))

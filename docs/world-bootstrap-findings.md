@@ -304,7 +304,7 @@ src/protocol/                            ← new module (the "no-replay" track)
 
 | Resource | Path | Used for |
 |----------|------|----------|
-| UE5 source (canonical) | `C:/Users/xmaxt/Documents/UnrealEngine-release/Engine/Source/` | Reference implementation for `DataBunch`, `NetConnection`, `PackageMapClient`, `RepLayout`, `ActorChannel`. **This is the official source we cross-check against** — do NOT use `C:/Program Files/Epic Games/UE_*` (those are stripped engine installs). |
+| UE5 source (canonical) | `<HOME>/Documents/UnrealEngine-release/Engine/Source/` | Reference implementation for `DataBunch`, `NetConnection`, `PackageMapClient`, `RepLayout`, `ActorChannel`. **This is the official source we cross-check against** — do NOT use `C:/Program Files/Epic Games/UE_*` (those are stripped engine installs). |
 | PCAPRepo captures | `dist/Release/PCAPRepo-main/` | 1792 real captures for diff-based RE. |
 | World-bootstrap doc | `docs/world-bootstrap-findings.md` | (this file) central roadmap + findings. |
 | Current session decoder tools | `dist/Release/` | `extract_bunch.py`, `decode_actor_open.py`, `reassemble_chain.py`, `patch_name.py`. |
@@ -341,7 +341,7 @@ To replace blobs with builders we need:
 - A `BunchBuilder` + `PacketBuilder` that writes bits correctly
 - `CharacterProfile` as the input to all builders
 
-UE5 source at `C:/Users/xmaxt/Documents/UnrealEngine-release/Engine/Source/Runtime/Engine/Private/`
+UE5 source at `<HOME>/Documents/UnrealEngine-release/Engine/Source/Runtime/Engine/Private/`
 has:
 - `DataBunch.cpp` — bunch header read/write (stock UE5 reference)
 - `NetConnection.cpp` — outer packet assembly

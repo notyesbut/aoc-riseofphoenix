@@ -22,7 +22,7 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
-DUMP = Path(r'C:\Users\xmaxt\Desktop\AOCClient-Win64-Shipping.exe.asm')
+DUMP = Path(r'<HOME>\Desktop\AOCClient-Win64-Shipping.exe.asm')
 
 # Patterns we want to find.  Each entry: (regex, label, context_lines_before, context_lines_after)
 PATTERNS = [

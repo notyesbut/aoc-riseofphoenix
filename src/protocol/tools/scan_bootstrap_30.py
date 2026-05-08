@@ -22,7 +22,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 from phase1_parser import parse_packet, read_bit, read_bits_le
 
-REPLAY = Path(r'C:\Users\xmaxt\source\repos\AshesOfCreation\AshesOfCreation\dist\Release\replay_data.bin')
+REPLAY = Path(r'<REPO_ROOT>\dist\Release\replay_data.bin')
 DOCS = HERE.parent.parent.parent / 'docs'
 OUT_JSON = DOCS / 'native-bootstrap-sequence.json'
 SCAN_N = 30

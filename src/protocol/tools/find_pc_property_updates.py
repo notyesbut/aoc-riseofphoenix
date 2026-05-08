@@ -45,7 +45,7 @@ from phase1_parser import (
     serialize_int_packed, serialize_int_packed64, serialize_int,
 )
 
-REPLAY = Path('C:/Users/xmaxt/source/repos/AshesOfCreation/AshesOfCreation/dist/Release/replay_data.bin')
+REPLAY = Path('<REPO_ROOT>/dist/Release/replay_data.bin')
 
 # ─── Replay format ────────────────────────────────────────────────
 #
@@ -104,7 +104,7 @@ if not HAVE_REPLAY_DECODER:
 # Given we already have replay_decoded.txt (14 MB) on disk, just GREP it
 # for ch=3 bunches and analyze those.
 
-DECODED = Path('C:/Users/xmaxt/source/repos/AshesOfCreation/AshesOfCreation/tools/replay_decoded.txt')
+DECODED = Path('<REPO_ROOT>/tools/replay_decoded.txt')
 if not DECODED.exists():
     print(f"ERROR: {DECODED} missing — run replay_decoder.py first")
     sys.exit(1)

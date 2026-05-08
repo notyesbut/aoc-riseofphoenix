@@ -692,7 +692,7 @@ Confirmed field offsets in the bit-archive flavour used by Function G:
 
 Rather than rely on IDA XRefs (which the Shipping build strips), we read
 `AOCClient-Win64-Shipping.exe` directly via a Python PE parser — see
-`C:\Users\xmaxt\AppData\Local\Temp\re_pe_dump.py`.  This gave us the full
+`<HOME>\AppData\Local\Temp\re_pe_dump.py`.  This gave us the full
 structure layout of every UE5 `FPropertyParams` entry.
 
 ### 17.1 64-byte layout
