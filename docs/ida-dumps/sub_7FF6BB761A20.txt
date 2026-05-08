@@ -1,0 +1,4 @@
+void __fastcall sub_7FF6BB761A20(__int64 a1)
+{
+  *(_BYTE *)(a1 + 576) = 1;
+}

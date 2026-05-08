@@ -1,0 +1,153 @@
+char __fastcall sub_1444E4620(__int64 a1, __int64 a2, __int64 a3, __int64 a4)
+{
+  __int64 v7; // r8
+  __int64 v8; // r9
+  bool v9; // al
+  __int64 v10; // r10
+  unsigned int v11; // ecx
+  const wchar_t *v12; // rbx
+  __int64 v14; // rbp
+  const wchar_t *v15; // rbx
+  __int64 v16; // rax
+  __int64 v17; // r13
+  __int64 v18; // r14
+  const wchar_t **v19; // rdi
+  __int64 v20; // rcx
+  const wchar_t *v21; // rbx
+  const wchar_t *v22; // rbx
+  const wchar_t *v23; // [rsp+20h] [rbp-58h] BYREF
+  int v24; // [rsp+28h] [rbp-50h]
+  _QWORD v25[9]; // [rsp+30h] [rbp-48h] BYREF
+  __int64 v27; // [rsp+90h] [rbp+18h]
+  unsigned int v28; // [rsp+98h] [rbp+20h] BYREF
+
+  if ( (unsigned int)sub_144236CB0(*(_QWORD *)(a3 + 40), &xmmword_14D5E3168) < 0xB )
+  {
+    v9 = 0;
+  }
+  else
+  {
+    v7 = *(_QWORD *)(a3 + 8);
+    v9 = 0;
+    if ( (*(_BYTE *)(v7 + 41) & 2) == 0 )
+    {
+      v10 = *(_QWORD *)(v7 + 168);
+      if ( v10 < *(_QWORD *)(v7 + 160) )
+      {
+        v8 = 1;
+        LOBYTE(v8) = *(_BYTE *)((int)(v10 >> 3) + *(_QWORD *)(v7 + 144)) & (1 << (*(_BYTE *)(v7 + 168) & 7));
+        *(_QWORD *)(v7 + 168) = v10 + 1;
+        v9 = (_BYTE)v8 != 0;
+      }
+      else
+      {
+        sub_1414F6310(*(_QWORD *)(a3 + 8), 1);
+        v9 = 0;
+      }
+    }
+  }
+  *(_BYTE *)(a3 + 79) = v9;
+  v11 = 0;
+  v28 = 0;
+  if ( *(_DWORD *)(a4 + 48) != 1 )
+  {
+    (*(void (__fastcall **)(_QWORD, unsigned int *, __int64, __int64))(**(_QWORD **)(a3 + 8) + 408LL))(
+      *(_QWORD *)(a3 + 8),
+      &v28,
+      v7,
+      v8);
+    v11 = v28;
+    if ( v28 >= *(_DWORD *)(a4 + 48) )
+    {
+      if ( (unsigned __int8)byte_14D838438 >= 2u )
+      {
+        sub_141768740(*(_QWORD *)(a3 + 88), v25, 0, 0);
+        v12 = &chText;
+        if ( (unsigned __int8)sub_141484B10(a4, "FField::GetName") )
+          sub_14150CFA0(a4 + 32, &v23);
+        else
+          sub_14133EDD0(&v23, L"None");
+        if ( v24 )
+          v12 = v23;
+        sub_141421C70(&byte_14D838438, &off_14AA7D4E0, v12);
+        if ( v23 )
+          sub_1413B0B20(v23);
+        if ( v25[0] )
+          sub_1413B0B20(v25[0]);
+      }
+      return 0;
+    }
+  }
+  v14 = *(_QWORD *)(a1 + 40) + 48LL * (int)(v11 + *(unsigned __int16 *)(a4 + 64));
+  if ( (*(_BYTE *)(v14 + 44) & 8) == 0 )
+  {
+    if ( (unsigned __int8)byte_14D838418 >= 2u )
+    {
+      sub_141768740(*(_QWORD *)(a3 + 88), &v23, 0, 0);
+      v15 = &chText;
+      v16 = sub_14150CFA0(v14 + 8, v25);
+      if ( *(_DWORD *)(v16 + 8) )
+        v15 = *(const wchar_t **)v16;
+      sub_141421C70(&byte_14D838418, &off_14AA7D548, v15);
+      if ( v25[0] )
+        sub_1413B0B20(v25[0]);
+      if ( v23 )
+        sub_1413B0B20(v23);
+    }
+    return 0;
+  }
+  v17 = *(_QWORD *)(a4 + 112);
+  v27 = *(_QWORD *)(v17 + 216);
+  v18 = sub_14150CFA0(v14 + 8, v25);
+  v19 = (const wchar_t **)(a3 + 136);
+  if ( a3 + 136 != v18 )
+  {
+    if ( *v19 )
+      sub_1413B0B20(*v19);
+    *v19 = *(const wchar_t **)v18;
+    *(_QWORD *)v18 = 0;
+    *(_DWORD *)(a3 + 144) = *(_DWORD *)(v18 + 8);
+    *(_DWORD *)(a3 + 148) = *(_DWORD *)(v18 + 12);
+    *(_QWORD *)(v18 + 8) = 0;
+  }
+  if ( v25[0] )
+    sub_1413B0B20(v25[0]);
+  *(_QWORD *)(a3 + 56) = v17;
+  *(_WORD *)(a3 + 128) = *(_WORD *)(*(_QWORD *)(*(_QWORD *)(a1 + 88) + 16LL)
+                                  + 2LL * (unsigned __int16)(*(_WORD *)(a4 + 64) + v28));
+  *(_QWORD *)(a3 + 48) = *(_QWORD *)(a3 + 88) + *(int *)(v14 + 20);
+  if ( !(*(unsigned __int8 (__fastcall **)(__int64, __int64))(*(_QWORD *)v27 + 88LL))(v27, a3) )
+    return 0;
+  v20 = *(_QWORD *)(a3 + 8);
+  if ( (*(_BYTE *)(v20 + 41) & 2) != 0 )
+  {
+    if ( (unsigned __int8)byte_14D838418 >= 2u )
+    {
+      sub_141768740(*(_QWORD *)(a3 + 88), v25, 0, 0);
+      v21 = &chText;
+      if ( *((_DWORD *)v19 + 2) )
+        v21 = *v19;
+      sub_141421C70(&byte_14D838418, &off_14AA7D5E8, v21);
+      if ( v25[0] )
+        sub_1413B0B20(v25[0]);
+    }
+    return 0;
+  }
+  if ( *(_QWORD *)(v20 + 160) != *(_QWORD *)(v20 + 168) )
+  {
+    if ( (unsigned __int8)byte_14D838418 >= 2u )
+    {
+      sub_141768740(*(_QWORD *)(a3 + 88), v25, 0, 0);
+      v22 = &chText;
+      if ( *((_DWORD *)v19 + 2) )
+        v22 = *v19;
+      sub_141421C70(&byte_14D838418, &off_14AA7D6F0, v22);
+      if ( v25[0] )
+        sub_1413B0B20(v25[0]);
+    }
+    return 0;
+  }
+  if ( *(_DWORD *)(v14 + 40) != -1 )
+    sub_1444E29B0(a2, a3, a4, v28);
+  return 1;
+}

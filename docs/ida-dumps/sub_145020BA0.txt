@@ -1,0 +1,38 @@
+__int64 __fastcall sub_145020BA0(__int64 a1, unsigned int a2, _QWORD *a3)
+{
+  __int64 v4; // r9
+  __int64 v5; // rax
+  int v6; // ecx
+  int v7; // eax
+  __int64 v8; // rax
+  int v10; // [rsp+40h] [rbp+8h] BYREF
+  _QWORD *v11; // [rsp+58h] [rbp+20h] BYREF
+
+  if ( *(_DWORD *)(a1 + 8) != *(_DWORD *)(a1 + 52) )
+  {
+    v4 = *(_QWORD *)(a1 + 64);
+    v5 = a1 + 56;
+    v6 = *(_DWORD *)(a1 + 72);
+    if ( !v4 )
+      v4 = v5;
+    v7 = *(_DWORD *)(v4 + 4LL * (a2 & (v6 - 1)));
+    if ( v7 != -1 )
+    {
+      while ( 1 )
+      {
+        v8 = *(_QWORD *)a1 + 32LL * v7;
+        if ( *(_QWORD *)v8 == *a3 )
+          break;
+        v7 = *(_DWORD *)(v8 + 24);
+        if ( v7 == -1 )
+          goto LABEL_7;
+      }
+      if ( v8 )
+        return v8 + 8;
+    }
+  }
+LABEL_7:
+  v11 = a3;
+  sub_143125F80(a1, &v10, a2, &v11, 0);
+  return 32LL * v10 + 8 + *(_QWORD *)a1;
+}

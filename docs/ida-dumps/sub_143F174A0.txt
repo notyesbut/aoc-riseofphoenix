@@ -1,0 +1,30 @@
+_QWORD *__fastcall sub_143F174A0(_QWORD *a1, unsigned int a2)
+{
+  __int64 v2; // rbp
+  __int64 v4; // rax
+  __int64 v5; // rbx
+  __int64 v6; // rax
+  __int64 v8; // [rsp+50h] [rbp+18h] BYREF
+
+  v2 = a2;
+  v4 = sub_141D314D0(a1);
+  v5 = v4;
+  *a1 = v2;
+  if ( byte_14D6B7288 && v4 )
+    sub_14163E750(v4);
+  a1[1] = 0;
+  v8 = v5;
+  if ( byte_14D6B7288 && v5 )
+    sub_14163E750(v5);
+  sub_14177B2B0(a1 + 1, &v8);
+  a1[2] = v5;
+  a1[3] = 0;
+  a1[4] = 0;
+  a1[5] = 0;
+  if ( (unsigned int)(v2 - 14) > 1 )
+  {
+    v6 = sub_141D411A0((unsigned int)v2);
+    sub_1413402F0(a1 + 3, v6);
+  }
+  return a1;
+}

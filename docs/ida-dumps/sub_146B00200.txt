@@ -1,0 +1,42 @@
+char __fastcall sub_146B00200(__int64 a1, __int64 a2)
+{
+  __int64 v2; // rbx
+  __int64 v4; // rax
+  __int64 v5; // rdx
+  __int64 v6; // r8
+  __int64 v7; // rax
+  __int64 v8; // rdx
+  const wchar_t *v9; // rdx
+
+  v2 = *(_QWORD *)(a1 - 1192);
+  if ( !v2 )
+    goto LABEL_12;
+  if ( byte_14D6B7288 )
+    sub_14163E750(*(_QWORD *)(a1 - 1192));
+  if ( (*(_DWORD *)(v2 + 8) & 0x40000000) != 0 )
+  {
+LABEL_12:
+    v9 = L"AAoCPlayerController - No valid pawn";
+  }
+  else
+  {
+    v4 = sub_145D75170();
+    v5 = *(_QWORD *)(v2 + 16);
+    v6 = v4 + 80;
+    v7 = *(int *)(v4 + 88);
+    if ( (int)v7 > *(_DWORD *)(v5 + 88) )
+      return 0;
+    if ( *(_QWORD *)(*(_QWORD *)(v5 + 80) + 8 * v7) != v6 )
+      return 0;
+    if ( (*(_DWORD *)(v2 + 8) & 0x40000000) != 0 )
+      return 0;
+    if ( !(unsigned __int8)sub_146B4D080(v2) )
+      return 0;
+    LOBYTE(v8) = 1;
+    if ( (*(unsigned __int8 (__fastcall **)(__int64, __int64))(*(_QWORD *)v2 + 3888LL))(v2, v8) )
+      return 0;
+    v9 = L"AAoCPlayerController - Teleport is still in progress";
+  }
+  sub_1413402F0(a2, v9);
+  return 1;
+}

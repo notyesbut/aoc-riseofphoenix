@@ -1,0 +1,4473 @@
+[
+  {
+    "Type": "ActionResponseComponent",
+    "Name": "ActionResponseComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'ActionResponseComponent'",
+    "Outer": {
+      "ObjectName": "AoCPlayerControllerBP_C'Default__AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.1"
+    }
+  },
+  {
+    "Type": "AoCPlayerControllerBP_C",
+    "Name": "Default__AoCPlayerControllerBP_C",
+    "Flags": "RF_Public | RF_ClassDefaultObject | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "BlueprintGeneratedClass'/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.AoCPlayerControllerBP_C'",
+    "Package": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP",
+    "Properties": {
+      "UberGraphFrame": {},
+      "OnActionCameraChange": {
+        "InvocationList": []
+      },
+      "Use Actionbar Slot": {
+        "InvocationList": []
+      },
+      "Set Actionbar Highlight": {
+        "InvocationList": []
+      },
+      "LocationTimer": {
+        "Handle": 0
+      },
+      "InputAxisDiverted": {
+        "InvocationList": []
+      },
+      "OnMoveStart": {
+        "InvocationList": []
+      },
+      "UpdateQuestSideBar": {
+        "InvocationList": []
+      },
+      "UpdateActiveTarget": {
+        "InvocationList": []
+      },
+      "ToggleCompassVisibility": {
+        "InvocationList": []
+      },
+      "OnAbilityUpdated": {
+        "InvocationList": []
+      },
+      "ClearHotbar": {
+        "InvocationList": []
+      },
+      "UpdateNodeActorBuildingResources": {
+        "InvocationList": []
+      },
+      "UpdateTargetTradeItems": {
+        "InvocationList": []
+      },
+      "UpdateVendorSaleItems": {
+        "InvocationList": []
+      },
+      "PlayerItemsUpdated": {
+        "InvocationList": []
+      },
+      "UpdateSkills": {
+        "InvocationList": []
+      },
+      "OnAnyKey": {
+        "InvocationList": []
+      },
+      "OnLevelChanged_0": {
+        "InvocationList": []
+      },
+      "OnExperienceEarned": {
+        "InvocationList": []
+      }
+    }
+  },
+  {
+    "Type": "BlueprintGeneratedClass",
+    "Name": "AoCPlayerControllerBP_C",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'BlueprintGeneratedClass'",
+    "Package": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP",
+    "Properties": {
+      "DynamicBindingObjects": [
+        {
+          "ObjectName": "InputKeyDelegateBinding'AoCPlayerControllerBP_C:InputKeyDelegateBinding_0'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.60"
+        },
+        {
+          "ObjectName": "InputActionDelegateBinding'AoCPlayerControllerBP_C:InputActionDelegateBinding_0'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.58"
+        },
+        {
+          "ObjectName": "InputAxisDelegateBinding'AoCPlayerControllerBP_C:InputAxisDelegateBinding_0'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.59"
+        }
+      ],
+      "Timelines": [
+        {
+          "ObjectName": "TimelineTemplate'AoCPlayerControllerBP_C:Timeline_1 old_Template'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.70"
+        }
+      ],
+      "SimpleConstructionScript": {
+        "ObjectName": "SimpleConstructionScript'AoCPlayerControllerBP_C:SimpleConstructionScript_0'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.69"
+      },
+      "UberGraphFunction": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:ExecuteUbergraph_AoCPlayerControllerBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.14"
+      }
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'AoCPlayerController'",
+      "ObjectPath": "/Script/GameSystemsPlugin"
+    },
+    "Children": [
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Set Hide All Characters In World'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.39"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Check Action Mode Old'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.8"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:GetInputDirection'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.15"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:DebugAuthorityOutput'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.12"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InitializeHUDModeForInGame'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.17"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Timeline_1 old__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.48"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Timeline_1 old__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.49"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_PageUp_K2Node_InputKeyEvent_6'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.23"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_Comma_K2Node_InputKeyEvent_5'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.19"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_Ctrl+Alt+Shift_M_K2Node_InputKeyEvent_4'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.20"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_ToggleFPS_K2Node_InputActionEvent_0'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.24"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_Ctrl+Alt+Shift_N_K2Node_InputKeyEvent_3'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.21"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_Ctrl+Alt+Shift_P_K2Node_InputKeyEvent_2'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.22"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_B_K2Node_InputKeyEvent_1'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.18"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_V_K2Node_InputKeyEvent_0'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.25"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:HandleLocationTimer'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.16"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnUpdatePlayerItemsBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.35"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:DisplaySiegeVictoryScreenBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.13"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:CLIENT Select Target from SERVER'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.10"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:TargetMember'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.46"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OpenFastTravelWidget'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.36"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:SpawnActorAtLocation'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.41"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:SpawnPFXAtLocation'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.43"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:BotShowUiBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.5"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:BotUpdateUiBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.6"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Show New Bot UI'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.40"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:CallOnMoveStartDelegateBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.7"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Old Bot UI'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.28"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Client_HideAllCharactersInWorld'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.11"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:SpawnDecalAtLocation'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.42"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:StopTalkToNPClientCallback'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.44"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:TalkToNPCClientCallback'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.45"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:TeleportStartedBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.47"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:LogRegisteredEmail'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.27"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:ExecuteUbergraph_AoCPlayerControllerBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.14"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnExperienceEarned__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.32"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnLevelChanged_0__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.33"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnAnyKey__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.31"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateSkills__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.54"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:PlayerItemsUpdated__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.37"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateVendorSaleItems__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.56"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateTargetTradeItems__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.55"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateNodeActorBuildingResources__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.52"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:ClearHotbar__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.9"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnAbilityUpdated__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.29"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:ToggleCompassVisibility__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.50"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateActiveTarget__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.51"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateQuestSideBar__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.53"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnMoveStart__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.34"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InputAxisDiverted__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.26"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Set Actionbar Highlight__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.38"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Use Actionbar Slot__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.57"
+      },
+      {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnActionCameraChange__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.30"
+      }
+    ],
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "UberGraphFrame",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 16,
+        "PropertyFlags": "Transient | DuplicateTransient",
+        "Struct": {
+          "ObjectName": "Class'PointerToUberGraphFrame'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "Timeline_1_old_NewTrack_0_24AC6927467B3BD4B88319AA2261EE27",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "Timeline_1_old__Direction_24AC6927467B3BD4B88319AA2261EE27",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ETimelineDirection'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Timeline_1 old",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'TimelineComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "DebugAuthority",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "CurrentAuthority",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 4,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance"
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "TempAuthority",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 4,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance"
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "InteractOverlapCheckTimer",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance"
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Decal",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'DecalComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Vendor Data Table",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'DataTable'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnActionCameraChange",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:OnActionCameraChange__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.30"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "Use Actionbar Slot",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:Use Actionbar Slot__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.57"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "Set Actionbar Highlight",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:Set Actionbar Highlight__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.38"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "LocationTimer",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "Struct": {
+          "ObjectName": "Class'TimerHandle'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "EnableABIndex",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "IsMovingX",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "IsMovingY",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "InitialMapRegs_0",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 16,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | ContainsInstancedReference",
+        "Inner": {
+          "Type": "ObjectProperty",
+          "Name": "InitialMapRegs_0",
+          "Flags": "RF_Public",
+          "ElementSize": 8,
+          "PropertyFlags": "InstancedReference",
+          "PropertyClass": {
+            "ObjectName": "BlueprintGeneratedClass'MapRegistrationComponentBP_C'",
+            "ObjectPath": "/Game/GameBlueprints/MapRegistrationComponentBP.0"
+          }
+        }
+      },
+      {
+        "Type": "MapProperty",
+        "Name": "ClientConstructionActorRefs",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 80,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "KeyProp": {
+          "Type": "StrProperty",
+          "Name": "ClientConstructionActorRefs",
+          "Flags": "RF_Public",
+          "ElementSize": 16
+        },
+        "ValueProp": {
+          "Type": "ObjectProperty",
+          "Name": "ClientConstructionActorRefs_Value",
+          "Flags": "RF_Public",
+          "ElementSize": 8,
+          "PropertyClass": {
+            "ObjectName": "Class'Actor'",
+            "ObjectPath": "/Script/Engine"
+          }
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "InputAxisDiverted",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:InputAxisDiverted__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.26"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnMoveStart",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:OnMoveStart__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.34"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "UpdateQuestSideBar",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateQuestSideBar__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.53"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "UpdateActiveTarget",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateActiveTarget__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.51"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "ToggleCompassVisibility",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:ToggleCompassVisibility__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.50"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnAbilityUpdated",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:OnAbilityUpdated__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.29"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "ClearHotbar",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:ClearHotbar__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.9"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "UpdateNodeActorBuildingResources",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateNodeActorBuildingResources__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.52"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "UpdateTargetTradeItems",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateTargetTradeItems__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.55"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "UpdateVendorSaleItems",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateVendorSaleItems__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.56"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "PlayerItemsUpdated",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:PlayerItemsUpdated__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.37"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "UpdateSkills",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateSkills__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.54"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnAnyKey",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:OnAnyKey__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.31"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnLevelChanged_0",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:OnLevelChanged_0__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.33"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnExperienceEarned",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'AoCPlayerControllerBP_C:OnExperienceEarned__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.32"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "FriendlyModifier OLD",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "NPC",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnTemplate",
+        "PropertyClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "ShadowArenaPrototype",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'MaterialInstanceDynamic'",
+          "ObjectPath": "/Script/Engine"
+        }
+      }
+    ],
+    "FuncMap": {
+      "OnActionCameraChange__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnActionCameraChange__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.30"
+      },
+      "Use Actionbar Slot__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Use Actionbar Slot__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.57"
+      },
+      "Set Actionbar Highlight__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Set Actionbar Highlight__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.38"
+      },
+      "InputAxisDiverted__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InputAxisDiverted__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.26"
+      },
+      "OnMoveStart__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnMoveStart__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.34"
+      },
+      "UpdateQuestSideBar__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateQuestSideBar__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.53"
+      },
+      "UpdateActiveTarget__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateActiveTarget__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.51"
+      },
+      "ToggleCompassVisibility__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:ToggleCompassVisibility__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.50"
+      },
+      "OnAbilityUpdated__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnAbilityUpdated__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.29"
+      },
+      "ClearHotbar__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:ClearHotbar__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.9"
+      },
+      "UpdateNodeActorBuildingResources__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateNodeActorBuildingResources__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.52"
+      },
+      "UpdateTargetTradeItems__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateTargetTradeItems__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.55"
+      },
+      "UpdateVendorSaleItems__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateVendorSaleItems__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.56"
+      },
+      "PlayerItemsUpdated__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:PlayerItemsUpdated__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.37"
+      },
+      "UpdateSkills__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:UpdateSkills__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.54"
+      },
+      "OnAnyKey__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnAnyKey__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.31"
+      },
+      "OnLevelChanged_0__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnLevelChanged_0__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.33"
+      },
+      "OnExperienceEarned__DelegateSignature": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnExperienceEarned__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.32"
+      },
+      "ExecuteUbergraph_AoCPlayerControllerBP": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:ExecuteUbergraph_AoCPlayerControllerBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.14"
+      },
+      "LogRegisteredEmail": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:LogRegisteredEmail'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.27"
+      },
+      "TeleportStartedBP": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:TeleportStartedBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.47"
+      },
+      "TalkToNPCClientCallback": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:TalkToNPCClientCallback'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.45"
+      },
+      "StopTalkToNPClientCallback": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:StopTalkToNPClientCallback'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.44"
+      },
+      "SpawnDecalAtLocation": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:SpawnDecalAtLocation'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.42"
+      },
+      "Client_HideAllCharactersInWorld": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Client_HideAllCharactersInWorld'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.11"
+      },
+      "Old Bot UI": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Old Bot UI'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.28"
+      },
+      "CallOnMoveStartDelegateBP": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:CallOnMoveStartDelegateBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.7"
+      },
+      "Show New Bot UI": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Show New Bot UI'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.40"
+      },
+      "BotUpdateUiBP": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:BotUpdateUiBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.6"
+      },
+      "BotShowUiBP": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:BotShowUiBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.5"
+      },
+      "SpawnPFXAtLocation": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:SpawnPFXAtLocation'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.43"
+      },
+      "SpawnActorAtLocation": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:SpawnActorAtLocation'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.41"
+      },
+      "OpenFastTravelWidget": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OpenFastTravelWidget'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.36"
+      },
+      "TargetMember": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:TargetMember'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.46"
+      },
+      "CLIENT Select Target from SERVER": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:CLIENT Select Target from SERVER'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.10"
+      },
+      "DisplaySiegeVictoryScreenBP": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:DisplaySiegeVictoryScreenBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.13"
+      },
+      "OnUpdatePlayerItemsBP": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:OnUpdatePlayerItemsBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.35"
+      },
+      "HandleLocationTimer": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:HandleLocationTimer'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.16"
+      },
+      "InpActEvt_V_K2Node_InputKeyEvent_0": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_V_K2Node_InputKeyEvent_0'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.25"
+      },
+      "InpActEvt_B_K2Node_InputKeyEvent_1": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_B_K2Node_InputKeyEvent_1'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.18"
+      },
+      "InpActEvt_Ctrl+Alt+Shift_P_K2Node_InputKeyEvent_2": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_Ctrl+Alt+Shift_P_K2Node_InputKeyEvent_2'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.22"
+      },
+      "InpActEvt_Ctrl+Alt+Shift_N_K2Node_InputKeyEvent_3": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_Ctrl+Alt+Shift_N_K2Node_InputKeyEvent_3'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.21"
+      },
+      "InpActEvt_ToggleFPS_K2Node_InputActionEvent_0": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_ToggleFPS_K2Node_InputActionEvent_0'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.24"
+      },
+      "InpActEvt_Ctrl+Alt+Shift_M_K2Node_InputKeyEvent_4": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_Ctrl+Alt+Shift_M_K2Node_InputKeyEvent_4'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.20"
+      },
+      "InpActEvt_Comma_K2Node_InputKeyEvent_5": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_Comma_K2Node_InputKeyEvent_5'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.19"
+      },
+      "InpActEvt_PageUp_K2Node_InputKeyEvent_6": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InpActEvt_PageUp_K2Node_InputKeyEvent_6'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.23"
+      },
+      "Timeline_1 old__UpdateFunc": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Timeline_1 old__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.49"
+      },
+      "Timeline_1 old__FinishedFunc": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Timeline_1 old__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.48"
+      },
+      "InitializeHUDModeForInGame": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:InitializeHUDModeForInGame'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.17"
+      },
+      "DebugAuthorityOutput": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:DebugAuthorityOutput'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.12"
+      },
+      "GetInputDirection": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:GetInputDirection'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.15"
+      },
+      "Check Action Mode Old": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Check Action Mode Old'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.8"
+      },
+      "Set Hide All Characters In World": {
+        "ObjectName": "Function'AoCPlayerControllerBP_C:Set Hide All Characters In World'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.39"
+      }
+    },
+    "ClassFlags": "CLASS_Config | CLASS_NoExport | CLASS_NotPlaceable | CLASS_CompiledFromBlueprint | CLASS_HasInstancedReference"
+  },
+  {
+    "Type": "CurveFloat",
+    "Name": "CurveFloat_1_2",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'CurveFloat'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "Properties": {
+      "FloatCurve": {
+        "Keys": [
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": 0.0,
+            "Value": 1.0,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          },
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": 3.4,
+            "Value": 0.0,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Type": "FTUEComponent",
+    "Name": "FTUE Component",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'FTUEComponent'",
+    "Outer": {
+      "ObjectName": "AoCPlayerControllerBP_C'Default__AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.1"
+    }
+  },
+  {
+    "Type": "Function",
+    "Name": "BotShowUiBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "BotUpdateUiBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "CallOnMoveStartDelegateBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'AoCPlayerController:CallOnMoveStartDelegateBP'",
+      "ObjectPath": "/Script/GameSystemsPlugin"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "bIsActionMode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "ForwardAxis",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm"
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "RightAxis",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Check Action Mode Old",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Object",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'Object'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetAoCCameraManager_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCCameraManager'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsPlayer_Character",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'PlayerCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ClearHotbar__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "IsMount",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "CLIENT Select Target from SERVER",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Target",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Friendly?",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Net | FUNC_NetClient | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Client_HideAllCharactersInWorld",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "bHide",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "IgnoreActors",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm",
+        "Inner": {
+          "Type": "ObjectProperty",
+          "Name": "IgnoreActors",
+          "Flags": "RF_Public",
+          "ElementSize": 8,
+          "PropertyClass": {
+            "ObjectName": "Class'Actor'",
+            "ObjectPath": "/Script/Engine"
+          }
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Net | FUNC_NetReliable | FUNC_HasOutParms | FUNC_NetClient | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "DebugAuthorityOutput",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsServer_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_HasAuthority_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_NotEqual_IntInt_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_SwitchInteger_CmpSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "DisplaySiegeVictoryScreenBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "EnumProperty",
+        "Name": "VictorTeamType",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Enum": {
+          "ObjectName": "Class'ESiegeTeamType'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ExecuteUbergraph_AoCPlayerControllerBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "EntryPoint",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetNiagaraParameterCollection_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'NiagaraParameterCollectionInstance'",
+          "ObjectPath": "/Script/Niagara"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_K2_GetPawn_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Pawn'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsBase_Character",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StrProperty",
+        "Name": "CallFunc_GetLocationData_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "CallFunc_Conv_StringToText_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_Event_loc",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'EItemLocation'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Not_PreBool_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetAoCHUD_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCHUDBase'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "K2Node_Event_VictorTeamType",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESiegeTeamType'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_Target",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_Friendly_",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_K2_GetPawn_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Pawn'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_CustomEvent_Member",
+        "Flags": "RF_Public",
+        "ElementSize": 288,
+        "Struct": {
+          "ObjectName": "Class'AoCPartyMember'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsBase_Character_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetRaidMemberByGuid_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCPlayerController'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetPartyMemberByGuid_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCPlayerController'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetActualPlayer_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'PlayerCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetActualPlayer_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'PlayerCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_InputKeyEvent_Key_2",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_3",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_FastTravelNPC",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'NPCPawn_C'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/NPCPawn.7"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_InputKeyEvent_Key_3",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetFastTravelComponent_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'FastTravelComponent'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_AttachToCharacter",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_OwningCharacter",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "NameProperty",
+        "Name": "K2Node_CustomEvent_Attach_Socket",
+        "Flags": "RF_Public",
+        "ElementSize": 12
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_CustomEvent_Spawn_Location",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_CustomEvent_Spawn_Rotation",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Rotator'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_CustomEvent_Spawn_Scale",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "ClassProperty",
+        "Name": "K2Node_CustomEvent_ClassToSpawn",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Class'",
+          "ObjectPath": "/Script/CoreUObject"
+        },
+        "MetaClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_4",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_MakeTransform_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 96,
+        "Struct": {
+          "ObjectName": "Class'Transform'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetPlayerMesh_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'SkeletalMeshComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_5",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_6",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_GetSocketTransform_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 96,
+        "Struct": {
+          "ObjectName": "Class'Transform'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "MapProperty",
+        "Name": "CallFunc_GetTravelRoutes_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 80,
+        "KeyProp": {
+          "Type": "IntProperty",
+          "Name": "CallFunc_GetTravelRoutes_ReturnValue",
+          "Flags": "RF_Public",
+          "ElementSize": 4
+        },
+        "ValueProp": {
+          "Type": "StructProperty",
+          "Name": "CallFunc_GetTravelRoutes_ReturnValue_Value",
+          "Flags": "RF_Public",
+          "ElementSize": 24,
+          "Struct": {
+            "ObjectName": "Class'TravelRoute'",
+            "ObjectPath": "/Script/GameSystemsPlugin"
+          }
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_BreakTransform_Location",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_BreakTransform_Rotation",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Rotator'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_BreakTransform_Scale",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_CustomEvent_Activation_Delay",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_ParticleToSpawn",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'ParticleSystem'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_CustomEvent_Location_1",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_CustomEvent_Rotation_1",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Rotator'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_CustomEvent_Scale",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_AutoDestroy",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_AutoActivate",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_MakeTransform_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 96,
+        "Struct": {
+          "ObjectName": "Class'Transform'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_SpawnEmitterAtLocation_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'ParticleSystemComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_BeginDeferredActorSpawnFromClass_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_FinishSpawningActor_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_K2_AttachToComponent_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetAoCHUD_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCHUDBase'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_CreateDynamicMaterialInstance_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'MaterialInstanceDynamic'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_7",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Conv_SoftObjectReferenceToObject_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Object'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_Event_bIsActionMode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "ConstParm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_Event_ForwardAxis",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "ConstParm"
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_Event_RightAxis",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "ConstParm"
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsText",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'TextBlock'",
+          "ObjectPath": "/Script/UMG"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_2",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "EnumProperty",
+        "Name": "CallFunc_GetVisibility_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ESlateVisibility'",
+          "ObjectPath": "/Script/UMG"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_SwitchEnum_CmpSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_InputActionEvent_Key",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_InputKeyEvent_Key_4",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_bHide",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "K2Node_CustomEvent_IgnoreActors",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ConstParm | ReferenceParm",
+        "Inner": {
+          "Type": "ObjectProperty",
+          "Name": "K2Node_CustomEvent_IgnoreActors",
+          "Flags": "RF_Public",
+          "ElementSize": 8,
+          "PropertyClass": {
+            "ObjectName": "Class'Actor'",
+            "ObjectPath": "/Script/Engine"
+          }
+        }
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "CallFunc_Set_Hide_All_Characters_In_World_OutCharacters",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ReferenceParm",
+        "Inner": {
+          "Type": "ObjectProperty",
+          "Name": "CallFunc_Set_Hide_All_Characters_In_World_OutCharacters",
+          "Flags": "RF_Public",
+          "ElementSize": 8,
+          "PropertyClass": {
+            "ObjectName": "Class'BaseCharacter'",
+            "ObjectPath": "/Script/GameSystemsPlugin"
+          }
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_InputKeyEvent_Key_1",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_K2_GetPawn_ReturnValue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Pawn'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_CreateDynamicMaterialInstance_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'MaterialInstanceDynamic'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsBase_Character_2",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_3",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "InterfaceProperty",
+        "Name": "CallFunc_AddOrUpdateBlendable_InBlendableObject_CastInput",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "UObjectWrapper",
+        "InterfaceClass": {
+          "ObjectName": "Class'BlendableInterface'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "InterfaceProperty",
+        "Name": "CallFunc_RemoveBlendable_InBlendableObject_CastInput",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "UObjectWrapper",
+        "InterfaceClass": {
+          "ObjectName": "Class'BlendableInterface'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_HasAuthority_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsServer_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_InputKeyEvent_Key",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_Decal_Material",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'MaterialInterface'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_CustomEvent_Decal_Size",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_CustomEvent_Location",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_CustomEvent_Rotation",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Rotator'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_CustomEvent_Life_Span",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_FadeIn_",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_FadeOut_",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_CustomEvent_FadeInDelay",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_CustomEvent_FadeInDuration",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_CustomEvent_FadeOutDelay",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_CustomEvent_FadeOutDuration",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_isMeteorStorm",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_BeginDeferredActorSpawnFromClass_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_FinishSpawningActor_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_SpawnDecalAtLocation_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'DecalComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_K2_GetPawn_ReturnValue_3",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Pawn'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_8",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_NPC_Talking_With",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'NPCPawn_C'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/NPCPawn.7"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_BaseChar_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_NPC_ToTalkTo",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'NPCPawn_C'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/NPCPawn.7"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_BaseChar",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_HasAuthority_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_SpawnSound2D_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'AudioComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetPlayerCharacter_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Character'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsServer_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsBase_Character_3",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_4",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsProxying_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StrProperty",
+        "Name": "K2Node_CustomEvent_Email",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "CallFunc_Conv_BoolToInt_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "CallFunc_Conv_StringToText_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "StrProperty",
+        "Name": "CallFunc_Conv_IntToString_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_MakeStruct_FormatArgumentData",
+        "Flags": "RF_Public",
+        "ElementSize": 72,
+        "Struct": {
+          "ObjectName": "Class'FormatArgumentData'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "StrProperty",
+        "Name": "CallFunc_Concat_StrStr_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "K2Node_MakeArray_Array",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ReferenceParm",
+        "Inner": {
+          "Type": "StructProperty",
+          "Name": "K2Node_MakeArray_Array",
+          "Flags": "RF_Public",
+          "ElementSize": 72,
+          "Struct": {
+            "ObjectName": "Class'FormatArgumentData'",
+            "ObjectPath": "/Script/Engine"
+          }
+        }
+      },
+      {
+        "Type": "TextProperty",
+        "Name": "CallFunc_Format_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_InputKeyEvent_Key_5",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_InputKeyEvent_Key_6",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'TimerDynamicDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_K2_SetTimerDelegate_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "Struct": {
+          "ObjectName": "Class'TimerHandle'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetNiagaraParameterCollection_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'NiagaraParameterCollectionInstance'",
+          "ObjectPath": "/Script/Niagara"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_Delay_Duration_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_CallDelegate_ForwardAxis_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_CallDelegate_RightAxis_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_SpawnDecalAtLocation_LifeSpan_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_SetFadeIn_StartDelay_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_SetFadeIn_Duration_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_SetFadeOut_StartDelay_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_SetFadeOut_Duration_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      }
+    ],
+    "FunctionFlags": "FUNC_Final | FUNC_UbergraphFunction | FUNC_HasDefaults"
+  },
+  {
+    "Type": "Function",
+    "Name": "GetInputDirection",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "InputDir",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "PropertyFlags": "Parm | OutParm",
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_GetActorRightVector_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_GetActorForwardVector_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_GetInputAxisValue_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_GetInputAxisValue_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_Multiply_VectorFloat_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_Multiply_VectorFloat_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_Add_VectorVector_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_BreakVector_X",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_BreakVector_Y",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_BreakVector_Z",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_MakeVector_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_Normal_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Multiply_VectorFloat_B_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Multiply_VectorFloat_B_ImplicitCast_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "HandleLocationTimer",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "InitializeHUDModeForInGame",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "InpActEvt_B_K2Node_InputKeyEvent_1",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Key",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "InpActEvt_Comma_K2Node_InputKeyEvent_5",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Key",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "InpActEvt_Ctrl+Alt+Shift_M_K2Node_InputKeyEvent_4",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Key",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "InpActEvt_Ctrl+Alt+Shift_N_K2Node_InputKeyEvent_3",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Key",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "InpActEvt_Ctrl+Alt+Shift_P_K2Node_InputKeyEvent_2",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Key",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "InpActEvt_PageUp_K2Node_InputKeyEvent_6",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Key",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "InpActEvt_ToggleFPS_K2Node_InputActionEvent_0",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Key",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "InpActEvt_V_K2Node_InputKeyEvent_0",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Key",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "InputAxisDiverted__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "Up",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "LogRegisteredEmail",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StrProperty",
+        "Name": "Email",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Net | FUNC_NetServer | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Old Bot UI",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnAbilityUpdated__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "HotbarObject",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'Object'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnActionCameraChange__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnAnyKey__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Key",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Key'",
+          "ObjectPath": "/Script/InputCore"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnExperienceEarned__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnLevelChanged_0__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "NewLevel",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "IsAdventureLevel",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "LevelUp",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnMoveStart__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "IsActionMode",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "ForwardAxis",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "RightAxis",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnUpdatePlayerItemsBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'AoCPlayerController:OnUpdatePlayerItemsBP'",
+      "ObjectPath": "/Script/GameSystemsPlugin"
+    },
+    "ChildProperties": [
+      {
+        "Type": "EnumProperty",
+        "Name": "loc",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Enum": {
+          "ObjectName": "Class'EItemLocation'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OpenFastTravelWidget",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "FastTravelNPC",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'NPCPawn_C'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/NPCPawn.7"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "PlayerItemsUpdated__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "EnumProperty",
+        "Name": "Loc",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Enum": {
+          "ObjectName": "Class'EItemLocation'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        },
+        "UnderlyingProp": {
+          "Type": "ByteProperty",
+          "Name": "UnderlyingType",
+          "Flags": "RF_Public",
+          "ElementSize": 1,
+          "Enum": null
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Set Actionbar Highlight__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "NameProperty",
+        "Name": "Slot ID",
+        "Flags": "RF_Public",
+        "ElementSize": 12,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "New Highlighted",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "IsMount",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Set Hide All Characters In World",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "bHide",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "IgnoreActors",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm",
+        "Inner": {
+          "Type": "ObjectProperty",
+          "Name": "IgnoreActors",
+          "Flags": "RF_Public",
+          "ElementSize": 8,
+          "PropertyClass": {
+            "ObjectName": "Class'Actor'",
+            "ObjectPath": "/Script/Engine"
+          }
+        }
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "OutCharacters",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "Parm | OutParm",
+        "Inner": {
+          "Type": "ObjectProperty",
+          "Name": "OutCharacters",
+          "Flags": "RF_Public",
+          "ElementSize": 8,
+          "PropertyClass": {
+            "ObjectName": "Class'BaseCharacter'",
+            "ObjectPath": "/Script/GameSystemsPlugin"
+          }
+        }
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "Temp_int_Array_Index_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "Temp_int_Loop_Counter_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "CallFunc_Add_IntInt_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetBaseCharacter_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "CallFunc_GetAllActorsOfClass_OutActors",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "ReferenceParm",
+        "Inner": {
+          "Type": "ObjectProperty",
+          "Name": "CallFunc_GetAllActorsOfClass_OutActors",
+          "Flags": "RF_Public",
+          "ElementSize": 8,
+          "PropertyClass": {
+            "ObjectName": "Class'BaseCharacter'",
+            "ObjectPath": "/Script/GameSystemsPlugin"
+          }
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_ActorIsAutonomousOnClient_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_Array_Get_Item",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Array_Contains_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "CallFunc_Array_Length_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_Less_IntInt_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasOutParms | FUNC_HasDefaults | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Show New Bot UI",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "SpawnActorAtLocation",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "AttachToCharacter",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "OwningCharacter",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "NameProperty",
+        "Name": "Attach Socket",
+        "Flags": "RF_Public",
+        "ElementSize": 12,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "Spawn Location",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "Spawn Rotation",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Rotator'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "Spawn Scale",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "ClassProperty",
+        "Name": "ClassToSpawn",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'Class'",
+          "ObjectPath": "/Script/CoreUObject"
+        },
+        "MetaClass": {
+          "ObjectName": "Class'Actor'",
+          "ObjectPath": "/Script/Engine"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "SpawnDecalAtLocation",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Decal Material",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'MaterialInterface'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "Decal Size",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "Location",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "Rotation",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Rotator'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "Life Span",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "FadeIn?",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "FadeOut?",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "FadeInDelay",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "FadeInDuration",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "FadeOutDelay",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "FadeOutDuration",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "isMeteorStorm",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "SpawnPFXAtLocation",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "DoubleProperty",
+        "Name": "Activation Delay",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "ParticleToSpawn",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'ParticleSystem'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "Location",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "Rotation",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Rotator'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "Scale",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "AutoDestroy",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "AutoActivate",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "StopTalkToNPClientCallback",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "NPC Talking With",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'NPCPawn_C'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/NPCPawn.7"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "BaseChar",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Net | FUNC_NetClient | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "TalkToNPCClientCallback",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "NPC_ToTalkTo",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'NPCPawn_C'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/NPCPawn.7"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "BaseChar",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Net | FUNC_NetClient | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "TargetMember",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Member",
+        "Flags": "RF_Public",
+        "ElementSize": 288,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'AoCPartyMember'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Net | FUNC_NetReliable | FUNC_NetServer | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "TeleportStartedBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Timeline_1 old__FinishedFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Timeline_1 old__UpdateFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ToggleCompassVisibility__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "UpdateActiveTarget__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "UpdateNodeActorBuildingResources__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "UpdateQuestSideBar__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "UpdateSkills__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "UpdateTargetTradeItems__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "TradeItems",
+        "Flags": "RF_Public",
+        "ElementSize": 104,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'TradeItems'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "UpdateVendorSaleItems__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ArrayProperty",
+        "Name": "SlotIndexes",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm",
+        "Inner": {
+          "Type": "IntProperty",
+          "Name": "SlotIndexes",
+          "Flags": "RF_Public",
+          "ElementSize": 4
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Use Actionbar Slot__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "ChildProperties": [
+      {
+        "Type": "NameProperty",
+        "Name": "Slot ID",
+        "Flags": "RF_Public",
+        "ElementSize": 12,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "KeyUo",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "isMount",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "InputActionDelegateBinding",
+    "Name": "InputActionDelegateBinding_0",
+    "Flags": "RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'InputActionDelegateBinding'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "Properties": {
+      "InputActionDelegateBindings": [
+        {
+          "InputActionName": "ToggleFPS",
+          "InputKeyEvent": "EInputEvent::IE_Pressed",
+          "FunctionNameToBind": "InpActEvt_ToggleFPS_K2Node_InputActionEvent_0",
+          "bConsumeInput": true,
+          "bExecuteWhenPaused": false,
+          "bOverrideParentBinding": true
+        }
+      ]
+    }
+  },
+  {
+    "Type": "InputAxisDelegateBinding",
+    "Name": "InputAxisDelegateBinding_0",
+    "Flags": "RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'InputAxisDelegateBinding'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "Properties": {
+      "InputAxisDelegateBindings": [
+        {
+          "InputAxisName": "MoveForward",
+          "FunctionNameToBind": "None",
+          "bConsumeInput": true,
+          "bExecuteWhenPaused": false,
+          "bOverrideParentBinding": false
+        },
+        {
+          "InputAxisName": "MoveRight",
+          "FunctionNameToBind": "None",
+          "bConsumeInput": true,
+          "bExecuteWhenPaused": false,
+          "bOverrideParentBinding": false
+        }
+      ]
+    }
+  },
+  {
+    "Type": "InputKeyDelegateBinding",
+    "Name": "InputKeyDelegateBinding_0",
+    "Flags": "RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'InputKeyDelegateBinding'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "Properties": {
+      "InputKeyDelegateBindings": [
+        {
+          "InputChord": {
+            "Key": {
+              "KeyName": "PageUp"
+            },
+            "bShift": false,
+            "bCtrl": false,
+            "bAlt": false,
+            "bCmd": false
+          },
+          "InputKeyEvent": "EInputEvent::IE_Pressed",
+          "FunctionNameToBind": "InpActEvt_PageUp_K2Node_InputKeyEvent_6",
+          "bConsumeInput": true,
+          "bExecuteWhenPaused": false,
+          "bOverrideParentBinding": true
+        },
+        {
+          "InputChord": {
+            "Key": {
+              "KeyName": "Comma"
+            },
+            "bShift": false,
+            "bCtrl": false,
+            "bAlt": false,
+            "bCmd": false
+          },
+          "InputKeyEvent": "EInputEvent::IE_Pressed",
+          "FunctionNameToBind": "InpActEvt_Comma_K2Node_InputKeyEvent_5",
+          "bConsumeInput": true,
+          "bExecuteWhenPaused": false,
+          "bOverrideParentBinding": true
+        },
+        {
+          "InputChord": {
+            "Key": {
+              "KeyName": "V"
+            },
+            "bShift": false,
+            "bCtrl": false,
+            "bAlt": false,
+            "bCmd": false
+          },
+          "InputKeyEvent": "EInputEvent::IE_Pressed",
+          "FunctionNameToBind": "InpActEvt_V_K2Node_InputKeyEvent_0",
+          "bConsumeInput": true,
+          "bExecuteWhenPaused": false,
+          "bOverrideParentBinding": true
+        },
+        {
+          "InputChord": {
+            "Key": {
+              "KeyName": "B"
+            },
+            "bShift": false,
+            "bCtrl": false,
+            "bAlt": false,
+            "bCmd": false
+          },
+          "InputKeyEvent": "EInputEvent::IE_Pressed",
+          "FunctionNameToBind": "InpActEvt_B_K2Node_InputKeyEvent_1",
+          "bConsumeInput": true,
+          "bExecuteWhenPaused": false,
+          "bOverrideParentBinding": true
+        },
+        {
+          "InputChord": {
+            "Key": {
+              "KeyName": "M"
+            },
+            "bShift": true,
+            "bCtrl": true,
+            "bAlt": true,
+            "bCmd": false
+          },
+          "InputKeyEvent": "EInputEvent::IE_Pressed",
+          "FunctionNameToBind": "InpActEvt_Ctrl+Alt+Shift_M_K2Node_InputKeyEvent_4",
+          "bConsumeInput": true,
+          "bExecuteWhenPaused": false,
+          "bOverrideParentBinding": true
+        },
+        {
+          "InputChord": {
+            "Key": {
+              "KeyName": "N"
+            },
+            "bShift": true,
+            "bCtrl": true,
+            "bAlt": true,
+            "bCmd": false
+          },
+          "InputKeyEvent": "EInputEvent::IE_Pressed",
+          "FunctionNameToBind": "InpActEvt_Ctrl+Alt+Shift_N_K2Node_InputKeyEvent_3",
+          "bConsumeInput": true,
+          "bExecuteWhenPaused": false,
+          "bOverrideParentBinding": true
+        },
+        {
+          "InputChord": {
+            "Key": {
+              "KeyName": "P"
+            },
+            "bShift": true,
+            "bCtrl": true,
+            "bAlt": true,
+            "bCmd": false
+          },
+          "InputKeyEvent": "EInputEvent::IE_Pressed",
+          "FunctionNameToBind": "InpActEvt_Ctrl+Alt+Shift_P_K2Node_InputKeyEvent_2",
+          "bConsumeInput": true,
+          "bExecuteWhenPaused": false,
+          "bOverrideParentBinding": true
+        }
+      ]
+    }
+  },
+  {
+    "Type": "IntrepidSocialComponent",
+    "Name": "SocialComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'IntrepidSocialComponent'",
+    "Outer": {
+      "ObjectName": "AoCPlayerControllerBP_C'Default__AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.1"
+    }
+  },
+  {
+    "Type": "LevelingComponent",
+    "Name": "XPTracker",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'LevelingComponent'",
+    "Outer": {
+      "ObjectName": "AoCPlayerControllerBP_C'Default__AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.1"
+    }
+  },
+  {
+    "Type": "NodeInfoComponent",
+    "Name": "NodeInfo",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'NodeInfoComponent'",
+    "Outer": {
+      "ObjectName": "AoCPlayerControllerBP_C'Default__AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.1"
+    }
+  },
+  {
+    "Type": "QuestConsumerComponent",
+    "Name": "ActorAuthGlobalQuestConsumerComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'QuestConsumerComponent'",
+    "Outer": {
+      "ObjectName": "AoCPlayerControllerBP_C'Default__AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.1"
+    }
+  },
+  {
+    "Type": "QuestConsumerComponent",
+    "Name": "QuestConsumerComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'QuestConsumerComponent'",
+    "Outer": {
+      "ObjectName": "AoCPlayerControllerBP_C'Default__AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.1"
+    }
+  },
+  {
+    "Type": "SceneComponent",
+    "Name": "DefaultSceneRoot_GEN_VARIABLE",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SceneComponent'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    }
+  },
+  {
+    "Type": "SceneComponent",
+    "Name": "TransformComponent0",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SceneComponent'",
+    "Outer": {
+      "ObjectName": "AoCPlayerControllerBP_C'Default__AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.1"
+    }
+  },
+  {
+    "Type": "SCS_Node",
+    "Name": "SCS_Node_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SCS_Node'",
+    "Outer": {
+      "ObjectName": "SimpleConstructionScript'AoCPlayerControllerBP_C:SimpleConstructionScript_0'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.69"
+    },
+    "Properties": {
+      "ComponentClass": {
+        "ObjectName": "Class'SceneComponent'",
+        "ObjectPath": "/Script/Engine"
+      },
+      "ComponentTemplate": {
+        "ObjectName": "SceneComponent'AoCPlayerControllerBP_C:DefaultSceneRoot_GEN_VARIABLE'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.66"
+      },
+      "VariableGuid": "2AB84A9D-413A930C-F66136A9-55F31D05",
+      "InternalVariableName": "DefaultSceneRoot"
+    }
+  },
+  {
+    "Type": "SimpleConstructionScript",
+    "Name": "SimpleConstructionScript_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SimpleConstructionScript'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "Properties": {
+      "DefaultSceneRootNode": {
+        "ObjectName": "SCS_Node'AoCPlayerControllerBP_C:SimpleConstructionScript_0.SCS_Node_0'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.68"
+      }
+    }
+  },
+  {
+    "Type": "TimelineTemplate",
+    "Name": "Timeline_1 old_Template",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'TimelineTemplate'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'AoCPlayerControllerBP_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.2"
+    },
+    "Properties": {
+      "TimelineLength": 3.4,
+      "FloatTracks": [
+        {
+          "CurveFloat": {
+            "ObjectName": "CurveFloat'AoCPlayerControllerBP_C:CurveFloat_1_2'",
+            "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/AoCPlayerControllerBP.3"
+          },
+          "PropertyName": "Timeline_1_old_NewTrack_0_24AC6927467B3BD4B88319AA2261EE27",
+          "TrackName": "NewTrack_0",
+          "bIsExternalCurve": false
+        }
+      ],
+      "TimelineGuid": "24AC6927-467B3BD4-B88319AA-2261EE27",
+      "VariableName": "Timeline_1 old",
+      "DirectionPropertyName": "Timeline_1_old__Direction_24AC6927467B3BD4B88319AA2261EE27",
+      "UpdateFunctionName": "Timeline_1 old__UpdateFunc",
+      "FinishedFunctionName": "Timeline_1 old__FinishedFunc"
+    }
+  }
+]

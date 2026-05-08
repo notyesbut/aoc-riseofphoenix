@@ -1,0 +1,121 @@
+void __fastcall sub_7FF6BD7F5F70(__int64 a1, int a2, unsigned __int8 a3, unsigned __int8 a4)
+{
+  char **v6; // rsi
+  char *v7; // r9
+  char *v8; // r10
+  int v9; // eax
+  int v10; // r11d
+  char *v11; // r8
+  char *v12; // rdx
+  int v13; // eax
+  __int128 v14; // xmm1
+  __int128 v15; // xmm0
+  __int128 v16; // xmm1
+  __int128 v17; // xmm1
+  char *v18; // rcx
+  char *i; // rdx
+  __int128 v20; // xmm1
+  char *v21; // rax
+  char *v22; // [rsp+30h] [rbp-338h]
+  _QWORD v23[2]; // [rsp+40h] [rbp-328h] BYREF
+  int v24; // [rsp+50h] [rbp-318h]
+  _BYTE v25[744]; // [rsp+58h] [rbp-310h] BYREF
+
+  if ( a2 >= 2 )
+  {
+    v23[0] = a1;
+    v23[1] = a1 - 16 + 16LL * a2;
+    v24 = (int)logf((float)a2 * (float)a2);
+    memset(v25, 0, sizeof(v25));
+    v6 = (char **)v23;
+    do
+    {
+      v7 = v6[1];
+      v8 = *v6;
+      v9 = ((v7 - *v6) >> 4) + 1;
+      v22 = v6[2];
+      v10 = (int)v22;
+      if ( (_DWORD)v22 )
+      {
+        while ( v9 > 8 )
+        {
+          v11 = v7 + 16;
+          v12 = v8;
+          v13 = v9 / 2;
+          v14 = *(_OWORD *)&v8[16 * v13];
+          *(_OWORD *)&v8[16 * v13] = *(_OWORD *)v8;
+          *(_OWORD *)v8 = v14;
+          while ( 1 )
+          {
+            do
+              v12 += 16;
+            while ( v12 <= v7 && *(_WORD *)v8 >= *(_WORD *)v12 );
+            do
+              v11 -= 16;
+            while ( v11 > v8 && *(_WORD *)v11 >= *(_WORD *)v8 );
+            v15 = *(_OWORD *)v11;
+            if ( v12 > v11 )
+              break;
+            v16 = *(_OWORD *)v12;
+            *(_OWORD *)v12 = v15;
+            *(_OWORD *)v11 = v16;
+          }
+          v17 = *(_OWORD *)v8;
+          --v10;
+          *(_OWORD *)v8 = v15;
+          *(_OWORD *)v11 = v17;
+          if ( (__int64)((v11 - v8 - 16) & 0xFFFFFFFFFFFFFFF0uLL) < (__int64)((v7 - v12) & 0xFFFFFFFFFFFFFFF0uLL) )
+          {
+            if ( v7 > v12 )
+            {
+              *v6 = v12;
+              v6[1] = v7;
+              *((_DWORD *)v6 + 4) = v10;
+              v6 += 3;
+            }
+            if ( v8 + 16 >= v11 )
+              goto LABEL_23;
+            v7 = v11 - 16;
+          }
+          else
+          {
+            if ( v8 + 16 < v11 )
+            {
+              *v6 = v8;
+              v6[1] = v11 - 16;
+              *((_DWORD *)v6 + 4) = v10;
+              v6 += 3;
+            }
+            if ( v7 <= v12 )
+              goto LABEL_23;
+            v8 = v12;
+          }
+          v9 = ((v7 - v8) >> 4) + 1;
+          if ( !v10 )
+            goto LABEL_22;
+        }
+        for ( ; v7 > v8; *(_OWORD *)v21 = v20 )
+        {
+          v18 = v8;
+          for ( i = v8 + 16; i <= v7; i += 16 )
+          {
+            if ( *(_WORD *)v18 < *(_WORD *)i )
+              v18 = i;
+          }
+          v20 = *(_OWORD *)v18;
+          v21 = v7;
+          v7 -= 16;
+          *(_OWORD *)v18 = *(_OWORD *)v21;
+        }
+      }
+      else
+      {
+LABEL_22:
+        sub_7FF6BD7F4000(v8, (unsigned int)v9, a3, a4);
+      }
+LABEL_23:
+      v6 -= 3;
+    }
+    while ( v6 >= v23 );
+  }
+}

@@ -1,0 +1,133 @@
+################################################################
+  Archetype / class-related property hunt
+################################################################
+
+################################################################
+  Hunting for property "CharacterArchetype"
+################################################################
+  Found string at 0x14B57E7A8
+
+---- Searching for references to CharacterArchetype at 0x14B57E7A8 ----
+  ref (non-prop): 0x14B57E590  flags@+10=0x0010000000000000
+  (0 FPropertyParams hit(s))
+
+################################################################
+  Hunting for property "PrimaryArchetype"
+################################################################
+  Found string at 0x14B0B4A6C
+
+---- Searching for references to PrimaryArchetype at 0x14B0B4A6C ----
+  (0 FPropertyParams hit(s))
+
+################################################################
+  Hunting for property "SecondaryArchetype"
+################################################################
+  String "SecondaryArchetype" NOT FOUND in .rdata.
+
+################################################################
+  Hunting for property "CharacterClass"
+################################################################
+  Found string at 0x14B15B65F
+
+---- Searching for references to CharacterClass at 0x14B15B65F ----
+  (0 FPropertyParams hit(s))
+
+################################################################
+  Hunting for property "CharacterRace"
+################################################################
+  Found string at 0x14B202250
+
+---- Searching for references to CharacterRace at 0x14B202250 ----
+  ref (non-prop): 0x14B202200  flags@+10=0x0010000000000080
+  ref (non-prop): 0x14B220390  flags@+10=0x0010000000000082
+  ref (non-prop): 0x14B4BA070  flags@+10=0x0010000000000005
+  (0 FPropertyParams hit(s))
+
+################################################################
+  Hunting for property "CharacterGender"
+################################################################
+  Found string at 0x14B220320
+
+---- Searching for references to CharacterGender at 0x14B220320 ----
+  ref (non-prop): 0x14B2202D0  flags@+10=0x0010000000000082
+  (0 FPropertyParams hit(s))
+
+################################################################
+  Hunting for property "TeamId"
+################################################################
+  Found string at 0x14ADC2DAF
+
+---- Searching for references to TeamId at 0x14ADC2DAF ----
+  (0 FPropertyParams hit(s))
+
+################################################################
+  Hunting for property "PlayerNamePrivate"
+################################################################
+  Found string at 0x14AA496F8
+
+---- Searching for references to PlayerNamePrivate at 0x14AA496F8 ----
+  HIT: FPropertyParams @ 0x14AA48FC0  flags=0x4040000100000020  name=PlayerNamePrivate
+    neighbours (±4 strides, stride guess = 0x40):
+      [-4] 0x14AA48EC0  flags=0x0014000000000000  EngineMessageClass
+      [-2] 0x14AA48F40  flags=0x0010000010080000  OnPawnSet
+      [-1] 0x14AA48F80  flags=0x0144000000000014  PawnPrivate
+      [+0] 0x14AA48FC0  flags=0x4040000100000020  PlayerNamePrivate  (RepNotify: OnRep_PlayerName)
+  (1 FPropertyParams hit(s))
+
+################################################################
+  Hunting for property "PlayerId"
+################################################################
+  Found string at 0x14A9CA6E0
+
+---- Searching for references to PlayerId at 0x14A9CA6E0 ----
+  ref (non-prop): 0x14A9CA0E0  flags@+10=0x0010000000000000
+  ref (non-prop): 0x14AA3E350  flags@+10=0x0010000000000080
+  HIT: FPropertyParams @ 0x14AA48BC0  flags=0x0040000100000034  name=PlayerId
+    neighbours (±4 strides, stride guess = 0x40):
+      [+0] 0x14AA48BC0  flags=0x0040000100000034  PlayerId  (RepNotify: OnRep_PlayerId)
+      [+1] 0x14AA48C00  flags=0x0040000000000014  CompressedPing
+      [+2] 0x14AA48C40  flags=0x0010000000000580  ReturnValue
+  ref (non-prop): 0x14AA4AFF0  flags@+10=0x0010000000000080
+  ref (non-prop): 0x14AA4B280  flags@+10=0x0010000000000080
+  ref (non-prop): 0x14AA4BB00  flags@+10=0x0010000000000080
+  ref (non-prop): 0x14AA4C5D0  flags@+10=0x0010000000000080
+  ref (non-prop): 0x14AA4C6F0  flags@+10=0x0010000000000080
+  ref (non-prop): 0x14AD45A08  flags@+10=0x0010000000000080
+  ref (non-prop): 0x14AD45AF0  flags@+10=0x0010000000000080
+  ref (non-prop): 0x14AD45BD8  flags@+10=0x0010000000000080
+  ref (non-prop): 0x14B270038  flags@+10=0x0010000000000000
+  ref (non-prop): 0x14B270A30  flags@+10=0x0010000000000000
+  ref (non-prop): 0x14B2D4D98  flags@+10=0x0010000000002000
+  ref (non-prop): 0x14B6DDA98  flags@+10=0x0010000000000000
+  ref (non-prop): 0x14B755270  flags@+10=0x0010000000000000
+  (1 FPropertyParams hit(s))
+
+################################################################
+  Hunting for property "Score"
+################################################################
+  Found string at 0x14AA47C5B
+
+---- Searching for references to Score at 0x14AA47C5B ----
+  (0 FPropertyParams hit(s))
+
+################################################################
+  Hunting for property "bIsSpectator"
+################################################################
+  Found string at 0x14AA494B0
+
+---- Searching for references to bIsSpectator at 0x14AA494B0 ----
+  HIT: FPropertyParams @ 0x14AA48CD0  flags=0x0040000000000034  name=bIsSpectator
+    neighbours (±4 strides, stride guess = 0x40):
+      [-1] 0x14AA48C90  flags=0x0040000000010001  bShouldUpdateReplicatedPing
+      [+0] 0x14AA48CD0  flags=0x0040000000000034  bIsSpectator
+      [+1] 0x14AA48D10  flags=0x0040000000000020  bOnlySpectator
+      [+2] 0x14AA48D50  flags=0x0040000000000034  bIsABot
+      [+3] 0x14AA48D90  flags=0x0040000100000020  bIsInactive  (RepNotify: OnRep_bIsInactive)
+  (1 FPropertyParams hit(s))
+
+################################################################
+  DONE.  Look at the 'neighbours' output for each HIT: that shows
+  the 8 FPropertyParams entries surrounding the target.  Those
+  neighbours identify the class — look for recognizable names
+  like PlayerState fields or CharacterInformationComponent fields.
+################################################################

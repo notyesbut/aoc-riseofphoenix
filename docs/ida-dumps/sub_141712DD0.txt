@@ -1,0 +1,16 @@
+void *sub_141712DD0()
+{
+  __int64 v1; // rax
+
+  if ( dword_14D6C02C0 <= *(_DWORD *)(*((_QWORD *)NtCurrentTeb()->ThreadLocalStoragePointer + (unsigned int)TlsIndex)
+                                    + 6160LL) )
+    return &unk_14D6C0280;
+  sub_1496E08D0(&dword_14D6C02C0);
+  if ( dword_14D6C02C0 != -1 )
+    return &unk_14D6C0280;
+  v1 = sub_141713350();
+  sub_14161FA50((unsigned int)&unk_14D6C0280, (unsigned int)L"FIntProperty", 128, 16810113, v1, (__int64)sub_1416F5000);
+  atexit(sub_149BCE1E0);
+  Init_thread_footer(&dword_14D6C02C0);
+  return &unk_14D6C0280;
+}

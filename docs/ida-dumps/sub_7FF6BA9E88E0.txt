@@ -1,0 +1,28 @@
+__int64 sub_7FF6BA9E88E0()
+{
+  __int64 result; // rax
+  void (__stdcall *v1)(ULONG_PTR); // [rsp+80h] [rbp+8h] BYREF
+
+  result = qword_7FF6C69EEBE0;
+  if ( !qword_7FF6C69EEBE0 )
+  {
+    v1 = AK::MemoryMgr::VerifyMemoryArenaIntegrity;
+    sub_7FF6BA92FF50(
+      (int)L"/Script/CoreUObject",
+      (int)L"Object",
+      (int)&qword_7FF6C69EEBE0,
+      (int)AK::MemoryMgr::VerifyMemoryArenaIntegrity,
+      72,
+      8,
+      268435489,
+      0,
+      (__int64)L"Engine",
+      (__int64)sub_7FF6BA9E22F0,
+      (__int64)sub_7FF6BA9E2750,
+      (__int64)&v1,
+      (__int64)sub_7FF6BA8B7130,
+      (__int64)sub_7FF6BA8B7130);
+    return qword_7FF6C69EEBE0;
+  }
+  return result;
+}

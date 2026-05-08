@@ -1,0 +1,387 @@
+__int64 __fastcall sub_14624D8A0(__int64 a1, __int64 a2)
+{
+  unsigned int v4; // r15d
+  __int64 *v5; // rbx
+  __int64 v6; // r8
+  const wchar_t *v7; // r13
+  __int64 v8; // rdx
+  int v9; // eax
+  __int64 v10; // rcx
+  __int64 v11; // rax
+  _WORD *v12; // rcx
+  _WORD *v13; // rcx
+  _WORD *v14; // rcx
+  int v15; // r11d
+  __int64 v16; // rdx
+  int v17; // eax
+  __int64 v18; // rdx
+  __int64 v19; // rcx
+  unsigned int *v20; // r10
+  unsigned int v21; // r9d
+  __int64 v22; // rdx
+  int v23; // eax
+  __int64 v24; // rdx
+  __int64 v25; // rcx
+  int v26; // eax
+  _WORD *v27; // rcx
+  const char *v28; // rax
+  int v29; // ecx
+  _WORD *v30; // rcx
+  const char *v31; // rax
+  int v32; // ecx
+  const wchar_t *v33; // rax
+  _WORD *v34; // rcx
+  _WORD *v35; // rcx
+  const char *v36; // rax
+  int v37; // ecx
+  const wchar_t *v38; // rax
+  const wchar_t *v39; // r8
+  __int64 v40; // rdx
+  int v41; // eax
+  __int64 v42; // rdx
+  __int64 v43; // rcx
+  _DWORD *v44; // rsi
+  _DWORD *v45; // rbx
+  double v46; // xmm7_8
+  int v47; // r8d
+  __int64 v48; // rax
+  __int64 v49; // rcx
+  const char *v51; // [rsp+50h] [rbp-79h] BYREF
+  int v52; // [rsp+58h] [rbp-71h]
+  _QWORD v53[2]; // [rsp+60h] [rbp-69h] BYREF
+  void *v54; // [rsp+70h] [rbp-59h] BYREF
+  _WORD *v55; // [rsp+78h] [rbp-51h]
+  _WORD *v56; // [rsp+80h] [rbp-49h]
+  char v57; // [rsp+88h] [rbp-41h]
+  _QWORD v58[3]; // [rsp+90h] [rbp-39h] BYREF
+  char v59; // [rsp+A8h] [rbp-21h]
+  __int16 v60; // [rsp+B0h] [rbp-19h]
+  char v61; // [rsp+B2h] [rbp-17h]
+  const wchar_t *v62; // [rsp+C0h] [rbp-9h] BYREF
+  int v63; // [rsp+C8h] [rbp-1h]
+  char v64; // [rsp+130h] [rbp+67h]
+  int v65; // [rsp+140h] [rbp+77h] BYREF
+  double v66; // [rsp+148h] [rbp+7Fh] BYREF
+
+  v4 = -1;
+  v65 = -1;
+  v64 = 0;
+  v5 = (__int64 *)(a1 + 800);
+  v6 = *(unsigned int *)(a2 + 4);
+  v7 = &chText;
+  if ( *(_DWORD *)(a1 + 808) == *(_DWORD *)(a1 + 852) )
+    goto LABEL_8;
+  v8 = *(_QWORD *)(a1 + 864);
+  if ( !v8 )
+    v8 = a1 + 856;
+  v9 = *(_DWORD *)(v8 + 4LL * ((unsigned int)v6 & (*(_DWORD *)(a1 + 872) - 1)));
+  if ( v9 == -1 )
+  {
+LABEL_8:
+    if ( (unsigned __int8)byte_14D93FDF0 >= 5u )
+    {
+      v53[0] = 0;
+      v53[1] = 0;
+      v54 = &unk_14D5AF3C0;
+      v55 = &unk_14D5AF3C0;
+      v56 = &unk_14D5AF3C2;
+      v57 = 0;
+      v58[0] = &unk_14D5AF3C0;
+      v58[1] = &unk_14D5AF3C0;
+      v58[2] = &unk_14D5AF3C2;
+      v59 = 0;
+      v60 = 0;
+      v61 = 0;
+      if ( byte_14D1FCFD6 )
+      {
+        sub_144E7DAA0(
+          v53,
+          L"Disconnect has already been processed for this connection... its replacement connection likely registered befo"
+           "re the old connection timed out");
+        sub_144E7DAA0(v53, L"Connection");
+        if ( (_BYTE)v60 )
+        {
+          if ( v61 )
+          {
+            v12 = v55;
+            if ( v55 + 1 >= v56 )
+            {
+              sub_1414D0E10(&v54, 1);
+              v12 = v55;
+            }
+            *v12 = 34;
+            ++v55;
+            sub_1414CAE20(&v54, L"%u", *(unsigned int *)(a2 + 4));
+            v13 = v55;
+            if ( v55 + 1 >= v56 )
+            {
+              sub_1414D0E10(&v54, 1);
+              v13 = v55;
+            }
+            *v13 = 34;
+            v14 = ++v55;
+          }
+          else
+          {
+            sub_1414CAE20(&v54, L"%u", *(unsigned int *)(a2 + 4));
+            v14 = v55;
+          }
+          if ( v14 + 1 >= v56 )
+          {
+            sub_1414D0E10(&v54, 1);
+            v14 = v55;
+          }
+          *v14 = 44;
+          ++v55;
+          v60 = 0;
+          v61 = 0;
+        }
+        sub_144E7DAA0(v53, L"Function+");
+        if ( (_BYTE)v60 )
+        {
+          if ( v61 )
+          {
+            v27 = v55;
+            if ( v55 + 1 >= v56 )
+            {
+              sub_1414D0E10(&v54, 1);
+              v27 = v55;
+            }
+            *v27 = 34;
+            ++v55;
+            v51 = "FServicePacketRouter<class UActorTrackingService,enum EActorTrackingPacketType>::ProcessDisconnect_Internal";
+            v28 = "FServicePacketRouter<class UActorTrackingService,enum EActorTrackingPacketType>::ProcessDisconnect_Internal";
+            v29 = 0;
+            do
+            {
+              ++v28;
+              ++v29;
+            }
+            while ( *v28 );
+            v52 = v29;
+            sub_1416CDE50(&v54, &v51);
+            v30 = v55;
+            if ( v55 + 1 >= v56 )
+            {
+              sub_1414D0E10(&v54, 1);
+              v30 = v55;
+            }
+            *v30 = 34;
+            ++v55;
+          }
+          else
+          {
+            v51 = "FServicePacketRouter<class UActorTrackingService,enum EActorTrackingPacketType>::ProcessDisconnect_Internal";
+            v31 = "FServicePacketRouter<class UActorTrackingService,enum EActorTrackingPacketType>::ProcessDisconnect_Internal";
+            v32 = 0;
+            do
+            {
+              ++v31;
+              ++v32;
+            }
+            while ( *v31 );
+            v52 = v32;
+            sub_1416CDE50(&v54, &v51);
+          }
+          v60 = 0;
+          v61 = 0;
+        }
+        v33 = (const wchar_t *)sub_144E7E0A0(v53);
+        sub_14133EDD0((__int64)&v62, v33);
+        sub_1414C7300(v58);
+        sub_1414C7300(&v54);
+      }
+      else
+      {
+        sub_144E7DF80(
+          v53,
+          L"Disconnect has already been processed for this connection... its replacement connection likely registered befo"
+           "re the old connection timed out");
+        sub_144E7DF80(v53, L"Connection");
+        if ( (_BYTE)v60 )
+        {
+          sub_1414CAE20(&v54, L"%u", *(unsigned int *)(a2 + 4));
+          v34 = v55;
+          if ( v55 + 1 >= v56 )
+          {
+            sub_1414D0E10(&v54, 1);
+            v34 = v55;
+          }
+          *v34 = 44;
+          v35 = v55 + 1;
+          v55 = v35;
+          if ( v35 + 1 >= v56 )
+          {
+            sub_1414D0E10(&v54, 1);
+            v35 = v55;
+          }
+          *v35 = 32;
+          ++v55;
+          v60 = 0;
+          v61 = 0;
+        }
+        sub_144E7DF80(v53, L"Function+");
+        if ( (_BYTE)v60 )
+        {
+          v51 = "FServicePacketRouter<class UActorTrackingService,enum EActorTrackingPacketType>::ProcessDisconnect_Internal";
+          v36 = "FServicePacketRouter<class UActorTrackingService,enum EActorTrackingPacketType>::ProcessDisconnect_Internal";
+          v37 = 0;
+          do
+          {
+            ++v36;
+            ++v37;
+          }
+          while ( *v36 );
+          v52 = v37;
+          sub_1416CDE50(&v54, &v51);
+          v60 = 0;
+          v61 = 0;
+        }
+        v38 = (const wchar_t *)sub_144E7E1A0(v53);
+        sub_14133EDD0((__int64)&v62, v38);
+        sub_1414C7300(v58);
+        sub_1414C7300(&v54);
+      }
+      if ( v53[0] )
+        sub_1413B0B20(v53[0]);
+      v39 = &chText;
+      if ( v63 )
+        v39 = v62;
+      sub_141421C70((__int64)&byte_14D93FDF0, (__int64)&off_14B834B80, v39);
+      if ( v62 )
+        sub_1413B0B20(v62);
+    }
+  }
+  else
+  {
+    v10 = *v5;
+    while ( 1 )
+    {
+      v11 = 3LL * v9;
+      if ( *(_DWORD *)(v10 + 4 * v11) == (_DWORD)v6 )
+        break;
+      v9 = *(_DWORD *)(v10 + 4 * v11 + 4);
+      if ( v9 == -1 )
+        goto LABEL_8;
+    }
+    (*(void (__fastcall **)(__int64, __int64))(*(_QWORD *)a1 + 24LL))(a1, a2);
+    sub_1462C12A0(v5, *(unsigned int *)(a2 + 4));
+    sub_1462C12A0(a1 + 720, *(unsigned int *)(a2 + 4));
+    v15 = *(_DWORD *)(a2 + 4);
+    if ( *(_DWORD *)(a1 + 488) != *(_DWORD *)(a1 + 532) )
+    {
+      v16 = *(_QWORD *)(a1 + 544);
+      if ( !v16 )
+        v16 = a1 + 536;
+      v17 = *(_DWORD *)(v16 + 4LL * (v15 & (unsigned int)(*(_DWORD *)(a1 + 552) - 1)));
+      if ( v17 != -1 )
+      {
+        v18 = *(_QWORD *)(a1 + 480);
+        while ( 1 )
+        {
+          v19 = 16LL * v17;
+          if ( *(_DWORD *)(v18 + v19) == v15 )
+            break;
+          v17 = *(_DWORD *)(v18 + v19 + 8);
+          if ( v17 == -1 )
+            goto LABEL_24;
+        }
+        v20 = (unsigned int *)(v19 + v18 + 4);
+        if ( !(v19 + v18) )
+          v20 = nullptr;
+        if ( v20 )
+        {
+          v21 = *v20;
+          if ( *(_DWORD *)(a1 + 568) == *(_DWORD *)(a1 + 612) )
+            goto LABEL_35;
+          v22 = *(_QWORD *)(a1 + 624);
+          if ( !v22 )
+            v22 = a1 + 616;
+          v23 = *(_DWORD *)(v22 + 4LL * (v21 & (*(_DWORD *)(a1 + 632) - 1)));
+          if ( v23 == -1 )
+            goto LABEL_35;
+          v24 = *(_QWORD *)(a1 + 560);
+          while ( 1 )
+          {
+            v25 = 16LL * v23;
+            if ( *(_DWORD *)(v24 + v25) == v21 )
+              break;
+            v23 = *(_DWORD *)(v24 + v25 + 8);
+            if ( v23 == -1 )
+              goto LABEL_35;
+          }
+          if ( !(v25 + v24) )
+LABEL_35:
+            v26 = 0;
+          else
+            v26 = *(_DWORD *)(v25 + v24 + 4);
+          if ( v26 == v15 )
+          {
+            v64 = 1;
+            v4 = *v20;
+            v65 = *v20;
+            sub_1415D3390(a1 + 560, v21);
+          }
+        }
+      }
+    }
+LABEL_24:
+    sub_1462C0F60(a1 + 480, *(unsigned int *)(a2 + 4));
+  }
+  if ( *(_DWORD *)(a1 + 896) != *(_DWORD *)(a1 + 940) )
+  {
+    v40 = *(_QWORD *)(a1 + 952);
+    if ( !v40 )
+      v40 = a1 + 944;
+    v41 = *(_DWORD *)(v40 + 4LL * (v4 & (*(_DWORD *)(a1 + 960) - 1)));
+    if ( v41 != -1 )
+    {
+      v42 = *(_QWORD *)(a1 + 888);
+      while ( *(_DWORD *)(v42 + 24LL * v41) != v4 )
+      {
+        v41 = *(_DWORD *)(v42 + 24LL * v41 + 16);
+        if ( v41 == -1 )
+          goto LABEL_93;
+      }
+      v43 = v42 + 24LL * v41;
+      v44 = (_DWORD *)(v43 + 8);
+      if ( !v43 )
+        v44 = nullptr;
+      if ( v44 )
+      {
+        v45 = (_DWORD *)sub_1414B48D0(&v66);
+        v46 = (double)(*v45 - *(_DWORD *)sub_14149E5F0((unsigned int)&v62, 1970, 1, 1, 0, 0, 0, 0)) * 0.0000001;
+        v66 = v46 - (double)(*v44 - *(_DWORD *)sub_14149E5F0((unsigned int)&v62, 1970, 1, 1, 0, 0, 0, 0)) * 0.0000001;
+        if ( (unsigned __int8)byte_14D93FDF0 >= 3u )
+        {
+          LOBYTE(v47) = 3;
+          v48 = sub_146249450(
+                  (unsigned int)&v51,
+                  (unsigned int)&byte_14D93FDF0,
+                  v47,
+                  (unsigned int)L"Server reconnected before we received its disconnection notification...",
+                  (__int64)L"ServerId",
+                  (__int64)&v65,
+                  (__int64)L"ReconnectedSecondsAgo",
+                  (__int64)&v66,
+                  (__int64)L"Function+",
+                  (__int64)"FServicePacketRouter<class UActorTrackingService,enum EActorTrackingPacketType>::ProcessDisconnect_Internal");
+          if ( *(_DWORD *)(v48 + 8) )
+            v7 = *(const wchar_t **)v48;
+          sub_141421C70((__int64)&byte_14D93FDF0, (__int64)&off_14B834BA0, v7);
+          if ( v51 )
+            sub_1413B0B20(v51);
+        }
+        sub_1415D3460(a1 + 888, v4);
+      }
+    }
+  }
+LABEL_93:
+  sub_1462C29D0(a1 + 144, *(unsigned int *)(a2 + 4), v6);
+  if ( v64 )
+    sub_1462C2B80(a1 + 144, v4);
+  v49 = *(_QWORD *)(a2 + 208);
+  if ( v49 )
+    sub_1413B0B20(v49);
+  return sub_141620F20(a2 + 8);
+}

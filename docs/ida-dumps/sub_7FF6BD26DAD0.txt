@@ -1,0 +1,57 @@
+__int64 __fastcall sub_7FF6BD26DAD0(_QWORD *a1)
+{
+  __int64 v2; // rax
+  __int64 v3; // rdi
+  __int64 v4; // rcx
+  __int64 v5; // rax
+  char v6; // al
+  int v7; // eax
+  _DWORD *v8; // rax
+  __int64 v10; // [rsp+20h] [rbp-1C8h] BYREF
+  struct _RTL_CRITICAL_SECTION *v11; // [rsp+28h] [rbp-1C0h]
+  unsigned __int64 v12; // [rsp+30h] [rbp-1B8h] BYREF
+  __int64 v13; // [rsp+38h] [rbp-1B0h]
+  char v14[8]; // [rsp+40h] [rbp-1A8h] BYREF
+  _BYTE v15[400]; // [rsp+48h] [rbp-1A0h] BYREF
+
+  v2 = sub_7FF6BA81BF40(v15);
+  v10 = *(_QWORD *)sub_7FF6BA726520(v2, v14);
+  v3 = sub_7FF6BA821880(&v10);
+  sub_7FF6BA9F2300(a1, v10);
+  v4 = a1[9];
+  if ( v4 )
+  {
+    if ( (*(_DWORD *)(v4 + 8) & 0x400) != 0 )
+    {
+      v5 = sub_7FF6BAAB00B0(a1[9]);
+      if ( v5 )
+        sub_7FF6BA9D8DF0(v5 + 616, a1[9]);
+    }
+  }
+  v6 = *(_BYTE *)(v3 + 40);
+  if ( (v6 & 1) != 0 )
+  {
+    v12 = (unsigned __int64)a1;
+    v13 = 0;
+    v11 = &stru_7FF6C6B68678;
+    EnterCriticalSection(&stru_7FF6C6B68678);
+    v7 = (-2048144789 * ((v12 >> 4) ^ ((unsigned int)(v12 >> 4) >> 16)))
+       ^ ((-2048144789 * ((unsigned int)(v12 >> 4) ^ ((unsigned int)(v12 >> 4) >> 16))) >> 13);
+    v8 = (_DWORD *)sub_7FF6BD246050(
+                     &qword_7FF6C65A9220,
+                     (-1028477387 * v7) ^ ((unsigned int)(-1028477387 * v7) >> 16),
+                     &v12);
+    v11 = nullptr;
+    v13 = 0;
+    ++*v8;
+    LeaveCriticalSection(&stru_7FF6C6B68678);
+    (*(void (__fastcall **)(_QWORD *))(*a1 + 872LL))(a1);
+    sub_7FF6BD258270(a1, v10);
+    sub_7FF6BD248D80(&v12);
+  }
+  else if ( (v6 & 4) != 0 )
+  {
+    sub_7FF6BD26AAF0(a1, v10);
+  }
+  return sub_7FF6BA81C110(v15);
+}

@@ -1,0 +1,23 @@
+__int64 __fastcall sub_141613520(__int64 a1, __int64 a2)
+{
+  __int64 v4; // rdx
+  __int64 v5; // rdx
+
+  sub_141785350();
+  sub_1415F5470(a1);
+  if ( byte_14D6B7288 && a2 )
+    sub_14163E750(a2);
+  *(_QWORD *)(a1 + 96) = a2;
+  sub_141609C20(a1 + 80);
+  if ( !*(_QWORD *)(a1 + 352) )
+  {
+    v4 = *(_QWORD *)(a1 + 96);
+    if ( v4 )
+    {
+      v5 = *(_QWORD *)(v4 + 352);
+      if ( v5 )
+        sub_1416133A0(a1, v5);
+    }
+  }
+  return sub_141780E80(a1);
+}

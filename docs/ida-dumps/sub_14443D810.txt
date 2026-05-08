@@ -1,0 +1,84 @@
+void __fastcall sub_14443D810(__int64 a1, float a2)
+{
+  __int64 v3; // rcx
+  float v4; // xmm0_4
+  bool v5; // zf
+  __int64 v6; // rax
+  __int64 v7; // rbx
+  __int64 v8; // rax
+  float v9; // xmm8_4
+  float v10; // xmm6_4
+  __int64 v11; // rbx
+  __int64 v12; // rsi
+  double v13; // xmm7_8
+  double v14; // xmm5_8
+  double v15; // xmm4_8
+  int v16; // r8d
+  __int64 v17; // xmm0_8
+  __int64 v18; // rbx
+  __int64 v19; // rax
+  double v20; // [rsp+20h] [rbp-B8h] BYREF
+  double v21; // [rsp+28h] [rbp-B0h]
+  double v22; // [rsp+30h] [rbp-A8h]
+  double v23[3]; // [rsp+38h] [rbp-A0h] BYREF
+  _QWORD v24[3]; // [rsp+50h] [rbp-88h] BYREF
+  int v25; // [rsp+68h] [rbp-70h]
+  char v26; // [rsp+E0h] [rbp+8h] BYREF
+
+  v3 = *(_QWORD *)(a1 + 872);
+  if ( *(_QWORD *)(v3 + 1032)
+    && (*(_BYTE *)(v3 + 1016) & 2) != 0
+    && (*(unsigned __int8 (__fastcall **)(__int64))(*(_QWORD *)v3 + 2216LL))(v3)
+    || (*(_DWORD *)(a1 + 10344) & 0x300) != 0x100 )
+  {
+    (*(void (__fastcall **)(__int64))(*(_QWORD *)a1 + 2336LL))(a1);
+    v4 = sub_143B7D560(a1);
+    v5 = (*(_DWORD *)(a1 + 10344) & 0x400) == 0;
+    *(float *)(a1 + 10372) = (float)(a2 / fmaxf(v4, 0.000099999997)) + *(float *)(a1 + 10372);
+    if ( !v5 )
+    {
+      if ( *(_QWORD *)(a1 + 496) )
+        sub_141505900(&v26, 282);
+      if ( (unsigned int)sub_143B847B0(a1) == 3 )
+      {
+        v6 = sub_143ADC190();
+        v7 = v6;
+        if ( !*(_QWORD *)(v6 + 336) )
+          sub_141605900(v6);
+        v8 = *(_QWORD *)(v7 + 336);
+        v9 = *(float *)(v8 + 1000);
+        v10 = *(float *)(v8 + 1004);
+        v11 = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)a1 + 2128LL))(a1);
+        v12 = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)a1 + 2136LL))(a1);
+        sub_143FDEDF0(&v20, v11);
+        sub_143FDEDF0(v23, v12);
+        v13 = v20 - v23[0];
+        v14 = v21 - v23[1];
+        v15 = v22 - v23[2];
+        if ( v14 * v14 + v13 * v13 + v15 * v15 > (float)(v10 * v10) || v9 < *(float *)(a1 + 10372) )
+        {
+          v16 = (unsigned __int16)((__int64)(unsigned int)(int)(*(double *)(v11 + 24) * 364.0888888888889 + 0.5) >> 1)
+              | ((unsigned __int16)((__int64)(unsigned int)(int)(*(double *)(v11 + 32) * 364.0888888888889 + 0.5) >> 1) << 16);
+          if ( v16 != ((unsigned __int16)((__int64)(unsigned int)(int)(*(double *)(v12 + 24) * 364.0888888888889 + 0.5) >> 1)
+                     | ((unsigned __int16)((__int64)(unsigned int)(int)(*(double *)(v12 + 32) * 364.0888888888889 + 0.5) >> 1) << 16))
+            || (v17 = _mm_load_si128((const __m128i *)&xmmword_149DDB410).m128i_i64[0],
+                COERCE_DOUBLE(*(_QWORD *)&v13 & v17) > 0.00009999999747378752)
+            || COERCE_DOUBLE(*(_QWORD *)&v14 & v17) > 0.00009999999747378752
+            || COERCE_DOUBLE(*(_QWORD *)&v15 & v17) > 0.00009999999747378752
+            || *(float *)(a1 + 10376) < *(float *)(a1 + 10372) )
+          {
+            v18 = *(_QWORD *)(a1 + 872);
+            *(double *)v24 = v20;
+            *(double *)&v24[1] = v21;
+            *(double *)&v24[2] = v22;
+            v25 = v16;
+            v19 = sub_141741E80(v18, qword_14D8564B0);
+            (*(void (__fastcall **)(__int64, __int64, _QWORD *))(*(_QWORD *)v18 + 744LL))(v18, v19, v24);
+            *(_DWORD *)(a1 + 10372) = 0;
+          }
+        }
+        *(_DWORD *)(a1 + 10344) &= ~0x400u;
+      }
+    }
+  }
+}

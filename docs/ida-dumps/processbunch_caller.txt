@@ -1,0 +1,431 @@
+============================================================
+ find_processbunch.idc — caller of sub_7FF6BD263E80
+============================================================
+
+Target: sub_7FF6BD263E80 = 0x7ff6bd263e80
+
+============================================================
+PART 1: All xrefs to sub_7FF6BD263E80
+============================================================
+  [code 0] xref 0x7ff6bd263e83 (.text) in func 0x7ff6bd263e80 (sub_7FF6BD263E80) size=3355
+
+[Total code xrefs: 1]
+
+--- Data xrefs (likely vtable entries) ---
+  [data 0] xref 0x7ff6c6fa0e48 (.pdata)
+
+[Total data xrefs: 1]
+
+============================================================
+PART 2: Disassembly of first calling function
+============================================================
+
+Function: 0x7ff6bd263e80 (sub_7FF6BD263E80)
+End:      0x7ff6bd264b9b (size 3355 bytes)
+xref hit: 0x7ff6bd263e83 (offset +0x3 into func)
+
+--- Full disassembly (max 400 instructions) ---
+  0x7ff6bd263e80:  mov     rax, rsp
+  0x7ff6bd263e83:  mov     [rax+18h], rbx
+  0x7ff6bd263e87:  mov     [rax+20h], r9
+  0x7ff6bd263e8b:  mov     [rax+10h], rdx
+  0x7ff6bd263e8f:  push    rbp
+  0x7ff6bd263e90:  push    rsi
+  0x7ff6bd263e91:  push    rdi
+  0x7ff6bd263e92:  push    r12
+  0x7ff6bd263e94:  push    r13
+  0x7ff6bd263e96:  push    r14
+  0x7ff6bd263e98:  push    r15
+  0x7ff6bd263e9a:  lea     rbp, [rax-47h]
+  0x7ff6bd263e9e:  sub     rsp, 0E0h
+  0x7ff6bd263ea5:  movaps  xmmword ptr [rax-48h], xmm6
+  0x7ff6bd263ea9:  mov     r15, r9
+  0x7ff6bd263eac:  mov     r12, r8
+  0x7ff6bd263eaf:  mov     r13, rcx
+  0x7ff6bd263eb2:  mov     rax, [rcx+58h]
+  0x7ff6bd263eb6:  mov     rcx, [rax+78h]
+  0x7ff6bd263eba:  mov     rax, [rcx]
+  0x7ff6bd263ebd:  call    qword ptr [rax+4B0h]
+  0x7ff6bd263ec3:  movzx   ebx, al
+  0x7ff6bd263ec6:  mov     [rbp+3Fh+arg_0], al
+  0x7ff6bd263ec9:  mov     rsi, [r13+50h]
+  0x7ff6bd263ecd:  test    rsi, rsi
+  0x7ff6bd263ed0:  jnz     short loc_7FF6BD263EE1
+  0x7ff6bd263ed2:  lea     rcx, [r13+0E0h]
+  0x7ff6bd263ed9:  call    sub_7FF6BAAAFAD0
+  0x7ff6bd263ede:  mov     rsi, rax
+  0x7ff6bd263ee1:  lea     rdx, [rsp+110h+var_C8]
+  0x7ff6bd263ee6:  mov     rcx, r15
+  0x7ff6bd263ee9:  call    sub_7FF6BA967EE0
+  0x7ff6bd263eee:  mov     rdx, [rsp+110h+var_C8]
+  0x7ff6bd263ef3:  mov     rcx, rsi
+  0x7ff6bd263ef6:  call    sub_7FF6BAA71E70
+  0x7ff6bd263efb:  mov     r14, rax
+  0x7ff6bd263efe:  mov     rcx, [r13+58h]
+  0x7ff6bd263f02:  mov     rdi, [rcx+1C48h]
+  0x7ff6bd263f09:  mov     [rbp+3Fh+var_60], rcx
+  0x7ff6bd263f0d:  mov     [rbp+3Fh+var_58], rax
+  0x7ff6bd263f11:  mov     [rbp+3Fh+var_50], 0
+  0x7ff6bd263f19:  xorps   xmm0, xmm0
+  0x7ff6bd263f1c:  movsd   qword ptr [rbp+3Fh+var_48], xmm0
+  0x7ff6bd263f21:  movsd   xmm6, cs:qword_7FF6C310B2D0
+  0x7ff6bd263f29:  cmp     cs:byte_7FF6C6B6787D, 0
+  0x7ff6bd263f30:  jz      short loc_7FF6BD263F56
+  0x7ff6bd263f32:  lea     rcx, [rbp+3Fh+PerformanceCount]; lpPerformanceCount
+  0x7ff6bd263f36:  call    cs:QueryPerformanceCounter
+  0x7ff6bd263f3c:  xorps   xmm0, xmm0
+  0x7ff6bd263f3f:  cvtsi2sd xmm0, qword ptr [rbp+3Fh+PerformanceCount]
+  0x7ff6bd263f45:  mulsd   xmm0, cs:qword_7FF6C68DF3A8
+  0x7ff6bd263f4d:  addsd   xmm0, xmm6
+  0x7ff6bd263f51:  movsd   qword ptr [rbp+3Fh+var_48], xmm0
+  0x7ff6bd263f56:  lea     rdx, dword_7FF6C6B68674
+  0x7ff6bd263f5d:  mov     eax, cs:dword_7FF6C6B68670
+  0x7ff6bd263f63:  cmp     eax, cs:dword_7FF6C6B68674
+  0x7ff6bd263f69:  jnz     short loc_7FF6BD263F7F
+  0x7ff6bd263f6b:  mov     ecx, 808h
+  0x7ff6bd263f70:  mov     r8, rdx
+  0x7ff6bd263f73:  lea     rdx, qword_7FF6C6B68668
+  0x7ff6bd263f7a:  call    sub_7FF6BA64EC90
+  0x7ff6bd263f7f:  lea     ecx, [rax+1]
+  0x7ff6bd263f82:  mov     cs:dword_7FF6C6B68670, ecx
+  0x7ff6bd263f88:  movsxd  rcx, eax
+  0x7ff6bd263f8b:  lea     rdx, [rbp+3Fh+var_60]
+  0x7ff6bd263f8f:  mov     rax, cs:qword_7FF6C6B68668
+  0x7ff6bd263f96:  mov     [rax+rcx*8], rdx
+  0x7ff6bd263f9a:  test    r14, r14
+  0x7ff6bd263f9d:  jnz     loc_7FF6BD26404B
+  0x7ff6bd263fa3:  cmp     cs:byte_7FF6C6B68418, 2
+  0x7ff6bd263faa:  jb      short loc_7FF6BD264026
+  0x7ff6bd263fac:  lea     rdx, [rsp+110h+var_C0]
+  0x7ff6bd263fb1:  lea     rcx, [rsp+110h+var_C8]
+  0x7ff6bd263fb6:  call    sub_7FF6BA83CFA0
+  0x7ff6bd263fbb:  nop
+  0x7ff6bd263fbc:  lea     rdi, pwszOutputURL
+  0x7ff6bd263fc3:  cmp     [rax+8], r14d
+  0x7ff6bd263fc7:  jz      short loc_7FF6BD263FCE
+  0x7ff6bd263fc9:  mov     r14, [rax]
+  0x7ff6bd263fcc:  jmp     short loc_7FF6BD263FD1
+  0x7ff6bd263fce:  mov     r14, rdi
+  0x7ff6bd263fd1:  xor     r9d, r9d
+  0x7ff6bd263fd4:  xor     r8d, r8d
+  0x7ff6bd263fd7:  lea     rdx, [rbp+3Fh+var_98]
+  0x7ff6bd263fdb:  mov     rcx, rsi
+  0x7ff6bd263fde:  call    sub_7FF6BAA98740
+  0x7ff6bd263fe3:  nop
+  0x7ff6bd263fe4:  cmp     dword ptr [rax+8], 0
+  0x7ff6bd263fe8:  jz      short loc_7FF6BD263FED
+  0x7ff6bd263fea:  mov     rdi, [rax]
+  0x7ff6bd263fed:  mov     r9, r14
+  0x7ff6bd263ff0:  mov     r8, rdi
+  0x7ff6bd263ff3:  lea     rdx, off_7FF6C3BDA818; "ReceivedRPC: Function not found. Object"...
+  0x7ff6bd263ffa:  lea     rcx, byte_7FF6C6B68418
+  0x7ff6bd264001:  call    sub_7FF6BA751C70
+  0x7ff6bd264006:  nop
+  0x7ff6bd264007:  mov     rcx, [rbp+3Fh+var_98]
+  0x7ff6bd26400b:  test    rcx, rcx
+  0x7ff6bd26400e:  jz      short loc_7FF6BD264016
+  0x7ff6bd264010:  call    sub_7FF6BA6E0B20
+  0x7ff6bd264015:  nop
+  0x7ff6bd264016:  mov     rcx, [rsp+110h+var_C0]
+  0x7ff6bd26401b:  test    rcx, rcx
+  0x7ff6bd26401e:  jz      short loc_7FF6BD264026
+  0x7ff6bd264020:  call    sub_7FF6BA6E0B20
+  0x7ff6bd264025:  nop
+  0x7ff6bd264026:  test    bl, bl
+  0x7ff6bd264028:  jz      short loc_7FF6BD264038
+  0x7ff6bd26402a:  xor     dil, dil
+  0x7ff6bd26402d:  mov     r13d, 1
+  0x7ff6bd264033:  jmp     loc_7FF6BD264A37
+  0x7ff6bd264038:  mov     byte ptr [r15+10h], 1
+  0x7ff6bd26403d:  mov     dil, 1
+  0x7ff6bd264040:  mov     r13d, 1
+  0x7ff6bd264046:  jmp     loc_7FF6BD264A37
+  0x7ff6bd26404b:  mov     eax, [r14+0D0h]
+  0x7ff6bd264052:  test    al, 40h
+  0x7ff6bd264054:  jnz     loc_7FF6BD2640F3
+  0x7ff6bd26405a:  cmp     cs:byte_7FF6C6B68438, 2
+  0x7ff6bd264061:  jb      short loc_7FF6BD2640DD
+  0x7ff6bd264063:  lea     rdx, [rsp+110h+var_C0]
+  0x7ff6bd264068:  lea     rcx, [rsp+110h+var_C8]
+  0x7ff6bd26406d:  call    sub_7FF6BA83CFA0
+  0x7ff6bd264072:  nop
+  0x7ff6bd264073:  lea     rdi, pwszOutputURL
+  0x7ff6bd26407a:  cmp     dword ptr [rax+8], 0
+  0x7ff6bd26407e:  jz      short loc_7FF6BD264085
+  0x7ff6bd264080:  mov     r14, [rax]
+  0x7ff6bd264083:  jmp     short loc_7FF6BD264088
+  0x7ff6bd264085:  mov     r14, rdi
+  0x7ff6bd264088:  xor     r9d, r9d
+  0x7ff6bd26408b:  xor     r8d, r8d
+  0x7ff6bd26408e:  lea     rdx, [rbp+3Fh+var_98]
+  0x7ff6bd264092:  mov     rcx, rsi
+  0x7ff6bd264095:  call    sub_7FF6BAA98740
+  0x7ff6bd26409a:  nop
+  0x7ff6bd26409b:  cmp     dword ptr [rax+8], 0
+  0x7ff6bd26409f:  jz      short loc_7FF6BD2640A4
+  0x7ff6bd2640a1:  mov     rdi, [rax]
+  0x7ff6bd2640a4:  mov     r9, r14
+  0x7ff6bd2640a7:  mov     r8, rdi
+  0x7ff6bd2640aa:  lea     rdx, off_7FF6C3BDA8B8; "Rejected non RPC function. Object: %s, "...
+  0x7ff6bd2640b1:  lea     rcx, byte_7FF6C6B68438
+  0x7ff6bd2640b8:  call    sub_7FF6BA751C70
+  0x7ff6bd2640bd:  nop
+  0x7ff6bd2640be:  mov     rcx, [rbp+3Fh+var_98]
+  0x7ff6bd2640c2:  test    rcx, rcx
+  0x7ff6bd2640c5:  jz      short loc_7FF6BD2640CD
+  0x7ff6bd2640c7:  call    sub_7FF6BA6E0B20
+  0x7ff6bd2640cc:  nop
+  0x7ff6bd2640cd:  mov     rcx, [rsp+110h+var_C0]
+  0x7ff6bd2640d2:  test    rcx, rcx
+  0x7ff6bd2640d5:  jz      short loc_7FF6BD2640DD
+  0x7ff6bd2640d7:  call    sub_7FF6BA6E0B20
+  0x7ff6bd2640dc:  nop
+  0x7ff6bd2640dd:  test    bl, bl
+  0x7ff6bd2640df:  jz      loc_7FF6BD264038
+  0x7ff6bd2640e5:  xor     dil, dil
+  0x7ff6bd2640e8:  mov     r13d, 1
+  0x7ff6bd2640ee:  jmp     loc_7FF6BD264A37
+  0x7ff6bd2640f3:  test    bl, bl
+  0x7ff6bd2640f5:  jz      short loc_7FF6BD2640FE
+  0x7ff6bd2640f7:  test    eax, 200030h
+  0x7ff6bd2640fc:  jmp     short loc_7FF6BD264103
+  0x7ff6bd2640fe:  test    eax, 1004000h
+  0x7ff6bd264103:  setnz   al
+  0x7ff6bd264106:  test    al, al
+  0x7ff6bd264108:  jnz     loc_7FF6BD2641A7
+  0x7ff6bd26410e:  cmp     cs:byte_7FF6C6B68438, 2
+  0x7ff6bd264115:  jb      short loc_7FF6BD264191
+  0x7ff6bd264117:  lea     rdx, [rsp+110h+var_C0]
+  0x7ff6bd26411c:  lea     rcx, [rsp+110h+var_C8]
+  0x7ff6bd264121:  call    sub_7FF6BA83CFA0
+  0x7ff6bd264126:  nop
+  0x7ff6bd264127:  lea     rdi, pwszOutputURL
+  0x7ff6bd26412e:  cmp     dword ptr [rax+8], 0
+  0x7ff6bd264132:  jz      short loc_7FF6BD264139
+  0x7ff6bd264134:  mov     r14, [rax]
+  0x7ff6bd264137:  jmp     short loc_7FF6BD26413C
+  0x7ff6bd264139:  mov     r14, rdi
+  0x7ff6bd26413c:  xor     r9d, r9d
+  0x7ff6bd26413f:  xor     r8d, r8d
+  0x7ff6bd264142:  lea     rdx, [rbp+3Fh+var_98]
+  0x7ff6bd264146:  mov     rcx, rsi
+  0x7ff6bd264149:  call    sub_7FF6BAA98740
+  0x7ff6bd26414e:  nop
+  0x7ff6bd26414f:  cmp     dword ptr [rax+8], 0
+  0x7ff6bd264153:  jz      short loc_7FF6BD264158
+  0x7ff6bd264155:  mov     rdi, [rax]
+  0x7ff6bd264158:  mov     r9, r14
+  0x7ff6bd26415b:  mov     r8, rdi
+  0x7ff6bd26415e:  lea     rdx, off_7FF6C3BDA948; "Rejected RPC function due to access rig"...
+  0x7ff6bd264165:  lea     rcx, byte_7FF6C6B68438
+  0x7ff6bd26416c:  call    sub_7FF6BA751C70
+  0x7ff6bd264171:  nop
+  0x7ff6bd264172:  mov     rcx, [rbp+3Fh+var_98]
+  0x7ff6bd264176:  test    rcx, rcx
+  0x7ff6bd264179:  jz      short loc_7FF6BD264181
+  0x7ff6bd26417b:  call    sub_7FF6BA6E0B20
+  0x7ff6bd264180:  nop
+  0x7ff6bd264181:  mov     rcx, [rsp+110h+var_C0]
+  0x7ff6bd264186:  test    rcx, rcx
+  0x7ff6bd264189:  jz      short loc_7FF6BD264191
+  0x7ff6bd26418b:  call    sub_7FF6BA6E0B20
+  0x7ff6bd264190:  nop
+  0x7ff6bd264191:  test    bl, bl
+  0x7ff6bd264193:  jz      loc_7FF6BD264038
+  0x7ff6bd264199:  xor     dil, dil
+  0x7ff6bd26419c:  mov     r13d, 1
+  0x7ff6bd2641a2:  jmp     loc_7FF6BD264A37
+  0x7ff6bd2641a7:  test    rdi, rdi
+  0x7ff6bd2641aa:  jz      loc_7FF6BD2643A5
+  0x7ff6bd2641b0:  test    bl, bl
+  0x7ff6bd2641b2:  jz      loc_7FF6BD2643A5
+  0x7ff6bd2641b8:  cmp     byte ptr [rdi+10A8h], 0
+  0x7ff6bd2641bf:  jz      loc_7FF6BD2643A5
+  0x7ff6bd2641c5:  mov     rax, [r13+58h]
+  0x7ff6bd2641c9:  mov     ecx, [rax+0F0h]
+  0x7ff6bd2641cf:  shr     ecx, 1
+  0x7ff6bd2641d1:  test    cl, 1
+  0x7ff6bd2641d4:  jnz     loc_7FF6BD2643A5
+  0x7ff6bd2641da:  mov     [rbp+3Fh+var_50], rdi
+  0x7ff6bd2641de:  cmp     byte ptr [rdi+1328h], 0
+  0x7ff6bd2641e5:  jz      loc_7FF6BD2642C7
+  0x7ff6bd2641eb:  mov     r8, [rsp+110h+var_C8]
+  0x7ff6bd2641f0:  cmp     byte ptr [rdi+10A8h], 0
+  0x7ff6bd2641f7:  jz      loc_7FF6BD2643A5
+  0x7ff6bd2641fd:  cmp     byte ptr [rdi+11C0h], 0
+  0x7ff6bd264204:  jnz     loc_7FF6BD2643A5
+  0x7ff6bd26420a:  cmp     byte ptr [rdi+70h], 0
+  0x7ff6bd26420e:  jnz     short loc_7FF6BD264249
+  0x7ff6bd264210:  mov     word ptr [rdi+70h], 101h
+  0x7ff6bd264216:  xor     ecx, ecx
+  0x7ff6bd264218:  mov     [rdi+74h], ecx
+  0x7ff6bd26421b:  mov     [rdi+1078h], cl
+  0x7ff6bd264221:  mov     qword ptr [rbp+3Fh+PerformanceCount], rcx
+  0x7ff6bd264225:  mov     eax, ecx
+  0x7ff6bd264227:  mov     [rdi+1080h], rcx
+  0x7ff6bd26422e:  mov     [rdi+1088h], rcx
+  0x7ff6bd264235:  mov     [rdi+1090h], rcx
+  0x7ff6bd26423c:  mov     [rdi+1098h], ecx
+  0x7ff6bd264242:  mov     [rdi+10A0h], rcx
+  0x7ff6bd264249:  cmp     byte ptr [rdi+1328h], 0
+  0x7ff6bd264250:  jz      loc_7FF6BD2643A5
+  0x7ff6bd264256:  mov     rdx, r14
+  0x7ff6bd264259:  mov     rcx, rdi
+  0x7ff6bd26425c:  call    sub_7FF6BD595650
+  0x7ff6bd264261:  cmp     al, 1
+  0x7ff6bd264263:  jnz     loc_7FF6BD2643A5
+  0x7ff6bd264269:  cmp     cs:byte_7FF6C6B68478, 5
+  0x7ff6bd264270:  jb      short loc_7FF6BD2642B9
+  0x7ff6bd264272:  lea     rdx, [rbp+3Fh+var_98]
+  0x7ff6bd264276:  lea     rcx, [rsp+110h+var_C8]
+  0x7ff6bd26427b:  call    sub_7FF6BA83CFA0
+  0x7ff6bd264280:  nop
+  0x7ff6bd264281:  cmp     dword ptr [rax+8], 0
+  0x7ff6bd264285:  jz      short loc_7FF6BD26428C
+  0x7ff6bd264287:  mov     rdi, [rax]
+  0x7ff6bd26428a:  jmp     short loc_7FF6BD264293
+  0x7ff6bd26428c:  lea     rdi, pwszOutputURL
+  0x7ff6bd264293:  mov     r8, rdi
+  0x7ff6bd264296:  lea     rdx, off_7FF6C3BDAA00; "      Blocked RPC: %s"
+  0x7ff6bd26429d:  lea     rcx, byte_7FF6C6B68478
+  0x7ff6bd2642a4:  call    sub_7FF6BA751C70
+  0x7ff6bd2642a9:  nop
+  0x7ff6bd2642aa:  mov     rcx, [rbp+3Fh+var_98]
+  0x7ff6bd2642ae:  test    rcx, rcx
+  0x7ff6bd2642b1:  jz      short loc_7FF6BD2642B9
+  0x7ff6bd2642b3:  call    sub_7FF6BA6E0B20
+  0x7ff6bd2642b8:  nop
+  0x7ff6bd2642b9:  mov     dil, 1
+  0x7ff6bd2642bc:  mov     r13d, 1
+  0x7ff6bd2642c2:  jmp     loc_7FF6BD264A37
+  0x7ff6bd2642c7:  mov     rbx, [rsp+110h+var_C8]
+  0x7ff6bd2642cc:  cmp     byte ptr [rdi+10A8h], 0
+  0x7ff6bd2642d3:  jz      loc_7FF6BD2643A5
+  0x7ff6bd2642d9:  cmp     byte ptr [rdi+11C0h], 0
+  0x7ff6bd2642e0:  jnz     loc_7FF6BD2643A5
+  0x7ff6bd2642e6:  cmp     byte ptr [rdi+70h], 0
+  0x7ff6bd2642ea:  jnz     short loc_7FF6BD264325
+  0x7ff6bd2642ec:  mov     word ptr [rdi+70h], 101h
+  0x7ff6bd2642f2:  xor     ecx, ecx
+  0x7ff6bd2642f4:  mov     [rdi+74h], ecx
+  0x7ff6bd2642f7:  mov     [rdi+1078h], cl
+  0x7ff6bd2642fd:  mov     qword ptr [rbp+3Fh+PerformanceCount], rcx
+  0x7ff6bd264301:  mov     eax, ecx
+  0x7ff6bd264303:  mov     [rdi+1080h], rcx
+  0x7ff6bd26430a:  mov     [rdi+1088h], rcx
+  0x7ff6bd264311:  mov     [rdi+1090h], rcx
+  0x7ff6bd264318:  mov     [rdi+1098h], ecx
+  0x7ff6bd26431e:  mov     [rdi+10A0h], rcx
+  0x7ff6bd264325:  cmp     [rdi+10C8h], rbx
+  0x7ff6bd26432c:  jnz     short loc_7FF6BD264384
+  0x7ff6bd26432e:  call    cs:__imp_rand
+  0x7ff6bd264334:  and     eax, 7FFFh
+  0x7ff6bd264339:  movd    xmm0, eax
+  0x7ff6bd26433d:  cvtdq2ps xmm0, xmm0
+  0x7ff6bd264340:  mulss   xmm0, dword ptr cs:ymmword_7FF6C3138F28
+  0x7ff6bd264348:  cvtps2pd xmm0, xmm0
+  0x7ff6bd26434b:  comisd  xmm0, qword ptr [rdi+10D0h]
+  0x7ff6bd264353:  ja      short loc_7FF6BD264384
+  0x7ff6bd264355:  lea     rcx, [rbp+3Fh+PerformanceCount]; lpPerformanceCount
+  0x7ff6bd264359:  call    cs:QueryPerformanceCounter
+  0x7ff6bd26435f:  xorps   xmm3, xmm3
+  0x7ff6bd264362:  cvtsi2sd xmm3, qword ptr [rbp+3Fh+PerformanceCount]
+  0x7ff6bd264368:  mulsd   xmm3, cs:qword_7FF6C68DF3A8
+  0x7ff6bd264370:  addsd   xmm3, xmm6
+  0x7ff6bd264374:  mov     r8, rbx
+  0x7ff6bd264377:  mov     rdx, r14
+  0x7ff6bd26437a:  mov     rcx, rdi
+  0x7ff6bd26437d:  call    sub_7FF6BD59A960
+  0x7ff6bd264382:  jmp     short loc_7FF6BD2643A5
+  0x7ff6bd264384:  movzx   eax, byte ptr [rdi+1078h]
+  0x7ff6bd26438b:  mov     ecx, eax
+  0x7ff6bd26438d:  add     rcx, rcx
+  0x7ff6bd264390:  inc     al
+  0x7ff6bd264392:  mov     [rdi+1078h], al
+  0x7ff6bd264398:  mov     [rdi+rcx*8+78h], r14
+  0x7ff6bd26439d:  mov     [rdi+rcx*8+80h], rbx
+  0x7ff6bd2643a5:  lea     rdi, pwszOutputURL
+  0x7ff6bd2643ac:  cmp     cs:byte_7FF6C6B68478, 5
+  0x7ff6bd2643b3:  jb      short loc_7FF6BD2643F5
+  0x7ff6bd2643b5:  lea     rdx, [rbp+3Fh+var_98]
+  0x7ff6bd2643b9:  lea     rcx, [rsp+110h+var_C8]
+  0x7ff6bd2643be:  call    sub_7FF6BA83CFA0
+  0x7ff6bd2643c3:  nop
+  0x7ff6bd2643c4:  cmp     dword ptr [rax+8], 0
+  0x7ff6bd2643c8:  jz      short loc_7FF6BD2643CF
+  0x7ff6bd2643ca:  mov     r8, [rax]
+  0x7ff6bd2643cd:  jmp     short loc_7FF6BD2643D2
+  0x7ff6bd2643cf:  mov     r8, rdi
+  0x7ff6bd2643d2:  lea     rdx, off_7FF6C3BDAA50; "      Received RPC: %s"
+  0x7ff6bd2643d9:  lea     rcx, byte_7FF6C6B68478
+  0x7ff6bd2643e0:  call    sub_7FF6BA751C70
+  0x7ff6bd2643e5:  nop
+  0x7ff6bd2643e6:  mov     rcx, [rbp+3Fh+var_98]
+  0x7ff6bd2643ea:  test    rcx, rcx
+  0x7ff6bd2643ed:  jz      short loc_7FF6BD2643F5
+  0x7ff6bd2643ef:  call    sub_7FF6BA6E0B20
+  0x7ff6bd2643f4:  nop
+  0x7ff6bd2643f5:  mov     rax, [r13+58h]
+  0x7ff6bd2643f9:  mov     rcx, [rax+78h]
+  0x7ff6bd2643fd:  mov     rax, [rcx]
+  0x7ff6bd264400:  mov     r9, r12
+  0x7ff6bd264403:  mov     r8, r14
+  0x7ff6bd264406:  mov     rdx, rsi
+  0x7ff6bd264409:  call    qword ptr [rax+550h]
+  0x7ff6bd26440f:  test    al, al
+  0x7ff6bd264411:  jz      loc_7FF6BD2649AB
+  0x7ff6bd264417:  cmp     byte ptr [rbp+3Fh+arg_20], 0
+  0x7ff6bd26441b:  jz      short loc_7FF6BD26442C
+  0x7ff6bd26441d:  test    byte ptr [r14+0D0h], 80h
+  0x7ff6bd264425:  mov     byte ptr [rsp+110h+var_D0], 1
+  0x7ff6bd26442a:  jnz     short loc_7FF6BD264431
+  0x7ff6bd26442c:  mov     byte ptr [rsp+110h+var_D0], 0
+  0x7ff6bd264431:  call    sub_7FF6BA7DFFB0
+  0x7ff6bd264436:  lea     rcx, [rsp+110h+var_D0+1]
+  0x7ff6bd26443b:  mov     [rbp+3Fh+var_B8], rcx
+  0x7ff6bd26443f:  lea     r15, sub_7FF6BA656280
+  0x7ff6bd264446:  mov     [rsp+110h+var_C0], r15
+  0x7ff6bd26444b:  mov     rdx, rax
+  0x7ff6bd26444e:  lea     rcx, [rsp+110h+var_C0]
+  0x7ff6bd264453:  call    sub_7FF6BA6E1050
+  0x7ff6bd264458:  lea     rcx, [rax+10h]
+  0x7ff6bd26445c:  mov     [rbp+3Fh+var_88], rcx
+  0x7ff6bd264460:  mov     rax, [rcx]
+  0x7ff6bd264463:  mov     [rbp+3Fh+var_80], rax
+  0x7ff6bd264467:  mov     rax, [rcx+10h]
+  0x7ff6bd26446b:  mov     [rbp+3Fh+var_78], rax
+  0x7ff6bd26446f:  mov     [rbp+3Fh+var_70], 0
+  0x7ff6bd264473:  mov     rax, [rcx+18h]
+  0x7ff6bd264477:  mov     [rbp+3Fh+var_68], rax
+  0x7ff6bd26447b:  lea     rax, [rbp+3Fh+var_88]
+  0x7ff6bd26447f:  mov     [rcx+18h], rax
+  0x7ff6bd264483:  mov     rax, [rbp+3Fh+var_88]
+  0x7ff6bd264487:  inc     dword ptr [rax+20h]
+  0x7ff6bd26448a:  movzx   ebx, word ptr [r14+0D6h]
+  0x7ff6bd264492:  call    sub_7FF6BA7DFFB0
+  0x7ff6bd264497:  lea     rcx, [rsp+110h+var_D0+1]
+  0x7ff6bd26449c:  mov     [rbp+3Fh+var_B8], rcx
+  0x7ff6bd2644a0:  mov     [rsp+110h+var_C0], r15
+  0x7ff6bd2644a5:  mov     rdx, rax
+  0x7ff6bd2644a8:  lea     rcx, [rsp+110h+var_C0]
+  0x7ff6bd2644ad:  call    sub_7FF6BA6E1050
+  0x7ff6bd2644b2:  lea     r12, [rax+10h]
+  0x7ff6bd2644b6:  mov     r15, [r12]
+  0x7ff6bd2644ba:  add     r15, 0Fh
+  0x7ff6bd2644be:  and     r15, 0FFFFFFFFFFFFFFF0h
+  0x7ff6bd2644c2:  lea     rax, [rbx+r15]
+  0x7ff6bd2644c6:  cmp     rax, [r12+8]
+  0x7ff6bd2644cb:  jbe     short loc_7FF6BD2644E8
+  0x7ff6bd2644cd:  lea     edx, [rbx+10h]
+  0x7ff6bd2644d0:  mov     rcx, r12
+  0x7ff6bd2644d3:  call    sub_7FF6BA7D3B10
+  0x7ff6bd2644d8:  mov     r15, [r12]
+  0x7ff6bd2644dc:  add     r15, 0Fh
+  0x7ff6bd2644e0:  and     r15, 0FFFFFFFFFFFFFFF0h
+  0x7ff6bd2644e4:  lea     rax, [rbx+r15]
+  0x7ff6bd2644e8:  mov     [r12], rax
+  0x7ff6bd2644ec:  mov     r8, rbx; Size
+
+============================================================
+  DONE
+============================================================

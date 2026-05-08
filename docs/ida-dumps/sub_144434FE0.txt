@@ -1,0 +1,47 @@
+void __fastcall sub_144434FE0(__int64 a1, __int64 a2)
+{
+  __int64 v4; // rax
+  void (__stdcall *v5)(ULONG_PTR); // rdx
+  volatile signed __int32 *v6; // rbx
+  __int64 v7; // rcx
+  __int64 (__fastcall **v8)(); // [rsp+28h] [rbp-50h] BYREF
+  ULONG_PTR Parameter[2]; // [rsp+30h] [rbp-48h] BYREF
+  unsigned __int8 v10; // [rsp+40h] [rbp-38h]
+  __int64 v11; // [rsp+48h] [rbp-30h]
+  __int64 v12; // [rsp+50h] [rbp-28h]
+
+  *(_OWORD *)Parameter = 0;
+  v10 = 0;
+  v8 = off_14A5F5360;
+  v11 = 0;
+  v12 = 0;
+  sub_144403EE0(&v8);
+  v4 = sub_141741E80(a1, qword_14D8564A0);
+  (*(void (__fastcall **)(__int64, __int64, __int64 (__fastcall ***)()))(*(_QWORD *)a1 + 744LL))(a1, v4, &v8);
+  v8 = off_14A5F5360;
+  if ( v11 )
+    sub_1413B0B20(v11);
+  v5 = (void (__stdcall *)(ULONG_PTR))funcs_143A94275[v10];
+  if ( (char *)v5 == (char *)sub_141CEECB0 )
+  {
+    v6 = (volatile signed __int32 *)Parameter[1];
+    if ( Parameter[1] )
+    {
+      if ( _InterlockedExchangeAdd((volatile signed __int32 *)(Parameter[1] + 8), 0xFFFFFFFF) == 1 )
+      {
+        (**(void (__fastcall ***)(volatile signed __int32 *))v6)(v6);
+        if ( _InterlockedExchangeAdd(v6 + 3, 0xFFFFFFFF) == 1 )
+          (*(void (__fastcall **)(volatile signed __int32 *, __int64))(*(_QWORD *)v6 + 8LL))(v6, 1);
+      }
+    }
+  }
+  else
+  {
+    v5((ULONG_PTR)Parameter);
+  }
+  *(_QWORD *)a2 = off_14A5F5360;
+  v7 = *(_QWORD *)(a2 + 32);
+  if ( v7 )
+    sub_1413B0B20(v7);
+  ((void (__stdcall *)(ULONG_PTR))funcs_143A94275[*(unsigned __int8 *)(a2 + 24)])(a2 + 8);
+}

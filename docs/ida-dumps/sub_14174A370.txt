@@ -1,0 +1,23 @@
+_QWORD *__fastcall sub_14174A370(_QWORD *a1, __int64 a2, _DWORD *a3)
+{
+  _QWORD *result; // rax
+  __int64 v5; // r8
+  __int64 v6; // rax
+
+  if ( (a3[14] & 0x100LL) != 0 )
+  {
+    for ( result = (_QWORD *)a1[16]; (_DWORD *)*result != a3; result = (_QWORD *)result[2] )
+      ;
+    a1[7] = result[1];
+    a1[8] = 0;
+  }
+  else
+  {
+    v5 = a1[5];
+    v6 = (int)a3[17];
+    a1[8] = v5;
+    a1[7] = v5 + v6;
+    return (_QWORD *)(*(__int64 (__fastcall **)(_DWORD *))(*(_QWORD *)a3 + 272LL))(a3);
+  }
+  return result;
+}

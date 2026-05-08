@@ -1,0 +1,197 @@
+char __fastcall sub_14503DDB0(__int64 a1, __int64 a2, int a3, __int64 *a4, _QWORD *a5)
+{
+  __int64 v8; // rbx
+  __int64 v9; // rax
+  const wchar_t *v10; // r8
+  __int64 v11; // rdi
+  __int64 (__fastcall **v12)(); // rcx
+  volatile signed __int32 *v13; // rbx
+  __int64 v14; // rax
+  unsigned int v15; // eax
+  __int64 v16; // r8
+  volatile signed __int32 *v17; // rdi
+  __int64 v18; // rax
+  const wchar_t *v19; // r8
+  __int64 v20; // rax
+  __int64 v21; // rax
+  __int64 v22; // rcx
+  __int64 v23; // rax
+  __int64 v24; // rbx
+  int v25; // eax
+  __int64 v27; // rbx
+  __int64 v28; // rax
+  const wchar_t *v29; // r8
+  __int64 v30; // rbx
+  __int64 v31; // rax
+  const wchar_t *v32; // r8
+  int v33; // [rsp+30h] [rbp-D0h]
+  __int64 (__fastcall **v34)(); // [rsp+38h] [rbp-C8h] BYREF
+  volatile signed __int32 *v35; // [rsp+40h] [rbp-C0h]
+  int v36; // [rsp+48h] [rbp-B8h]
+  __int64 (__fastcall **v37)(); // [rsp+50h] [rbp-B0h] BYREF
+  volatile signed __int32 *v38; // [rsp+58h] [rbp-A8h]
+  __int64 v39; // [rsp+60h] [rbp-A0h]
+  int v40; // [rsp+68h] [rbp-98h]
+  int v41; // [rsp+6Ch] [rbp-94h]
+  _BYTE v42[256]; // [rsp+70h] [rbp-90h] BYREF
+  __int64 v43; // [rsp+170h] [rbp+70h]
+  __int64 v44; // [rsp+178h] [rbp+78h]
+
+  v36 = a3;
+  sub_145025960(a2, a5);
+  if ( (*(_BYTE *)(a2 + 41) & 2) != 0 )
+  {
+    if ( (unsigned __int8)byte_14D8974B0 >= 2u )
+    {
+      v43 = 0;
+      sub_14137A2D0(
+        v42,
+        "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\IntrepidNet\\Source\\IntrepidNet\\Private\\Managers\\InterServerReplication\\"
+        "IntrepidNetInterServerReplicationDriver.cpp",
+        144,
+        1);
+      v8 = v44;
+      v9 = sub_14133EC00(&v34, "ReadPlayerPromotionData Reader Error!");
+      if ( *(_DWORD *)(v9 + 8) )
+        v10 = *(const wchar_t **)v9;
+      else
+        v10 = &chText;
+      sub_141421C70((__int64)&byte_14D8974B0, (__int64)&off_14AE30C60, v10, v8, 1582);
+      if ( v34 )
+        sub_1413B0B20(v34);
+      if ( v43 )
+        sub_1413B0B20(v43);
+    }
+  }
+  else
+  {
+    v11 = sub_14177FAD0(a1 + 248) + 336;
+    v12 = (__int64 (__fastcall **)())a5[102];
+    v37 = v12;
+    v13 = (volatile signed __int32 *)a5[103];
+    v38 = v13;
+    if ( v13 )
+    {
+      v14 = (__int64)(v13 + 2);
+      _InterlockedIncrement(v13 + 2);
+    }
+    else
+    {
+      v14 = 8;
+    }
+    v34 = v12;
+    v35 = v13;
+    if ( v13 )
+    {
+      _InterlockedIncrement((volatile signed __int32 *)v14);
+      v12 = v34;
+    }
+    v15 = (*((__int64 (__fastcall **)(__int64 (__fastcall **)()))*v12 + 18))(v12);
+    v33 = sub_144225600(v11, v15, &v34);
+    v17 = v35;
+    if ( v35 )
+    {
+      if ( _InterlockedExchangeAdd(v35 + 2, 0xFFFFFFFF) == 1 )
+      {
+        (**(void (__fastcall ***)(volatile signed __int32 *))v17)(v17);
+        if ( _InterlockedExchangeAdd(v17 + 3, 0xFFFFFFFF) == 1 )
+          (*(void (__fastcall **)(volatile signed __int32 *, __int64))(*(_QWORD *)v17 + 8LL))(v17, 1);
+      }
+    }
+    if ( v13 )
+    {
+      if ( _InterlockedExchangeAdd(v13 + 2, 0xFFFFFFFF) == 1 )
+      {
+        (**(void (__fastcall ***)(volatile signed __int32 *))v13)(v13);
+        if ( _InterlockedExchangeAdd(v13 + 3, 0xFFFFFFFF) == 1 )
+          (*(void (__fastcall **)(volatile signed __int32 *, __int64))(*(_QWORD *)v13 + 8LL))(v13, 1);
+      }
+    }
+    if ( v33 == -1 )
+    {
+      v20 = sub_14177FAD0(a1 + 248);
+      v21 = sub_14502CC10(v20, a5);
+      *a4 = v21;
+      if ( !v21 || (*(_DWORD *)(v21 + 8) & 0x40000000) != 0 )
+      {
+        if ( (unsigned __int8)byte_14D8974B0 >= 2u )
+        {
+          v43 = 0;
+          sub_14137A2D0(
+            v42,
+            "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\IntrepidNet\\Source\\IntrepidNet\\Private\\Managers\\InterServerReplicat"
+            "ion\\IntrepidNetInterServerReplicationDriver.cpp",
+            144,
+            1);
+          v30 = v44;
+          v31 = sub_14133EC00(&v37, "Unable to CreateIntrepidNetConnection.");
+          if ( *(_DWORD *)(v31 + 8) )
+            v32 = *(const wchar_t **)v31;
+          else
+            v32 = &chText;
+          sub_141421C70((__int64)&byte_14D8974B0, (__int64)&off_14AE30D48, v32, v30, 1613);
+          if ( v37 )
+            sub_1413B0B20(v37);
+          if ( v43 )
+            sub_1413B0B20(v43);
+        }
+      }
+      else
+      {
+        v22 = *(_QWORD *)(*(_QWORD *)(a1 + 240) + 8LL);
+        if ( !*(_DWORD *)(*(_QWORD *)(v22 + 584) + 592LL) )
+          sub_14503AA90(*(_QWORD *)(v22 + 584));
+        sub_14505A690((LPCRITICAL_SECTION)(a1 + 1232));
+        v23 = sub_14177FAD0(a1 + 248);
+        if ( (unsigned __int8)sub_145057320(v23, *a4) )
+        {
+          v24 = *a4;
+          v25 = sub_145031C90(*(_QWORD *)(a1 + 240));
+          LOBYTE(v38) = 2;
+          v37 = off_14AE2AF78;
+          v39 = a5[2];
+          v41 = v25;
+          v40 = v36;
+          if ( (unsigned __int8)sub_1450624F0(*(_QWORD *)(a1 + 240), &v37, v24 + 200) )
+            return 1;
+          if ( (unsigned __int8)byte_14D8974B0 >= 3u )
+            sub_141421C70((__int64)&byte_14D8974B0, (__int64)&off_14AE32B28);
+        }
+        else if ( (unsigned __int8)byte_14D8974B0 >= 2u )
+        {
+          v43 = 0;
+          sub_14137A2D0(
+            v42,
+            "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\IntrepidNet\\Source\\IntrepidNet\\Private\\Managers\\InterServerReplicat"
+            "ion\\IntrepidNetInterServerReplicationDriver.cpp",
+            144,
+            1);
+          v27 = v44;
+          v28 = sub_14133EC00(&v37, "Unable to WelcomeIntrepidNetConnectionToWorld.");
+          if ( *(_DWORD *)(v28 + 8) )
+            v29 = *(const wchar_t **)v28;
+          else
+            v29 = &chText;
+          sub_141421C70((__int64)&byte_14D8974B0, (__int64)&off_14AE30D28, v29, v27, 1609);
+          if ( v37 )
+            sub_1413B0B20(v37);
+          if ( v43 )
+            sub_1413B0B20(v43);
+        }
+      }
+    }
+    else if ( (unsigned __int8)byte_14D8974B0 >= 3u )
+    {
+      LOBYTE(v16) = 1;
+      v18 = (*(__int64 (__fastcall **)(_QWORD, __int64 (__fastcall ***)(), __int64))(*(_QWORD *)a5[102] + 128LL))(
+              a5[102],
+              &v37,
+              v16);
+      v19 = *(_DWORD *)(v18 + 8) ? *(const wchar_t **)v18 : &chText;
+      sub_141421C70((__int64)&byte_14D8974B0, (__int64)&off_14AE30C80, v19);
+      if ( v37 )
+        sub_1413B0B20(v37);
+    }
+  }
+  return 0;
+}

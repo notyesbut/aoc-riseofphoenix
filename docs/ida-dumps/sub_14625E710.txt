@@ -1,0 +1,617 @@
+__int64 __fastcall sub_14625E710(__int64 a1, __int128 *a2, __int64 a3, int a4, __int64 a5)
+{
+  __int128 *v6; // r15
+  __int64 result; // rax
+  int v8; // ebx
+  __int64 v9; // rdi
+  __int64 v10; // rax
+  __int64 v11; // rdx
+  __int64 v12; // r8
+  __int64 v13; // rcx
+  int v14; // r8d
+  unsigned int v15; // r14d
+  int *v16; // r10
+  int v17; // r11d
+  unsigned int v18; // r9d
+  int v19; // esi
+  int *v20; // r10
+  int v21; // ecx
+  unsigned __int64 v22; // rax
+  int v23; // eax
+  __int64 v24; // r14
+  int v25; // r11d
+  int v26; // r8d
+  int v27; // edi
+  unsigned int v28; // r9d
+  int *v29; // r10
+  int v30; // esi
+  int v31; // edx
+  unsigned __int64 v32; // rax
+  int v33; // eax
+  unsigned __int64 v34; // rcx
+  __m128i si128; // xmm9
+  __int64 v36; // rdi
+  __int64 v37; // r14
+  unsigned int v38; // eax
+  int v39; // eax
+  __int64 v40; // rdi
+  _DWORD *v41; // rdi
+  __int64 v42; // r14
+  unsigned int v43; // eax
+  int v44; // eax
+  __int64 v45; // rdx
+  _DWORD *v46; // rdx
+  _DWORD *v47; // r14
+  _WORD *v48; // rcx
+  const char *v49; // rax
+  int v50; // ecx
+  _WORD *v51; // rcx
+  const char *v52; // rax
+  int v53; // ecx
+  const wchar_t *v54; // rax
+  const char *v55; // rax
+  int v56; // ecx
+  const wchar_t *v57; // rax
+  const wchar_t *v58; // r8
+  __int64 v59; // rdi
+  int v60; // eax
+  __int64 v61; // rdi
+  __int64 v62; // r13
+  __int64 v63; // rdi
+  __int64 v64; // r15
+  __int64 v65; // rdi
+  __int64 v66; // rax
+  __int64 v67; // rdx
+  __int64 v68; // rax
+  char v69; // al
+  __int64 v70; // rax
+  __int64 v71; // rax
+  __int128 v72; // xmm3
+  __int128 v73; // xmm4
+  __int128 v74; // xmm5
+  __int128 v75; // xmm6
+  __int128 v76; // xmm7
+  __int128 v77; // xmm8
+  __int64 v78; // xmm2_8
+  _WORD *v79; // rcx
+  const char *v80; // rsi
+  _WORD *v81; // rcx
+  const char *v82; // rsi
+  const wchar_t *v83; // rax
+  const char *v84; // rsi
+  const wchar_t *v85; // rax
+  const wchar_t *v86; // r8
+  __int64 v87; // [rsp+38h] [rbp-D0h] BYREF
+  __int64 v88; // [rsp+40h] [rbp-C8h]
+  void *v89; // [rsp+48h] [rbp-C0h] BYREF
+  _WORD *v90; // [rsp+50h] [rbp-B8h]
+  char *v91; // [rsp+58h] [rbp-B0h]
+  __int64 v92; // [rsp+60h] [rbp-A8h]
+  void *v93; // [rsp+68h] [rbp-A0h] BYREF
+  void *v94; // [rsp+70h] [rbp-98h]
+  void *v95; // [rsp+78h] [rbp-90h]
+  char v96; // [rsp+80h] [rbp-88h]
+  __int16 v97; // [rsp+88h] [rbp-80h]
+  char v98; // [rsp+8Ah] [rbp-7Eh]
+  int *v99; // [rsp+98h] [rbp-70h]
+  __int128 v100; // [rsp+A8h] [rbp-60h] BYREF
+  __int128 v101; // [rsp+B8h] [rbp-50h]
+  unsigned __int64 v102; // [rsp+C8h] [rbp-40h]
+  __int64 v103; // [rsp+D8h] [rbp-30h]
+  __int128 *v104; // [rsp+E0h] [rbp-28h]
+  const wchar_t *v105; // [rsp+E8h] [rbp-20h] BYREF
+  int v106; // [rsp+F0h] [rbp-18h]
+  int v107; // [rsp+F8h] [rbp-10h]
+  char v108[12]; // [rsp+FCh] [rbp-Ch] BYREF
+  __int128 v109; // [rsp+108h] [rbp+0h] BYREF
+  __int64 v110; // [rsp+118h] [rbp+10h]
+  __int64 v111; // [rsp+120h] [rbp+18h]
+  __int64 v112; // [rsp+128h] [rbp+20h]
+  unsigned __int64 v113; // [rsp+130h] [rbp+28h]
+  ULONG_PTR *v114; // [rsp+138h] [rbp+30h]
+  __int128 v115; // [rsp+140h] [rbp+38h] BYREF
+  __int128 v116; // [rsp+150h] [rbp+48h]
+  unsigned __int64 v117; // [rsp+160h] [rbp+58h]
+  __int128 v118; // [rsp+168h] [rbp+60h]
+  __int128 v119; // [rsp+178h] [rbp+70h]
+  __int128 v120; // [rsp+188h] [rbp+80h]
+  __int128 v121; // [rsp+198h] [rbp+90h]
+  __int64 v122; // [rsp+1A8h] [rbp+A0h]
+  ULONG_PTR Parameter[12]; // [rsp+1B0h] [rbp+A8h] BYREF
+  unsigned __int8 v124; // [rsp+210h] [rbp+108h]
+  __int128 v125; // [rsp+218h] [rbp+110h] BYREF
+  __int128 v126; // [rsp+228h] [rbp+120h] BYREF
+  __int64 v127; // [rsp+238h] [rbp+130h]
+  __m128i v128; // [rsp+240h] [rbp+138h]
+  __int64 v129; // [rsp+250h] [rbp+148h]
+  __int128 v130; // [rsp+258h] [rbp+150h]
+  ULONG_PTR v131[2]; // [rsp+268h] [rbp+160h] BYREF
+  __int128 v132; // [rsp+278h] [rbp+170h]
+  __int128 v133; // [rsp+288h] [rbp+180h]
+  __int128 v134; // [rsp+298h] [rbp+190h]
+  __int128 v135; // [rsp+2A8h] [rbp+1A0h]
+  __int128 v136; // [rsp+2B8h] [rbp+1B0h]
+  __int64 v137; // [rsp+2C8h] [rbp+1C0h]
+  ULONG_PTR v138[12]; // [rsp+2D0h] [rbp+1C8h] BYREF
+  unsigned __int8 v139; // [rsp+330h] [rbp+228h]
+
+  v107 = a4;
+  v111 = a3;
+  v6 = a2;
+  v104 = a2;
+  v110 = a1;
+  result = a5;
+  v112 = a5;
+  v8 = 0;
+  v9 = *(_QWORD *)(a1 + 32);
+  if ( v9
+    && (v10 = sub_1458A8B10(),
+        v11 = *(_QWORD *)(v9 + 16),
+        v12 = v10 + 80,
+        result = *(int *)(v10 + 88),
+        (int)result <= *(_DWORD *)(v11 + 88))
+    && (v13 = result, result = *(_QWORD *)(v11 + 80), *(_QWORD *)(result + 8 * v13) == v12)
+    && (result = *(_DWORD *)(v9 + 8) >> 30, (*(_DWORD *)(v9 + 8) & 0x40000000) == 0) )
+  {
+    v14 = 0;
+    v15 = 1;
+    v16 = (int *)(a3 + 16);
+    v99 = (int *)(a3 + 16);
+    v17 = 0;
+    v18 = 0;
+    v19 = *(_DWORD *)(a3 + 40);
+    v103 = v9;
+    if ( v19 )
+    {
+      v20 = *(int **)(a3 + 32);
+      if ( !v20 )
+        v20 = v99;
+      v17 = v19;
+      v21 = *v20;
+      v103 = v9;
+      if ( v21 )
+      {
+LABEL_12:
+        v15 = v21 & ~(v21 - 1);
+        _BitScanReverse64(&v22, 2LL * v15 + 1);
+        v23 = v18 + v22 - 1;
+        if ( v23 > v19 )
+          v23 = v19;
+        v17 = v23;
+      }
+      else
+      {
+        v103 = v9;
+        while ( 1 )
+        {
+          ++v14;
+          v18 += 32;
+          if ( v14 > (v19 - 1) / 32 )
+            break;
+          v21 = v20[v14];
+          if ( v21 )
+            goto LABEL_12;
+        }
+      }
+      v16 = v99;
+    }
+    *(_QWORD *)&v100 = a3;
+    *((_QWORD *)&v100 + 1) = __PAIR64__(v15, v14);
+    *(_QWORD *)&v101 = v16;
+    DWORD2(v101) = -1;
+    HIDWORD(v101) = v17;
+    v102 = __PAIR64__(v17, v18);
+    v115 = v100;
+    v116 = v101;
+    v117 = __PAIR64__(v17, v18);
+    v24 = a3;
+    v25 = *(_DWORD *)(a3 + 40);
+    v26 = v25 >> 5;
+    v27 = -1 << v25;
+    v28 = v25 & 0xFFFFFFE0;
+    if ( v25 != v19 )
+    {
+      v29 = *((int **)v16 + 2);
+      if ( !v29 )
+        v29 = v99;
+      v25 = v19;
+      v30 = (v19 - 1) / 32;
+      v31 = v29[v26] & v27;
+      if ( v31 )
+      {
+LABEL_22:
+        _BitScanReverse64(&v32, 2LL * (v31 & (unsigned int)~(v31 - 1)) + 1);
+        v33 = v28 + v32 - 1;
+        if ( v33 > v25 )
+          v33 = v25;
+        v25 = v33;
+      }
+      else
+      {
+        while ( 1 )
+        {
+          ++v26;
+          v28 += 32;
+          if ( v26 > v30 )
+            break;
+          v31 = v29[v26];
+          v27 = -1;
+          if ( v31 )
+            goto LABEL_22;
+        }
+      }
+      v16 = v99;
+    }
+    *((_QWORD *)&v101 + 1) = __PAIR64__(v25, v27);
+    v34 = __PAIR64__(v25, v27) >> 32;
+    v113 = __PAIR64__(v25, v27) >> 32;
+    si128 = _mm_load_si128((const __m128i *)&xmmword_149DDE1C0);
+    while ( 1 )
+    {
+      result = SHIDWORD(v116);
+      if ( HIDWORD(v116) == (_DWORD)v34 && (int *)v116 == v16 && (_QWORD)v115 == v24 )
+        break;
+      v36 = *(_QWORD *)v115 + 24LL * SHIDWORD(v116);
+      v37 = v110;
+      v38 = sub_1413A6340(v36, 16);
+      v39 = sub_1462444D0(v37 + 152, v38, v36);
+      if ( v39 != -1 )
+      {
+        v40 = *(_QWORD *)(v37 + 152) + 240LL * v39;
+        if ( v40 )
+        {
+          v41 = (_DWORD *)(v40 + 16);
+          if ( v41 )
+          {
+            v42 = v103;
+            v43 = sub_1413A6340(v41, 16);
+            v44 = sub_143F4DBF0(v42 + 1600, v43, v41);
+            if ( v44 != -1 )
+            {
+              v45 = *(_QWORD *)(v42 + 1600) + 80LL * v44;
+              if ( v45 )
+              {
+                v46 = (_DWORD *)(v45 + 16);
+                if ( v46 )
+                {
+                  if ( v107 == v46[13] )
+                  {
+                    v47 = v41;
+                    if ( *v41 ^ *v46 | v46[1] ^ v41[1] | v46[2] ^ v41[2] | v46[3] ^ v41[3]
+                      && (unsigned __int8)byte_14D940330 >= 3u )
+                    {
+                      v87 = 0;
+                      v88 = 0;
+                      v89 = &unk_14D5AF3C0;
+                      v90 = &unk_14D5AF3C0;
+                      v91 = (char *)&unk_14D5AF3C2;
+                      LOBYTE(v92) = 0;
+                      v93 = &unk_14D5AF3C0;
+                      v94 = &unk_14D5AF3C0;
+                      v95 = &unk_14D5AF3C2;
+                      v96 = 0;
+                      v97 = 0;
+                      v98 = 0;
+                      if ( byte_14D1FCFD6 )
+                      {
+                        sub_144E7DAA0(
+                          &v87,
+                          L"Bad state detected - unexpected mismatch between FActorInformation and FActorTrackerRegistrati"
+                           "on. This should never happen");
+                        sub_144E7DAA0(&v87, L"Function+");
+                        if ( (_BYTE)v97 )
+                        {
+                          if ( v98 )
+                          {
+                            v48 = v90;
+                            if ( v90 + 1 >= (_WORD *)v91 )
+                            {
+                              sub_1414D0E10(&v89, 1);
+                              v48 = v90;
+                            }
+                            *v48 = 34;
+                            ++v90;
+                            *(_QWORD *)&v118 = "UFilteredActorTrackingRegistry::GetLocationUpdatesForServer";
+                            v49 = "UFilteredActorTrackingRegistry::GetLocationUpdatesForServer";
+                            v50 = 0;
+                            v47 = v41;
+                            do
+                            {
+                              ++v49;
+                              ++v50;
+                            }
+                            while ( *v49 );
+                            DWORD2(v118) = v50;
+                            v109 = v118;
+                            sub_1416CDE50(&v89, &v109);
+                            v51 = v90;
+                            if ( v90 + 1 >= (_WORD *)v91 )
+                            {
+                              sub_1414D0E10(&v89, 1);
+                              v51 = v90;
+                            }
+                            *v51 = 34;
+                            ++v90;
+                          }
+                          else
+                          {
+                            *(_QWORD *)&v119 = "UFilteredActorTrackingRegistry::GetLocationUpdatesForServer";
+                            v52 = "UFilteredActorTrackingRegistry::GetLocationUpdatesForServer";
+                            v53 = 0;
+                            v47 = v41;
+                            do
+                            {
+                              ++v52;
+                              ++v53;
+                            }
+                            while ( *v52 );
+                            DWORD2(v119) = v53;
+                            v109 = v119;
+                            sub_1416CDE50(&v89, &v109);
+                          }
+                          v97 = 0;
+                          v98 = 0;
+                        }
+                        v54 = (const wchar_t *)sub_144E7E0A0(&v87);
+                        sub_14133EDD0((__int64)&v105, v54);
+                        sub_1414C7300(&v93);
+                        sub_1414C7300(&v89);
+                        if ( v87 )
+                          sub_1413B0B20(v87);
+                      }
+                      else
+                      {
+                        sub_144E7DF80(
+                          &v87,
+                          L"Bad state detected - unexpected mismatch between FActorInformation and FActorTrackerRegistrati"
+                           "on. This should never happen");
+                        sub_144E7DF80(&v87, L"Function+");
+                        v47 = v41;
+                        if ( (_BYTE)v97 )
+                        {
+                          *(_QWORD *)&v100 = "UFilteredActorTrackingRegistry::GetLocationUpdatesForServer";
+                          v55 = "UFilteredActorTrackingRegistry::GetLocationUpdatesForServer";
+                          v56 = 0;
+                          do
+                          {
+                            ++v55;
+                            ++v56;
+                          }
+                          while ( *v55 );
+                          DWORD2(v100) = v56;
+                          v109 = v100;
+                          sub_1416CDE50(&v89, &v109);
+                          v97 = 0;
+                          v98 = 0;
+                        }
+                        v57 = (const wchar_t *)sub_144E7E1A0(&v87);
+                        sub_14133EDD0((__int64)&v105, v57);
+                        sub_1414C7300(&v93);
+                        sub_1414C7300(&v89);
+                        if ( v87 )
+                          sub_1413B0B20(v87);
+                      }
+                      v58 = &chText;
+                      if ( v106 )
+                        v58 = v105;
+                      sub_141421C70((__int64)&byte_14D940330, (__int64)&off_14B833D60, v58);
+                      if ( v105 )
+                        sub_1413B0B20(v105);
+                    }
+                    v120 = *v6;
+                    v121 = v6[1];
+                    v122 = *((_QWORD *)v6 + 4);
+                    v114 = Parameter;
+                    v124 = *((_BYTE *)v6 + 136);
+                    ((void (__fastcall *)(ULONG_PTR *))funcs_1458A6DE7[v124])(Parameter);
+                    v126 = 0;
+                    v129 = 0;
+                    v125 = 0u;
+                    v127 = 0;
+                    v128 = si128;
+                    v130 = 0u;
+                    v59 = v112;
+                    v60 = *(_DWORD *)(v112 + 8);
+                    if ( v60 == *(_DWORD *)(v112 + 12) )
+                      v60 = sub_14131EC90(0x8E0u, v112, (unsigned int *)(v112 + 12));
+                    *(_DWORD *)(v59 + 8) = v60 + 1;
+                    v61 = 224LL * v60 + *(_QWORD *)v59;
+                    v114 = (ULONG_PTR *)v61;
+                    *(_OWORD *)v61 = v120;
+                    *(_OWORD *)(v61 + 16) = v121;
+                    *(_QWORD *)(v61 + 32) = v122;
+                    v62 = v61 + 40;
+                    *(_QWORD *)&v109 = v61 + 40;
+                    *(_BYTE *)(v61 + 136) = v124;
+                    ((void (__fastcall *)(_QWORD *))funcs_14625EDF1[v124])((_QWORD *)(v61 + 40));
+                    sub_141C52BB0(v61 + 144, &v125);
+                    DWORD2(v130) = 0;
+                    if ( (_QWORD)v130 )
+                      sub_1413B0B20(v130);
+                    DWORD2(v125) = 0;
+                    if ( HIDWORD(v125) )
+                      sub_14131BD90(24, 4, 0, (unsigned int)&v125, 0, (__int64)&v125 + 12);
+                    v128.m128i_i64[1] = 0xFFFFFFFFLL;
+                    v128.m128i_i32[0] = 0;
+                    if ( v128.m128i_i32[1] > 0x80u )
+                    {
+                      v128.m128i_i32[1] = 128;
+                      sub_14131C1F0(&v126, 0);
+                    }
+                    if ( v127 )
+                      sub_1413B0B20(v127);
+                    if ( (_QWORD)v125 )
+                      sub_1413B0B20(v125);
+                    ((void (__stdcall *)(ULONG_PTR))funcs_1458A6C67[v124])((ULONG_PTR)Parameter);
+                    sub_141412F30(v61 + 144, v108, v47, 0);
+                    v63 = v110;
+                    if ( !sub_14625BCB0(v110 + 472, v47, v6) )
+                      sub_1462421A0(v63 + 472, v47, v6);
+                    v64 = *((_QWORD *)v47 + 26);
+                    v65 = *((_QWORD *)v47 + 25);
+                    if ( v64 && v65 )
+                    {
+                      if ( v65 == sub_145C7C350()
+                        || (v66 = sub_145C7C350()) != 0
+                        && ((v67 = v66 + 80, v68 = *(int *)(v66 + 88), (int)v68 > *(_DWORD *)(v65 + 88))
+                         || *(_QWORD *)(*(_QWORD *)(v65 + 80) + 8 * v68) != v67
+                          ? (v69 = 0)
+                          : (v69 = 1),
+                            v69) )
+                      {
+                        v70 = (*(__int64 (__fastcall **)(__int64, ULONG_PTR *))(*(_QWORD *)v64 + 16LL))(v64, v138);
+                        if ( v70 != v62 )
+                        {
+                          v71 = *(unsigned __int8 *)(v70 + 96);
+                          LOBYTE(v137) = v71;
+                          ((void (__fastcall *)(_QWORD *))funcs_14625EDF1[v71])(v131);
+                          v72 = *(_OWORD *)v131;
+                          v73 = v132;
+                          v74 = v133;
+                          v75 = v134;
+                          v76 = v135;
+                          v77 = v136;
+                          v78 = v137;
+                          *(_OWORD *)v131 = *(_OWORD *)v62;
+                          v132 = *(_OWORD *)(v62 + 16);
+                          v133 = *(_OWORD *)(v62 + 32);
+                          v134 = *(_OWORD *)(v62 + 48);
+                          v135 = *(_OWORD *)(v62 + 64);
+                          v136 = *(_OWORD *)(v62 + 80);
+                          v137 = *(_QWORD *)(v62 + 96);
+                          *(_OWORD *)v62 = v72;
+                          *(_OWORD *)(v62 + 16) = v73;
+                          *(_OWORD *)(v62 + 32) = v74;
+                          *(_OWORD *)(v62 + 48) = v75;
+                          *(_OWORD *)(v62 + 64) = v76;
+                          *(_OWORD *)(v62 + 80) = v77;
+                          *(_QWORD *)(v62 + 96) = v78;
+                          ((void (__stdcall *)(ULONG_PTR))funcs_1458A6C67[(unsigned __int8)v137])((ULONG_PTR)v131);
+                        }
+                        ((void (__stdcall *)(ULONG_PTR))funcs_1458A6C67[v139])((ULONG_PTR)v138);
+                      }
+                    }
+                    v6 = v104;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      DWORD2(v116) &= ~HIDWORD(v115);
+      sub_14131C0A0((char *)&v115 + 8);
+      v16 = v99;
+      v24 = v111;
+      LODWORD(v34) = v113;
+    }
+  }
+  else if ( (unsigned __int8)byte_14D940330 >= 2u )
+  {
+    v87 = 0;
+    v88 = 0;
+    v89 = &unk_14D5AF3C0;
+    v90 = &unk_14D5AF3C0;
+    v91 = (char *)&unk_14D5AF3C2;
+    LOBYTE(v92) = 0;
+    v93 = &unk_14D5AF3C0;
+    v94 = &unk_14D5AF3C0;
+    v95 = &unk_14D5AF3C2;
+    v96 = 0;
+    v97 = 0;
+    v98 = 0;
+    if ( byte_14D1FCFD6 )
+    {
+      sub_144E7DAA0(
+        &v87,
+        L"UFilteredActorTrackingRegistry::GetTrackerInstigatorsForServer failed to find actor tracking service");
+      sub_144E7DAA0(&v87, L"Function+");
+      if ( (_BYTE)v97 )
+      {
+        if ( v98 )
+        {
+          v79 = v90;
+          if ( v90 + 1 >= (_WORD *)v91 )
+          {
+            sub_1414D0E10(&v89, 1);
+            v79 = v90;
+          }
+          *v79 = 34;
+          ++v90;
+          v80 = "UFilteredActorTrackingRegistry::GetLocationUpdatesForServer";
+          *(_QWORD *)&v100 = "UFilteredActorTrackingRegistry::GetLocationUpdatesForServer";
+          do
+          {
+            ++v80;
+            ++v8;
+          }
+          while ( *v80 );
+          DWORD2(v100) = v8;
+          sub_1416CDE50(&v89, &v100);
+          v81 = v90;
+          if ( v90 + 1 >= (_WORD *)v91 )
+          {
+            sub_1414D0E10(&v89, 1);
+            v81 = v90;
+          }
+          *v81 = 34;
+          ++v90;
+        }
+        else
+        {
+          v82 = "UFilteredActorTrackingRegistry::GetLocationUpdatesForServer";
+          *(_QWORD *)&v100 = "UFilteredActorTrackingRegistry::GetLocationUpdatesForServer";
+          do
+          {
+            ++v82;
+            ++v8;
+          }
+          while ( *v82 );
+          DWORD2(v100) = v8;
+          sub_1416CDE50(&v89, &v100);
+        }
+        v97 = 0;
+        v98 = 0;
+      }
+      v83 = (const wchar_t *)sub_144E7E0A0(&v87);
+      sub_14133EDD0((__int64)&v105, v83);
+      sub_1414C7300(&v93);
+      sub_1414C7300(&v89);
+    }
+    else
+    {
+      sub_144E7DF80(
+        &v87,
+        L"UFilteredActorTrackingRegistry::GetTrackerInstigatorsForServer failed to find actor tracking service");
+      sub_144E7DF80(&v87, L"Function+");
+      if ( (_BYTE)v97 )
+      {
+        v84 = "UFilteredActorTrackingRegistry::GetLocationUpdatesForServer";
+        *(_QWORD *)&v100 = "UFilteredActorTrackingRegistry::GetLocationUpdatesForServer";
+        do
+        {
+          ++v84;
+          ++v8;
+        }
+        while ( *v84 );
+        DWORD2(v100) = v8;
+        sub_1416CDE50(&v89, &v100);
+        v97 = 0;
+        v98 = 0;
+      }
+      v85 = (const wchar_t *)sub_144E7E1A0(&v87);
+      sub_14133EDD0((__int64)&v105, v85);
+      sub_1414C7300(&v93);
+      sub_1414C7300(&v89);
+    }
+    if ( v87 )
+      sub_1413B0B20(v87);
+    v86 = &chText;
+    if ( v106 )
+      v86 = v105;
+    result = sub_141421C70((__int64)&byte_14D940330, (__int64)&off_14B833D40, v86);
+    if ( v105 )
+      return sub_1413B0B20(v105);
+  }
+  return result;
+}

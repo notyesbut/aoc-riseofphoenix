@@ -1,0 +1,100 @@
+bool __fastcall sub_14162BE60(int *a1, char a2, double a3, double a4)
+{
+  int v5; // ebp
+  int v7; // ecx
+  __int64 v8; // rdi
+  __int64 v9; // rsi
+  __int64 v10; // rbx
+  int v11; // ecx
+  int v12; // eax
+  int v13; // eax
+  int v14; // ecx
+  __int64 v15; // rdi
+  __int64 v16; // rsi
+  void (__fastcall ***v17)(_QWORD, _QWORD); // rbx
+  int v18; // ecx
+  int v19; // ecx
+  bool result; // al
+  LARGE_INTEGER PerformanceCount; // [rsp+80h] [rbp+8h] BYREF
+
+  v5 = 0;
+  EnterCriticalSection(&stru_14D6D2110);
+  v7 = *a1;
+  if ( *a1 < (int)qword_14D6B7D80 )
+  {
+    while ( 1 )
+    {
+      v8 = qword_14D6B7D78;
+      v9 = v7;
+      v10 = **(_QWORD **)(qword_14D6B7D78 + 8LL * v7);
+      sub_141767830(&dword_14D6D20E0, v10);
+      *(_QWORD *)(v8 + 8 * v9) = v10;
+      ++v5;
+      v11 = *a1 + 1;
+      *a1 = v11;
+      if ( !a2 || v5 != 100 )
+        goto LABEL_6;
+      v12 = qword_14D6B7D80;
+      if ( v11 < (int)qword_14D6B7D80 )
+        break;
+LABEL_7:
+      v7 = *a1;
+      if ( *a1 >= v12 )
+        goto LABEL_8;
+    }
+    v5 = 0;
+    QueryPerformanceCounter(&PerformanceCount);
+    if ( (double)(int)PerformanceCount.LowPart * *(double *)&qword_14D5AF3A8 + 16777216.0 - a4 > a3 )
+      goto LABEL_8;
+LABEL_6:
+    v12 = qword_14D6B7D80;
+    goto LABEL_7;
+  }
+LABEL_8:
+  LeaveCriticalSection(&stru_14D6D2110);
+  v13 = qword_14D6B7D80;
+  if ( *a1 == (_DWORD)qword_14D6B7D80 )
+  {
+    v14 = a1[1];
+    if ( v14 < (int)qword_14D6B7D80 )
+    {
+      while ( 1 )
+      {
+        v15 = qword_14D6B7D78;
+        v16 = v14;
+        v17 = *(void (__fastcall ****)(_QWORD, _QWORD))(qword_14D6B7D78 + 8LL * v14);
+        (**v17)(v17, 0);
+        sub_141767810(&unk_14D6D1D34, v17);
+        *(_QWORD *)(v15 + 8 * v16) = 0;
+        ++v5;
+        v18 = a1[1];
+        ++a1[2];
+        v19 = v18 + 1;
+        a1[1] = v19;
+        if ( !a2 || v5 != 100 )
+          goto LABEL_14;
+        v13 = qword_14D6B7D80;
+        if ( v19 < (int)qword_14D6B7D80 )
+          break;
+LABEL_15:
+        v14 = a1[1];
+        if ( v14 >= v13 )
+          goto LABEL_18;
+      }
+      v5 = 0;
+      QueryPerformanceCounter(&PerformanceCount);
+      if ( (double)(int)PerformanceCount.LowPart * *(double *)&qword_14D5AF3A8 + 16777216.0 - a4 > a3 )
+      {
+        v13 = qword_14D6B7D80;
+        goto LABEL_18;
+      }
+LABEL_14:
+      v13 = qword_14D6B7D80;
+      goto LABEL_15;
+    }
+  }
+LABEL_18:
+  result = a1[1] == v13;
+  *((_BYTE *)a1 + 12) = result;
+  return result;
+}

@@ -1,0 +1,37 @@
+__int64 __fastcall sub_143DCF5A0(__int64 a1, float a2)
+{
+  __int64 result; // rax
+  __int64 v4; // rbx
+  unsigned int v5; // eax
+
+  result = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)a1 + 1784LL))(a1);
+  if ( (_BYTE)result && (*(_BYTE *)(a1 + 189) & 0x10) != 0 )
+  {
+    v4 = *(_QWORD *)(a1 + 2048);
+    if ( !v4 )
+    {
+      v4 = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)(a1 + 480) + 40LL))(a1 + 480);
+      *(_QWORD *)(a1 + 2048) = v4;
+    }
+    v5 = sub_143DE22C0(v4);
+    if ( v5 == -1 )
+    {
+      result = *(_QWORD *)(v4 + 72);
+      if ( result )
+      {
+        if ( (unsigned __int8)byte_14D838448 >= 5u )
+          return sub_141421C70(
+                   (__int64)&byte_14D838448,
+                   (__int64)&off_14A834638,
+                   a2,
+                   *(float *)(result + 20),
+                   *(float *)(v4 + 12));
+      }
+    }
+    else
+    {
+      return sub_143DBF250(v4, v5, a1);
+    }
+  }
+  return result;
+}

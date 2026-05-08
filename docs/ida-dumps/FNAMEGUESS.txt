@@ -1,0 +1,90 @@
+__int64 __fastcall sub_7FF6C2118C80(unsigned int *a1, _DWORD *a2)
+{
+  unsigned int v3; // r9d
+  unsigned int v4; // r8d
+  unsigned int v5; // r9d
+  unsigned int v6; // r8d
+  unsigned int v7; // r9d
+  unsigned int v8; // r8d
+  unsigned int v9; // r9d
+  unsigned int v10; // r8d
+  unsigned int v11; // r9d
+  unsigned int v12; // r8d
+  unsigned int v13; // r9d
+  unsigned int v14; // r8d
+  unsigned int v15; // r9d
+  unsigned int v16; // r8d
+  unsigned int v17; // r9d
+  unsigned int v18; // r8d
+  __int64 result; // rax
+  int v20; // r9d
+
+  v3 = *a1 ^ a2[17];
+  v4 = a1[1]
+     ^ a2[16]
+     ^ (a2[(unsigned __int8)v3 + 786]
+      + (a2[BYTE1(v3) + 530] ^ (a2[((unsigned __int64)v3 >> 24) + 18] + a2[BYTE2(v3) + 274])));
+  v5 = a2[15]
+     ^ (a2[(unsigned __int8)v4 + 786]
+      + (a2[BYTE1(v4) + 530] ^ (a2[((unsigned __int64)v4 >> 24) + 18] + a2[BYTE2(v4) + 274])))
+     ^ v3;
+  v6 = a2[14]
+     ^ (a2[(unsigned __int8)v5 + 786]
+      + (a2[BYTE1(v5) + 530] ^ (a2[((unsigned __int64)v5 >> 24) + 18] + a2[BYTE2(v5) + 274])))
+     ^ v4;
+  v7 = a2[13]
+     ^ (a2[(unsigned __int8)v6 + 786]
+      + (a2[BYTE1(v6) + 530] ^ (a2[((unsigned __int64)v6 >> 24) + 18] + a2[BYTE2(v6) + 274])))
+     ^ v5;
+  v8 = a2[12]
+     ^ (a2[(unsigned __int8)v7 + 786]
+      + (a2[BYTE1(v7) + 530] ^ (a2[((unsigned __int64)v7 >> 24) + 18] + a2[BYTE2(v7) + 274])))
+     ^ v6;
+  v9 = a2[11]
+     ^ (a2[(unsigned __int8)v8 + 786]
+      + (a2[BYTE1(v8) + 530] ^ (a2[((unsigned __int64)v8 >> 24) + 18] + a2[BYTE2(v8) + 274])))
+     ^ v7;
+  v10 = a2[10]
+      ^ (a2[(unsigned __int8)v9 + 786]
+       + (a2[BYTE1(v9) + 530] ^ (a2[((unsigned __int64)v9 >> 24) + 18] + a2[BYTE2(v9) + 274])))
+      ^ v8;
+  v11 = a2[9]
+      ^ (a2[(unsigned __int8)v10 + 786]
+       + (a2[BYTE1(v10) + 530] ^ (a2[((unsigned __int64)v10 >> 24) + 18] + a2[BYTE2(v10) + 274])))
+      ^ v9;
+  v12 = a2[8]
+      ^ (a2[(unsigned __int8)v11 + 786]
+       + (a2[BYTE1(v11) + 530] ^ (a2[((unsigned __int64)v11 >> 24) + 18] + a2[BYTE2(v11) + 274])))
+      ^ v10;
+  v13 = a2[7]
+      ^ (a2[(unsigned __int8)v12 + 786]
+       + (a2[BYTE1(v12) + 530] ^ (a2[((unsigned __int64)v12 >> 24) + 18] + a2[BYTE2(v12) + 274])))
+      ^ v11;
+  v14 = a2[6]
+      ^ (a2[(unsigned __int8)v13 + 786]
+       + (a2[BYTE1(v13) + 530] ^ (a2[((unsigned __int64)v13 >> 24) + 18] + a2[BYTE2(v13) + 274])))
+      ^ v12;
+  v15 = a2[5]
+      ^ (a2[(unsigned __int8)v14 + 786]
+       + (a2[BYTE1(v14) + 530] ^ (a2[((unsigned __int64)v14 >> 24) + 18] + a2[BYTE2(v14) + 274])))
+      ^ v13;
+  v16 = a2[4]
+      ^ (a2[(unsigned __int8)v15 + 786]
+       + (a2[BYTE1(v15) + 530] ^ (a2[((unsigned __int64)v15 >> 24) + 18] + a2[BYTE2(v15) + 274])))
+      ^ v14;
+  v17 = a2[3]
+      ^ (a2[(unsigned __int8)v16 + 786]
+       + (a2[BYTE1(v16) + 530] ^ (a2[((unsigned __int64)v16 >> 24) + 18] + a2[BYTE2(v16) + 274])))
+      ^ v15;
+  v18 = a2[2]
+      ^ (a2[(unsigned __int8)v17 + 786]
+       + (a2[BYTE1(v17) + 530] ^ (a2[((unsigned __int64)v17 >> 24) + 18] + a2[BYTE2(v17) + 274])))
+      ^ v16;
+  result = (unsigned int)(unsigned __int8)v18 + 768;
+  v20 = a2[1]
+      ^ (a2[result + 18] + (a2[BYTE1(v18) + 530] ^ (a2[((unsigned __int64)v18 >> 24) + 18] + a2[BYTE2(v18) + 274])))
+      ^ v17;
+  *a1 = *a2 ^ v18;
+  a1[1] = v20;
+  return result;
+}

@@ -1,0 +1,9 @@
+double __fastcall sub_7FF6BD566980(__int64 a1)
+{
+  double result; // xmm0_8
+
+  if ( (*(unsigned __int8 (__fastcall **)(__int64))(*(_QWORD *)a1 + 1200LL))(a1) )
+    return 0.0;
+  *(_QWORD *)&result = (unsigned int)dword_7FF6C6B7F908;
+  return result;
+}

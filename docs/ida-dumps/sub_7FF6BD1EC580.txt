@@ -1,0 +1,61 @@
+__int64 __fastcall sub_7FF6BD1EC580(__int64 a1, _QWORD *a2)
+{
+  __int64 v4; // r8
+  __int64 v5; // rdi
+  __int64 v6; // r8
+  __int64 result; // rax
+  __int64 v8; // rax
+  std::ios_base *v9; // rcx
+  int v10; // [rsp+50h] [rbp+8h] BYREF
+  int v11; // [rsp+58h] [rbp+10h] BYREF
+
+  v11 = 0;
+  sub_7FF6BAA42B10();
+  if ( a2[4] )
+  {
+    sub_7FF6BAA7A340(a2, a2[3], &v11);
+  }
+  else
+  {
+    v4 = a2[17];
+    a2[17] = *(_QWORD *)(v4 + 24);
+    sub_7FF6BAA7A370(a2, (__int64)&v11, (_DWORD *)v4);
+  }
+  v5 = 0;
+  v10 = 0;
+  sub_7FF6BAA427A0();
+  if ( a2[4] )
+  {
+    sub_7FF6BAA7A340(a2, a2[3], &v10);
+  }
+  else
+  {
+    v6 = a2[17];
+    a2[17] = *(_QWORD *)(v6 + 24);
+    sub_7FF6BAA7A370(a2, (__int64)&v10, (_DWORD *)v6);
+  }
+  result = a2[4];
+  LOBYTE(v5) = result != 0;
+  a2[4] = result + v5;
+  if ( (*(_BYTE *)(a1 + 2816) & 0x20) != 0 )
+  {
+    if ( *(_QWORD *)(a1 + 2424) )
+    {
+      v8 = sub_7FF6BCF91440();
+      result = sub_7FF6BA9E9A40(a1 + 2424, v8);
+      if ( (_BYTE)result && (v9 = *(std::ios_base **)(a1 + 2424)) != nullptr )
+      {
+        return sub_7FF6BCFB2DD0(v9);
+      }
+      else if ( *(_QWORD *)(a1 + 2424) && (unsigned __int8)byte_7FF6C6B5DCE0 >= 3u )
+      {
+        return sub_7FF6BA751C70((__int64)&byte_7FF6C6B5DCE0, (__int64)&off_7FF6C3BA58B0);
+      }
+    }
+  }
+  else if ( (unsigned __int8)byte_7FF6C6B5DCE0 >= 3u )
+  {
+    return sub_7FF6BA751C70((__int64)&byte_7FF6C6B5DCE0, (__int64)&off_7FF6C3BA5830);
+  }
+  return result;
+}

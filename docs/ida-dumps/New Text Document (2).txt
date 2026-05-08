@@ -1,0 +1,81 @@
+$ head -50 "C:/Users/xmaxt/source/repos/AshesOfCreation/AshesOfCreation/dist/Release/re_scan_deep.txt"; echo "---"; head -30 "C:/Users/xmaxt/source/repos/AshesOfCreation/AshesOfCreation/dist/Release/re_scan_full.txt"
+================================================================================
+  Spawn_Respawn
+================================================================================
+  BeginPlay                                      20x  @ 0xa7774f7, 0xa77dba0, 0xa794461, +17 more
+  SpawnActor                                     20x  @ 0xa752111, 0xa752141, 0xa752171, +17 more
+  RespawnLocation                                 4x  @ 0xb12d590, 0xb549418, 0xb7bb016, +1 more
+  NextAllowedRespawnTime                          1x  @ 0xb57e348
+  InitialSpawn                                    2x  @ 0xb0c7d30, 0xb4f3dc8
+  StartingLocation                                1x  @ 0xb7534a0
+  SpawnPoint                                      3x  @ 0xa6ef0c7, 0xb1e3a80, 0xb6cf940
+  LoadCharacter                                   2x  @ 0xb2293a8, 0xb92009a
+
+  [Spawn_Respawn] 8/17 keywords found
+
+================================================================================
+  Node_Internals
+================================================================================
+  ANode                                          13x  @ 0xb885160, 0xb885350, 0xb885520, +10 more
+  UNode                                          20x  @ 0xb87d9b8, 0xb87db68, 0xb8b9c00, +17 more
+  NodeInfo                                        5x  @ 0xb2391c8, 0xb4a7418, 0xb4e646f, +2 more
+  NodePopulation                                  3x  @ 0xb7e0aa8, 0xb83c266, 0xb8403a9
+  CitizenshipStatus                               5x  @ 0xb239176, 0xb239196, 0xb493320, +2 more
+  NodeExperience                                 10x  @ 0xb1e24ca, 0xb41a799, 0xb4a6396, +7 more
+  NodeXP                                          2x  @ 0xb4a7228, 0xb4dd318
+  SetNodeLevel                                    2x  @ 0xb6ff0a0, 0xb713826
+  AAoCGameState                                   4x  @ 0xb7d4dd8, 0xb7d4e30, 0xb7d4fa8, +1 more
+
+  [Node_Internals] 9/28 keywords found
+
+================================================================================
+  Character_Creation
+================================================================================
+  CreateCharacter                                20x  @ 0xb10c609, 0xb10cf02, 0xb10d07f, +17 more
+  CreateCharacterReply                            8x  @ 0xb866526, 0xb86d550, 0xc4ec19f, +5 more
+  CreateCharacterInfo                             5x  @ 0xb87173a, 0xc4e778b, 0xc4eb39e, +2 more
+  UCharacterCreator                               2x  @ 0xb7e8fc8, 0xb7e9258
+  SelectCharacter                                 6x  @ 0xc4ec3b4, 0xc4ec3e4, 0xc4ee0e4, +3 more
+  DeleteCharacter                                20x  @ 0xb10c631, 0xb252d8e, 0xb254058, +17 more
+  GetCharacters                                  12x  @ 0xb10cfb2, 0xb395d29, 0xb7ea6b0, +9 more
+  FCharacterCustomization                        20x  @ 0xb22efc8, 0xb22eff0, 0xb22f020, +17 more
+
+  [Character_Creation] 8/13 keywords found
+
+================================================================================
+  Inventory_Internals
+================================================================================
+  ItemDurability                                  8x  @ 0xb2ecad8, 0xb5c6b98, 0xb5c7228, +5 more
+  ItemEnchantment                                 9x  @ 0xb37c198, 0xb5c7780, 0xb6b551c, +6 more
+
+---
+
+================================================================================
+  Identity
+================================================================================
+  CharacterName                                  50 hits  @ 0xb109e87, 0xb10cc8a, 0xb10ccaf, 0xb10ddb7, ... +46 more
+  OnRep_CharacterName                             1 hits  @ 0xb7081f0
+  SetCharacterName                                2 hits  @ 0xb4bcbb2, 0xb734590
+  PrimaryArchetype                               14 hits  @ 0xb0b386c, 0xb0d346e, 0xb5865a8, 0xb5e0140, ... +10 more
+  CharacterArchetype                              1 hits  @ 0xb57d5a8
+  CharacterRace                                  15 hits  @ 0xb201050, 0xb4c2b90, 0xb4c2ba8, 0xb74d0a1, ... +11 more
+  HandleRaceChanged                               1 hits  @ 0xb201060
+  CharacterGender                                10 hits  @ 0xb21f120, 0xb3b52be, 0xb4c2bf0, 0xb4c2c20, ... +6 more
+  HandleGenderChanged                             1 hits  @ 0xb220720
+  CharacterGuildName                              1 hits  @ 0xb57d5c0
+  CharacterCitizenNodeId                          1 hits  @ 0xb57d5d8
+  CharacterInformationComponent                   1 hits  @ 0xb73e380
+  CharacterTitle                                  1 hits  @ 0xb7549a8
+  CharacterAlignment                             13 hits  @ 0xb0d5f20, 0xb224a30, 0xb224bf0, 0xb225a40, ... +9 more
+  CorruptionLevel                                 1 hits  @ 0xb47a4ca
+  PlayerLevel                                    11 hits  @ 0xb05ce56, 0xb05cf1d, 0xb192210, 0xb493120, ... +7 more
+  CharacterLevel                                  8 hits  @ 0xb1353f8, 0xb493137, 0xb5a6550, 0xb5a8b2f, ... +4 more
+
+================================================================================
+  Nodes
+================================================================================
+  NodeId                                         48 hits  @ 0xa60ad5c, 0xae59df9, 0xb0b616a, 0xb154d89, ... +44 more
+  NodeLevel                                      50 hits  @ 0xb12ab80, 0xb13aef0, 0xb18c81a, 0xb18d4c8, ... +46 more
+  NodeType                                       42 hits  @ 0xa79aac0, 0xa79aad0, 0xaf1aef0, 0xb184fd6, ... +38 more
+  Encampment                                      1 hits  @ 0xb48d3ac
+  Village                                         4 hits  @ 0xb48d3c4, 0xb4a7186, 0xb4a71a8, 0xb4ddf97

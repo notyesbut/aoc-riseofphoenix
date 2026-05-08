@@ -1,0 +1,1041 @@
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA49C0   proc near               ; DATA XREF: .rdata:0000000149D62728↓o
+                mov     r8d, 1
+                lea     rdx, aClientacktimed ; "ClientAckTimeDilation"
+                lea     rcx, qword_14D856278
+                jmp     sub_1414FE830
+sub_140FA49C0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA49E0   proc near               ; DATA XREF: .rdata:0000000149D62730↓o
+                mov     r8d, 1
+                lea     rdx, aClientackupdat ; "ClientAckUpdateLevelVisibility"
+                lea     rcx, qword_14D856280
+                jmp     sub_1414FE830
+sub_140FA49E0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4A00   proc near               ; DATA XREF: .rdata:0000000149D62738↓o
+                mov     r8d, 1
+                lea     rdx, aClientaddtextu ; "ClientAddTextureStreamingLoc"
+                lea     rcx, unk_14D856288
+                jmp     sub_1414FE830
+sub_140FA4A00   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4A20   proc near               ; DATA XREF: .rdata:0000000149D62740↓o
+                mov     r8d, 1
+                lea     rdx, aClientcancelpe ; "ClientCancelPendingMapChange"
+                lea     rcx, unk_14D856290
+                jmp     sub_1414FE830
+sub_140FA4A20   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4A40   proc near               ; DATA XREF: .rdata:0000000149D62748↓o
+                mov     r8d, 1
+                lea     rdx, aClientcapbandw ; "ClientCapBandwidth"
+                lea     rcx, qword_14D856298
+                jmp     sub_1414FE830
+sub_140FA4A40   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4A60   proc near               ; DATA XREF: .rdata:0000000149D62750↓o
+                mov     r8d, 1
+                lea     rdx, aClientclearcam ; "ClientClearCameraLensEffects"
+                lea     rcx, qword_14D8562A0
+                jmp     sub_1414FE830
+sub_140FA4A60   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4A80   proc near               ; DATA XREF: .rdata:0000000149D62758↓o
+                mov     r8d, 1
+                lea     rdx, aClientcommitma ; "ClientCommitMapChange"
+                lea     rcx, qword_14D8562A8
+                jmp     sub_1414FE830
+sub_140FA4A80   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4AA0   proc near               ; DATA XREF: .rdata:0000000149D62760↓o
+                mov     r8d, 1
+                lea     rdx, aClientenablene ; "ClientEnableNetworkVoice"
+                lea     rcx, qword_14D8562B0
+                jmp     sub_1414FE830
+sub_140FA4AA0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4AC0   proc near               ; DATA XREF: .rdata:0000000149D62768↓o
+                mov     r8d, 1
+                lea     rdx, aClientendonlin ; "ClientEndOnlineSession"
+                lea     rcx, qword_14D8562B8
+                jmp     sub_1414FE830
+sub_140FA4AC0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4AE0   proc near               ; DATA XREF: .rdata:0000000149D62770↓o
+                mov     r8d, 1
+                lea     rdx, aClientflushlev ; "ClientFlushLevelStreaming"
+                lea     rcx, qword_14D8562C0
+                jmp     sub_1414FE830
+sub_140FA4AE0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4B00   proc near               ; DATA XREF: .rdata:0000000149D62778↓o
+                mov     r8d, 1
+                lea     rdx, aClientforcegar ; "ClientForceGarbageCollection"
+                lea     rcx, unk_14D8562C8
+                jmp     sub_1414FE830
+sub_140FA4B00   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4B20   proc near               ; DATA XREF: .rdata:0000000149D62780↓o
+                mov     r8d, 1
+                lea     rdx, aClientgameende ; "ClientGameEnded"
+                lea     rcx, qword_14D8562D0
+                jmp     sub_1414FE830
+sub_140FA4B20   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4B40   proc near               ; DATA XREF: .rdata:0000000149D62788↓o
+                mov     r8d, 1
+                lea     rdx, aClientgotostat ; "ClientGotoState"
+                lea     rcx, qword_14D8562D8
+                jmp     sub_1414FE830
+sub_140FA4B40   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4B60   proc near               ; DATA XREF: .rdata:0000000149D62790↓o
+                mov     r8d, 1
+                lea     rdx, aClientignorelo ; "ClientIgnoreLookInput"
+                lea     rcx, unk_14D8562E0
+                jmp     sub_1414FE830
+sub_140FA4B60   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4B80   proc near               ; DATA XREF: .rdata:0000000149D62798↓o
+                mov     r8d, 1
+                lea     rdx, aClientignoremo ; "ClientIgnoreMoveInput"
+                lea     rcx, unk_14D8562E8
+                jmp     sub_1414FE830
+sub_140FA4B80   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4BA0   proc near               ; DATA XREF: .rdata:0000000149D627A0↓o
+                mov     r8d, 1
+                lea     rdx, aClientmessage ; "ClientMessage"
+                lea     rcx, qword_14D8562F0
+                jmp     sub_1414FE830
+sub_140FA4BA0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4BC0   proc near               ; DATA XREF: .rdata:0000000149D627A8↓o
+                mov     r8d, 1
+                lea     rdx, aClientmuteplay ; "ClientMutePlayer"
+                lea     rcx, qword_14D8562F8
+                jmp     sub_1414FE830
+sub_140FA4BC0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4BE0   proc near               ; DATA XREF: .rdata:0000000149D627B0↓o
+                mov     r8d, 1
+                lea     rdx, aClientplayforc ; "ClientPlayForceFeedback_Internal"
+                lea     rcx, qword_14D856300
+                jmp     sub_1414FE830
+sub_140FA4BE0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4C00   proc near               ; DATA XREF: .rdata:0000000149D627B8↓o
+                mov     r8d, 1
+                lea     rdx, aClientplaysoun ; "ClientPlaySound"
+                lea     rcx, qword_14D856308
+                jmp     sub_1414FE830
+sub_140FA4C00   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4C20   proc near               ; DATA XREF: .rdata:0000000149D627C0↓o
+                mov     r8d, 1
+                lea     rdx, aClientplaysoun_0 ; "ClientPlaySoundAtLocation"
+                lea     rcx, unk_14D856310
+                jmp     sub_1414FE830
+sub_140FA4C20   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4C40   proc near               ; DATA XREF: .rdata:0000000149D627C8↓o
+                mov     r8d, 1
+                lea     rdx, aClientpreparem ; "ClientPrepareMapChange"
+                lea     rcx, qword_14D856318
+                jmp     sub_1414FE830
+sub_140FA4C40   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4C60   proc near               ; DATA XREF: .rdata:0000000149D627D0↓o
+                mov     r8d, 1
+                lea     rdx, aClientprestrea ; "ClientPrestreamTextures"
+                lea     rcx, unk_14D856320
+                jmp     sub_1414FE830
+sub_140FA4C60   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4C80   proc near               ; DATA XREF: .rdata:0000000149D627D8↓o
+                mov     r8d, 1
+                lea     rdx, aClientreceivel ; "ClientReceiveLocalizedMessage"
+                lea     rcx, unk_14D856328
+                jmp     sub_1414FE830
+sub_140FA4C80   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4CA0   proc near               ; DATA XREF: .rdata:0000000149D627E0↓o
+                mov     r8d, 1
+                lea     rdx, aClientrepobjre ; "ClientRepObjRef"
+                lea     rcx, qword_14D856330
+                jmp     sub_1414FE830
+sub_140FA4CA0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4CC0   proc near               ; DATA XREF: .rdata:0000000149D627E8↓o
+                mov     r8d, 1
+                lea     rdx, aClientreset ; "ClientReset"
+                lea     rcx, qword_14D856338
+                jmp     sub_1414FE830
+sub_140FA4CC0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4CE0   proc near               ; DATA XREF: .rdata:0000000149D627F0↓o
+                mov     r8d, 1
+                lea     rdx, aClientrestart ; "ClientRestart"
+                lea     rcx, qword_14D856340
+                jmp     sub_1414FE830
+sub_140FA4CE0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4D00   proc near               ; DATA XREF: .rdata:0000000149D627F8↓o
+                mov     r8d, 1
+                lea     rdx, aClientretrycli_0 ; "ClientRetryClientRestart"
+                lea     rcx, qword_14D856348
+                jmp     sub_1414FE830
+sub_140FA4D00   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4D20   proc near               ; DATA XREF: .rdata:0000000149D62800↓o
+                mov     r8d, 1
+                lea     rdx, aClientreturnto ; "ClientReturnToMainMenuWithTextReason"
+                lea     rcx, qword_14D856350
+                jmp     sub_1414FE830
+sub_140FA4D20   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4D40   proc near               ; DATA XREF: .rdata:0000000149D62808↓o
+                mov     r8d, 1
+                lea     rdx, aClientsetblock ; "ClientSetBlockOnAsyncLoading"
+                lea     rcx, unk_14D856358
+                jmp     sub_1414FE830
+sub_140FA4D40   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4D60   proc near               ; DATA XREF: .rdata:0000000149D62810↓o
+                mov     r8d, 1
+                lea     rdx, aClientsetcamer ; "ClientSetCameraFade"
+                lea     rcx, unk_14D856360
+                jmp     sub_1414FE830
+sub_140FA4D60   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4D80   proc near               ; DATA XREF: .rdata:0000000149D62818↓o
+                mov     r8d, 1
+                lea     rdx, aClientsetcamer_0 ; "ClientSetCameraMode"
+                lea     rcx, qword_14D856368
+                jmp     sub_1414FE830
+sub_140FA4D80   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4DA0   proc near               ; DATA XREF: .rdata:0000000149D62820↓o
+                mov     r8d, 1
+                lea     rdx, aClientsetcinem ; "ClientSetCinematicMode"
+                lea     rcx, qword_14D856370
+                jmp     sub_1414FE830
+sub_140FA4DA0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4DC0   proc near               ; DATA XREF: .rdata:0000000149D62828↓o
+                mov     r8d, 1
+                lea     rdx, aClientsetforce ; "ClientSetForceMipLevelsToBeResident"
+                lea     rcx, unk_14D856378
+                jmp     sub_1414FE830
+sub_140FA4DC0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4DE0   proc near               ; DATA XREF: .rdata:0000000149D62830↓o
+                mov     r8d, 1
+                lea     rdx, aClientsethud ; "ClientSetHUD"
+                lea     rcx, qword_14D856380
+                jmp     sub_1414FE830
+sub_140FA4DE0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4E00   proc near               ; DATA XREF: .rdata:0000000149D62838↓o
+                mov     r8d, 1
+                lea     rdx, aClientsetspect ; "ClientSetSpectatorWaiting"
+                lea     rcx, unk_14D856388
+                jmp     sub_1414FE830
+sub_140FA4E00   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4E20   proc near               ; DATA XREF: .rdata:0000000149D62848↓o
+                mov     r8d, 1
+                lea     rdx, aClientsetviewt ; "ClientSetViewTarget"
+                lea     rcx, qword_14D856398
+                jmp     sub_1414FE830
+sub_140FA4E20   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4E40   proc near               ; DATA XREF: .rdata:0000000149D62840↓o
+                mov     r8d, 1
+                lea     rdx, aClientsetupnet ; "ClientSetupNetworkPhysicsTimestamp"
+                lea     rcx, qword_14D856390
+                jmp     sub_1414FE830
+sub_140FA4E40   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4E60   proc near               ; DATA XREF: .rdata:0000000149D62850↓o
+                mov     r8d, 1
+                lea     rdx, aClientspawncam ; "ClientSpawnCameraLensEffect"
+                lea     rcx, unk_14D8563A0
+                jmp     sub_1414FE830
+sub_140FA4E60   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4E80   proc near               ; DATA XREF: .rdata:0000000149D62858↓o
+                mov     r8d, 1
+                lea     rdx, aClientspawngen ; "ClientSpawnGenericCameraLensEffect"
+                lea     rcx, unk_14D8563A8
+                jmp     sub_1414FE830
+sub_140FA4E80   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4EA0   proc near               ; DATA XREF: .rdata:0000000149D62860↓o
+                mov     r8d, 1
+                lea     rdx, aClientstartcam ; "ClientStartCameraShake"
+                lea     rcx, qword_14D8563B0
+                jmp     sub_1414FE830
+sub_140FA4EA0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4EC0   proc near               ; DATA XREF: .rdata:0000000149D62868↓o
+                mov     r8d, 1
+                lea     rdx, aClientstartonl ; "ClientStartOnlineSession"
+                lea     rcx, qword_14D8563B8
+                jmp     sub_1414FE830
+sub_140FA4EC0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4EE0   proc near               ; DATA XREF: .rdata:0000000149D62870↓o
+                mov     r8d, 1
+                lea     rdx, aClientstopcame ; "ClientStopCameraShake"
+                lea     rcx, unk_14D8563C0
+                jmp     sub_1414FE830
+sub_140FA4EE0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4F00   proc near               ; DATA XREF: .rdata:0000000149D62878↓o
+                mov     r8d, 1
+                lea     rdx, aClientstopforc ; "ClientStopForceFeedback"
+                lea     rcx, unk_14D8563C8
+                jmp     sub_1414FE830
+sub_140FA4F00   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4F20   proc near               ; DATA XREF: .rdata:0000000149D62880↓o
+                mov     r8d, 1
+                lea     rdx, aClientteammess ; "ClientTeamMessage"
+                lea     rcx, qword_14D8563D0
+                jmp     sub_1414FE830
+sub_140FA4F20   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4F40   proc near               ; DATA XREF: .rdata:0000000149D62888↓o
+                mov     r8d, 1
+                lea     rdx, aClienttravelin ; "ClientTravelInternal"
+                lea     rcx, qword_14D8563D8
+                jmp     sub_1414FE830
+sub_140FA4F40   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4F60   proc near               ; DATA XREF: .rdata:0000000149D62890↓o
+                mov     r8d, 1
+                lea     rdx, aClientunmutepl ; "ClientUnmutePlayer"
+                lea     rcx, qword_14D8563E0
+                jmp     sub_1414FE830
+sub_140FA4F60   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4F80   proc near               ; DATA XREF: .rdata:0000000149D62898↓o
+                mov     r8d, 1
+                lea     rdx, aClientunmutepl_0 ; "ClientUnmutePlayers"
+                lea     rcx, qword_14D8563E8
+                jmp     sub_1414FE830
+sub_140FA4F80   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4FA0   proc near               ; DATA XREF: .rdata:0000000149D628A0↓o
+                mov     r8d, 1
+                lea     rdx, aClientupdatele ; "ClientUpdateLevelStreamingStatus"
+                lea     rcx, qword_14D8563F0
+                jmp     sub_1414FE830
+sub_140FA4FA0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4FC0   proc near               ; DATA XREF: .rdata:0000000149D628A8↓o
+                mov     r8d, 1
+                lea     rdx, aClientupdatemu ; "ClientUpdateMultipleLevelsStreamingStat"...
+                lea     rcx, qword_14D8563F8
+                jmp     sub_1414FE830
+sub_140FA4FC0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA4FE0   proc near               ; DATA XREF: .rdata:0000000149D628B0↓o
+                mov     r8d, 1
+                lea     rdx, aClientupdatemu_0 ; "ClientUpdateMultipleLevelsStreamingStat"...
+                lea     rcx, qword_14D856400
+                jmp     sub_1414FE830
+sub_140FA4FE0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5000   proc near               ; DATA XREF: .rdata:0000000149D628B8↓o
+                mov     r8d, 1
+                lea     rdx, aClientvoicehan ; "ClientVoiceHandshakeComplete"
+                lea     rcx, qword_14D856408
+                jmp     sub_1414FE830
+sub_140FA5000   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5020   proc near               ; DATA XREF: .rdata:0000000149D628C0↓o
+                mov     r8d, 1
+                lea     rdx, aClientwaskicke ; "ClientWasKicked"
+                lea     rcx, qword_14D856410
+                jmp     sub_1414FE830
+sub_140FA5020   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5040   proc near               ; DATA XREF: .rdata:0000000149D628C8↓o
+                mov     r8d, 1
+                lea     rdx, aOnserverstarte ; "OnServerStartedVisualLogger"
+                lea     rcx, unk_14D856418
+                jmp     sub_1414FE830
+sub_140FA5040   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5060   proc near               ; DATA XREF: .rdata:0000000149D628D0↓o
+                mov     r8d, 1
+                lea     rdx, aServeracknowle_1 ; "ServerAcknowledgePossession"
+                lea     rcx, qword_14D856420
+                jmp     sub_1414FE830
+sub_140FA5060   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5080   proc near               ; DATA XREF: .rdata:0000000149D628D8↓o
+                mov     r8d, 1
+                lea     rdx, aServerblockpla_0 ; "ServerBlockPlayer"
+                lea     rcx, qword_14D856428
+                jmp     sub_1414FE830
+sub_140FA5080   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA50A0   proc near               ; DATA XREF: .rdata:0000000149D628E0↓o
+                mov     r8d, 1
+                lea     rdx, aServercamera ; "ServerCamera"
+                lea     rcx, qword_14D856430
+                jmp     sub_1414FE830
+sub_140FA50A0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA50C0   proc near               ; DATA XREF: .rdata:0000000149D628E8↓o
+                mov     r8d, 1
+                lea     rdx, aServerchangena_0 ; "ServerChangeName"
+                lea     rcx, qword_14D856438
+                jmp     sub_1414FE830
+sub_140FA50C0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA50E0   proc near               ; DATA XREF: .rdata:0000000149D628F0↓o
+                mov     r8d, 1
+                lea     rdx, aServercheckcli_1 ; "ServerCheckClientPossession"
+                lea     rcx, qword_14D856440
+                jmp     sub_1414FE830
+sub_140FA50E0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5100   proc near               ; DATA XREF: .rdata:0000000149D628F8↓o
+                mov     r8d, 1
+                lea     rdx, aServercheckcli_2 ; "ServerCheckClientPossessionReliable"
+                lea     rcx, qword_14D856448
+                jmp     sub_1414FE830
+sub_140FA5100   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5120   proc near               ; DATA XREF: .rdata:0000000149D62900↓o
+                mov     r8d, 1
+                lea     rdx, aServerexecrpc ; "ServerExecRPC"
+                lea     rcx, qword_14D856450
+                jmp     sub_1414FE830
+sub_140FA5120   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5140   proc near               ; DATA XREF: .rdata:0000000149D62908↓o
+                mov     r8d, 1
+                lea     rdx, aServermuteplay_0 ; "ServerMutePlayer"
+                lea     rcx, qword_14D856458
+                jmp     sub_1414FE830
+sub_140FA5140   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5160   proc near               ; DATA XREF: .rdata:0000000149D62910↓o
+                mov     r8d, 1
+                lea     rdx, aServernotifylo_0 ; "ServerNotifyLoadedWorld"
+                lea     rcx, qword_14D856460
+                jmp     sub_1414FE830
+sub_140FA5160   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5180   proc near               ; DATA XREF: .rdata:0000000149D62918↓o
+                mov     r8d, 1
+                lea     rdx, aServerpause ; "ServerPause"
+                lea     rcx, unk_14D856468
+                jmp     sub_1414FE830
+sub_140FA5180   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA51A0   proc near               ; DATA XREF: .rdata:0000000149D62920↓o
+                mov     r8d, 1
+                lea     rdx, aServerrestartp_0 ; "ServerRestartPlayer"
+                lea     rcx, qword_14D856470
+                jmp     sub_1414FE830
+sub_140FA51A0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA51C0   proc near               ; DATA XREF: .rdata:0000000149D62928↓o
+                mov     r8d, 1
+                lea     rdx, aServersendlate ; "ServerSendLatestAsyncPhysicsTimestamp"
+                lea     rcx, qword_14D856478
+                jmp     sub_1414FE830
+sub_140FA51C0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA51E0   proc near               ; DATA XREF: .rdata:0000000149D62930↓o
+                mov     r8d, 1
+                lea     rdx, aServersetspect_3 ; "ServerSetSpectatorLocation"
+                lea     rcx, qword_14D856480
+                jmp     sub_1414FE830
+sub_140FA51E0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5200   proc near               ; DATA XREF: .rdata:0000000149D62938↓o
+                mov     r8d, 1
+                lea     rdx, aServersetspect_4 ; "ServerSetSpectatorWaiting"
+                lea     rcx, unk_14D856488
+                jmp     sub_1414FE830
+sub_140FA5200   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5220   proc near               ; DATA XREF: .rdata:0000000149D62940↓o
+                mov     r8d, 1
+                lea     rdx, aServershorttim_0 ; "ServerShortTimeout"
+                lea     rcx, qword_14D856490
+                jmp     sub_1414FE830
+sub_140FA5220   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5240   proc near               ; DATA XREF: .rdata:0000000149D62948↓o
+                mov     r8d, 1
+                lea     rdx, aServertoggleai_0 ; "ServerToggleAILogging"
+                lea     rcx, unk_14D856498
+                jmp     sub_1414FE830
+sub_140FA5240   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5260   proc near               ; DATA XREF: .rdata:0000000149D62950↓o
+                mov     r8d, 1
+                lea     rdx, aServerunblockp_0 ; "ServerUnblockPlayer"
+                lea     rcx, qword_14D8564A0
+                jmp     sub_1414FE830
+sub_140FA5260   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5280   proc near               ; DATA XREF: .rdata:0000000149D62958↓o
+                mov     r8d, 1
+                lea     rdx, aServerunmutepl_0 ; "ServerUnmutePlayer"
+                lea     rcx, qword_14D8564A8
+                jmp     sub_1414FE830
+sub_140FA5280   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA52A0   proc near               ; DATA XREF: .rdata:0000000149D62960↓o
+                mov     r8d, 1
+                lea     rdx, aServerupdateca ; "ServerUpdateCamera"
+                lea     rcx, qword_14D8564B0
+                jmp     sub_1414FE830
+sub_140FA52A0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA52C0   proc near               ; DATA XREF: .rdata:0000000149D62968↓o
+                mov     r8d, 1
+                lea     rdx, aServerupdatele_4 ; "ServerUpdateLevelVisibility"
+                lea     rcx, qword_14D8564B8
+                jmp     sub_1414FE830
+sub_140FA52C0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA52E0   proc near               ; DATA XREF: .rdata:0000000149D62970↓o
+                mov     r8d, 1
+                lea     rdx, aServerupdatemu_0 ; "ServerUpdateMultipleLevelsVisibility"
+                lea     rcx, qword_14D8564C0
+                jmp     sub_1414FE830
+sub_140FA52E0   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5300   proc near               ; DATA XREF: .rdata:0000000149D62978↓o
+                mov     r8d, 1
+                lea     rdx, aSerververifyvi_0 ; "ServerVerifyViewTarget"
+                lea     rcx, qword_14D8564C8
+                jmp     sub_1414FE830
+sub_140FA5300   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5320   proc near               ; DATA XREF: .rdata:0000000149D62980↓o
+                mov     r8d, 1
+                lea     rdx, aServerviewnext_0 ; "ServerViewNextPlayer"
+                lea     rcx, qword_14D8564D0
+                jmp     sub_1414FE830
+sub_140FA5320   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5340   proc near               ; DATA XREF: .rdata:0000000149D62988↓o
+                mov     r8d, 1
+                lea     rdx, aServerviewprev_0 ; "ServerViewPrevPlayer"
+                lea     rcx, unk_14D8564D8
+                jmp     sub_1414FE830
+sub_140FA5340   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5360   proc near               ; DATA XREF: .rdata:0000000149D62990↓o
+                mov     r8d, 1
+                lea     rdx, aServerviewself_0 ; "ServerViewSelf"
+                lea     rcx, unk_14D8564E0
+                jmp     sub_1414FE830
+sub_140FA5360   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA5380   proc near               ; DATA XREF: .rdata:0000000149D62A30↓o
+                mov     r8d, 1
+                lea     rdx, aReceivecopypro ; "ReceiveCopyProperties"
+                lea     rcx, qword_14D8565E0
+                jmp     sub_1414FE830
+sub_140FA5380   endp
+
+; ---------------------------------------------------------------------------
+                align 20h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_140FA53A0   proc near               ; DATA XREF: .rdata:0000000149D62A38↓o
+                mov     r8d, 1
+                lea     rdx, aReceiveoverrid ; "ReceiveOverrideWith"
+                lea     rcx, qword_14D8565E8
+                jmp     sub_1414FE830
+sub_140FA53A0   endp
+
+; ---------------------------------------------------------------------------

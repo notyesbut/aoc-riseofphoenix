@@ -1,0 +1,3607 @@
+off_7FF6C4A83850 dq offset off_7FF6C4A82A08 ; DATA XREF: .data:00007FF6C6697788↓o
+                                        ; "PresetGuid"
+                dq offset off_7FF6C4A82A78 ; "RandomSeed"
+                dq offset off_7FF6C4A82AE8 ; "SkinColorHue"
+                dq offset off_7FF6C4A82B58 ; "SkinColorPigmentation"
+                dq offset off_7FF6C4A82B90 ; "NormalDetailStrength01"
+                dq offset off_7FF6C4A82C10 ; "NormalDetailStrength02"
+                dq offset off_7FF6C4A82C80 ; "SkinSet"
+                dq offset off_7FF6C4A82D00 ; "EyeColor"
+                dq offset off_7FF6C4A82D80 ; "EyeShape"
+                dq offset off_7FF6C4A82DF0 ; "ScleraShape"
+                dq offset off_7FF6C4A82E60 ; "Eyebrows"
+                dq offset off_7FF6C4A82F00 ; "HeadHair"
+                dq offset off_7FF6C4A82F38 ; "HeadHairRootColor"
+                dq offset off_7FF6C4A82F70 ; "HeadHairTipColor"
+                dq offset off_7FF6C4A82FA8 ; "HeadHairLength"
+                dq offset off_7FF6C4A82FE0 ; "HeadHairContrast"
+                dq offset off_7FF6C4A83018 ; "HeadHairGradient"
+                dq offset off_7FF6C4A83050 ; "FacialHairLip"
+                dq offset off_7FF6C4A83088 ; "FacialHairChin"
+                dq offset off_7FF6C4A830C0 ; "FacialHairCheek"
+                dq offset off_7FF6C4A830F8 ; "FacialHairLipLength"
+                dq offset off_7FF6C4A83130 ; "FacialHairChinLength"
+                dq offset off_7FF6C4A83168 ; "FacialHairCheekLength"
+                dq offset off_7FF6C4A831A0 ; "EyelashLength"
+                dq offset off_7FF6C4A831D8 ; "FacialHairRootColor"
+                dq offset off_7FF6C4A83210 ; "FacialHairTipColor"
+                dq offset off_7FF6C4A83248 ; "FacialHairContrast"
+                dq offset off_7FF6C4A83280 ; "FacialHairGradient"
+                dq offset off_7FF6C4A832B8 ; "RacialHorns"
+                dq offset off_7FF6C4A832F0 ; "RacialHornsLength"
+                dq offset off_7FF6C4A83328 ; "NailColor"
+                dq offset off_7FF6C4A83360 ; "NailOpacity"
+                dq offset off_7FF6C4A833A0 ; "DecalData"
+                dq offset off_7FF6C4A833E0 ; "DecalData"
+                dq offset off_7FF6C4A83420 ; "DecalBlendGroups"
+                dq offset off_7FF6C4A83460 ; "DecalBlendGroups"
+                dq offset off_7FF6C4A834A0 ; "bIsHelmetVisible"
+                dq offset off_7FF6C4A834E0 ; "bIsCapeVisible"
+                dq offset off_7FF6C4A83520 ; "UnderlyingType"
+                dq offset off_7FF6C4A83560 ; "Gender"
+                dq offset off_7FF6C4A835A0 ; "UnderlyingType"
+                dq offset off_7FF6C4A835E0 ; "Race"
+                dq offset off_7FF6C4A83620 ; "UnderlyingType"
+                dq offset off_7FF6C4A83660 ; "Class"
+                dq offset off_7FF6C4A836A0 ; "FaceMorphWeightMaps"
+                dq offset off_7FF6C4A836D8 ; "FaceMorphWeightMaps_Key"
+                dq offset off_7FF6C4A83710 ; "FaceMorphWeightMaps"
+                dq offset off_7FF6C4A83750 ; "SectionsValues"
+                dq offset off_7FF6C4A83790 ; "UnderlyingType"
+                dq offset off_7FF6C4A837D0 ; "SectionsValues_Key"
+                dq offset off_7FF6C4A83810 ; "SectionsValues"
+off_7FF6C4A839E8 dq offset sub_7FF6BA8ACBA0 ; DATA XREF: sub_7FF6BF0BD0E0+18↑o
+                dq offset sub_7FF6BA8ACE20
+                dq offset sub_7FF6BF0BD120
+                dq offset sub_7FF6BF0BD180
+                dq offset sub_7FF6BF0BD1C0
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD2E0
+                dq offset sub_7FF6BA8AD2C0
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset sub_7FF6BF0BD250
+                dq offset sub_7FF6BA8ACB00
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8ACB10
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD020
+                dq offset sub_7FF6BA9F6A40
+                dq offset sub_7FF6BA9F6A50
+                dq offset sub_7FF6BF0BD6B0
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6B9FBAB00
+                dq offset ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z ; AK::SoundEngine::UnregisterResourceMonitorCallback(void (*)(AkResourceMonitorDataSummary const *))
+off_7FF6C4A83AD0 dq offset sub_7FF6BA8ACBA0 ; DATA XREF: sub_7FF6BF0BD320+18↑o
+                dq offset sub_7FF6BCDFF3B0
+                dq offset sub_7FF6BF0BD360
+                dq offset sub_7FF6BF0BD390
+                dq offset sub_7FF6BECBAAB0
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD2E0
+                dq offset sub_7FF6BA8AD2C0
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset sub_7FF6BF0BD3A0
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset sub_7FF6BF0BD3B0
+                dq offset sub_7FF6BA8ACB00
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8ACB10
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD020
+                dq offset sub_7FF6BD1EDB40
+                dq offset sub_7FF6BD1EDB50
+                dq offset sub_7FF6BF0BD6E0
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6B9FBAB00
+                dq offset ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z ; AK::SoundEngine::UnregisterResourceMonitorCallback(void (*)(AkResourceMonitorDataSummary const *))
+aCreatedon      db 'CreatedOn',0        ; DATA XREF: .rdata:off_7FF6C4A82B20↑o
+                align 8
+aPresetguid     db 'PresetGuid',0       ; DATA XREF: .rdata:off_7FF6C4A82A08↑o
+                align 8
+aBshouldexpire  db 'bShouldExpire',0    ; DATA XREF: .rdata:off_7FF6C4A82BD0↑o
+                align 8
+aSkincolorhue   db 'SkinColorHue',0     ; DATA XREF: .rdata:off_7FF6C4A82AE8↑o
+                align 8
+aSkincolorpigme db 'SkinColorPigmentation',0
+                                        ; DATA XREF: .rdata:off_7FF6C4A82B58↑o
+                align 10h
+aDismissalmode  db 'DismissalMode',0    ; DATA XREF: .rdata:off_7FF6C4A82D40↑o
+                align 20h
+aDismissalactio db 'DismissalActions',0 ; DATA XREF: .rdata:off_7FF6C4A82DB8↑o
+                                        ; .rdata:off_7FF6C4A82E28↑o
+                align 8
+aEyecolor       db 'EyeColor',0         ; DATA XREF: .rdata:off_7FF6C4A82D00↑o
+                align 8
+aEyeshape       db 'EyeShape',0         ; DATA XREF: .rdata:off_7FF6C4A82D80↑o
+                align 8
+aSclerashape    db 'ScleraShape',0      ; DATA XREF: .rdata:off_7FF6C4A82DF0↑o
+                align 8
+aHeadhairrootco db 'HeadHairRootColor',0 ; DATA XREF: .rdata:off_7FF6C4A82F38↑o
+                align 20h
+aInappnotificat_0 db 'InAppNotification',0 ; DATA XREF: .data:00007FF6C6697F18↓o
+                align 8
+aHeadhairtipcol db 'HeadHairTipColor',0 ; DATA XREF: .rdata:off_7FF6C4A82F70↑o
+                align 10h
+aHeadhairlength db 'HeadHairLength',0   ; DATA XREF: .rdata:off_7FF6C4A82FA8↑o
+                align 20h
+aHeadhaircontra db 'HeadHairContrast',0 ; DATA XREF: .rdata:off_7FF6C4A82FE0↑o
+                align 8
+aHeadhairgradie db 'HeadHairGradient',0 ; DATA XREF: .rdata:off_7FF6C4A83018↑o
+                align 10h
+aEcharacterclas_0:                      ; DATA XREF: sub_7FF6BF0BD710+18↑o
+                                        ; .rdata:00007FF6C4A84978↓o
+                text "UTF-16LE", 'ECharacterClassification',0
+                align 8
+aFacialhairlip  db 'FacialHairLip',0    ; DATA XREF: .rdata:off_7FF6C4A83050↑o
+                align 8
+aFacialhairchin db 'FacialHairChin',0   ; DATA XREF: .rdata:off_7FF6C4A83088↑o
+                align 8
+aFacialhairchee db 'FacialHairCheek',0  ; DATA XREF: .rdata:off_7FF6C4A830C0↑o
+aFacialhairlipl db 'FacialHairLipLength',0 ; DATA XREF: .rdata:off_7FF6C4A830F8↑o
+                align 10h
+off_7FF6C4A83D70 dq offset aEcharacterclas_24
+                                        ; DATA XREF: .data:00007FF6C6697F58↓o
+                                        ; "ECharacterClassification::Character"
+                align 20h
+                dq offset aEcharacterclas_25 ; "ECharacterClassification::Mount"
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEcharacterclas_26 ; "ECharacterClassification::NPC"
+                db    2
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEcharacterclas_27 ; "ECharacterClassification::SiegeVehicle"
+                db    3
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEcharacterclas_28 ; "ECharacterClassification::Caravan"
+                db    4
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEcharacterclas_29 ; "ECharacterClassification::cCount"
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+aFacialhairchin_0 db 'FacialHairChinLength',0
+                                        ; DATA XREF: .rdata:off_7FF6C4A83130↑o
+                align 8
+aFacialhairchee_0 db 'FacialHairCheekLength',0
+                                        ; DATA XREF: .rdata:off_7FF6C4A83168↑o
+                align 20h
+aEyelashlength  db 'EyelashLength',0    ; DATA XREF: .rdata:off_7FF6C4A831A0↑o
+                align 10h
+aEcharacterclas_24 db 'ECharacterClassification::Character',0
+                                        ; DATA XREF: .rdata:off_7FF6C4A83D70↑o
+                align 8
+aEcharacterclas_25 db 'ECharacterClassification::Mount',0
+                                        ; DATA XREF: .rdata:00007FF6C4A83D80↑o
+aEcharacterclas_26 db 'ECharacterClassification::NPC',0
+                                        ; DATA XREF: .rdata:00007FF6C4A83D90↑o
+                align 8
+aFacialhairroot db 'FacialHairRootColor',0 ; DATA XREF: .rdata:off_7FF6C4A831D8↑o
+                align 10h
+aEcharacterclas_27 db 'ECharacterClassification::SiegeVehicle',0
+                                        ; DATA XREF: .rdata:00007FF6C4A83DA0↑o
+                align 8
+aEcharacterclas_28 db 'ECharacterClassification::Caravan',0
+                                        ; DATA XREF: .rdata:00007FF6C4A83DB0↑o
+                align 20h
+aEcharacterclas_29 db 'ECharacterClassification::cCount',0
+                                        ; DATA XREF: .rdata:00007FF6C4A83DC0↑o
+                align 8
+aFacialhairtipc db 'FacialHairTipColor',0 ; DATA XREF: .rdata:off_7FF6C4A83210↑o
+                align 20h
+aFacialhaircont db 'FacialHairContrast',0 ; DATA XREF: .rdata:off_7FF6C4A83248↑o
+                align 8
+aFacialhairgrad db 'FacialHairGradient',0 ; DATA XREF: .rdata:off_7FF6C4A83280↑o
+                align 10h
+aRacialhorns    db 'RacialHorns',0      ; DATA XREF: .rdata:off_7FF6C4A832B8↑o
+                align 20h
+aRacialhornslen db 'RacialHornsLength',0 ; DATA XREF: .rdata:off_7FF6C4A832F0↑o
+                align 8
+aNailcolor      db 'NailColor',0        ; DATA XREF: .rdata:off_7FF6C4A83328↑o
+                align 8
+aNailopacity    db 'NailOpacity',0      ; DATA XREF: sub_7FF6BF329CF0+149D↑o
+                                        ; .rdata:off_7FF6C4A83360↑o
+                align 8
+aEcharacterclas_30 db 'ECharacterClassification',0
+                                        ; DATA XREF: .data:00007FF6C6697F48↓o
+                                        ; .data:00007FF6C6697F50↓o
+                align 8
+aDecalblendgrou_0 db 'DecalBlendGroups',0 ; DATA XREF: .rdata:off_7FF6C4A83420↑o
+                                        ; .rdata:off_7FF6C4A83460↑o
+                align 10h
+aRequestedwhoin:                        ; DATA XREF: sub_7FF6BF0BAF20+18↑o
+                                        ; .rdata:00007FF6C4A85030↓o
+                text "UTF-16LE", 'RequestedWhoInfo',0
+                align 8
+aBishelmetvisib db 'bIsHelmetVisible',0 ; DATA XREF: .rdata:off_7FF6C4A834A0↑o
+                align 10h
+off_7FF6C4A84010 dq offset aPlayerguid_2 ; DATA XREF: .rdata:off_7FF6C4A840D0↓o
+                                        ; "PlayerGuid"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BA9E0560
+off_7FF6C4A84050 dq offset aPlayername_1 ; DATA XREF: .rdata:00007FF6C4A840D8↓o
+                                        ; "PlayerName"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  15h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  10h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A84090 dq offset aLastknownlocat ; DATA XREF: .rdata:00007FF6C4A840E0↓o
+                                        ; "LastKnownLocation"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  20h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BA9E0B30
+off_7FF6C4A840D0 dq offset off_7FF6C4A84010 ; DATA XREF: .data:00007FF6C6697F88↓o
+                                        ; "PlayerGuid"
+                dq offset off_7FF6C4A84050 ; "PlayerName"
+                dq offset off_7FF6C4A84090 ; "LastKnownLocation"
+aBiscapevisible db 'bIsCapeVisible',0   ; DATA XREF: .rdata:off_7FF6C4A834E0↑o
+                align 8
+aCharactercreat_21:                     ; DATA XREF: sub_7FF6BF0BE8B0+18↑o
+                                        ; .rdata:00007FF6C4A84B08↓o
+                text "UTF-16LE", 'CharacterCreateInfo',0
+off_7FF6C4A84120 dq offset aCharactername_2 ; DATA XREF: .rdata:off_7FF6C4A84390↓o
+                                        ; "CharacterName"
+                align 10h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  15h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A84160 dq offset aUnderlyingtype ; DATA XREF: .rdata:00007FF6C4A84398↓o
+                                        ; "UnderlyingType"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A841A0 dq offset aRace_0      ; DATA XREF: .rdata:00007FF6C4A843A0↓o
+                                        ; "Race"
+                align 10h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  1Eh
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  10h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BB2A0
+off_7FF6C4A841E0 dq offset aUnderlyingtype ; DATA XREF: .rdata:00007FF6C4A843A8↓o
+                                        ; "UnderlyingType"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A84220 dq offset aGender_1    ; DATA XREF: .rdata:00007FF6C4A843B0↓o
+                                        ; "Gender"
+                align 10h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  1Eh
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  11h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BB270
+off_7FF6C4A84260 dq offset aUnderlyingtype ; DATA XREF: .rdata:00007FF6C4A843B8↓o
+                                        ; "UnderlyingType"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A842A0 dq offset aPrimaryclass ; DATA XREF: .rdata:00007FF6C4A843C0↓o
+                                        ; "PrimaryClass"
+                align 10h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  1Eh
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  12h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BECB4B80
+off_7FF6C4A842E0 dq offset aWorldserver ; DATA XREF: .rdata:00007FF6C4A843C8↓o
+                                        ; "WorldServer"
+                align 10h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  15h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  18h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A84318 dq offset aStartinglocati_0
+                                        ; DATA XREF: .rdata:00007FF6C4A843D0↓o
+                                        ; "StartingLocationTag"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  15h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  28h ; (
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A84350 dq offset aCustomizationd_1
+                                        ; DATA XREF: .rdata:00007FF6C4A843D8↓o
+                                        ; "CustomizationData"
+                align 20h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  38h ; 8
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BB390
+off_7FF6C4A84390 dq offset off_7FF6C4A84120 ; DATA XREF: .data:00007FF6C66977C0↓o
+                                        ; "CharacterName"
+                dq offset off_7FF6C4A84160 ; "UnderlyingType"
+                dq offset off_7FF6C4A841A0 ; "Race"
+                dq offset off_7FF6C4A841E0 ; "UnderlyingType"
+                dq offset off_7FF6C4A84220 ; "Gender"
+                dq offset off_7FF6C4A84260 ; "UnderlyingType"
+                dq offset off_7FF6C4A842A0 ; "PrimaryClass"
+                dq offset off_7FF6C4A842E0 ; "WorldServer"
+                dq offset off_7FF6C4A84318 ; "StartingLocationTag"
+                dq offset off_7FF6C4A84350 ; "CustomizationData"
+off_7FF6C4A843E0 dq offset sub_7FF6BA8ACBA0 ; DATA XREF: sub_7FF6BF0BD750+18↑o
+                dq offset sub_7FF6BA8ACE20
+                dq offset sub_7FF6BF0BD790
+                dq offset sub_7FF6BF0BD7F0
+                dq offset sub_7FF6BA9FCDA0
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD2E0
+                dq offset sub_7FF6BA8AD2C0
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset sub_7FF6BF0BD830
+                dq offset sub_7FF6BA8ACB00
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8ACB10
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD020
+                dq offset sub_7FF6BA8AE5E0
+                dq offset sub_7FF6BA8AE5F0
+                dq offset sub_7FF6BCDFB1A0
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6B9FBAB00
+                dq offset ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z ; AK::SoundEngine::UnregisterResourceMonitorCallback(void (*)(AkResourceMonitorDataSummary const *))
+aLastknownlocat db 'LastKnownLocation',0 ; DATA XREF: .rdata:off_7FF6C4A84090↑o
+                align 20h
+aRequestedwhoin_0 db 'RequestedWhoInfo',0 ; DATA XREF: .data:00007FF6C6697F80↓o
+                align 8
+aStartingzoneba:                        ; DATA XREF: sub_7FF6BF0BAFA0+18↑o
+                                        ; .rdata:00007FF6C4A85058↓o
+                text "UTF-16LE", 'StartingZoneBackgrounds',0
+                align 10h
+off_7FF6C4A84530 dq offset aBackgrounds ; DATA XREF: .rdata:off_7FF6C4A845A8↓o
+                                        ; "Backgrounds"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0D6FF0
+off_7FF6C4A84570 dq offset aBackgrounds ; DATA XREF: .rdata:00007FF6C4A845B0↓o
+                                        ; "Backgrounds"
+                align 20h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  16h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A845A8 dq offset off_7FF6C4A84530 ; DATA XREF: .data:00007FF6C6697FC0↓o
+                                        ; "Backgrounds"
+                dq offset off_7FF6C4A84570 ; "Backgrounds"
+off_7FF6C4A845B8 dq offset sub_7FF6BA8ACBA0 ; DATA XREF: sub_7FF6BF0BD8C0+18↑o
+                dq offset sub_7FF6BA8ACE20
+                dq offset sub_7FF6BF0BD900
+                dq offset sub_7FF6BF0BD950
+                dq offset sub_7FF6BF0BD980
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD2E0
+                dq offset sub_7FF6BA8AD2C0
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset sub_7FF6BF0BD9D0
+                dq offset sub_7FF6BA8ACB00
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8ACB10
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD020
+                dq offset sub_7FF6BC8F4DA0
+                dq offset sub_7FF6BC8F4DB0
+                dq offset sub_7FF6BF0BDA80
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6B9FBAB00
+                dq offset ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z ; AK::SoundEngine::UnregisterResourceMonitorCallback(void (*)(AkResourceMonitorDataSummary const *))
+aStartinglocati_0 db 'StartingLocationTag',0
+                                        ; DATA XREF: .rdata:off_7FF6C4A84318↑o
+                align 8
+aCustomizationd_1 db 'CustomizationData',0 ; DATA XREF: .rdata:off_7FF6C4A84350↑o
+                                        ; .rdata:off_7FF6C4A858D0↓o
+                align 10h
+aPersistedlocat:                        ; DATA XREF: sub_7FF6BF0BE930+18↑o
+                                        ; .rdata:00007FF6C4A84B30↓o
+                text "UTF-16LE", 'PersistedLocation',0
+                align 8
+off_7FF6C4A846F8 dq offset aMap_0       ; DATA XREF: .rdata:off_7FF6C4A847B0↓o
+                                        ; "Map"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  15h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  15h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A84730 dq offset aLocation    ; DATA XREF: .rdata:00007FF6C4A847B8↓o
+                                        ; "Location"
+                align 20h
+                db  15h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  10h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BA9E0B30
+off_7FF6C4A84770 dq offset aRotation_2  ; DATA XREF: .rdata:00007FF6C4A847C0↓o
+                                        ; "Rotation"
+                align 20h
+                db  15h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  28h ; (
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BA9F6320
+off_7FF6C4A847B0 dq offset off_7FF6C4A846F8 ; DATA XREF: .data:00007FF6C66977F8↓o
+                                        ; "Map"
+                dq offset off_7FF6C4A84730 ; "Location"
+                dq offset off_7FF6C4A84770 ; "Rotation"
+aBackgrounds    db 'Backgrounds',0      ; DATA XREF: .rdata:off_7FF6C4A84530↑o
+                                        ; .rdata:off_7FF6C4A84570↑o
+                align 8
+aStartingzoneba_0 db 'StartingZoneBackgrounds',0
+                                        ; DATA XREF: .data:00007FF6C6697FB8↓o
+off_7FF6C4A847F0 dq offset sub_7FF6BF0BB960 ; DATA XREF: sub_7FF6BA4C44B0+4↑o
+                dq offset aEcharactergend ; "ECharacterGender"
+                dq offset qword_7FF6C6C4C558
+                align 10h
+                dq offset sub_7FF6BF0BB9A0
+                dq offset aEchatresponset ; "EChatResponseType"
+                dq offset qword_7FF6C6C4C570
+                align 10h
+                dq offset sub_7FF6BF0BBA30
+                dq offset aEignoretype  ; "EIgnoreType"
+                dq offset qword_7FF6C6C4C588
+                align 10h
+                dq offset sub_7FF6BF0BBA70
+                dq offset aEcharacterrace ; "ECharacterRace"
+                dq offset qword_7FF6C6C4C5B8
+                align 10h
+                dq offset sub_7FF6BF0BBBB0
+                dq offset aEnpcoutfitsele ; "ENPCOutfitSelection"
+                dq offset qword_7FF6C6C4C5D0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BC400
+                dq offset aEcharacteridle ; "ECharacterIdle"
+                dq offset qword_7FF6C6C4C678
+                align 10h
+                dq offset sub_7FF6BF0BC4E0
+                dq offset aFcharactercust_0 ; "FCharacterCustomizationBodySections"
+                dq offset qword_7FF6C6C4C6A8
+                align 10h
+                dq offset sub_7FF6BF0BC520
+                dq offset aEtransformtype ; "ETransformType"
+                dq offset qword_7FF6C6C4C6D8
+                align 10h
+                dq offset sub_7FF6BF0BC8E0
+                dq offset aEcharacterdeca ; "ECharacterDecalPlacementType"
+                dq offset qword_7FF6C6C4C750
+                align 10h
+                dq offset sub_7FF6BF0BC920
+                dq offset aEcharacterdeca_0 ; "ECharacterDecalShadingType"
+                dq offset qword_7FF6C6C4C768
+                align 10h
+                dq offset sub_7FF6BF0BC9A0
+                dq offset aEhousingtype ; "EHousingType"
+                dq offset qword_7FF6C6C4C798
+                align 10h
+                dq offset sub_7FF6BF0BD0A0
+                dq offset aEinappnotifica ; "EInAppNotificationDismissalType"
+                dq offset qword_7FF6C6C4C828
+                align 10h
+                dq offset sub_7FF6BF0BD710
+                dq offset aEcharacterclas_0 ; "ECharacterClassification"
+                dq offset qword_7FF6C6C4C870
+                align 10h
+off_7FF6C4A84990 dq offset sub_7FF6BF0BC6A0 ; DATA XREF: sub_7FF6BA4C44B0+19↑o
+                dq offset sub_7FF6BF0BBC30
+                dq offset aPlacedhousingp ; "PlacedHousingProp"
+                dq offset qword_7FF6C6C4C5E8
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BC6E0
+                dq offset sub_7FF6BF0BBE30
+                dq offset aHousinglayout ; "HousingLayout"
+                dq offset qword_7FF6C6C4C618
+                align 20h
+                dq offset sub_7FF6BF0BCC70
+                dq offset sub_7FF6BF0BBFD0
+                dq offset aItemdata2    ; "ItemData2"
+                dq offset qword_7FF6C6C4C648
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BCEA0
+                dq offset sub_7FF6BF0BC560
+                dq offset aSectionsvalues ; "SectionsValuesLimits"
+                dq offset qword_7FF6C6C4C6F0
+                align 10h
+                dq offset sub_7FF6BF0BE050
+                dq offset sub_7FF6BEB5B130
+                dq offset aCharactercusto_29 ; "CharacterCustomizationBoneValues"
+                dq offset qword_7FF6C6C4C720
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BE090
+                dq offset sub_7FF6BEC7F7A0
+                dq offset aCharacterdecal ; "CharacterDecalBlendGroup"
+                dq offset qword_7FF6C6C4C780
+                align 20h
+                dq offset sub_7FF6BF0BE0D0
+                dq offset sub_7FF6BF0BCAB0
+                dq offset aCharactercusto_30 ; "CharacterCustomizationDecalData"
+                dq offset qword_7FF6C6C4C7C8
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BE170
+                dq offset sub_7FF6BF0BCD70
+                dq offset aCharactercusto_31 ; "CharacterCustomizationHairData"
+                dq offset qword_7FF6C6C4C7F8
+                align 10h
+                dq offset sub_7FF6BF0BE1B0
+                dq offset sub_7FF6BF0BD320
+                dq offset aCharactercusto_32 ; "CharacterCustomizationSaveData"
+                dq offset qword_7FF6C6C4C858
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BE8B0
+                dq offset sub_7FF6BF0BD8C0
+                dq offset aCharactercreat_21 ; "CharacterCreateInfo"
+                dq offset qword_7FF6C6C4C8A0
+                align 20h
+                dq offset sub_7FF6BF0BE930
+                dq offset sub_7FF6BF0BDAE0
+                dq offset aPersistedlocat ; "PersistedLocation"
+                dq offset qword_7FF6C6C4C8D0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BE980
+                dq offset sub_7FF6BCD82C00
+                dq offset aCharacterid  ; "CharacterID"
+                dq offset qword_7FF6C6C4C8E8
+                align 10h
+                dq offset sub_7FF6BF0BEA40
+                dq offset sub_7FF6BF0BDC50
+                dq offset aCharacterinfor ; "CharacterInformation"
+                dq offset qword_7FF6C6C4C900
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BB130
+                dq offset sub_7FF6BF0BDFC0
+                dq offset aPersistentreci ; "PersistentRecipe"
+                dq offset qword_7FF6C6C4C918
+                align 20h
+                dq offset sub_7FF6BF0BB170
+                dq offset sub_7FF6BE3B2160
+                dq offset aKnownrecipedat ; "KnownRecipeData"
+                dq offset qword_7FF6C6C4C930
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BBBF0
+                dq offset sub_7FF6BF0BE110
+                dq offset aPersistentcurr ; "PersistentCurrency"
+                dq offset qword_7FF6C6C4C948
+                align 10h
+                dq offset sub_7FF6BF0BBCD0
+                dq offset sub_7FF6BEEC9590
+                dq offset aHeldcurrencyda ; "HeldCurrencyData"
+                dq offset qword_7FF6C6C4C960
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BD1D0
+                dq offset sub_7FF6BE3B1F60
+                dq offset aPersistentsurv ; "PersistentSurveyBuff"
+                dq offset qword_7FF6C6C4C978
+                align 20h
+                dq offset sub_7FF6BF0BD210
+                dq offset sub_7FF6BF0BE230
+                dq offset aPersistentsurv_0 ; "PersistentSurvey"
+                dq offset qword_7FF6C6C4C990
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BDC10
+                dq offset sub_7FF6BF0BE4A0
+                dq offset aActivesurveyda ; "ActiveSurveyData"
+                dq offset qword_7FF6C6C4C9A8
+                align 10h
+                dq offset sub_7FF6BF0BDF80
+                dq offset sub_7FF6BF0BE6F0
+                dq offset aStoragecontain ; "StorageContainerItemData"
+                dq offset qword_7FF6C6C4C9C0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BE010
+                dq offset sub_7FF6BF0BE8F0
+                dq offset aStoragecontain_0 ; "StorageContainerData"
+                dq offset qword_7FF6C6C4C9D8
+                align 20h
+                dq offset sub_7FF6BF0BE1F0
+                dq offset sub_7FF6BF0BEB40
+                dq offset aKnownrecipeper ; "KnownRecipePersistenceData"
+                dq offset qword_7FF6C6C4C9F0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BE460
+                dq offset sub_7FF6BF0BEC00
+                dq offset aHeldcurrencype ; "HeldCurrencyPersistenceData"
+                dq offset qword_7FF6C6C4CA08
+                align 10h
+                dq offset sub_7FF6BF0BE510
+                dq offset sub_7FF6BF0BECC0
+                dq offset aCurrentsurveyp ; "CurrentSurveyPersistenceData"
+                dq offset qword_7FF6C6C4CA20
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BE630
+                dq offset sub_7FF6BF0BF030
+                dq offset aWarehouseconta ; "WarehouseContainerPersistenceData"
+                dq offset qword_7FF6C6C4CA38
+                align 20h
+                dq offset sub_7FF6BF0BE670
+                dq offset sub_7FF6BF0BAD80
+                dq offset aNodeitemcontai ; "NodeItemContainerPersistenceData"
+                dq offset qword_7FF6C6C4C4F8
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BE840
+                dq offset sub_7FF6BF0BAFE0
+                dq offset aWarehouseresou_0 ; "WarehouseResourceContainerPersistenceDa"...
+                dq offset qword_7FF6C6C4C510
+                align 10h
+                dq offset sub_7FF6BF0BEA80
+                dq offset sub_7FF6BF0BB1F0
+                dq offset aNodetoplayerre_2 ; "NodeToPlayerReputationPersistenceData"
+                dq offset qword_7FF6C6C4C528
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BEAC0
+                dq offset sub_7FF6BF0BB450
+                dq offset aItemwarehousep ; "ItemWarehousePersistenceDataSets"
+                dq offset qword_7FF6C6C4C540
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BED00
+                dq offset sub_7FF6BF0BBAB0
+                dq offset aCharacterinven ; "CharacterInventory"
+                dq offset qword_7FF6C6C4C5A0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BED40
+                dq offset sub_7FF6BCECEDA0
+                dq offset aLootallocation_1 ; "LootAllocationMethodsDataDEPRECATED"
+                dq offset qword_7FF6C6C4C600
+                align 10h
+                dq offset sub_7FF6BF0BED80
+                dq offset sub_7FF6BF0BBF50
+                dq offset aLootallocation_2 ; "LootAllocationMethodsData"
+                dq offset qword_7FF6C6C4C630
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BEE30
+                dq offset sub_7FF6BF0BC330
+                dq offset aPartysettingsd ; "PartySettingsData"
+                dq offset qword_7FF6C6C4C660
+                align 20h
+                dq offset sub_7FF6BF0BEE70
+                dq offset sub_7FF6BF0BC440
+                dq offset aRaidsettingsda ; "RaidSettingsData"
+                dq offset qword_7FF6C6C4C690
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BEEB0
+                dq offset sub_7FF6BA9FB260
+                dq offset aSquadsettingsd ; "SquadSettingsData"
+                dq offset qword_7FF6C6C4C6C0
+                align 10h
+                dq offset sub_7FF6BF0BEEF0
+                dq offset sub_7FF6BF0BC620
+                dq offset aCombatplayerse ; "CombatPlayerSettingsData"
+                dq offset qword_7FF6C6C4C708
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BEF30
+                dq offset sub_7FF6BF0BC720
+                dq offset aIngamesettings_0 ; "InGameSettingsData"
+                dq offset qword_7FF6C6C4C738
+                align 20h
+                dq offset sub_7FF6BF0BEFB0
+                dq offset sub_7FF6BF0BC9E0
+                dq offset aCharacternoded ; "CharacterNodeData"
+                dq offset qword_7FF6C6C4C7B0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BEFF0
+                dq offset sub_7FF6BF0BCBB0
+                dq offset aCharacterdto ; "CharacterDto"
+                dq offset qword_7FF6C6C4C7E0
+                align 10h
+                dq offset sub_7FF6BF0BAD40
+                dq offset sub_7FF6BF0BCDB0
+                dq offset aUpdatecharacte ; "UpdateCharacterRequest"
+                dq offset qword_7FF6C6C4C810
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BAEE0
+                dq offset sub_7FF6BF0BD0E0
+                dq offset aInappnotificat ; "InAppNotification"
+                dq offset qword_7FF6C6C4C840
+                align 20h
+                dq offset sub_7FF6BF0BAF20
+                dq offset sub_7FF6BF0BD750
+                dq offset aRequestedwhoin ; "RequestedWhoInfo"
+                dq offset qword_7FF6C6C4C888
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BAFA0
+                dq offset sub_7FF6BEFB7520
+                dq offset aStartingzoneba ; "StartingZoneBackgrounds"
+                dq offset qword_7FF6C6C4C8B8
+                align 10h
+off_7FF6C4A85070 dq offset sub_7FF6BA8ACBA0 ; DATA XREF: sub_7FF6BF0BDAE0+18↑o
+                dq offset sub_7FF6BA8ACE20
+                dq offset sub_7FF6BF0BDB20
+                dq offset sub_7FF6BF0BDB20
+                dq offset sub_7FF6BA946AF0
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD2E0
+                dq offset sub_7FF6BA8AD2C0
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset sub_7FF6BF0BDB70
+                dq offset sub_7FF6BA8ACB00
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8ACB10
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD020
+                dq offset sub_7FF6BAAD84B0
+                dq offset sub_7FF6BAAD84C0
+                dq offset sub_7FF6BCE83000
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6B9FBAB00
+                dq offset ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z ; AK::SoundEngine::UnregisterResourceMonitorCallback(void (*)(AkResourceMonitorDataSummary const *))
+aCharacterid:                           ; DATA XREF: sub_7FF6BF0BE980+18↑o
+                                        ; .rdata:00007FF6C4A84B58↑o
+                text "UTF-16LE", 'CharacterID',0
+off_7FF6C4A85170 dq offset aCharacterguid_1 ; DATA XREF: .rdata:off_7FF6C4A851E8↓o
+                                        ; "CharacterGuid"
+                align 20h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BA9E0560
+off_7FF6C4A851B0 dq offset aCharactername_2 ; DATA XREF: .rdata:00007FF6C4A851F0↓o
+                                        ; "CharacterName"
+                align 20h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  15h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  10h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A851E8 dq offset off_7FF6C4A85170 ; DATA XREF: .data:00007FF6C6697830↓o
+                                        ; "CharacterGuid"
+                dq offset off_7FF6C4A851B0 ; "CharacterName"
+aCharacterid_4  db 'CharacterID',0      ; DATA XREF: .data:00007FF6C6697828↓o
+                align 8
+aCharacterinfor:                        ; DATA XREF: sub_7FF6BF0BEA40+18↑o
+                                        ; .rdata:00007FF6C4A84B80↑o
+                text "UTF-16LE", 'CharacterInformation',0
+                align 8
+off_7FF6C4A85238 dq offset aId_14       ; DATA XREF: .rdata:off_7FF6C4A85990↓o
+                                        ; "Id"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  15h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A85270 dq offset aPlayerid_3  ; DATA XREF: .rdata:00007FF6C4A85998↓o
+                                        ; "PlayerId"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  15h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  10h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A852A8 dq offset aAuth0id_0   ; DATA XREF: .rdata:00007FF6C4A859A0↓o
+                                        ; "Auth0Id"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  15h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  20h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A852E0 dq offset aCharacteridasg ; DATA XREF: .rdata:00007FF6C4A859A8↓o
+                                        ; "CharacterIdAsGuid"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  30h ; 0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BA9E0560
+off_7FF6C4A85320 dq offset aCharactername_2 ; DATA XREF: .rdata:00007FF6C4A859B0↓o
+                                        ; "CharacterName"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  15h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  40h ; @
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A85358 dq offset aCharacterrecor_1
+                                        ; DATA XREF: .rdata:00007FF6C4A859B8↓o
+                                        ; "CharacterRecordRevision"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  50h ; P
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A85390 dq offset aLevel_0     ; DATA XREF: .rdata:00007FF6C4A859C0↓o
+                                        ; "Level"
+                align 20h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  54h ; T
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A853C8 dq offset aCharactertitle_0
+                                        ; DATA XREF: .rdata:00007FF6C4A859C8↓o
+                                        ; "CharacterTitle"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  15h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  58h ; X
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A85400 dq offset aUnderlyingtype ; DATA XREF: .rdata:00007FF6C4A859D0↓o
+                                        ; "UnderlyingType"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A85440 dq offset aGender_1    ; DATA XREF: .rdata:00007FF6C4A859D8↓o
+                                        ; "Gender"
+                align 10h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  1Eh
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  68h ; h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BB270
+off_7FF6C4A85480 dq offset aUnderlyingtype ; DATA XREF: .rdata:00007FF6C4A859E0↓o
+                                        ; "UnderlyingType"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A854C0 dq offset aRace_0      ; DATA XREF: .rdata:00007FF6C4A859E8↓o
+                                        ; "Race"
+                align 10h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  1Eh
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  69h ; i
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BB2A0
+off_7FF6C4A85500 dq offset aUnderlyingtype ; DATA XREF: .rdata:00007FF6C4A859F0↓o
+                                        ; "UnderlyingType"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A85540 dq offset aPrimaryclass ; DATA XREF: .rdata:00007FF6C4A859F8↓o
+                                        ; "PrimaryClass"
+                align 10h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  1Eh
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  6Ah ; j
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BECB4B80
+off_7FF6C4A85580 dq offset aUnderlyingtype ; DATA XREF: .rdata:00007FF6C4A85A00↓o
+                                        ; "UnderlyingType"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A855C0 dq offset aSecondaryclass_5
+                                        ; DATA XREF: .rdata:00007FF6C4A85A08↓o
+                                        ; "SecondaryClass"
+                align 10h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  1Eh
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  6Bh ; k
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BECB4B80
+off_7FF6C4A85600 dq offset aBoundlocation ; DATA XREF: .rdata:00007FF6C4A85A10↓o
+                                        ; "BoundLocation"
+                align 10h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  70h ; p
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BB610
+off_7FF6C4A85640 dq offset aSkillpoints ; DATA XREF: .rdata:00007FF6C4A85A18↓o
+                                        ; "SkillPoints"
+                align 10h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db 0B8h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A85678 dq offset aCitizencooldow_0
+                                        ; DATA XREF: .rdata:00007FF6C4A85A20↓o
+                                        ; "CitizenCooldownEndDate"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db    4
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db 0C0h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A856B0 dq offset aCurrentbreathi_0
+                                        ; DATA XREF: .rdata:00007FF6C4A85A28↓o
+                                        ; "CurrentBreathingTime"
+                align 20h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db 0C8h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A856E8 dq offset aPvpflag     ; DATA XREF: .rdata:00007FF6C4A85A30↓o
+                                        ; "PvpFlag"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db 0CCh
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A85720 dq offset aCharactertype_0 ; DATA XREF: .rdata:00007FF6C4A85A38↓o
+                                        ; "CharacterType"
+                align 10h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db 0D0h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A85760 dq offset aFriendlist_0 ; DATA XREF: .rdata:00007FF6C4A85A40↓o
+                                        ; "FriendList"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BB3F0
+off_7FF6C4A857A0 dq offset aFriendlist_0 ; DATA XREF: .rdata:00007FF6C4A85A48↓o
+                                        ; "FriendList"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  16h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db 0D8h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A857E0 dq offset aIgnoredplayers ; DATA XREF: .rdata:00007FF6C4A85A50↓o
+                                        ; "IgnoredPlayers"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BB3F0
+off_7FF6C4A85820 dq offset aIgnoredplayers ; DATA XREF: .rdata:00007FF6C4A85A58↓o
+                                        ; "IgnoredPlayers"
+                align 10h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  16h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db 0E8h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A85858 dq offset aUnlockedfasttr_0
+                                        ; DATA XREF: .rdata:00007FF6C4A85A60↓o
+                                        ; "UnlockedFastTravelIds"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A85890 dq offset aUnlockedfasttr_0
+                                        ; DATA XREF: .rdata:00007FF6C4A85A68↓o
+                                        ; "UnlockedFastTravelIds"
+                align 20h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  16h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db 0F8h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A858D0 dq offset aCustomizationd_1
+                                        ; DATA XREF: .rdata:00007FF6C4A85A70↓o
+                                        ; "CustomizationData"
+                align 20h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    8
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BB390
+off_7FF6C4A85910 dq offset aHousingcustomi_0
+                                        ; DATA XREF: .rdata:00007FF6C4A85A78↓o
+                                        ; "HousingCustomizationLayouts"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BB4C0
+off_7FF6C4A85950 dq offset aHousingcustomi_0
+                                        ; DATA XREF: .rdata:00007FF6C4A85A80↓o
+                                        ; "HousingCustomizationLayouts"
+                align 20h
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  16h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db 0A0h
+                db    2
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A85990 dq offset off_7FF6C4A85238 ; DATA XREF: .data:00007FF6C6697868↓o
+                                        ; "Id"
+                dq offset off_7FF6C4A85270 ; "PlayerId"
+                dq offset off_7FF6C4A852A8 ; "Auth0Id"
+                dq offset off_7FF6C4A852E0 ; "CharacterIdAsGuid"
+                dq offset off_7FF6C4A85320 ; "CharacterName"
+                dq offset off_7FF6C4A85358 ; "CharacterRecordRevision"
+                dq offset off_7FF6C4A85390 ; "Level"
+                dq offset off_7FF6C4A853C8 ; "CharacterTitle"
+                dq offset off_7FF6C4A85400 ; "UnderlyingType"
+                dq offset off_7FF6C4A85440 ; "Gender"
+                dq offset off_7FF6C4A85480 ; "UnderlyingType"
+                dq offset off_7FF6C4A854C0 ; "Race"
+                dq offset off_7FF6C4A85500 ; "UnderlyingType"
+                dq offset off_7FF6C4A85540 ; "PrimaryClass"
+                dq offset off_7FF6C4A85580 ; "UnderlyingType"
+                dq offset off_7FF6C4A855C0 ; "SecondaryClass"
+                dq offset off_7FF6C4A85600 ; "BoundLocation"
+                dq offset off_7FF6C4A85640 ; "SkillPoints"
+                dq offset off_7FF6C4A85678 ; "CitizenCooldownEndDate"
+                dq offset off_7FF6C4A856B0 ; "CurrentBreathingTime"
+                dq offset off_7FF6C4A856E8 ; "PvpFlag"
+                dq offset off_7FF6C4A85720 ; "CharacterType"
+                dq offset off_7FF6C4A85760 ; "FriendList"
+                dq offset off_7FF6C4A857A0 ; "FriendList"
+                dq offset off_7FF6C4A857E0 ; "IgnoredPlayers"
+                dq offset off_7FF6C4A85820 ; "IgnoredPlayers"
+                dq offset off_7FF6C4A85858 ; "UnlockedFastTravelIds"
+                dq offset off_7FF6C4A85890 ; "UnlockedFastTravelIds"
+                dq offset off_7FF6C4A858D0 ; "CustomizationData"
+                dq offset off_7FF6C4A85910 ; "HousingCustomizationLayouts"
+                dq offset off_7FF6C4A85950 ; "HousingCustomizationLayouts"
+off_7FF6C4A85A88 dq offset sub_7FF6BA8ACBA0 ; DATA XREF: sub_7FF6BF0BDC50+18↑o
+                dq offset sub_7FF6BA8ACE20
+                dq offset sub_7FF6BF0BDC90
+                dq offset sub_7FF6BF0BDC90
+                dq offset sub_7FF6BF0BDCA0
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD2E0
+                dq offset sub_7FF6BA8AD2C0
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset sub_7FF6BF0BDCB0
+                dq offset sub_7FF6BA8ACB00
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8ACB10
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD020
+                dq offset sub_7FF6BB74E1C0
+                dq offset sub_7FF6BB74E1D0
+                dq offset sub_7FF6BF0BDF50
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6B9FBAB00
+                dq offset ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z ; AK::SoundEngine::UnregisterResourceMonitorCallback(void (*)(AkResourceMonitorDataSummary const *))
+aAuth0id_0      db 'Auth0Id',0          ; DATA XREF: .rdata:off_7FF6C4A852A8↑o
+aCharacteridasg db 'CharacterIdAsGuid',0 ; DATA XREF: .rdata:off_7FF6C4A852E0↑o
+                align 10h
+aCharacterrecor_1 db 'CharacterRecordRevision',0
+                                        ; DATA XREF: .rdata:off_7FF6C4A85358↑o
+aCharactertitle_0 db 'CharacterTitle',0 ; DATA XREF: .rdata:off_7FF6C4A853C8↑o
+                                        ; .rdata:off_7FF6C4ADAAE0↓o
+                align 8
+aSecondaryclass_5 db 'SecondaryClass',0 ; DATA XREF: .rdata:off_7FF6C4A855C0↑o
+                align 8
+aCitizencooldow_0 db 'CitizenCooldownEndDate',0
+                                        ; DATA XREF: .rdata:off_7FF6C4A85678↑o
+                                        ; .rdata:off_7FF6C4ADDD10↓o
+                align 20h
+aCurrentbreathi_0 db 'CurrentBreathingTime',0
+                                        ; DATA XREF: .rdata:off_7FF6C4A856B0↑o
+                                        ; .rdata:off_7FF6C4ADAE80↓o
+                align 8
+aPvpflag        db 'PvpFlag',0          ; DATA XREF: .rdata:off_7FF6C4A856E8↑o
+aFriendlist_0   db 'FriendList',0       ; DATA XREF: .rdata:off_7FF6C4A85760↑o
+                                        ; .rdata:off_7FF6C4A857A0↑o
+                align 10h
+aUnlockedfasttr_0 db 'UnlockedFastTravelIds',0
+                                        ; DATA XREF: .rdata:off_7FF6C4A85858↑o
+                                        ; .rdata:off_7FF6C4A85890↑o ...
+                align 8
+aHousingcustomi_0 db 'HousingCustomizationLayouts',0
+                                        ; DATA XREF: .rdata:off_7FF6C4A85910↑o
+                                        ; .rdata:off_7FF6C4A85950↑o ...
+                align 8
+aPersistentreci:                        ; DATA XREF: sub_7FF6BF0BB130+18↑o
+                                        ; .rdata:00007FF6C4A84BA8↑o
+                text "UTF-16LE", 'PersistentRecipe',0
+                align 10h
+off_7FF6C4A85C70 dq offset aRecipeid    ; DATA XREF: .rdata:off_7FF6C4A85CA8↓o
+                                        ; "RecipeId"
+                align 20h
+                db  15h
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db    4
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4A85CA8 dq offset off_7FF6C4A85C70 ; DATA XREF: .data:00007FF6C66978A0↓o
+                                        ; "RecipeId"
+off_7FF6C4A85CB0 dq offset sub_7FF6BA8ACBA0 ; DATA XREF: sub_7FF6BF0BDFC0+18↑o
+                dq offset sub_7FF6BA9156D0
+                dq offset sub_7FF6BF0BE000
+                dq offset sub_7FF6BF0BE000
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD2E0
+                dq offset sub_7FF6BA8AD2C0
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset sub_7FF6BA9FC890
+                dq offset sub_7FF6BA8ACB00
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8ACB10
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD020
+                dq offset sub_7FF6BA8ACB70
+                dq offset sub_7FF6BA8ACB80
+                dq offset sub_7FF6BA8ACB90
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6B9FBAB00
+                dq offset ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z ; AK::SoundEngine::UnregisterResourceMonitorCallback(void (*)(AkResourceMonitorDataSummary const *))
+aPersistentreci_0 db 'PersistentRecipe',0 ; DATA XREF: .data:00007FF6C6697898↓o
+                align 10h
+aKnownrecipedat:                        ; DATA XREF: sub_7FF6BF0BB170+18↑o
+                                        ; .rdata:00007FF6C4A84BD0↑o
+                text "UTF-16LE", 'KnownRecipeData',0
+off_7FF6C4A85DD0 dq offset aKnownrecipes ; DATA XREF: .rdata:off_7FF6C4A85E48↓o
+                                        ; "KnownRecipes"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BB670
+off_7FF6C4A85E10 dq offset aKnownrecipes ; DATA XREF: .rdata:00007FF6C4A85E50↓o
+                                        ; "KnownRecipes"
+                align 20h
+                db  15h
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  16h
+                db    0
+                db    0
+                db    0
+                db  45h ; E

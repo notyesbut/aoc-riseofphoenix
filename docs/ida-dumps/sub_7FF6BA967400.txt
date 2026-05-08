@@ -1,0 +1,11 @@
+__int64 __fastcall sub_7FF6BA967400(RTL_SRWLOCK *a1, __int64 a2)
+{
+  RTL_SRWLOCK *v4; // rsi
+  __int64 v5; // rbx
+
+  v4 = a1 + 11;
+  AcquireSRWLockExclusive(a1 + 11);
+  v5 = sub_7FF6BA967460((__int64)a1, a2);
+  ReleaseSRWLockExclusive(v4);
+  return v5;
+}

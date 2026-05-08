@@ -1,0 +1,118 @@
+================================================================
+ Refined: byte-sized FLAG-SHAPED writes to [reg + 0x240]
+ IDB   : AOCClient-Win64-Shipping.exe
+================================================================
+
+HIT  .text:00007FF6B994A4CE  sub_7FF6B9948B30 | mov byte ptr [rsp+6A8h+var_468], r11b
+HIT  .text:00007FF6B996304E  sub_7FF6B99616B0 | mov byte ptr [rsp+6A8h+var_468], r11b
+HIT  .text:00007FF6B9B616C0  sub_7FF6B9B60420 | mov byte ptr [rsp+598h+var_358], cl
+HIT  .text:00007FF6B9B73A90  sub_7FF6B9B727F0 | mov byte ptr [rsp+598h+var_358], cl
+HIT  .text:00007FF6BAD23CE8  sub_7FF6BAD23C30 | mov byte ptr [rbp+240h], 1
+HIT  .text:00007FF6BB761A20  sub_7FF6BB761A20 | mov byte ptr [rcx+240h], 1
+HIT  .text:00007FF6BC0FC221  sub_7FF6BC0FA900 | mov byte ptr [rdi+240h], 1
+HIT  .text:00007FF6BC29D5C0  sub_7FF6BC29C5A0 | mov byte ptr [rbp+420h+var_1E0], al
+HIT  .text:00007FF6BC29D60E  sub_7FF6BC29C5A0 | mov byte ptr [rbp+420h+var_1E0], al
+HIT  .text:00007FF6BC29DF80  sub_7FF6BC29C5A0 | mov byte ptr [rbp+420h+var_1E0], al
+HIT  .text:00007FF6BC29DFCE  sub_7FF6BC29C5A0 | mov byte ptr [rbp+420h+var_1E0], cl
+HIT  .text:00007FF6BC29F307  sub_7FF6BC29C5A0 | mov byte ptr [rbp+420h+var_1E0], al
+HIT  .text:00007FF6BC2EBB93  sub_7FF6BC2EBA00 | mov byte ptr [rsi+240h], 1
+HIT  .text:00007FF6BC95E82B  sub_7FF6BC95E6B0 | mov byte ptr [rbp+240h], 1
+HIT  .text:00007FF6BC95EC27  sub_7FF6BC95E6B0 | mov byte ptr [rax+240h], 0
+HIT  .text:00007FF6BC9C4DA9  sub_7FF6BC9C3A70 | or byte ptr [r14+240h], 1
+HIT  .text:00007FF6BCC4883D  sub_7FF6BCC48760 | mov byte ptr [rdi+240h], 0
+HIT  .text:00007FF6BCE55900  sub_7FF6BCE55900 | mov byte ptr [rdx+240h], 0
+HIT  .text:00007FF6BCE5595E  sub_7FF6BCE55920 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BCEE1947  sub_7FF6BCEE17C0 | mov byte ptr [rbp+200h+arg_30], dl
+HIT  .text:00007FF6BD915890  sub_7FF6BD915890 | or byte ptr [rcx+240h], 1
+HIT  .text:00007FF6BDB63B2F  sub_7FF6BDB63AE0 | or byte ptr [r14+240h], 1
+HIT  .text:00007FF6BDB94E08  sub_7FF6BDB94B40 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BDBBC49A  sub_7FF6BDBBC2C0 | mov byte ptr [r15+240h], 1
+HIT  .text:00007FF6BDBBCE45  sub_7FF6BDBBC920 | mov byte ptr [rdi+240h], 0
+HIT  .text:00007FF6BDBBD4B1  sub_7FF6BDBBD320 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BDE78D7A  sub_7FF6BDE78D60 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BDF343DA  sub_7FF6BDF343C0 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BE44D424  sub_7FF6BE44D3D0 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BE7E180B  sub_7FF6BE7E10F0 | mov byte ptr [rbp+3E0h+var_1A0], 0
+HIT  .text:00007FF6BEA0A5C9  sub_7FF6BEA0A5C0 | mov byte ptr [rdx+240h], 0
+HIT  .text:00007FF6BEB31312  sub_7FF6BEB312E0 | mov byte ptr [rdi+240h], 0
+HIT  .text:00007FF6BEB3561B  sub_7FF6BEB355E0 | mov byte ptr [rdi+240h], 0
+HIT  .text:00007FF6BEB4353F  sub_7FF6BEB43220 | mov byte ptr [rsi+240h], 0
+HIT  .text:00007FF6BEB435E9  sub_7FF6BEB43220 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BEB43AA2  sub_7FF6BEB43770 | mov byte ptr [r15+240h], 0
+HIT  .text:00007FF6BEB43B5D  sub_7FF6BEB43770 | mov byte ptr [r14+240h], 0
+HIT  .text:00007FF6BEB43C2E  sub_7FF6BEB43770 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BEB43DA5  sub_7FF6BEB43770 | mov byte ptr [rsi+240h], 0
+HIT  .text:00007FF6BEB43E5A  sub_7FF6BEB43770 | mov byte ptr [rsi+240h], 0
+HIT  .text:00007FF6BEB442A7  sub_7FF6BEB43FB0 | mov byte ptr [rsi+240h], 0
+HIT  .text:00007FF6BEB444EF  sub_7FF6BEB443D0 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BEB44641  sub_7FF6BEB443D0 | mov byte ptr [rsi+240h], 0
+HIT  .text:00007FF6BEB447AF  sub_7FF6BEB443D0 | mov byte ptr [rdi+240h], 0
+HIT  .text:00007FF6BEB44871  sub_7FF6BEB443D0 | mov byte ptr [r14+240h], 0
+HIT  .text:00007FF6BEB44A0B  sub_7FF6BEB443D0 | mov byte ptr [r14+240h], 0
+HIT  .text:00007FF6BEB44B8B  sub_7FF6BEB443D0 | mov byte ptr [r14+240h], 0
+HIT  .text:00007FF6BEB44EBC  sub_7FF6BEB443D0 | mov byte ptr [rsi+240h], 0
+HIT  .text:00007FF6BEB44F6C  sub_7FF6BEB443D0 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BEB4521F  sub_7FF6BEB443D0 | mov byte ptr [rsi+240h], 0
+HIT  .text:00007FF6BEB45528  sub_7FF6BEB452F0 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BEB45873  sub_7FF6BEB45640 | mov byte ptr [rdi+240h], 0
+HIT  .text:00007FF6BEB45A0E  sub_7FF6BEB45910 | mov byte ptr [rdi+240h], 0
+HIT  .text:00007FF6BEB45D70  sub_7FF6BEB45910 | mov byte ptr [rsi+240h], 0
+HIT  .text:00007FF6BEB45E28  sub_7FF6BEB45910 | mov byte ptr [rdi+240h], 0
+HIT  .text:00007FF6BEB45ED6  sub_7FF6BEB45910 | mov byte ptr [rsi+240h], 0
+HIT  .text:00007FF6BEB461E9  sub_7FF6BEB46020 | mov byte ptr [rdi+240h], 0
+HIT  .text:00007FF6BEB46660  sub_7FF6BEB465A0 | mov byte ptr [rdi+240h], 0
+HIT  .text:00007FF6BEB46750  sub_7FF6BEB465A0 | mov byte ptr [rsi+240h], 0
+HIT  .text:00007FF6BEB468A2  sub_7FF6BEB465A0 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BEC8FF1A  sub_7FF6BEC8FF00 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BECC04DA  sub_7FF6BECC04C0 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BED0793A  sub_7FF6BED07920 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BEE2B0D3  sub_7FF6BEE2AF40 | mov byte ptr [rdi+240h], 1
+HIT  .text:00007FF6BEE2B0F6  sub_7FF6BEE2AF40 | mov byte ptr [rdi+240h], 0
+HIT  .text:00007FF6BEF7C6F2  sub_7FF6BEF7C520 | mov byte ptr [rbx+240h], 1
+HIT  .text:00007FF6BEF7C707  sub_7FF6BEF7C520 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BEF88FF4  sub_7FF6BEF88F20 | mov byte ptr [rbx+240h], 1
+HIT  .text:00007FF6BEF8900E  sub_7FF6BEF88F20 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BF1A4900  sub_7FF6BF1A38A0 | mov byte ptr [rbp+480h+var_240], bl
+HIT  .text:00007FF6BF310D25  sub_7FF6BF310C70 | mov byte ptr [rbx+240h], 1
+HIT  .text:00007FF6BF310E6C  sub_7FF6BF310DB0 | mov byte ptr [rbx+240h], 1
+HIT  .text:00007FF6BF322630  sub_7FF6BF322620 | mov byte ptr [rcx+240h], 0
+HIT  .text:00007FF6BF468226  sub_7FF6BF4671C0 | mov byte ptr [rbp+2E0h+var_A0], 0
+HIT  .text:00007FF6BF7BD4B7  sub_7FF6BF7BD140 | mov byte ptr [rbx+240h], 1
+HIT  .text:00007FF6BF7BD4E2  sub_7FF6BF7BD140 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6BF84DB0C  sub_7FF6BF84D8C0 | mov byte ptr [rbx+240h], 1
+HIT  .text:00007FF6BFC20A57  sub_7FF6BFC20970 | mov byte ptr [rdi+240h], 0
+HIT  .text:00007FF6BFEC7400  sub_7FF6BFEC6590 | mov byte ptr [rbp+230h+arg_0], 0
+HIT  .text:00007FF6BFEC7503  sub_7FF6BFEC6590 | mov byte ptr [rbp+230h+arg_0], 1
+HIT  .text:00007FF6C013AB0D  sub_7FF6C013A910 | mov byte ptr [rdi+240h], 1
+HIT  .text:00007FF6C029223D  sub_7FF6C0292120 | mov byte ptr [rdi+240h], 0
+HIT  .text:00007FF6C045CD24  sub_7FF6C045B7B0 | mov byte ptr [rbp+820h+var_5E0], 1
+HIT  .text:00007FF6C07E905D  sub_7FF6C07E8EA0 | mov byte ptr [rbx+240h], 1
+HIT  .text:00007FF6C07F2127  sub_7FF6C07F2100 | mov byte ptr [rbx+240h], 1
+HIT  .text:00007FF6C07F2151  sub_7FF6C07F2100 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6C07FA755  sub_7FF6C07FA1F0 | mov byte ptr [rsi+240h], 0
+HIT  .text:00007FF6C0DF5FDA  sub_7FF6C0DF5FC0 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6C0DFCFD5  sub_7FF6C0DFCFB0 | mov byte ptr [rbx+240h], 1
+HIT  .text:00007FF6C11A977D  sub_7FF6C11A9740 | mov byte ptr [rbx+240h], 0
+HIT  .text:00007FF6C1491CA6  sub_7FF6C1491C20 | mov byte ptr [rdi+240h], 1
+HIT  .text:00007FF6C26BEC96  sub_7FF6C26BEB70 | mov byte ptr [rsp+9F8h+var_7B8], 0
+HIT  .text:00007FF6C26C0081  sub_7FF6C26BEB70 | mov byte ptr [rsp+9F8h+var_7B8], 0
+HIT  .text:00007FF6C2814533  sub_7FF6C2814250 | mov byte ptr [rbp+2F0h+var_B0], 0
+HIT  .text:00007FF6C2814903  sub_7FF6C2814250 | mov byte ptr [rbp+2F0h+var_B0], 0
+HIT  .text:00007FF6C2814A16  sub_7FF6C2814250 | mov byte ptr [rbp+2F0h+var_B0], 0
+HIT  .text:00007FF6C2814B48  sub_7FF6C2814250 | mov byte ptr [rbp+2F0h+var_B0], 0
+HIT  .text:00007FF6C281E595  sub_7FF6C281D6E0 | mov byte ptr [rbp+340h+var_100], 0
+HIT  .text:00007FF6C2820D80  sub_7FF6C2820AB0 | mov byte ptr [rbp+300h+var_C0], 0
+HIT  .text:00007FF6C2821159  sub_7FF6C2820AB0 | mov byte ptr [rbp+300h+var_C0], 0
+HIT  .text:00007FF6C282126C  sub_7FF6C2820AB0 | mov byte ptr [rbp+300h+var_C0], 0
+HIT  .text:00007FF6C282137F  sub_7FF6C2820AB0 | mov byte ptr [rbp+300h+var_C0], 0
+HIT  .text:00007FF6C2BC7DE5  sub_7FF6C2BC7D50 | and byte ptr [rbx+240h], 0FEh
+HIT  .text:00007FF6C2BC8DAB  sub_7FF6C2BC8CC0 | or byte ptr [rdi+240h], 1
+HIT  .text:00007FF6C2BC9190  sub_7FF6C2BC8F30 | and byte ptr [rbx+240h], 0FEh
+
+=== DONE ===
+  Functions : 659774
+  Hits      : 105
+
+>>> Inspect each hit -- these are the actual flag toggles.
+>>> Look for: UNetConnection::*, *NetDriver*, NMT_*, Hello,
+>>>           Login, Challenge, Welcome, Init.

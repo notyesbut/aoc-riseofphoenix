@@ -1,0 +1,99 @@
+__int64 __fastcall sub_7FF6BD7F54A0(_QWORD *a1, __int64 a2, __int64 a3, __int64 a4)
+{
+  __int64 v4; // rsi
+  __int64 i; // rbx
+  int v7; // eax
+  unsigned int v8; // r13d
+  int v9; // r14d
+  int v10; // r8d
+  __int64 v11; // rdx
+  __int64 v12; // rdi
+  signed int v13; // ebx
+  __int64 v14; // rcx
+  int v15; // r15d
+  __int64 v16; // r12
+  __int32 v17; // r8d
+  __int32 v18; // eax
+  unsigned int v19; // ebx
+  __int64 v21; // [rsp+20h] [rbp-49h] BYREF
+  __int64 v22; // [rsp+28h] [rbp-41h] BYREF
+  __m128i v23; // [rsp+30h] [rbp-39h] BYREF
+  __m128i v24; // [rsp+40h] [rbp-29h]
+  __int64 v25; // [rsp+50h] [rbp-19h]
+  __m128i v26[2]; // [rsp+60h] [rbp-9h] BYREF
+  __int64 v27; // [rsp+80h] [rbp+17h]
+
+  v4 = a2;
+  v21 = 0;
+  v22 = 0;
+  v23.m128i_i64[0] = a4;
+  if ( a4 )
+    v23.m128i_i64[1] = *(_QWORD *)(a4 + 112);
+  else
+    v23 = 0u;
+  v24.m128i_i32[0] = -1;
+  v24.m128i_i16[2] = 257;
+  v24.m128i_i8[6] = 0;
+  sub_7FF6BA8D4650(&v23);
+  for ( i = v23.m128i_i64[1]; v23.m128i_i64[1]; i = v23.m128i_i64[1] )
+  {
+    if ( (*(_DWORD *)(i + 56) & 0x80000000) == 0 )
+    {
+      v7 = v22;
+      if ( (_DWORD)v22 == HIDWORD(v22) )
+        v7 = sub_7FF6BA64EC90(0x808u, (int)&v21, (unsigned int *)&v22 + 1);
+      LODWORD(v22) = v7 + 1;
+      *(_QWORD *)(v21 + 8LL * v7) = i;
+    }
+    v23.m128i_i64[1] = *(_QWORD *)(i + 24);
+    sub_7FF6BA8D4650(&v23);
+  }
+  sub_7FF6BD7F5830(v21, (unsigned int)v22, (unsigned __int8)a1, (unsigned __int8)a1);
+  v8 = sub_7FF6BD809660(*(_QWORD **)v4, a1[1], *(_DWORD *)(v4 + 20), *(_DWORD *)(v4 + 16));
+  v9 = 0;
+  v10 = v22;
+  v11 = v21;
+  if ( (int)v22 > 0 )
+  {
+    v12 = 0;
+    do
+    {
+      v13 = 0;
+      v14 = *(_QWORD *)(v12 + v11);
+      if ( *(int *)(v14 + 48) > 0 )
+      {
+        v15 = *(_DWORD *)(v4 + 8);
+        v16 = *(_QWORD *)(v4 + 24);
+        v17 = *(_DWORD *)(v4 + 12);
+        do
+        {
+          v23.m128i_i64[0] = v14;
+          v23.m128i_i32[2] = v15 + *(_DWORD *)(v14 + 52) * v13;
+          v23.m128i_i32[3] = v17;
+          v24.m128i_i64[0] = __PAIR64__(v13, v8);
+          v24.m128i_i64[1] = v16;
+          LOBYTE(v25) = 0;
+          v26[0] = v23;
+          v26[1] = v24;
+          v27 = v25;
+          v18 = sub_7FF6BD7F4AC0(a1, v26);
+          v17 = v18;
+          ++v13;
+          v11 = v21;
+          v14 = *(_QWORD *)(v12 + v21);
+        }
+        while ( v13 < *(_DWORD *)(v14 + 48) );
+        v4 = a2;
+        *(_DWORD *)(a2 + 12) = v18;
+        v10 = v22;
+      }
+      ++v9;
+      v12 += 8;
+    }
+    while ( v9 < v10 );
+  }
+  v19 = *(_DWORD *)(v4 + 12);
+  if ( v11 )
+    sub_7FF6BA6E0B20(v11);
+  return v19;
+}

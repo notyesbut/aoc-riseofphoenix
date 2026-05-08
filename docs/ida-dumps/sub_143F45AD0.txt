@@ -1,0 +1,56 @@
+__int64 __fastcall sub_143F45AD0(__int64 a1, _DWORD *a2, _DWORD *a3, __int64 a4, RTL_SRWLOCK *a5, __int64 a6, char a7)
+{
+  int v8; // r12d
+  __int64 v10; // rsi
+  int v11; // edi
+  unsigned int v12; // ebx
+  __int64 v13; // rcx
+  _DWORD *v14; // rax
+  __int64 v15; // r8
+  __int64 v16; // rbx
+  unsigned int v18; // [rsp+50h] [rbp+8h] BYREF
+
+  v8 = a2[40];
+  if ( (*(_BYTE *)(*(_QWORD *)(a1 + 72) + 240LL) & 1) == 0 || a7 )
+  {
+    v12 = *(_DWORD *)(a4 + 8);
+    v15 = (unsigned int)(a3[10] + *a3 + 1);
+  }
+  else
+  {
+    v10 = (__int64)a5;
+    v11 = *(_DWORD *)(a4 + 12);
+    AcquireSRWLockShared(a5 + 6);
+    v12 = 0;
+    if ( *(int *)(v10 + 32) <= 0 )
+    {
+LABEL_7:
+      ReleaseSRWLockShared((PSRWLOCK)(v10 + 48));
+      v12 = -1;
+    }
+    else
+    {
+      v13 = 0;
+      v14 = (_DWORD *)(*(_QWORD *)(v10 + 24) + 20LL);
+      while ( *v14 != v11 )
+      {
+        ++v12;
+        ++v13;
+        v14 += 10;
+        if ( v13 >= *(int *)(v10 + 32) )
+          goto LABEL_7;
+      }
+      ReleaseSRWLockShared((PSRWLOCK)(v10 + 48));
+    }
+    sub_14428A090(*(_QWORD *)(*(_QWORD *)(a1 + 72) + 136LL), v10, v12);
+    v15 = 2;
+    if ( *(int *)(v10 + 32) > 2 )
+      v15 = *(unsigned int *)(v10 + 32);
+  }
+  sub_1414F9D30(a2, v12, v15);
+  v16 = a6;
+  v18 = *(_DWORD *)(a6 + 160);
+  (*(void (__fastcall **)(_DWORD *, unsigned int *))(*(_QWORD *)a2 + 408LL))(a2, &v18);
+  (*(void (__fastcall **)(_DWORD *, _QWORD, _QWORD))(*(_QWORD *)a2 + 392LL))(a2, *(_QWORD *)(v16 + 144), v18);
+  return (unsigned int)(a2[40] - v8);
+}

@@ -1,0 +1,13 @@
+char __fastcall sub_144BD2190(__int64 a1, __int64 a2, __int64 a3, unsigned int a4)
+{
+  __int64 v8; // rax
+  __int64 v10; // [rsp+20h] [rbp-18h] BYREF
+  _DWORD v11[4]; // [rsp+28h] [rbp-10h] BYREF
+
+  if ( (*(_BYTE *)(a3 + 53) & 2) == 0 )
+    return 0;
+  v8 = sub_144B8CCF0(a3 + 40);
+  v10 = *(_QWORD *)(a3 + 44);
+  v11[0] = sub_144B8BB50(v11, v8);
+  return sub_144BD1950(a1, a2, &v10, a4);
+}

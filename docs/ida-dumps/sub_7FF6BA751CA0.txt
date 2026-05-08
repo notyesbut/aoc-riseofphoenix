@@ -1,0 +1,97 @@
+__int64 __fastcall sub_7FF6BA751CA0(__int64 a1, __int64 a2, __int64 a3)
+{
+  void *v5; // rdi
+  __int64 v6; // rdi
+  __int64 v7; // rax
+  __int64 v8; // rax
+  __int64 result; // rax
+  __int64 v10; // rbx
+  _QWORD v11[2]; // [rsp+30h] [rbp-59h] BYREF
+  _BYTE v12[28]; // [rsp+40h] [rbp-49h] BYREF
+  char v13; // [rsp+5Ch] [rbp-2Dh]
+  __int64 v14; // [rsp+60h] [rbp-29h]
+  __int128 v15; // [rsp+68h] [rbp-21h] BYREF
+  __int64 v16; // [rsp+78h] [rbp-11h]
+  __int128 v17; // [rsp+80h] [rbp-9h]
+  __int64 v18; // [rsp+90h] [rbp+7h]
+  void *v19; // [rsp+A0h] [rbp+17h] BYREF
+  __int128 v20; // [rsp+A8h] [rbp+1Fh] BYREF
+  __int64 v21; // [rsp+B8h] [rbp+2Fh]
+  char v22; // [rsp+108h] [rbp+7Fh] BYREF
+
+  if ( !byte_7FF6C68E5F41 )
+    return sub_7FF6BA7655D0(
+             *(_QWORD *)(a2 + 8),
+             *(_DWORD *)(a2 + 16),
+             (int)a1 + 4,
+             *(unsigned __int8 *)(a2 + 20),
+             *(_QWORD *)a2,
+             a3);
+  sub_7FF6BA772FD0(&v20);
+  memset(v12, 0, sizeof(v12));
+  v13 = 5;
+  v14 = 0;
+  sub_7FF6BA81B7A0(&v15);
+  v16 = 0;
+  v17 = 0;
+  v18 = 0;
+  *(_QWORD *)v12 = L"{Message}";
+  v5 = &unk_7FF6C6528950;
+  if ( dword_7FF6C68E6428 > *(_DWORD *)(*((_QWORD *)NtCurrentTeb()->ThreadLocalStoragePointer + (unsigned int)TlsIndex)
+                                      + 6160LL) )
+  {
+    sub_7FF6C2A108D0(&dword_7FF6C68E6428);
+    if ( dword_7FF6C68E6428 == -1 )
+    {
+      qword_7FF6C6528980 = 0;
+      dword_7FF6C6528988 = 0;
+      dword_7FF6C652898C = 48;
+      v19 = &unk_7FF6C6528950;
+      v11[0] = sub_7FF6BA752430;
+      v11[1] = &v19;
+      sub_7FF6BA755310((unsigned int)L"{Message}", (unsigned int)&v22, 0, 0, (__int64)v11);
+      atexit(sub_7FF6C2EF5D70);
+      Init_thread_footer(&dword_7FF6C68E6428);
+    }
+  }
+  if ( qword_7FF6C6528980 )
+    v5 = (void *)qword_7FF6C6528980;
+  *(_QWORD *)&v17 = v5;
+  v15 = v20;
+  v6 = v16;
+  v7 = v21;
+  v21 = 0;
+  v16 = v7;
+  if ( v6 )
+  {
+    if ( (_InterlockedExchangeAdd64((volatile signed __int64 *)(v6 + 24), 0xFFFFFFFFFFFFFFFFuLL) & 0x3FFFFFFF) == 1 )
+    {
+      (*(void (__fastcall **)(__int64))(*(_QWORD *)v6 + 16LL))(v6);
+      *(_QWORD *)(v6 + 8) = 0;
+      *(_QWORD *)(v6 + 16) = 0;
+      if ( (((unsigned __int64)_InterlockedExchangeAdd64((volatile signed __int64 *)(v6 + 24), 0xFFFFFFFFC0000000uLL) >> 30)
+          & 0x3FFFFFFF) == 1 )
+        (**(void (__fastcall ***)(__int64, __int64))v6)(v6, 1);
+    }
+  }
+  *(_QWORD *)&v12[8] = *(_QWORD *)(a2 + 8);
+  *(_DWORD *)&v12[16] = *(_DWORD *)(a2 + 16);
+  *(_QWORD *)&v12[20] = *(_QWORD *)(a1 + 4);
+  v13 = *(_BYTE *)(a2 + 20);
+  v14 = *(_QWORD *)sub_7FF6BA7F1150(&v22);
+  if ( v13 != 2 && v13 != 3 && v13 != 4 && v13 != 64 || (v8 = qword_7FF6C6907700) == 0 )
+    v8 = sub_7FF6BA7DEA90();
+  result = (*(__int64 (__fastcall **)(__int64, _BYTE *))(*(_QWORD *)v8 + 24LL))(v8, v12);
+  v10 = v16;
+  if ( v16
+    && (_InterlockedExchangeAdd64((volatile signed __int64 *)(v16 + 24), 0xFFFFFFFFFFFFFFFFuLL) & 0x3FFFFFFF) == 1 )
+  {
+    result = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)v10 + 16LL))(v10);
+    *(_QWORD *)(v10 + 8) = 0;
+    *(_QWORD *)(v10 + 16) = 0;
+    if ( (((unsigned __int64)_InterlockedExchangeAdd64((volatile signed __int64 *)(v10 + 24), 0xFFFFFFFFC0000000uLL) >> 30)
+        & 0x3FFFFFFF) == 1 )
+      return (**(__int64 (__fastcall ***)(__int64, __int64))v10)(v10, 1);
+  }
+  return result;
+}

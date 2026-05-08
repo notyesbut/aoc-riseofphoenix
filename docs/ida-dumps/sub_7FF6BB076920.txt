@@ -1,0 +1,62 @@
+__int64 __fastcall sub_7FF6BB076920(__int64 a1, char a2)
+{
+  char v4; // si
+  unsigned int v5; // eax
+  char v6; // si
+  __int64 result; // rax
+
+  if ( *(int *)(a1 + 152) > 1 )
+  {
+    v4 = 1;
+  }
+  else
+  {
+    v4 = 0;
+    sub_7FF6BA6FA520(a1 + 80);
+  }
+  *(_DWORD *)(a1 + 88) = 0;
+  if ( *(_DWORD *)(a1 + 92) )
+    sub_7FF6BA64BD90(24, 8, 0, a1 + 80, 0, a1 + 92);
+  *(_DWORD *)(a1 + 128) = -1;
+  *(_DWORD *)(a1 + 132) = 0;
+  v5 = *(_DWORD *)(a1 + 124);
+  *(_DWORD *)(a1 + 120) = 0;
+  if ( v5 > 0x80 )
+  {
+    *(_DWORD *)(a1 + 124) = 128;
+    sub_7FF6BA64C1F0(a1 + 96, 0);
+  }
+  if ( v4 )
+  {
+    *(_DWORD *)(a1 + 152) = 1;
+    sub_7FF6BA770530(a1 + 80);
+  }
+  if ( *(int *)(a1 + 232) > 1 )
+  {
+    v6 = 1;
+  }
+  else
+  {
+    v6 = 0;
+    sub_7FF6BA6FA520(a1 + 160);
+  }
+  *(_DWORD *)(a1 + 168) = 0;
+  if ( *(_DWORD *)(a1 + 172) )
+    sub_7FF6BA64BD90(24, 8, 0, a1 + 160, 0, a1 + 172);
+  *(_DWORD *)(a1 + 208) = -1;
+  *(_DWORD *)(a1 + 212) = 0;
+  result = *(unsigned int *)(a1 + 204);
+  *(_DWORD *)(a1 + 200) = 0;
+  if ( (unsigned int)result > 0x80 )
+  {
+    *(_DWORD *)(a1 + 204) = 128;
+    result = sub_7FF6BA64C1F0(a1 + 176, 0);
+  }
+  if ( v6 )
+  {
+    *(_DWORD *)(a1 + 232) = 1;
+    result = sub_7FF6BA770530(a1 + 160);
+  }
+  *(_BYTE *)(a1 + 72) = a2;
+  return result;
+}

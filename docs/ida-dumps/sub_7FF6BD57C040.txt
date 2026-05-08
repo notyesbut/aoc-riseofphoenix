@@ -1,0 +1,87 @@
+void __fastcall sub_7FF6BD57C040(__int64 a1, unsigned int a2)
+{
+  unsigned int *v3; // rsi
+  unsigned int v5; // edi
+  unsigned int v6; // edi
+  unsigned int v7; // edi
+  const wchar_t *v8; // r8
+  __int64 v9; // rcx
+  unsigned int *v10; // rbp
+  __int64 v11; // rbx
+  __int64 v12; // rdx
+  __int64 v13; // rax
+
+  v3 = (unsigned int *)(a1 + 556);
+  if ( *(_DWORD *)(a1 + 556) != a2 )
+  {
+    if ( (unsigned __int8)byte_7FF6C6B68418 >= 6u )
+    {
+      v9 = *(_QWORD *)(a1 + 120);
+      v10 = v3;
+      if ( !v9 )
+      {
+LABEL_22:
+        v11 = sub_7FF6BD5802D0(a2, a1);
+        v13 = sub_7FF6BD5802D0(*v3, v12);
+        sub_7FF6BA751C70((__int64)&byte_7FF6C6B68418, (__int64)&off_7FF6C3D03B68, v13, v11);
+        v3 = v10;
+        goto LABEL_23;
+      }
+      if ( !*(_BYTE *)(v9 + 1953) )
+      {
+        if ( *(_BYTE *)(v9 + 1912) )
+        {
+          if ( ++*(_DWORD *)(v9 + 1960) > *(_DWORD *)(v9 + 1956) )
+          {
+            *(_DWORD *)(a1 + 556) = a2;
+            return;
+          }
+        }
+        v10 = (unsigned int *)(a1 + 556);
+        goto LABEL_22;
+      }
+    }
+LABEL_23:
+    *v3 = a2;
+    return;
+  }
+  if ( (unsigned __int8)byte_7FF6C6B68418 >= 6u )
+  {
+    if ( a2 )
+    {
+      v5 = a2 - 1;
+      if ( v5 )
+      {
+        v6 = v5 - 1;
+        if ( v6 )
+        {
+          v7 = v6 - 1;
+          if ( v7 )
+          {
+            if ( v7 == 1 )
+              v8 = L"CleanedUp";
+            else
+              v8 = &pwszOutputURL;
+          }
+          else
+          {
+            v8 = L"ReceivedJoin";
+          }
+        }
+        else
+        {
+          v8 = L"Welcomed";
+        }
+      }
+      else
+      {
+        v8 = L"LoggingIn";
+      }
+    }
+    else
+    {
+      v8 = L"Invalid";
+    }
+    sub_7FF6BA751C70((__int64)&byte_7FF6C6B68418, (__int64)&off_7FF6C3D03AE0, v8);
+  }
+}

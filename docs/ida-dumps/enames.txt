@@ -1,0 +1,1102 @@
+============================================================
+ find_enames.idc — locate AOC EName string table
+============================================================
+
+.rdata: 0x7ff6c30756c0 - 0x7ff6c6527000
+
+============================================================
+PART 1: Find well-known FName strings
+============================================================
+  Actor  = 0x7ff6c3158164
+  Pawn   = 0x7ff6c31581bc
+  None   = 0x7ff6c3157c9c
+  Object = 0x7ff6c3158154
+  PlayerController = 0x7ff6c34dda98
+
+============================================================
+PART 2: Find qword pointers to FName strings in .rdata
+============================================================
+
+--- Pointers to Actor (0x7ff6c3158164) in .rdata ---
+  ptr at 0x7ff6c36fd6c0
+  ptr at 0x7ff6c3798170
+  ptr at 0x7ff6c390c730
+  ptr at 0x7ff6c390c830
+  ptr at 0x7ff6c390cce0
+  ptr at 0x7ff6c390cec0
+  ptr at 0x7ff6c3936260
+  ptr at 0x7ff6c3a8fa00
+  ptr at 0x7ff6c3aa8d90
+  ptr at 0x7ff6c3b6d8c0
+  ptr at 0x7ff6c3b6e1d0
+  ptr at 0x7ff6c3c08a20
+  ptr at 0x7ff6c3c29a40
+  ptr at 0x7ff6c3c86a80
+  ptr at 0x7ff6c3cd17b0
+  ptr at 0x7ff6c3cd2ca0
+  ptr at 0x7ff6c3d2d760
+  ptr at 0x7ff6c3f130a0
+  ptr at 0x7ff6c3f15400
+  ptr at 0x7ff6c3f6a030
+  ptr at 0x7ff6c3fdcd90
+  ptr at 0x7ff6c3fdd280
+  ptr at 0x7ff6c3fdd420
+  ptr at 0x7ff6c3fe72e0
+  ptr at 0x7ff6c3fe7460
+  ptr at 0x7ff6c3fe78d0
+  ptr at 0x7ff6c3fe7b50
+  ptr at 0x7ff6c3fe9010
+  ptr at 0x7ff6c3fe9150
+  ptr at 0x7ff6c3fe9730
+  ... [more, capping at 30]
+  [total: 30 pointers]
+
+--- Pointers to None (0x7ff6c3157c9c) in .rdata ---
+  [total: 0 pointers]
+
+--- Pointers to Pawn (0x7ff6c31581bc) in .rdata ---
+  ptr at 0x7ff6c3a7fd10
+  ptr at 0x7ff6c3a89f70
+  ptr at 0x7ff6c3ba7ba0
+  ptr at 0x7ff6c3c02a80
+  ptr at 0x7ff6c3d39d00
+  ptr at 0x7ff6c3d39da0
+  ptr at 0x7ff6c3d3a910
+  ptr at 0x7ff6c41064a0
+  ptr at 0x7ff6c413fee0
+  ptr at 0x7ff6c46c8800
+  ptr at 0x7ff6c46c8aa0
+  ptr at 0x7ff6c46c8b80
+  ptr at 0x7ff6c46c8ed0
+  ptr at 0x7ff6c46c9420
+  ptr at 0x7ff6c46c9780
+  ptr at 0x7ff6c46ca5f0
+  ptr at 0x7ff6c46cad00
+  ptr at 0x7ff6c46cba40
+  ptr at 0x7ff6c46cbaa0
+  ptr at 0x7ff6c46cbb30
+  ptr at 0x7ff6c46cbb90
+  ptr at 0x7ff6c46cbbf0
+  ptr at 0x7ff6c46cbcd0
+  ptr at 0x7ff6c4764680
+  ptr at 0x7ff6c48b1e90
+  ptr at 0x7ff6c48b2640
+  [total: 26 pointers]
+
+============================================================
+PART 3: Compute table base from known indices
+============================================================
+  IF NAME_Actor = 102, table_base = 0x7ff6c36fd390
+  table[0] = 0x0  (string: "")
+
+============================================================
+PART 4: Full EName table dump (qword + string)
+============================================================
+
+--- Table dump: ±200 qwords around 0x7ff6c36fd6c0 ---
+  (offset from center | address | qword value | target string)
+  [ -200]  0x7ff6c36fd080  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ -199]  0x7ff6c36fd088  0x00007ff6ba64c300  sub_7FF6BA64C300
+  [ -198]  0x7ff6c36fd090  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ -197]  0x7ff6c36fd098  0x00007ff6ba64c320  ?state@?$fpos@U_Mbstatet@@@std@@QEBA?AU_Mbstatet@@XZ
+  [ -196]  0x7ff6c36fd0a0  0x00007ff6bc6567c0  sub_7FF6BC6567C0
+  [ -195]  0x7ff6c36fd0a8  0x00007ff6bc6567c0  sub_7FF6BC6567C0
+  [ -194]  0x7ff6c36fd0b0  0x00007ff6bc656750  sub_7FF6BC656750
+  [ -193]  0x7ff6c36fd0b8  0x00007ff6bc656800  sub_7FF6BC656800
+  [ -192]  0x7ff6c36fd0c0  0x00007ff6bc656810  sub_7FF6BC656810
+  [ -191]  0x7ff6c36fd0c8  0x007200630053002f
+  [ -190]  0x7ff6c36fd0d0  0x002f007400700069
+  [ -189]  0x7ff6c36fd0d8  0x00720074006e0049
+  [ -188]  0x7ff6c36fd0e0  0x0064006900700065
+  [ -187]  0x7ff6c36fd0e8  0x0000000000000000
+  [ -186]  0x7ff6c36fd0f0  0x00720074006e0049
+  [ -185]  0x7ff6c36fd0f8  0x0064006900700065
+  [ -184]  0x7ff6c36fd100  0x0074007300790053
+  [ -183]  0x7ff6c36fd108  0x006f0043006d0065
+  [ -182]  0x7ff6c36fd110  0x006700690066006e
+  [ -181]  0x7ff6c36fd118  0x0061007400610044
+  [ -180]  0x7ff6c36fd120  0x0000000000000000
+  [ -179]  0x7ff6c36fd128  0x00007ff6c36fd2e0  aClassname_2  "ClassName"
+  [ -178]  0x7ff6c36fd130  0x0000000000000000
+  [ -177]  0x7ff6c36fd138  0x0010000000000000
+  [ -176]  0x7ff6c36fd140  0x0000004500000015
+  [ -175]  0x7ff6c36fd148  0x0000000000000000
+  [ -174]  0x7ff6c36fd150  0x0000000000000000
+  [ -173]  0x7ff6c36fd158  0x0000000000000001
+  [ -172]  0x7ff6c36fd160  0x00007ff6c36fd2f0  aGoalcompletion  "GoalCompletionTime"
+  [ -171]  0x7ff6c36fd168  0x0000000000000000
+  [ -170]  0x7ff6c36fd170  0x0010000000000000
+  [ -169]  0x7ff6c36fd178  0x000000450000000a
+  [ -168]  0x7ff6c36fd180  0x0000000000000000
+  [ -167]  0x7ff6c36fd188  0x0000000000000000
+  [ -166]  0x7ff6c36fd190  0x0000000000100001
+  [ -165]  0x7ff6c36fd198  0x0000000000000000
+  [ -164]  0x7ff6c36fd1a0  0x00007ff6c328d490  aBenabled_0  "bEnabled"
+  [ -163]  0x7ff6c36fd1a8  0x0000000000000000
+  [ -162]  0x7ff6c36fd1b0  0x0010000000000000
+  [ -161]  0x7ff6c36fd1b8  0x000000450000004c
+  [ -160]  0x7ff6c36fd1c0  0x0000000000000000
+  [ -159]  0x7ff6c36fd1c8  0x0000000000000000
+  [ -158]  0x7ff6c36fd1d0  0x0000001800010001
+  [ -157]  0x7ff6c36fd1d8  0x00007ff6ba9e0c20  sub_7FF6BA9E0C20
+  [ -156]  0x7ff6c36fd1e0  0x00007ff6c36fd128  off_7FF6C36FD128
+  [ -155]  0x7ff6c36fd1e8  0x00007ff6c36fd160  off_7FF6C36FD160
+  [ -154]  0x7ff6c36fd1f0  0x00007ff6c36fd1a0  off_7FF6C36FD1A0
+  [ -153]  0x7ff6c36fd1f8  0x00007ff6ba8acba0  sub_7FF6BA8ACBA0
+  [ -152]  0x7ff6c36fd200  0x00007ff6ba8ace20  sub_7FF6BA8ACE20
+  [ -151]  0x7ff6c36fd208  0x00007ff6bc656a60  sub_7FF6BC656A60
+  [ -150]  0x7ff6c36fd210  0x00007ff6bc656a60  sub_7FF6BC656A60
+  [ -149]  0x7ff6c36fd218  0x00007ff6ba946af0  sub_7FF6BA946AF0
+  [ -148]  0x7ff6c36fd220  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ -147]  0x7ff6c36fd228  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ -146]  0x7ff6c36fd230  0x00007ff6ba8ad2e0  sub_7FF6BA8AD2E0
+  [ -145]  0x7ff6c36fd238  0x00007ff6ba8ad2c0  sub_7FF6BA8AD2C0
+  [ -144]  0x7ff6c36fd240  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ -143]  0x7ff6c36fd248  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ -142]  0x7ff6c36fd250  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ -141]  0x7ff6c36fd258  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ -140]  0x7ff6c36fd260  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ -139]  0x7ff6c36fd268  0x00007ff6bb25da40  sub_7FF6BB25DA40
+  [ -138]  0x7ff6c36fd270  0x00007ff6ba8acb00  sub_7FF6BA8ACB00
+  [ -137]  0x7ff6c36fd278  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ -136]  0x7ff6c36fd280  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ -135]  0x7ff6c36fd288  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ -134]  0x7ff6c36fd290  0x00007ff6ba8acb10  sub_7FF6BA8ACB10
+  [ -133]  0x7ff6c36fd298  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ -132]  0x7ff6c36fd2a0  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ -131]  0x7ff6c36fd2a8  0x00007ff6ba8ad020  sub_7FF6BA8AD020
+  [ -130]  0x7ff6c36fd2b0  0x00007ff6ba8ad300  sub_7FF6BA8AD300
+  [ -129]  0x7ff6c36fd2b8  0x00007ff6ba8ad310  sub_7FF6BA8AD310
+  [ -128]  0x7ff6c36fd2c0  0x00007ff6bb25db40  sub_7FF6BB25DB40
+  [ -127]  0x7ff6c36fd2c8  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ -126]  0x7ff6c36fd2d0  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ -125]  0x7ff6c36fd2d8  0x00007ff6ba64c360  ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z
+  [ -124]  0x7ff6c36fd2e0  0x6d614e7373616c43
+  [ -123]  0x7ff6c36fd2e8  0x0000000000000065
+  [ -122]  0x7ff6c36fd2f0  0x706d6f436c616f47
+  [ -121]  0x7ff6c36fd2f8  0x69546e6f6974656c
+  [ -120]  0x7ff6c36fd300  0x000000000000656d
+  [ -119]  0x7ff6c36fd308  0x6469706572746e49
+  [ -118]  0x7ff6c36fd310  0x6f436d6574737953
+  [ -117]  0x7ff6c36fd318  0x617461446769666e
+  [ -116]  0x7ff6c36fd320  0x0000000000000000
+  [ -115]  0x7ff6c36fd328  0x0000000000000000
+  [ -114]  0x7ff6c36fd330  0x00007ff6c36fd460  aUsethread  "UseThread"
+  [ -113]  0x7ff6c36fd338  0x0000000000000000
+  [ -112]  0x7ff6c36fd340  0x0010000000004000
+  [ -111]  0x7ff6c36fd348  0x000000450000004c
+  [ -110]  0x7ff6c36fd350  0x0000000000000000
+  [ -109]  0x7ff6c36fd358  0x0000000000000000
+  [ -108]  0x7ff6c36fd360  0x0000006000010001
+  [ -107]  0x7ff6c36fd368  0x00007ff6bad55c20  sub_7FF6BAD55C20
+  [ -106]  0x7ff6c36fd370  0x00007ff6c36fd470  aConfigdata  "ConfigData"
+  [ -105]  0x7ff6c36fd378  0x0000000000000000
+  [ -104]  0x7ff6c36fd380  0x0000000000004000
+  [ -103]  0x7ff6c36fd388  0x0000004500000019
+  [ -102]  0x7ff6c36fd390  0x0000000000000000
+  [ -101]  0x7ff6c36fd398  0x0000000000000000
+  [ -100]  0x7ff6c36fd3a0  0x0000000000000001
+  [  -99]  0x7ff6c36fd3a8  0x00007ff6bc6569f0  sub_7FF6BC6569F0
+  [  -98]  0x7ff6c36fd3b0  0x00007ff6c36fd470  aConfigdata  "ConfigData"
+  [  -97]  0x7ff6c36fd3b8  0x0000000000000000
+  [  -96]  0x7ff6c36fd3c0  0x0010000000004000
+  [  -95]  0x7ff6c36fd3c8  0x0000004500000016
+  [  -94]  0x7ff6c36fd3d0  0x0000000000000000
+  [  -93]  0x7ff6c36fd3d8  0x0000000000000000
+  [  -92]  0x7ff6c36fd3e0  0x0000000000500001
+  [  -91]  0x7ff6c36fd3e8  0x00007ff6c36fd330  off_7FF6C36FD330
+  [  -90]  0x7ff6c36fd3f0  0x00007ff6c36fd370  off_7FF6C36FD370
+  [  -89]  0x7ff6c36fd3f8  0x00007ff6c36fd3b0  off_7FF6C36FD3B0
+  [  -88]  0x7ff6c36fd400  0x00007ff6ba9e0290  sub_7FF6BA9E0290
+  [  -87]  0x7ff6c36fd408  0x00007ff6bc6568e0  sub_7FF6BC6568E0
+  [  -86]  0x7ff6c36fd410  0x0000000000000000
+  [  -85]  0x7ff6c36fd418  0x0000000000000000
+  [  -84]  0x7ff6c36fd420  0x00007ff6bc656e40  sub_7FF6BC656E40
+  [  -83]  0x7ff6c36fd428  0x00007ff6c36fd480  aIntrepidsystem_7  "IntrepidSystemConfig"
+  [  -82]  0x7ff6c36fd430  0x00007ff6c36fd410  unk_7FF6C36FD410
+  [  -81]  0x7ff6c36fd438  0x00007ff6c36fd400  off_7FF6C36FD400
+  [  -80]  0x7ff6c36fd440  0x0000000000000000
+  [  -79]  0x7ff6c36fd448  0x00007ff6c36fd3e8  off_7FF6C36FD3E8
+  [  -78]  0x7ff6c36fd450  0x0000000000000000
+  [  -77]  0x7ff6c36fd458  0x001000a600018002
+  [  -76]  0x7ff6c36fd460  0x6165726854657355
+  [  -75]  0x7ff6c36fd468  0x0000000000000064
+  [  -74]  0x7ff6c36fd470  0x61446769666e6f43
+  [  -73]  0x7ff6c36fd478  0x0000000000006174
+  [  -72]  0x7ff6c36fd480  0x6469706572746e49
+  [  -71]  0x7ff6c36fd488  0x6f436d6574737953
+  [  -70]  0x7ff6c36fd490  0x000000006769666e
+  [  -69]  0x7ff6c36fd498  0x00720074006e0049
+  [  -68]  0x7ff6c36fd4a0  0x0064006900700065
+  [  -67]  0x7ff6c36fd4a8  0x0074007300790053
+  [  -66]  0x7ff6c36fd4b0  0x00690054006d0065
+  [  -65]  0x7ff6c36fd4b8  0x00750046006b0063
+  [  -64]  0x7ff6c36fd4c0  0x006900740063006e
+  [  -63]  0x7ff6c36fd4c8  0x00000000006e006f
+  [  -62]  0x7ff6c36fd4d0  0x00007ff6ba8acba0  sub_7FF6BA8ACBA0
+  [  -61]  0x7ff6c36fd4d8  0x00007ff6bb753e70  sub_7FF6BB753E70
+  [  -60]  0x7ff6c36fd4e0  0x00007ff6bc656ac0  sub_7FF6BC656AC0
+  [  -59]  0x7ff6c36fd4e8  0x00007ff6bc656b00  sub_7FF6BC656B00
+  [  -58]  0x7ff6c36fd4f0  0x00007ff6bc656b30  sub_7FF6BC656B30
+  [  -57]  0x7ff6c36fd4f8  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [  -56]  0x7ff6c36fd500  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [  -55]  0x7ff6c36fd508  0x00007ff6ba8ad2e0  sub_7FF6BA8AD2E0
+  [  -54]  0x7ff6c36fd510  0x00007ff6ba8ad2c0  sub_7FF6BA8AD2C0
+  [  -53]  0x7ff6c36fd518  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [  -52]  0x7ff6c36fd520  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [  -51]  0x7ff6c36fd528  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [  -50]  0x7ff6c36fd530  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [  -49]  0x7ff6c36fd538  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [  -48]  0x7ff6c36fd540  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [  -47]  0x7ff6c36fd548  0x00007ff6ba8acb00  sub_7FF6BA8ACB00
+  [  -46]  0x7ff6c36fd550  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [  -45]  0x7ff6c36fd558  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [  -44]  0x7ff6c36fd560  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [  -43]  0x7ff6c36fd568  0x00007ff6ba8acb10  sub_7FF6BA8ACB10
+  [  -42]  0x7ff6c36fd570  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [  -41]  0x7ff6c36fd578  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [  -40]  0x7ff6c36fd580  0x00007ff6ba8ad020  sub_7FF6BA8AD020
+  [  -39]  0x7ff6c36fd588  0x00007ff6ba8ae480  sub_7FF6BA8AE480
+  [  -38]  0x7ff6c36fd590  0x00007ff6ba8ae490  sub_7FF6BA8AE490
+  [  -37]  0x7ff6c36fd598  0x00007ff6bc656b40  sub_7FF6BC656B40
+  [  -36]  0x7ff6c36fd5a0  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [  -35]  0x7ff6c36fd5a8  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [  -34]  0x7ff6c36fd5b0  0x00007ff6ba64c360  ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z
+  [  -33]  0x7ff6c36fd5b8  0x6469706572746e49
+  [  -32]  0x7ff6c36fd5c0  0x69546d6574737953
+  [  -31]  0x7ff6c36fd5c8  0x6974636e75466b63
+  [  -30]  0x7ff6c36fd5d0  0x0000000000006e6f
+  [  -29]  0x7ff6c36fd5d8  0x0000000000000000
+  [  -28]  0x7ff6c36fd5e0  0x00007ff6c31d274c  aWorld_2  "World"
+  [  -27]  0x7ff6c36fd5e8  0x0000000000000000
+  [  -26]  0x7ff6c36fd5f0  0x0010000000000080
+  [  -25]  0x7ff6c36fd5f8  0x0000004500000012
+  [  -24]  0x7ff6c36fd600  0x0000000000000000
+  [  -23]  0x7ff6c36fd608  0x0000000000000000
+  [  -22]  0x7ff6c36fd610  0x0000000000000001
+  [  -21]  0x7ff6c36fd618  0x00007ff6bda61c50  sub_7FF6BDA61C50
+  [  -20]  0x7ff6c36fd620  0x00007ff6c36fd5e0  off_7FF6C36FD5E0
+  [  -19]  0x7ff6c36fd628  0x0070556e61656c43
+  [  -18]  0x7ff6c36fd630  0x0063006900540045
+  [  -17]  0x7ff6c36fd638  0x006800630053006b
+  [  -16]  0x7ff6c36fd640  0x006c007500640065
+  [  -15]  0x7ff6c36fd648  0x006d006900540065
+  [  -14]  0x7ff6c36fd650  0x00000067006e0069
+  [  -13]  0x7ff6c36fd658  0x00007ff6c36fd678  aEtickschedulet_0  "ETickScheduleTiming::None"
+  [  -12]  0x7ff6c36fd660  0x0000000000000000
+  [  -11]  0x7ff6c36fd668  0x00007ff6c36fd698  aEtickschedulet_1  "ETickScheduleTiming::Budget"
+  [  -10]  0x7ff6c36fd670  0x0000000000000001
+  [   -9]  0x7ff6c36fd678  0x6863536b63695445
+  [   -8]  0x7ff6c36fd680  0x6d6954656c756465
+  [   -7]  0x7ff6c36fd688  0x6e6f4e3a3a676e69
+  [   -6]  0x7ff6c36fd690  0x0000000000000065
+  [   -5]  0x7ff6c36fd698  0x6863536b63695445
+  [   -4]  0x7ff6c36fd6a0  0x6d6954656c756465
+  [   -3]  0x7ff6c36fd6a8  0x6475423a3a676e69
+  [   -2]  0x7ff6c36fd6b0  0x0000000000746567
+  [   -1]  0x7ff6c36fd6b8  0x0000000000000000
+  [   +0]  0x7ff6c36fd6c0  0x00007ff6c3158164  aActor  "Actor"
+  [   +1]  0x7ff6c36fd6c8  0x0000000000000000
+  [   +2]  0x7ff6c36fd6d0  0x0010000000000080
+  [   +3]  0x7ff6c36fd6d8  0x0000004500000012
+  [   +4]  0x7ff6c36fd6e0  0x0000000000000000
+  [   +5]  0x7ff6c36fd6e8  0x0000000000000000
+  [   +6]  0x7ff6c36fd6f0  0x0000000000000001
+  [   +7]  0x7ff6c36fd6f8  0x00007ff6bce945d0  sub_7FF6BCE945D0
+  [   +8]  0x7ff6c36fd700  0x00007ff6c36fd768  aEndplayreason  "EndPlayReason"
+  [   +9]  0x7ff6c36fd708  0x0000000000000000
+  [  +10]  0x7ff6c36fd710  0x0010000000000080
+  [  +11]  0x7ff6c36fd718  0x0000004500000000
+  [  +12]  0x7ff6c36fd720  0x0000000000000000
+  [  +13]  0x7ff6c36fd728  0x0000000000000000
+  [  +14]  0x7ff6c36fd730  0x0000000000080001
+  [  +15]  0x7ff6c36fd738  0x00007ff6bce84350  sub_7FF6BCE84350
+  [  +16]  0x7ff6c36fd740  0x00007ff6c36fd6c0  off_7FF6C36FD6C0
+  [  +17]  0x7ff6c36fd748  0x00007ff6c36fd700  off_7FF6C36FD700
+  [  +18]  0x7ff6c36fd750  0x6863536b63695445
+  [  +19]  0x7ff6c36fd758  0x6d6954656c756465
+  [  +20]  0x7ff6c36fd760  0x0000000000676e69
+  [  +21]  0x7ff6c36fd768  0x5279616c50646e45
+  [  +22]  0x7ff6c36fd770  0x0000006e6f736165
+  [  +23]  0x7ff6c36fd778  0x0063006900540045
+  [  +24]  0x7ff6c36fd780  0x006800630053006b
+  [  +25]  0x7ff6c36fd788  0x006c007500640065
+  [  +26]  0x7ff6c36fd790  0x00740065004d0065
+  [  +27]  0x7ff6c36fd798  0x00000064006f0068
+  [  +28]  0x7ff6c36fd7a0  0x00007ff6c36fd7d8  aEtickschedulem_0  "ETickScheduleMethod::None"
+  [  +29]  0x7ff6c36fd7a8  0x0000000000000000
+  [  +30]  0x7ff6c36fd7b0  0x00007ff6c36fd7f8  aEtickschedulem_1  "ETickScheduleMethod::RoundRobin"
+  [  +31]  0x7ff6c36fd7b8  0x0000000000000001
+  [  +32]  0x7ff6c36fd7c0  0x6341656c646e6148
+  [  +33]  0x7ff6c36fd7c8  0x6c50646e45726f74
+  [  +34]  0x7ff6c36fd7d0  0x0000000000007961
+  [  +35]  0x7ff6c36fd7d8  0x6863536b63695445
+  [  +36]  0x7ff6c36fd7e0  0x74654d656c756465
+  [  +37]  0x7ff6c36fd7e8  0x6e6f4e3a3a646f68
+  [  +38]  0x7ff6c36fd7f0  0x0000000000000065
+  [  +39]  0x7ff6c36fd7f8  0x6863536b63695445
+  [  +40]  0x7ff6c36fd800  0x74654d656c756465
+  [  +41]  0x7ff6c36fd808  0x756f523a3a646f68
+  [  +42]  0x7ff6c36fd810  0x006e69626f52646e
+  [  +43]  0x7ff6c36fd818  0x6863536b63695445
+  [  +44]  0x7ff6c36fd820  0x74654d656c756465
+  [  +45]  0x7ff6c36fd828  0x0000000000646f68
+  [  +46]  0x7ff6c36fd830  0x0063006900540045
+  [  +47]  0x7ff6c36fd838  0x006900720050006b
+  [  +48]  0x7ff6c36fd840  0x007400690072006f
+  [  +49]  0x7ff6c36fd848  0x00740065004d0079
+  [  +50]  0x7ff6c36fd850  0x00000064006f0068
+  [  +51]  0x7ff6c36fd858  0x0000000000000000
+  [  +52]  0x7ff6c36fd860  0x00007ff6c3158154  aObject_1  "Object"
+  [  +53]  0x7ff6c36fd868  0x0000000000000000
+  [  +54]  0x7ff6c36fd870  0x0010000000000080
+  [  +55]  0x7ff6c36fd878  0x0000004500000012
+  [  +56]  0x7ff6c36fd880  0x0000000000000000
+  [  +57]  0x7ff6c36fd888  0x0000000000000000
+  [  +58]  0x7ff6c36fd890  0x0000000000000001
+  [  +59]  0x7ff6c36fd898  0x00007ff6ba8b7130  sub_7FF6BA8B7130
+  [  +60]  0x7ff6c36fd8a0  0x00007ff6c36fd860  off_7FF6C36FD860
+  [  +61]  0x7ff6c36fd8a8  0x00007ff6c36fd8d8  aEtickprioritym_0  "ETickPriorityMethod::None"
+  [  +62]  0x7ff6c36fd8b0  0x0000000000000000
+  [  +63]  0x7ff6c36fd8b8  0x00007ff6c36fd8f8  aEtickprioritym_1  "ETickPriorityMethod::Significance"
+  [  +64]  0x7ff6c36fd8c0  0x0000000000000001
+  [  +65]  0x7ff6c36fd8c8  0x00007ff6c36fd920  aEtickprioritym_2  "ETickPriorityMethod::LastTickedTime"
+  [  +66]  0x7ff6c36fd8d0  0x0000000000000002
+  [  +67]  0x7ff6c36fd8d8  0x6972506b63695445
+  [  +68]  0x7ff6c36fd8e0  0x74654d797469726f
+  [  +69]  0x7ff6c36fd8e8  0x6e6f4e3a3a646f68
+  [  +70]  0x7ff6c36fd8f0  0x0000000000000065
+  [  +71]  0x7ff6c36fd8f8  0x6972506b63695445
+  [  +72]  0x7ff6c36fd900  0x74654d797469726f
+  [  +73]  0x7ff6c36fd908  0x6769533a3a646f68
+  [  +74]  0x7ff6c36fd910  0x636e61636966696e
+  [  +75]  0x7ff6c36fd918  0x0000000000000065
+  [  +76]  0x7ff6c36fd920  0x6972506b63695445
+  [  +77]  0x7ff6c36fd928  0x74654d797469726f
+  [  +78]  0x7ff6c36fd930  0x73614c3a3a646f68
+  [  +79]  0x7ff6c36fd938  0x5464656b63695474
+  [  +80]  0x7ff6c36fd940  0x0000000000656d69
+  [  +81]  0x7ff6c36fd948  0x6f43656c646e6148
+  [  +82]  0x7ff6c36fd950  0x45746e656e6f706d
+  [  +83]  0x7ff6c36fd958  0x000079616c50646e
+  [  +84]  0x7ff6c36fd960  0x6972506b63695445
+  [  +85]  0x7ff6c36fd968  0x74654d797469726f
+  [  +86]  0x7ff6c36fd970  0x0000000000646f68
+  [  +87]  0x7ff6c36fd978  0x00720074006e0049
+  [  +88]  0x7ff6c36fd980  0x0064006900700065
+  [  +89]  0x7ff6c36fd988  0x0074007300790053
+  [  +90]  0x7ff6c36fd990  0x0062004f006d0065
+  [  +91]  0x7ff6c36fd998  0x007400630065006a
+  [  +92]  0x7ff6c36fd9a0  0x0061007200610050
+  [  +93]  0x7ff6c36fd9a8  0x000000000073006d
+  [  +94]  0x7ff6c36fd9b0  0x00007ff6c36fdd10  aObjectsystemma  "ObjectSystemMap"
+  [  +95]  0x7ff6c36fd9b8  0x0000000000000000
+  [  +96]  0x7ff6c36fd9c0  0x0004000000000000
+  [  +97]  0x7ff6c36fd9c8  0x000000450000000e
+  [  +98]  0x7ff6c36fd9d0  0x0000000000000000
+  [  +99]  0x7ff6c36fd9d8  0x0000000000000000
+  [ +100]  0x7ff6c36fd9e0  0x0000000000010001
+  [ +101]  0x7ff6c36fd9e8  0x00007ff6bc656830  sub_7FF6BC656830
+  [ +102]  0x7ff6c36fd9f0  0x00007ff6c36fdd20  aObjectsystemma_0  "ObjectSystemMap_Key"
+  [ +103]  0x7ff6c36fd9f8  0x0000000000000000
+  [ +104]  0x7ff6c36fda00  0x0004000000000000
+  [ +105]  0x7ff6c36fda08  0x000000450000000e
+  [ +106]  0x7ff6c36fda10  0x0000000000000000
+  [ +107]  0x7ff6c36fda18  0x0000000000000000
+  [ +108]  0x7ff6c36fda20  0x0000000000000001
+  [ +109]  0x7ff6c36fda28  0x00007ff6ba8b7130  sub_7FF6BA8B7130
+  [ +110]  0x7ff6c36fda30  0x00007ff6c36fdd10  aObjectsystemma  "ObjectSystemMap"
+  [ +111]  0x7ff6c36fda38  0x0000000000000000
+  [ +112]  0x7ff6c36fda40  0x0044000000002000
+  [ +113]  0x7ff6c36fda48  0x0000004500000017
+  [ +114]  0x7ff6c36fda50  0x0000000000000000
+  [ +115]  0x7ff6c36fda58  0x0000000000000000
+  [ +116]  0x7ff6c36fda60  0x0000000000900001
+  [ +117]  0x7ff6c36fda68  0x0000000000000000
+  [ +118]  0x7ff6c36fda70  0x00007ff6c36fdd38  aManagerclasses  "ManagerClasses"
+  [ +119]  0x7ff6c36fda78  0x0000000000000000
+  [ +120]  0x7ff6c36fda80  0x0104000000000000
+  [ +121]  0x7ff6c36fda88  0x0000004500000051
+  [ +122]  0x7ff6c36fda90  0x0000000000000000
+  [ +123]  0x7ff6c36fda98  0x0000000000000000
+  [ +124]  0x7ff6c36fdaa0  0x0000000000000001
+  [ +125]  0x7ff6c36fdaa8  0x00007ff6ba945c70  sub_7FF6BA945C70
+  [ +126]  0x7ff6c36fdab0  0x00007ff6ba8b7130  sub_7FF6BA8B7130
+  [ +127]  0x7ff6c36fdab8  0x00007ff6c36fdd38  aManagerclasses  "ManagerClasses"
+  [ +128]  0x7ff6c36fdac0  0x0000000000000000
+  [ +129]  0x7ff6c36fdac8  0x0144000000002000
+  [ +130]  0x7ff6c36fdad0  0x0000004500000016
+  [ +131]  0x7ff6c36fdad8  0x0000000000000000
+  [ +132]  0x7ff6c36fdae0  0x0000000000000000
+  [ +133]  0x7ff6c36fdae8  0x0000000000e00001
+  [ +134]  0x7ff6c36fdaf0  0x00007ff6c36fdd48  aManagermap  "ManagerMap"
+  [ +135]  0x7ff6c36fdaf8  0x0000000000000000
+  [ +136]  0x7ff6c36fdb00  0x0104000000000000
+  [ +137]  0x7ff6c36fdb08  0x0000004500000052
+  [ +138]  0x7ff6c36fdb10  0x0000000000000000
+  [ +139]  0x7ff6c36fdb18  0x0000000000000000
+  [ +140]  0x7ff6c36fdb20  0x0000000000010001
+  [ +141]  0x7ff6c36fdb28  0x00007ff6bc656830  sub_7FF6BC656830
+  [ +142]  0x7ff6c36fdb30  0x00007ff6c36fdd58  aManagermapKey  "ManagerMap_Key"
+  [ +143]  0x7ff6c36fdb38  0x0000000000000000
+  [ +144]  0x7ff6c36fdb40  0x0104000000000000
+  [ +145]  0x7ff6c36fdb48  0x0000004500000051
+  [ +146]  0x7ff6c36fdb50  0x0000000000000000
+  [ +147]  0x7ff6c36fdb58  0x0000000000000000
+  [ +148]  0x7ff6c36fdb60  0x0000000000000001
+  [ +149]  0x7ff6c36fdb68  0x00007ff6ba945c70  sub_7FF6BA945C70
+  [ +150]  0x7ff6c36fdb70  0x00007ff6ba8b7130  sub_7FF6BA8B7130
+  [ +151]  0x7ff6c36fdb78  0x00007ff6c36fdd48  aManagermap  "ManagerMap"
+  [ +152]  0x7ff6c36fdb80  0x0000000000000000
+  [ +153]  0x7ff6c36fdb88  0x0144000000002000
+  [ +154]  0x7ff6c36fdb90  0x0000004500000017
+  [ +155]  0x7ff6c36fdb98  0x0000000000000000
+  [ +156]  0x7ff6c36fdba0  0x0000000000000000
+  [ +157]  0x7ff6c36fdba8  0x0000000000f00001
+  [ +158]  0x7ff6c36fdbb0  0x00007ff6c36fdd68  aManagerinstanc  "ManagerInstances"
+  [ +159]  0x7ff6c36fdbb8  0x0000000000000000
+  [ +160]  0x7ff6c36fdbc0  0x0104000000000000
+  [ +161]  0x7ff6c36fdbc8  0x0000004500000052
+  [ +162]  0x7ff6c36fdbd0  0x0000000000000000
+  [ +163]  0x7ff6c36fdbd8  0x0000000000000000
+  [ +164]  0x7ff6c36fdbe0  0x0000000000000001
+  [ +165]  0x7ff6c36fdbe8  0x00007ff6bc656830  sub_7FF6BC656830
+  [ +166]  0x7ff6c36fdbf0  0x00007ff6c36fdd68  aManagerinstanc  "ManagerInstances"
+  [ +167]  0x7ff6c36fdbf8  0x0000000000000000
+  [ +168]  0x7ff6c36fdc00  0x0144000000002000
+  [ +169]  0x7ff6c36fdc08  0x0000004500000016
+  [ +170]  0x7ff6c36fdc10  0x0000000000000000
+  [ +171]  0x7ff6c36fdc18  0x0000000000000000
+  [ +172]  0x7ff6c36fdc20  0x0000000001400001
+  [ +173]  0x7ff6c36fdc28  0x0000000000000000
+  [ +174]  0x7ff6c36fdc30  0x00007ff6c36fd9b0  off_7FF6C36FD9B0
+  [ +175]  0x7ff6c36fdc38  0x00007ff6c36fd9f0  off_7FF6C36FD9F0
+  [ +176]  0x7ff6c36fdc40  0x00007ff6c36fda30  off_7FF6C36FDA30
+  [ +177]  0x7ff6c36fdc48  0x00007ff6c36fda70  off_7FF6C36FDA70
+  [ +178]  0x7ff6c36fdc50  0x00007ff6c36fdab8  off_7FF6C36FDAB8
+  [ +179]  0x7ff6c36fdc58  0x00007ff6c36fdaf0  off_7FF6C36FDAF0
+  [ +180]  0x7ff6c36fdc60  0x00007ff6c36fdb30  off_7FF6C36FDB30
+  [ +181]  0x7ff6c36fdc68  0x00007ff6c36fdb78  off_7FF6C36FDB78
+  [ +182]  0x7ff6c36fdc70  0x00007ff6c36fdbb0  off_7FF6C36FDBB0
+  [ +183]  0x7ff6c36fdc78  0x00007ff6c36fdbf0  off_7FF6C36FDBF0
+  [ +184]  0x7ff6c36fdc80  0x00007ff6bd9a4290  sub_7FF6BD9A4290
+  [ +185]  0x7ff6c36fdc88  0x00007ff6bc6568e0  sub_7FF6BC6568E0
+  [ +186]  0x7ff6c36fdc90  0x00007ff6bc656b70  sub_7FF6BC656B70
+  [ +187]  0x7ff6c36fdc98  0x00007ff6c36fd628  aCleanup_0  "CleanUp"
+  [ +188]  0x7ff6c36fdca0  0x00007ff6bc656c80  sub_7FF6BC656C80
+  [ +189]  0x7ff6c36fdca8  0x00007ff6c36fd7c0  aHandleactorend  "HandleActorEndPlay"
+  [ +190]  0x7ff6c36fdcb0  0x00007ff6bc656cf0  sub_7FF6BC656CF0
+  [ +191]  0x7ff6c36fdcb8  0x00007ff6c36fd948  aHandlecomponen  "HandleComponentEndPlay"
+  [ +192]  0x7ff6c36fdcc0  0x0000000000000000
+  [ +193]  0x7ff6c36fdcc8  0x0000000000000000
+  [ +194]  0x7ff6c36fdcd0  0x00007ff6bc656f20  sub_7FF6BC656F20
+  [ +195]  0x7ff6c36fdcd8  0x0000000000000000
+  [ +196]  0x7ff6c36fdce0  0x00007ff6c36fdcc0  unk_7FF6C36FDCC0
+  [ +197]  0x7ff6c36fdce8  0x00007ff6c36fdc80  off_7FF6C36FDC80
+  [ +198]  0x7ff6c36fdcf0  0x00007ff6c36fdc90  off_7FF6C36FDC90
+  [ +199]  0x7ff6c36fdcf8  0x00007ff6c36fdc30  off_7FF6C36FDC30
+  [ +200]  0x7ff6c36fdd00  0x0000000000000000
+  [ +201]  0x7ff6c36fdd08  0x001000a000050032
+  [ +202]  0x7ff6c36fdd10  0x79537463656a624f
+  [ +203]  0x7ff6c36fdd18  0x0070614d6d657473
+  [ +204]  0x7ff6c36fdd20  0x79537463656a624f
+  [ +205]  0x7ff6c36fdd28  0x5f70614d6d657473
+  [ +206]  0x7ff6c36fdd30  0x000000000079654b
+  [ +207]  0x7ff6c36fdd38  0x43726567616e614d
+  [ +208]  0x7ff6c36fdd40  0x000073657373616c
+  [ +209]  0x7ff6c36fdd48  0x4d726567616e614d
+  [ +210]  0x7ff6c36fdd50  0x0000000000007061
+  [ +211]  0x7ff6c36fdd58  0x4d726567616e614d
+  [ +212]  0x7ff6c36fdd60  0x000079654b5f7061
+  [ +213]  0x7ff6c36fdd68  0x49726567616e614d
+  [ +214]  0x7ff6c36fdd70  0x7365636e6174736e
+  [ +215]  0x7ff6c36fdd78  0x0000000000000000
+  [ +216]  0x7ff6c36fdd80  0x00007ff6ba8acba0  sub_7FF6BA8ACBA0
+  [ +217]  0x7ff6c36fdd88  0x00007ff6ba9156d0  sub_7FF6BA9156D0
+  [ +218]  0x7ff6c36fdd90  0x00007ff6bc656d60  sub_7FF6BC656D60
+  [ +219]  0x7ff6c36fdd98  0x00007ff6bc656d60  sub_7FF6BC656D60
+  [ +220]  0x7ff6c36fdda0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +221]  0x7ff6c36fdda8  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +222]  0x7ff6c36fddb0  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +223]  0x7ff6c36fddb8  0x00007ff6ba8ad2e0  sub_7FF6BA8AD2E0
+  [ +224]  0x7ff6c36fddc0  0x00007ff6ba8ad2c0  sub_7FF6BA8AD2C0
+  [ +225]  0x7ff6c36fddc8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +226]  0x7ff6c36fddd0  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +227]  0x7ff6c36fddd8  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +228]  0x7ff6c36fdde0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +229]  0x7ff6c36fdde8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +230]  0x7ff6c36fddf0  0x00007ff6bc656d70  sub_7FF6BC656D70
+  [ +231]  0x7ff6c36fddf8  0x00007ff6ba8acb00  sub_7FF6BA8ACB00
+  [ +232]  0x7ff6c36fde00  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +233]  0x7ff6c36fde08  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +234]  0x7ff6c36fde10  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +235]  0x7ff6c36fde18  0x00007ff6ba8acb10  sub_7FF6BA8ACB10
+  [ +236]  0x7ff6c36fde20  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +237]  0x7ff6c36fde28  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +238]  0x7ff6c36fde30  0x00007ff6ba8ad020  sub_7FF6BA8AD020
+  [ +239]  0x7ff6c36fde38  0x00007ff6baa38bd0  sub_7FF6BAA38BD0
+  [ +240]  0x7ff6c36fde40  0x00007ff6baa39ac0  sub_7FF6BAA39AC0
+  [ +241]  0x7ff6c36fde48  0x00007ff6baa236f0  sub_7FF6BAA236F0
+  [ +242]  0x7ff6c36fde50  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +243]  0x7ff6c36fde58  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +244]  0x7ff6c36fde60  0x00007ff6ba64c360  ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z
+  [ +245]  0x7ff6c36fde68  0x0000000000000000
+  [ +246]  0x7ff6c36fde70  0x00007ff6bc656e00  sub_7FF6BC656E00
+  [ +247]  0x7ff6c36fde78  0x00007ff6bc656a20  sub_7FF6BC656A20
+  [ +248]  0x7ff6c36fde80  0x00007ff6c36fd0f0  aIntrepidsystem_2  "IntrepidSystemConfigData"
+  [ +249]  0x7ff6c36fde88  0x00007ff6c6b33d08  qword_7FF6C6B33D08
+  [ +250]  0x7ff6c36fde90  0x0000000000000000
+  [ +251]  0x7ff6c36fde98  0x00007ff6bc656ee0  sub_7FF6BC656EE0
+  [ +252]  0x7ff6c36fdea0  0x00007ff6bc656a80  sub_7FF6BC656A80
+  [ +253]  0x7ff6c36fdea8  0x00007ff6c36fd498  aIntrepidsystem_4  "IntrepidSystemTickFunction"
+  [ +254]  0x7ff6c36fdeb0  0x00007ff6c6b33d38  qword_7FF6C6B33D38
+  [ +255]  0x7ff6c36fdeb8  0x0000000000000000
+  [ +256]  0x7ff6c36fdec0  0x00007ff6bc656990  sub_7FF6BC656990
+  [ +257]  0x7ff6c36fdec8  0x00007ff6bc656e40  sub_7FF6BC656E40
+  [ +258]  0x7ff6c36fded0  0x00007ff6c36fdf10  aUintrepidsyste_0  "UIntrepidSystemConfig"
+  [ +259]  0x7ff6c36fded8  0x00007ff6c6b33d20  qword_7FF6C6B33D20
+  [ +260]  0x7ff6c36fdee0  0x0000000000000000
+  [ +261]  0x7ff6c36fdee8  0x00007ff6bc6569c0  sub_7FF6BC6569C0
+  [ +262]  0x7ff6c36fdef0  0x00007ff6bc656f20  sub_7FF6BC656F20
+  [ +263]  0x7ff6c36fdef8  0x00007ff6c36fdf40  aUintrepidsyste_1  "UIntrepidSystemManager"
+  [ +264]  0x7ff6c36fdf00  0x00007ff6c6b33d98  qword_7FF6C6B33D98
+  [ +265]  0x7ff6c36fdf08  0x0000000000000000
+  [ +266]  0x7ff6c36fdf10  0x0074006e00490055
+  [ +267]  0x7ff6c36fdf18  0x0069007000650072
+  [ +268]  0x7ff6c36fdf20  0x0073007900530064
+  [ +269]  0x7ff6c36fdf28  0x0043006d00650074
+  [ +270]  0x7ff6c36fdf30  0x00690066006e006f
+  [ +271]  0x7ff6c36fdf38  0x0000000000000067
+  [ +272]  0x7ff6c36fdf40  0x0074006e00490055
+  [ +273]  0x7ff6c36fdf48  0x0069007000650072
+  [ +274]  0x7ff6c36fdf50  0x0073007900530064
+  [ +275]  0x7ff6c36fdf58  0x004d006d00650074
+  [ +276]  0x7ff6c36fdf60  0x00670061006e0061
+  [ +277]  0x7ff6c36fdf68  0x0000000000720065
+  [ +278]  0x7ff6c36fdf70  0x6469706572746e49
+  [ +279]  0x7ff6c36fdf78  0x624f6d6574737953
+  [ +280]  0x7ff6c36fdf80  0x617261507463656a
+  [ +281]  0x7ff6c36fdf88  0x000000000000736d
+  [ +282]  0x7ff6c36fdf90  0x00720074006e0049
+  [ +283]  0x7ff6c36fdf98  0x0064006900700065
+  [ +284]  0x7ff6c36fdfa0  0x0074007300790053
+  [ +285]  0x7ff6c36fdfa8  0x0062004f006d0065
+  [ +286]  0x7ff6c36fdfb0  0x007400630065006a
+  [ +287]  0x7ff6c36fdfb8  0x0000000000000000
+  [ +288]  0x7ff6c36fdfc0  0x00720074006e0049
+  [ +289]  0x7ff6c36fdfc8  0x0064006900700065
+  [ +290]  0x7ff6c36fdfd0  0x0000000000000000
+  [ +291]  0x7ff6c36fdfd8  0x00007ff6ba8acba0  sub_7FF6BA8ACBA0
+  [ +292]  0x7ff6c36fdfe0  0x00007ff6ba9156d0  sub_7FF6BA9156D0
+  [ +293]  0x7ff6c36fdfe8  0x00007ff6bc656de0  sub_7FF6BC656DE0
+  [ +294]  0x7ff6c36fdff0  0x00007ff6bc656de0  sub_7FF6BC656DE0
+  [ +295]  0x7ff6c36fdff8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +296]  0x7ff6c36fe000  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +297]  0x7ff6c36fe008  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +298]  0x7ff6c36fe010  0x00007ff6ba8ad2e0  sub_7FF6BA8AD2E0
+  [ +299]  0x7ff6c36fe018  0x00007ff6ba8ad2c0  sub_7FF6BA8AD2C0
+  [ +300]  0x7ff6c36fe020  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +301]  0x7ff6c36fe028  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +302]  0x7ff6c36fe030  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +303]  0x7ff6c36fe038  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +304]  0x7ff6c36fe040  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +305]  0x7ff6c36fe048  0x00007ff6baad7a50  sub_7FF6BAAD7A50
+  [ +306]  0x7ff6c36fe050  0x00007ff6ba8acb00  sub_7FF6BA8ACB00
+  [ +307]  0x7ff6c36fe058  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +308]  0x7ff6c36fe060  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +309]  0x7ff6c36fe068  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +310]  0x7ff6c36fe070  0x00007ff6ba8acb10  sub_7FF6BA8ACB10
+  [ +311]  0x7ff6c36fe078  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +312]  0x7ff6c36fe080  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +313]  0x7ff6c36fe088  0x00007ff6ba8ad020  sub_7FF6BA8AD020
+  [ +314]  0x7ff6c36fe090  0x00007ff6ba934b20  sub_7FF6BA934B20
+  [ +315]  0x7ff6c36fe098  0x00007ff6ba9359e0  sub_7FF6BA9359E0
+  [ +316]  0x7ff6c36fe0a0  0x00007ff6ba9f8640  sub_7FF6BA9F8640
+  [ +317]  0x7ff6c36fe0a8  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +318]  0x7ff6c36fe0b0  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +319]  0x7ff6c36fe0b8  0x00007ff6ba64c360  ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z
+  [ +320]  0x7ff6c36fe0c0  0x6469706572746e49
+  [ +321]  0x7ff6c36fe0c8  0x624f6d6574737953
+  [ +322]  0x7ff6c36fe0d0  0x000000007463656a
+  [ +323]  0x7ff6c36fe0d8  0x0000000000000000
+  [ +324]  0x7ff6c36fe0e0  0x00007ff6c36fe2b0  aWorkerclass  "WorkerClass"
+  [ +325]  0x7ff6c36fe0e8  0x0000000000000000
+  [ +326]  0x7ff6c36fe0f0  0x0114000000000000
+  [ +327]  0x7ff6c36fe0f8  0x0000004500000051
+  [ +328]  0x7ff6c36fe100  0x0000000000000000
+  [ +329]  0x7ff6c36fe108  0x0000000000000000
+  [ +330]  0x7ff6c36fe110  0x0000000000500001
+  [ +331]  0x7ff6c36fe118  0x00007ff6ba945c70  sub_7FF6BA945C70
+  [ +332]  0x7ff6c36fe120  0x00007ff6ba8b7130  sub_7FF6BA8B7130
+  [ +333]  0x7ff6c36fe128  0x0000000000000000
+  [ +334]  0x7ff6c36fe130  0x00007ff6c36fe2c0  aWorkerstotick  "WorkersToTick"
+  [ +335]  0x7ff6c36fe138  0x0000000000000000
+  [ +336]  0x7ff6c36fe140  0x0000000000000000
+  [ +337]  0x7ff6c36fe148  0x0000004500000019
+  [ +338]  0x7ff6c36fe150  0x0000000000000000
+  [ +339]  0x7ff6c36fe158  0x0000000000000000
+  [ +340]  0x7ff6c36fe160  0x0000000000000001
+  [ +341]  0x7ff6c36fe168  0x00007ff6bc656bd0  sub_7FF6BC656BD0
+  [ +342]  0x7ff6c36fe170  0x00007ff6c36fe2c0  aWorkerstotick  "WorkersToTick"
+  [ +343]  0x7ff6c36fe178  0x0000000000000000
+  [ +344]  0x7ff6c36fe180  0x0010000000000000
+  [ +345]  0x7ff6c36fe188  0x0000004500000016
+  [ +346]  0x7ff6c36fe190  0x0000000000000000
+  [ +347]  0x7ff6c36fe198  0x0000000000000000
+  [ +348]  0x7ff6c36fe1a0  0x0000000000580001
+  [ +349]  0x7ff6c36fe1a8  0x0000000000000000
+  [ +350]  0x7ff6c36fe1b0  0x00007ff6c36fe2d0  aObjects_0  "Objects"
+  [ +351]  0x7ff6c36fe1b8  0x0000000000000000
+  [ +352]  0x7ff6c36fe1c0  0x0000000000000000
+  [ +353]  0x7ff6c36fe1c8  0x0000004500000019
+  [ +354]  0x7ff6c36fe1d0  0x0000000000000000
+  [ +355]  0x7ff6c36fe1d8  0x0000000000000000
+  [ +356]  0x7ff6c36fe1e0  0x0000000000000001
+  [ +357]  0x7ff6c36fe1e8  0x00007ff6bc656bd0  sub_7FF6BC656BD0
+  [ +358]  0x7ff6c36fe1f0  0x00007ff6c36fe2d0  aObjects_0  "Objects"
+  [ +359]  0x7ff6c36fe1f8  0x0000000000000000
+  [ +360]  0x7ff6c36fe200  0x0010000000002000
+  [ +361]  0x7ff6c36fe208  0x0000004500000016
+  [ +362]  0x7ff6c36fe210  0x0000000000000000
+  [ +363]  0x7ff6c36fe218  0x0000000000000000
+  [ +364]  0x7ff6c36fe220  0x0000000000900001
+  [ +365]  0x7ff6c36fe228  0x00007ff6c36fe0e0  off_7FF6C36FE0E0
+  [ +366]  0x7ff6c36fe230  0x00007ff6c36fe130  off_7FF6C36FE130
+  [ +367]  0x7ff6c36fe238  0x00007ff6c36fe170  off_7FF6C36FE170
+  [ +368]  0x7ff6c36fe240  0x00007ff6c36fe1b0  off_7FF6C36FE1B0
+  [ +369]  0x7ff6c36fe248  0x00007ff6c36fe1f0  off_7FF6C36FE1F0
+  [ +370]  0x7ff6c36fe250  0x00007ff6ba9e0290  sub_7FF6BA9E0290
+  [ +371]  0x7ff6c36fe258  0x00007ff6bc6568e0  sub_7FF6BC6568E0
+  [ +372]  0x7ff6c36fe260  0x0000000000000000
+  [ +373]  0x7ff6c36fe268  0x0000000000000000
+  [ +374]  0x7ff6c36fe270  0x00007ff6bc656830  sub_7FF6BC656830
+  [ +375]  0x7ff6c36fe278  0x0000000000000000
+  [ +376]  0x7ff6c36fe280  0x00007ff6c36fe260  unk_7FF6C36FE260
+  [ +377]  0x7ff6c36fe288  0x00007ff6c36fe250  off_7FF6C36FE250
+  [ +378]  0x7ff6c36fe290  0x0000000000000000
+  [ +379]  0x7ff6c36fe298  0x00007ff6c36fe228  off_7FF6C36FE228
+  [ +380]  0x7ff6c36fe2a0  0x0000000000000000
+  [ +381]  0x7ff6c36fe2a8  0x001000a000028002
+  [ +382]  0x7ff6c36fe2b0  0x6c4372656b726f57
+  [ +383]  0x7ff6c36fe2b8  0x0000000000737361
+  [ +384]  0x7ff6c36fe2c0  0x547372656b726f57
+  [ +385]  0x7ff6c36fe2c8  0x0000006b6369546f
+  [ +386]  0x7ff6c36fe2d0  0x00737463656a624f
+  [ +387]  0x7ff6c36fe2d8  0x0000000000000000
+  [ +388]  0x7ff6c36fe2e0  0x00007ff6bc656c00  sub_7FF6BC656C00
+  [ +389]  0x7ff6c36fe2e8  0x00007ff6c36fd630  aEtickschedulet  "ETickScheduleTiming"
+  [ +390]  0x7ff6c36fe2f0  0x00007ff6c6b33d50  qword_7FF6C6B33D50
+  [ +391]  0x7ff6c36fe2f8  0x0000000000000000
+  [ +392]  0x7ff6c36fe300  0x00007ff6bc656c40  sub_7FF6BC656C40
+  [ +393]  0x7ff6c36fe308  0x00007ff6c36fd778  aEtickschedulem  "ETickScheduleMethod"
+  [ +394]  0x7ff6c36fe310  0x00007ff6c6b33d68  qword_7FF6C6B33D68
+  [ +395]  0x7ff6c36fe318  0x0000000000000000
+  [ +396]  0x7ff6c36fe320  0x00007ff6bc656cb0  sub_7FF6BC656CB0
+  [ +397]  0x7ff6c36fe328  0x00007ff6c36fd830  aEtickprioritym  "ETickPriorityMethod"
+  [ +398]  0x7ff6c36fe330  0x00007ff6c6b33d80  qword_7FF6C6B33D80
+  [ +399]  0x7ff6c36fe338  0x0000000000000000
+  [ +400]  0x7ff6c36fe340  0x00007ff6bc656910  sub_7FF6BC656910
+  [ +401]  0x7ff6c36fe348  0x00007ff6bc656d20  sub_7FF6BC656D20
+  [ +402]  0x7ff6c36fe350  0x00007ff6c36fd978  aIntrepidsystem_0  "IntrepidSystemObjectParams"
+  [ +403]  0x7ff6c36fe358  0x00007ff6c6b33db0  qword_7FF6C6B33DB0
+  [ +404]  0x7ff6c36fe360  0x0000000000000000
+  [ +405]  0x7ff6c36fe368  0x00007ff6bc656950  sub_7FF6BC656950
+  [ +406]  0x7ff6c36fe370  0x00007ff6bc656da0  sub_7FF6BC656DA0
+  [ +407]  0x7ff6c36fe378  0x00007ff6c36fdf90  aIntrepidsystem_1  "IntrepidSystemObject"
+  [ +408]  0x7ff6c36fe380  0x00007ff6c6b33dc8  qword_7FF6C6B33DC8
+  [ +409]  0x7ff6c36fe388  0x0000000000000000
+  [ +410]  0x7ff6c36fe390  0x00007ff6bc656ba0  sub_7FF6BC656BA0
+  [ +411]  0x7ff6c36fe398  0x00007ff6bc656830  sub_7FF6BC656830
+  [ +412]  0x7ff6c36fe3a0  0x00007ff6c36fe3b8  aUintrepidsyste_2  "UIntrepidSystem"
+  [ +413]  0x7ff6c36fe3a8  0x00007ff6c6b33de0  qword_7FF6C6B33DE0
+  [ +414]  0x7ff6c36fe3b0  0x0000000000000000
+  [ +415]  0x7ff6c36fe3b8  0x0074006e00490055
+  [ +416]  0x7ff6c36fe3c0  0x0069007000650072
+  [ +417]  0x7ff6c36fe3c8  0x0073007900530064
+  [ +418]  0x7ff6c36fe3d0  0x0000006d00650074
+  [ +419]  0x7ff6c36fe3d8  0x00490067006f004c
+  [ +420]  0x7ff6c36fe3e0  0x006500720074006e
+  [ +421]  0x7ff6c36fe3e8  0x0053006400690070
+  [ +422]  0x7ff6c36fe3f0  0x0065007400730079
+  [ +423]  0x7ff6c36fe3f8  0x000000000000006d
+  [ +424]  0x7ff6c36fe400  0x006b006300690054
+  [ +425]  0x7ff6c36fe408  0x0061006e0061006d
+  [ +426]  0x7ff6c36fe410  0x0020007200650067
+  [ +427]  0x7ff6c36fe418  0x0075006200650064
+  [ +428]  0x7ff6c36fe420  0x0000000000000067
+  [ +429]  0x7ff6c36fe428  0x006b006300690054
+  [ +430]  0x7ff6c36fe430  0x006200650044002e
+  [ +431]  0x7ff6c36fe438  0x0000000000670075
+  [ +432]  0x7ff6c36fe440  0x006e006900720070
+  [ +433]  0x7ff6c36fe448  0x0068007400200074
+  [ +434]  0x7ff6c36fe450  0x0065006400200065
+  [ +435]  0x7ff6c36fe458  0x0020006700750062
+  [ +436]  0x7ff6c36fe460  0x0074006100740073
+  [ +437]  0x7ff6c36fe468  0x00200066006f0020
+  [ +438]  0x7ff6c36fe470  0x0020006500680074
+  [ +439]  0x7ff6c36fe478  0x006b006300690074
+  [ +440]  0x7ff6c36fe480  0x0000000000000073
+  [ +441]  0x7ff6c36fe488  0x006b006300690054
+  [ +442]  0x7ff6c36fe490  0x006900720050002e
+  [ +443]  0x7ff6c36fe498  0x0061004d0074006e
+  [ +444]  0x7ff6c36fe4a0  0x006500670061006e
+  [ +445]  0x7ff6c36fe4a8  0x0000000000000072
+  [ +446]  0x7ff6c36fe4b0  0x0073007400650053
+  [ +447]  0x7ff6c36fe4b8  0x0073007900730020
+  [ +448]  0x7ff6c36fe4c0  0x0020006d00650074
+  [ +449]  0x7ff6c36fe4c8  0x0065006d00690074
+  [ +450]  0x7ff6c36fe4d0  0x000000000000002e
+  [ +451]  0x7ff6c36fe4d8  0x006b006300690054
+  [ +452]  0x7ff6c36fe4e0  0x007400650053002e
+  [ +453]  0x7ff6c36fe4e8  0x0074007300790053
+  [ +454]  0x7ff6c36fe4f0  0x00690054006d0065
+  [ +455]  0x7ff6c36fe4f8  0x000000000065006d
+  [ +456]  0x7ff6c36fe500  0x006b006300690054
+  [ +457]  0x7ff6c36fe508  0x0061006e0061006d
+  [ +458]  0x7ff6c36fe510  0x0020007200650067
+  [ +459]  0x7ff6c36fe518  0x0020006500730075
+  [ +460]  0x7ff6c36fe520  0x006b007300610074
+  [ +461]  0x7ff6c36fe528  0x006f006600200073
+  [ +462]  0x7ff6c36fe530  0x0063007300200072
+  [ +463]  0x7ff6c36fe538  0x0075006400650068
+  [ +464]  0x7ff6c36fe540  0x0067006e0069006c
+  [ +465]  0x7ff6c36fe548  0x0000000000000000
+  [ +466]  0x7ff6c36fe550  0x006b006300690054
+  [ +467]  0x7ff6c36fe558  0x006800630053002e
+  [ +468]  0x7ff6c36fe560  0x006c007500640065
+  [ +469]  0x7ff6c36fe568  0x0073006100540065
+  [ +470]  0x7ff6c36fe570  0x000000000073006b
+  [ +471]  0x7ff6c36fe578  0x0069006e00610073
+  [ +472]  0x7ff6c36fe580  0x0065007a00690074
+  [ +473]  0x7ff6c36fe588  0x006c0075006e0020
+  [ +474]  0x7ff6c36fe590  0x0062006f0020006c
+  [ +475]  0x7ff6c36fe598  0x007400630065006a
+  [ +476]  0x7ff6c36fe5a0  0x0075007300200073
+  [ +477]  0x7ff6c36fe5a8  0x0000000000650072
+  [ +478]  0x7ff6c36fe5b0  0x006b006300690054
+  [ +479]  0x7ff6c36fe5b8  0x006e00610053002e
+  [ +480]  0x7ff6c36fe5c0  0x007a006900740069
+  [ +481]  0x7ff6c36fe5c8  0x0072006f00570065
+  [ +482]  0x7ff6c36fe5d0  0x007300720065006b
+  [ +483]  0x7ff6c36fe5d8  0x0000000000000000
+  [ +484]  0x7ff6c36fe5e0  0x616c50646e456e4f
+  [ +485]  0x7ff6c36fe5e8  0x0000000000000079
+  [ +486]  0x7ff6c36fe5f0  0x00007ff6c36fe610  aScriptIntrepid_5  "/Script/Intrepid"
+  [ +487]  0x7ff6c36fe5f8  0x0000000000000000
+  [ +488]  0x7ff6c36fe600  0x0000001000000000
+  [ +489]  0x7ff6c36fe608  0x47c0eebdd57c47fe
+  [ +490]  0x7ff6c36fe610  0x2f7470697263532f
+  [ +491]  0x7ff6c36fe618  0x6469706572746e49
+  [ +492]  0x7ff6c36fe620  0x0000000000000000
+  [ +493]  0x7ff6c36fe628  0x00007ff6bc658340  sub_7FF6BC658340
+  [ +494]  0x7ff6c36fe630  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +495]  0x7ff6c36fe638  0x00007ff6baa95930  sub_7FF6BAA95930
+  [ +496]  0x7ff6c36fe640  0x00007ff6ba726520  sub_7FF6BA726520
+  [ +497]  0x7ff6c36fe648  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +498]  0x7ff6c36fe650  0x00007ff6baa93340  sub_7FF6BAA93340
+  [ +499]  0x7ff6c36fe658  0x00007ff6baa947b0  sub_7FF6BAA947B0
+  [ +500]  0x7ff6c36fe660  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +501]  0x7ff6c36fe668  0x00007ff6baa99690  sub_7FF6BAA99690
+  [ +502]  0x7ff6c36fe670  0x00007ff6ba8b4360  sub_7FF6BA8B4360
+  [ +503]  0x7ff6c36fe678  0x00007ff6baa9d860  sub_7FF6BAA9D860
+  [ +504]  0x7ff6c36fe680  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +505]  0x7ff6c36fe688  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +506]  0x7ff6c36fe690  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +507]  0x7ff6c36fe698  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +508]  0x7ff6c36fe6a0  0x00007ff6ba9eca80  sub_7FF6BA9ECA80
+  [ +509]  0x7ff6c36fe6a8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +510]  0x7ff6c36fe6b0  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +511]  0x7ff6c36fe6b8  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +512]  0x7ff6c36fe6c0  0x00007ff6ba9ec7f0  sub_7FF6BA9EC7F0
+  [ +513]  0x7ff6c36fe6c8  0x00007ff6ba9ec8a0  sub_7FF6BA9EC8A0
+  [ +514]  0x7ff6c36fe6d0  0x00007ff6ba9e5410  sub_7FF6BA9E5410
+  [ +515]  0x7ff6c36fe6d8  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +516]  0x7ff6c36fe6e0  0x00007ff6ba9e6910  sub_7FF6BA9E6910
+  [ +517]  0x7ff6c36fe6e8  0x00007ff6ba9f2300  sub_7FF6BA9F2300
+  [ +518]  0x7ff6c36fe6f0  0x00007ff6ba9f2290  sub_7FF6BA9F2290
+  [ +519]  0x7ff6c36fe6f8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +520]  0x7ff6c36fe700  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +521]  0x7ff6c36fe708  0x00007ff6ba895450  sub_7FF6BA895450
+  [ +522]  0x7ff6c36fe710  0x00007ff6ba8b5000  sub_7FF6BA8B5000
+  [ +523]  0x7ff6c36fe718  0x00007ff6ba9e78e0  unknown_libname_13
+  [ +524]  0x7ff6c36fe720  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +525]  0x7ff6c36fe728  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +526]  0x7ff6c36fe730  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +527]  0x7ff6c36fe738  0x00007ff6ba6a7810  sub_7FF6BA6A7810
+  [ +528]  0x7ff6c36fe740  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +529]  0x7ff6c36fe748  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +530]  0x7ff6c36fe750  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +531]  0x7ff6c36fe758  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +532]  0x7ff6c36fe760  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +533]  0x7ff6c36fe768  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +534]  0x7ff6c36fe770  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +535]  0x7ff6c36fe778  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +536]  0x7ff6c36fe780  0x00007ff6ba9f2690  sub_7FF6BA9F2690
+  [ +537]  0x7ff6c36fe788  0x00007ff6ba8b6d20  sub_7FF6BA8B6D20
+  [ +538]  0x7ff6c36fe790  0x00007ff6ba9f2680  sub_7FF6BA9F2680
+  [ +539]  0x7ff6c36fe798  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +540]  0x7ff6c36fe7a0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +541]  0x7ff6c36fe7a8  0x00007ff6ba8b5540  sub_7FF6BA8B5540
+  [ +542]  0x7ff6c36fe7b0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +543]  0x7ff6c36fe7b8  0x00007ff6ba9ec1d0  sub_7FF6BA9EC1D0
+  [ +544]  0x7ff6c36fe7c0  0x00007ff6ba9ec1f0  sub_7FF6BA9EC1F0
+  [ +545]  0x7ff6c36fe7c8  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +546]  0x7ff6c36fe7d0  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +547]  0x7ff6c36fe7d8  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +548]  0x7ff6c36fe7e0  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +549]  0x7ff6c36fe7e8  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +550]  0x7ff6c36fe7f0  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +551]  0x7ff6c36fe7f8  0x00007ff6ba9e8440  sub_7FF6BA9E8440
+  [ +552]  0x7ff6c36fe800  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +553]  0x7ff6c36fe808  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +554]  0x7ff6c36fe810  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +555]  0x7ff6c36fe818  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +556]  0x7ff6c36fe820  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +557]  0x7ff6c36fe828  0x00007ff6ba9ed380  sub_7FF6BA9ED380
+  [ +558]  0x7ff6c36fe830  0x00007ff6ba785150  sub_7FF6BA785150
+  [ +559]  0x7ff6c36fe838  0x00007ff6ba9e8da0  sub_7FF6BA9E8DA0
+  [ +560]  0x7ff6c36fe840  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +561]  0x7ff6c36fe848  0x00007ff6ba9e8a40  sub_7FF6BA9E8A40
+  [ +562]  0x7ff6c36fe850  0x00007ff6ba8b4390  sub_7FF6BA8B4390
+  [ +563]  0x7ff6c36fe858  0x00007ff6ba64c360  ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z
+  [ +564]  0x7ff6c36fe860  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +565]  0x7ff6c36fe868  0x00007ff6ba9e6f10  sub_7FF6BA9E6F10
+  [ +566]  0x7ff6c36fe870  0x00007ff6ba9e72d0  sub_7FF6BA9E72D0
+  [ +567]  0x7ff6c36fe878  0x00007ff6ba9e9a80  sub_7FF6BA9E9A80
+  [ +568]  0x7ff6c36fe880  0x00007ff6ba9e8630  sub_7FF6BA9E8630
+  [ +569]  0x7ff6c36fe888  0x00007ff6ba9e9e80  sub_7FF6BA9E9E80
+  [ +570]  0x7ff6c36fe890  0x00007ff6ba9e9ff0  sub_7FF6BA9E9FF0
+  [ +571]  0x7ff6c36fe898  0x00007ff6ba9f4900  sub_7FF6BA9F4900
+  [ +572]  0x7ff6c36fe8a0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +573]  0x7ff6c36fe8a8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +574]  0x7ff6c36fe8b0  0x00007ff6ba9e9f30  sub_7FF6BA9E9F30
+  [ +575]  0x7ff6c36fe8b8  0x00007ff6ba9e9e30  sub_7FF6BA9E9E30
+  [ +576]  0x7ff6c36fe8c0  0x00007ff6ba9ea020  sub_7FF6BA9EA020
+  [ +577]  0x7ff6c36fe8c8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +578]  0x7ff6c36fe8d0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +579]  0x7ff6c36fe8d8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +580]  0x7ff6c36fe8e0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +581]  0x7ff6c36fe8e8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +582]  0x7ff6c36fe8f0  0x00007ff6ba9e54f0  sub_7FF6BA9E54F0
+  [ +583]  0x7ff6c36fe8f8  0x00007ff6ba64c360  ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z
+  [ +584]  0x7ff6c36fe900  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +585]  0x7ff6c36fe908  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +586]  0x7ff6c36fe910  0x00007ff6baa75f00  sub_7FF6BAA75F00
+  [ +587]  0x7ff6c36fe918  0x00007ff6ba6e9030  ?__acrt_select_exit_lock@@YA?AW4__acrt_lock_id@@XZ_0
+  [ +588]  0x7ff6c36fe920  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +589]  0x7ff6c36fe928  0x00007ff6ba8b5550  ?DecompFuncInfo@FH4@@YA_JPEAEAEAUFuncInfo4@1@_KH@Z
+  [ +590]  0x7ff6c36fe930  0x00007ff6ba64c360  ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z
+  [ +591]  0x7ff6c36fe938  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +592]  0x7ff6c36fe940  0x00007ff6ba9e5710  sub_7FF6BA9E5710
+  [ +593]  0x7ff6c36fe948  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +594]  0x7ff6c36fe950  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +595]  0x7ff6c36fe958  0x00007ff6ba6a9470  unknown_libname_1799
+  [ +596]  0x7ff6c36fe960  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +597]  0x7ff6c36fe968  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +598]  0x7ff6c36fe970  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +599]  0x7ff6c36fe978  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +600]  0x7ff6c36fe980  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +601]  0x7ff6c36fe988  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +602]  0x7ff6c36fe990  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +603]  0x7ff6c36fe998  0x00007ff6bc659b40  sub_7FF6BC659B40
+  [ +604]  0x7ff6c36fe9a0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +605]  0x7ff6c36fe9a8  0x00007ff6bc65a7f0  sub_7FF6BC65A7F0
+  [ +606]  0x7ff6c36fe9b0  0x00720074006e0049
+  [ +607]  0x7ff6c36fe9b8  0x0064006900700065
+  [ +608]  0x7ff6c36fe9c0  0x0074007300790053
+  [ +609]  0x7ff6c36fe9c8  0x00000000006d0065
+  [ +610]  0x7ff6c36fe9d0  0x00007ff6bc6583c0  sub_7FF6BC6583C0
+  [ +611]  0x7ff6c36fe9d8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +612]  0x7ff6c36fe9e0  0x00007ff6baa95930  sub_7FF6BAA95930
+  [ +613]  0x7ff6c36fe9e8  0x00007ff6ba726520  sub_7FF6BA726520
+  [ +614]  0x7ff6c36fe9f0  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +615]  0x7ff6c36fe9f8  0x00007ff6baa93340  sub_7FF6BAA93340
+  [ +616]  0x7ff6c36fea00  0x00007ff6baa947b0  sub_7FF6BAA947B0
+  [ +617]  0x7ff6c36fea08  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +618]  0x7ff6c36fea10  0x00007ff6baa99690  sub_7FF6BAA99690
+  [ +619]  0x7ff6c36fea18  0x00007ff6ba8b4360  sub_7FF6BA8B4360
+  [ +620]  0x7ff6c36fea20  0x00007ff6baa9d860  sub_7FF6BAA9D860
+  [ +621]  0x7ff6c36fea28  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +622]  0x7ff6c36fea30  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +623]  0x7ff6c36fea38  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +624]  0x7ff6c36fea40  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +625]  0x7ff6c36fea48  0x00007ff6ba9eca80  sub_7FF6BA9ECA80
+  [ +626]  0x7ff6c36fea50  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +627]  0x7ff6c36fea58  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +628]  0x7ff6c36fea60  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +629]  0x7ff6c36fea68  0x00007ff6ba9ec7f0  sub_7FF6BA9EC7F0
+  [ +630]  0x7ff6c36fea70  0x00007ff6ba9ec8a0  sub_7FF6BA9EC8A0
+  [ +631]  0x7ff6c36fea78  0x00007ff6ba9e5410  sub_7FF6BA9E5410
+  [ +632]  0x7ff6c36fea80  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +633]  0x7ff6c36fea88  0x00007ff6ba9e6910  sub_7FF6BA9E6910
+  [ +634]  0x7ff6c36fea90  0x00007ff6ba9f2300  sub_7FF6BA9F2300
+  [ +635]  0x7ff6c36fea98  0x00007ff6ba9f2290  sub_7FF6BA9F2290
+  [ +636]  0x7ff6c36feaa0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +637]  0x7ff6c36feaa8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +638]  0x7ff6c36feab0  0x00007ff6ba895450  sub_7FF6BA895450
+  [ +639]  0x7ff6c36feab8  0x00007ff6ba8b5000  sub_7FF6BA8B5000
+  [ +640]  0x7ff6c36feac0  0x00007ff6ba9e78e0  unknown_libname_13
+  [ +641]  0x7ff6c36feac8  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +642]  0x7ff6c36fead0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +643]  0x7ff6c36fead8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +644]  0x7ff6c36feae0  0x00007ff6ba6a7810  sub_7FF6BA6A7810
+  [ +645]  0x7ff6c36feae8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +646]  0x7ff6c36feaf0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +647]  0x7ff6c36feaf8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +648]  0x7ff6c36feb00  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +649]  0x7ff6c36feb08  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +650]  0x7ff6c36feb10  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +651]  0x7ff6c36feb18  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +652]  0x7ff6c36feb20  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +653]  0x7ff6c36feb28  0x00007ff6ba9f2690  sub_7FF6BA9F2690
+  [ +654]  0x7ff6c36feb30  0x00007ff6ba8b6d20  sub_7FF6BA8B6D20
+  [ +655]  0x7ff6c36feb38  0x00007ff6ba9f2680  sub_7FF6BA9F2680
+  [ +656]  0x7ff6c36feb40  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +657]  0x7ff6c36feb48  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +658]  0x7ff6c36feb50  0x00007ff6ba8b5540  sub_7FF6BA8B5540
+  [ +659]  0x7ff6c36feb58  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +660]  0x7ff6c36feb60  0x00007ff6ba9ec1d0  sub_7FF6BA9EC1D0
+  [ +661]  0x7ff6c36feb68  0x00007ff6ba9ec1f0  sub_7FF6BA9EC1F0
+  [ +662]  0x7ff6c36feb70  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +663]  0x7ff6c36feb78  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +664]  0x7ff6c36feb80  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +665]  0x7ff6c36feb88  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +666]  0x7ff6c36feb90  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +667]  0x7ff6c36feb98  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +668]  0x7ff6c36feba0  0x00007ff6ba9e8440  sub_7FF6BA9E8440
+  [ +669]  0x7ff6c36feba8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +670]  0x7ff6c36febb0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +671]  0x7ff6c36febb8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +672]  0x7ff6c36febc0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +673]  0x7ff6c36febc8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +674]  0x7ff6c36febd0  0x00007ff6ba9ed380  sub_7FF6BA9ED380
+  [ +675]  0x7ff6c36febd8  0x00007ff6ba785150  sub_7FF6BA785150
+  [ +676]  0x7ff6c36febe0  0x00007ff6ba9e8da0  sub_7FF6BA9E8DA0
+  [ +677]  0x7ff6c36febe8  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +678]  0x7ff6c36febf0  0x00007ff6ba9e8a40  sub_7FF6BA9E8A40
+  [ +679]  0x7ff6c36febf8  0x00007ff6ba8b4390  sub_7FF6BA8B4390
+  [ +680]  0x7ff6c36fec00  0x00007ff6ba64c360  ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z
+  [ +681]  0x7ff6c36fec08  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +682]  0x7ff6c36fec10  0x00007ff6ba9e6f10  sub_7FF6BA9E6F10
+  [ +683]  0x7ff6c36fec18  0x00007ff6ba9e72d0  sub_7FF6BA9E72D0
+  [ +684]  0x7ff6c36fec20  0x00007ff6ba9e9a80  sub_7FF6BA9E9A80
+  [ +685]  0x7ff6c36fec28  0x00007ff6ba9e8630  sub_7FF6BA9E8630
+  [ +686]  0x7ff6c36fec30  0x00007ff6ba9e9e80  sub_7FF6BA9E9E80
+  [ +687]  0x7ff6c36fec38  0x00007ff6ba9e9ff0  sub_7FF6BA9E9FF0
+  [ +688]  0x7ff6c36fec40  0x00007ff6ba9f4900  sub_7FF6BA9F4900
+  [ +689]  0x7ff6c36fec48  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +690]  0x7ff6c36fec50  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +691]  0x7ff6c36fec58  0x00007ff6ba9e9f30  sub_7FF6BA9E9F30
+  [ +692]  0x7ff6c36fec60  0x00007ff6ba9e9e30  sub_7FF6BA9E9E30
+  [ +693]  0x7ff6c36fec68  0x00007ff6ba9ea020  sub_7FF6BA9EA020
+  [ +694]  0x7ff6c36fec70  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +695]  0x7ff6c36fec78  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +696]  0x7ff6c36fec80  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +697]  0x7ff6c36fec88  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +698]  0x7ff6c36fec90  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +699]  0x7ff6c36fec98  0x00007ff6ba9e54f0  sub_7FF6BA9E54F0
+  [ +700]  0x7ff6c36feca0  0x00007ff6ba64c360  ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z
+  [ +701]  0x7ff6c36feca8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +702]  0x7ff6c36fecb0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +703]  0x7ff6c36fecb8  0x00007ff6baa75f00  sub_7FF6BAA75F00
+  [ +704]  0x7ff6c36fecc0  0x00007ff6ba6e9030  ?__acrt_select_exit_lock@@YA?AW4__acrt_lock_id@@XZ_0
+  [ +705]  0x7ff6c36fecc8  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +706]  0x7ff6c36fecd0  0x00007ff6ba8b5550  ?DecompFuncInfo@FH4@@YA_JPEAEAEAUFuncInfo4@1@_KH@Z
+  [ +707]  0x7ff6c36fecd8  0x00007ff6ba64c360  ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z
+  [ +708]  0x7ff6c36fece0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +709]  0x7ff6c36fece8  0x00007ff6ba9e5710  sub_7FF6BA9E5710
+  [ +710]  0x7ff6c36fecf0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +711]  0x7ff6c36fecf8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +712]  0x7ff6c36fed00  0x00007ff6ba6a9470  unknown_libname_1799
+  [ +713]  0x7ff6c36fed08  0x00720074006e0049
+  [ +714]  0x7ff6c36fed10  0x0064006900700065
+  [ +715]  0x7ff6c36fed18  0x0074007300790053
+  [ +716]  0x7ff6c36fed20  0x006f0043006d0065
+  [ +717]  0x7ff6c36fed28  0x006700690066006e
+  [ +718]  0x7ff6c36fed30  0x0000000000000000
+  [ +719]  0x7ff6c36fed38  0x00007ff6bc658300  sub_7FF6BC658300
+  [ +720]  0x7ff6c36fed40  0x00007ff6bd9deb30  sub_7FF6BD9DEB30
+  [ +721]  0x7ff6c36fed48  0x00007ff6bd9deb50  sub_7FF6BD9DEB50
+  [ +722]  0x7ff6c36fed50  0x00007ff6bc659530  sub_7FF6BC659530
+  [ +723]  0x7ff6c36fed58  0x00007ff6bc658fd0  sub_7FF6BC658FD0
+  [ +724]  0x7ff6c36fed60  0x00007ff6bc658fb0  sub_7FF6BC658FB0
+  [ +725]  0x7ff6c36fed68  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +726]  0x7ff6c36fed70  0x00007ff6bc658440  sub_7FF6BC658440
+  [ +727]  0x7ff6c36fed78  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +728]  0x7ff6c36fed80  0x00007ff6baa95930  sub_7FF6BAA95930
+  [ +729]  0x7ff6c36fed88  0x00007ff6ba726520  sub_7FF6BA726520
+  [ +730]  0x7ff6c36fed90  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +731]  0x7ff6c36fed98  0x00007ff6baa93340  sub_7FF6BAA93340
+  [ +732]  0x7ff6c36feda0  0x00007ff6baa947b0  sub_7FF6BAA947B0
+  [ +733]  0x7ff6c36feda8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +734]  0x7ff6c36fedb0  0x00007ff6baa99690  sub_7FF6BAA99690
+  [ +735]  0x7ff6c36fedb8  0x00007ff6ba8b4360  sub_7FF6BA8B4360
+  [ +736]  0x7ff6c36fedc0  0x00007ff6baa9d860  sub_7FF6BAA9D860
+  [ +737]  0x7ff6c36fedc8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +738]  0x7ff6c36fedd0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +739]  0x7ff6c36fedd8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +740]  0x7ff6c36fede0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +741]  0x7ff6c36fede8  0x00007ff6ba9eca80  sub_7FF6BA9ECA80
+  [ +742]  0x7ff6c36fedf0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +743]  0x7ff6c36fedf8  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +744]  0x7ff6c36fee00  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +745]  0x7ff6c36fee08  0x00007ff6ba9ec7f0  sub_7FF6BA9EC7F0
+  [ +746]  0x7ff6c36fee10  0x00007ff6ba9ec8a0  sub_7FF6BA9EC8A0
+  [ +747]  0x7ff6c36fee18  0x00007ff6ba9e5410  sub_7FF6BA9E5410
+  [ +748]  0x7ff6c36fee20  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +749]  0x7ff6c36fee28  0x00007ff6ba9e6910  sub_7FF6BA9E6910
+  [ +750]  0x7ff6c36fee30  0x00007ff6ba9f2300  sub_7FF6BA9F2300
+  [ +751]  0x7ff6c36fee38  0x00007ff6ba9f2290  sub_7FF6BA9F2290
+  [ +752]  0x7ff6c36fee40  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +753]  0x7ff6c36fee48  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +754]  0x7ff6c36fee50  0x00007ff6ba895450  sub_7FF6BA895450
+  [ +755]  0x7ff6c36fee58  0x00007ff6ba8b5000  sub_7FF6BA8B5000
+  [ +756]  0x7ff6c36fee60  0x00007ff6ba9e78e0  unknown_libname_13
+  [ +757]  0x7ff6c36fee68  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +758]  0x7ff6c36fee70  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +759]  0x7ff6c36fee78  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +760]  0x7ff6c36fee80  0x00007ff6ba6a7810  sub_7FF6BA6A7810
+  [ +761]  0x7ff6c36fee88  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +762]  0x7ff6c36fee90  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +763]  0x7ff6c36fee98  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +764]  0x7ff6c36feea0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +765]  0x7ff6c36feea8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +766]  0x7ff6c36feeb0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +767]  0x7ff6c36feeb8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +768]  0x7ff6c36feec0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +769]  0x7ff6c36feec8  0x00007ff6ba9f2690  sub_7FF6BA9F2690
+  [ +770]  0x7ff6c36feed0  0x00007ff6ba8b6d20  sub_7FF6BA8B6D20
+  [ +771]  0x7ff6c36feed8  0x00007ff6ba9f2680  sub_7FF6BA9F2680
+  [ +772]  0x7ff6c36feee0  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +773]  0x7ff6c36feee8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +774]  0x7ff6c36feef0  0x00007ff6ba8b5540  sub_7FF6BA8B5540
+  [ +775]  0x7ff6c36feef8  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +776]  0x7ff6c36fef00  0x00007ff6ba9ec1d0  sub_7FF6BA9EC1D0
+  [ +777]  0x7ff6c36fef08  0x00007ff6ba9ec1f0  sub_7FF6BA9EC1F0
+  [ +778]  0x7ff6c36fef10  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +779]  0x7ff6c36fef18  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +780]  0x7ff6c36fef20  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +781]  0x7ff6c36fef28  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +782]  0x7ff6c36fef30  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +783]  0x7ff6c36fef38  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +784]  0x7ff6c36fef40  0x00007ff6ba9e8440  sub_7FF6BA9E8440
+  [ +785]  0x7ff6c36fef48  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +786]  0x7ff6c36fef50  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +787]  0x7ff6c36fef58  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +788]  0x7ff6c36fef60  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +789]  0x7ff6c36fef68  0x00007ff6ba64c2f0  ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z
+  [ +790]  0x7ff6c36fef70  0x00007ff6ba9ed380  sub_7FF6BA9ED380
+  [ +791]  0x7ff6c36fef78  0x00007ff6ba785150  sub_7FF6BA785150
+  [ +792]  0x7ff6c36fef80  0x00007ff6bd9c1dd0  sub_7FF6BD9C1DD0
+  [ +793]  0x7ff6c36fef88  0x00007ff6ba64c380  ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z
+  [ +794]  0x7ff6c36fef90  0x00007ff6ba9e8a40  sub_7FF6BA9E8A40
+  [ +795]  0x7ff6c36fef98  0x00007ff6ba8b4390  sub_7FF6BA8B4390
+  [ +796]  0x7ff6c36fefa0  0x00007ff6ba64c360  ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z
+  [ +797]  0x7ff6c36fefa8  0x00007ff6b9fbab00  sub_7FF6B9FBAB00
+  [ +798]  0x7ff6c36fefb0  0x00007ff6ba9e6f10  sub_7FF6BA9E6F10
+  [ +799]  0x7ff6c36fefb8  0x00007ff6ba9e72d0  sub_7FF6BA9E72D0
+  [ +800]  0x7ff6c36fefc0  0x00007ff6ba9e9a80  sub_7FF6BA9E9A80
+
+============================================================
+  DONE
+============================================================

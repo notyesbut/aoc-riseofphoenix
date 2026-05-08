@@ -1,0 +1,41 @@
+_QWORD *__fastcall sub_7FF6BD59EF80(__int64 a1, _QWORD *a2, __int64 a3)
+{
+  RTL_SRWLOCK *v6; // rsi
+  __int64 v7; // rbx
+  int v8; // eax
+  const wchar_t *v9; // rdx
+  __int64 v10; // rcx
+  unsigned int v11; // eax
+  int v12; // eax
+  __int64 v13; // rdx
+  __int64 v14; // rax
+
+  v6 = (RTL_SRWLOCK *)(*(_QWORD *)(a1 + 824) + 8LL);
+  AcquireSRWLockShared(v6);
+  v7 = *(_QWORD *)(a1 + 824);
+  v8 = *(_DWORD *)(a3 + 8);
+  if ( v8 )
+    v9 = *(const wchar_t **)a3;
+  else
+    v9 = &pwszOutputURL;
+  v10 = (unsigned int)(v8 - 1);
+  if ( !v8 )
+    v10 = 0;
+  v11 = sub_7FF6BA66DF60(v10, v9);
+  v12 = sub_7FF6BA6C8FD0(v7 + 456, v11, a3);
+  if ( v12 == -1 || (v13 = *(_QWORD *)(v7 + 456) + 40LL * v12) == 0 )
+  {
+    *a2 = 0;
+    a2[1] = 0;
+  }
+  else
+  {
+    *a2 = *(_QWORD *)(v13 + 16);
+    v14 = *(_QWORD *)(v13 + 24);
+    a2[1] = v14;
+    if ( v14 )
+      _InterlockedIncrement((volatile signed __int32 *)(v14 + 8));
+  }
+  ReleaseSRWLockShared(v6);
+  return a2;
+}

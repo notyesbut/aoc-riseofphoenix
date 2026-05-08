@@ -1,0 +1,38 @@
+__int64 __fastcall sub_7FF6BA82CE40(unsigned __int64 a1, int *a2)
+{
+  __int64 v2; // r11
+  __int64 v3; // r10
+  int v5; // r9d
+  _WORD *i; // r8
+  __int64 v7; // r8
+  _WORD *v8; // rdx
+  __int64 v9; // rax
+
+  v2 = *a2;
+  v3 = 0;
+  v5 = 0;
+  for ( i = (_WORD *)(a1 - 2 + 2 * v2); (unsigned __int64)i >= a1; --i )
+  {
+    if ( (unsigned __int16)(*i - 48) > 9u )
+      break;
+    ++v5;
+  }
+  v7 = v5;
+  v8 = (_WORD *)(a1 + 2 * (v2 - v5));
+  if ( !v5 || v5 >= (int)v2 || *(v8 - 1) != 95 || v5 > 10 || v5 != 1 && *v8 == 48 )
+    return 0;
+  if ( v5 > 0 )
+  {
+    do
+    {
+      v9 = (unsigned __int16)*v8++;
+      v3 = v9 + 2 * (5 * v3 - 24);
+      --v7;
+    }
+    while ( v7 );
+    if ( v3 >= 0x7FFFFFFF )
+      return 0;
+  }
+  *a2 = v2 - v5 - 1;
+  return (unsigned int)(v3 + 1);
+}

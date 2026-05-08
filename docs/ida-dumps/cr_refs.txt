@@ -1,0 +1,17 @@
+
+=== [0] ClientRestart at 0x14aa4bf70 (next=0x0) ===
+    string: 'ClientRestart'
+    qword pattern: 70 bf a4 4a 01 00 00 00
+    REF at 0x14aa41e58  -> next_qword=0x1443f9fe0 sub_1443F9FE0
+    REF at 0x14aa559c0  -> next_qword=0x144442fd0 sub_144442FD0
+    total refs: 2
+
+=== [1] ClientRestart at 0x14aa4c083 (next=0x0) ===
+    string: 'ClientRestart'
+    qword pattern: 83 c0 a4 4a 01 00 00 00
+    total refs: 0
+
+=== [2] ClientRestart at 0x14b12e955 (next=0x69) ===
+    string: 'ClientRestarting'
+    qword pattern: 55 e9 12 4b 01 00 00 00
+    total refs: 0

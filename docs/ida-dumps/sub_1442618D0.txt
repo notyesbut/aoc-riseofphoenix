@@ -1,0 +1,85 @@
+char __fastcall sub_1442618D0(__int64 a1, double *a2, double *a3, char a4, _BYTE *a5)
+{
+  _BYTE *v5; // rbx
+  char result; // al
+  _BYTE *v10; // rcx
+  _BYTE *v11; // rdi
+  char *v12; // r15
+  double v13; // xmm1_8
+  double v14; // xmm1_8
+  __int64 v15; // rax
+  int v16; // ebx
+  unsigned int v17; // r14d
+  int v18; // [rsp+20h] [rbp-20h] BYREF
+  int v19; // [rsp+24h] [rbp-1Ch] BYREF
+  __int128 v20; // [rsp+28h] [rbp-18h] BYREF
+  double v21; // [rsp+38h] [rbp-8h]
+  int v22; // [rsp+80h] [rbp+40h] BYREF
+  char v23; // [rsp+98h] [rbp+58h] BYREF
+
+  v23 = a4;
+  v5 = a5;
+  result = (*(__int64 (__fastcall **)(_QWORD, _BYTE *, __int64))(**(_QWORD **)(a1 + 8) + 392LL))(
+             *(_QWORD *)(a1 + 8),
+             a5,
+             1);
+  if ( *v5 )
+  {
+    v10 = *(_BYTE **)(a1 + 8);
+    if ( (v10[40] & 1) != 0 && (*(unsigned int (__fastcall **)(_BYTE *))(*(_QWORD *)v10 + 72LL))(v10) < 0xD )
+    {
+      v23 = 1;
+    }
+    else
+    {
+      (*(void (__fastcall **)(_QWORD, char *, __int64))(**(_QWORD **)(a1 + 8) + 392LL))(*(_QWORD *)(a1 + 8), &v23, 1);
+      if ( !v23 )
+        return sub_14141ED80(*(_QWORD *)(a1 + 8), a2);
+    }
+    v11 = *(_BYTE **)(a1 + 8);
+    v12 = *(char **)(a1 + 16);
+    v13 = a2[2];
+    v20 = *(_OWORD *)a2;
+    v21 = v13;
+    (*(void (__fastcall **)(_BYTE *, __int128 *))(*(_QWORD *)v11 + 552LL))(v11, &xmmword_14D5E3168);
+    if ( (*(unsigned int (__fastcall **)(_BYTE *))(*(_QWORD *)v11 + 72LL))(v11) < 0x17
+      || (*(unsigned int (__fastcall **)(_BYTE *))(*(_QWORD *)v11 + 72LL))(v11) == 26 )
+    {
+      v15 = *(_QWORD *)v11;
+      LODWORD(a5) = 0;
+      (*(void (__fastcall **)(_BYTE *, _BYTE **, __int64))(v15 + 400))(v11, &a5, 24);
+      v22 = 0;
+      v18 = 0;
+      v19 = 0;
+      v16 = 1 << ((_BYTE)a5 + 1);
+      v17 = 1 << ((_BYTE)a5 + 2);
+      (*(void (__fastcall **)(_BYTE *, int *, _QWORD))(*(_QWORD *)v11 + 400LL))(v11, &v22, v17);
+      (*(void (__fastcall **)(_BYTE *, int *, _QWORD))(*(_QWORD *)v11 + 400LL))(v11, &v18, v17);
+      (*(void (__fastcall **)(_BYTE *, int *, _QWORD))(*(_QWORD *)v11 + 400LL))(v11, &v19, v17);
+      *(double *)&v20 = (float)((float)(v22 - v16) * 0.1);
+      *((double *)&v20 + 1) = (float)((float)(v18 - v16) * 0.1);
+      result = 1;
+      v21 = (float)((float)(v19 - v16) * 0.1);
+      *v12 = 1;
+      v14 = v21;
+      *(_OWORD *)a2 = v20;
+    }
+    else
+    {
+      if ( (v11[40] & 1) != 0 )
+        result = sub_141D44A60(10, &v20, v11);
+      else
+        result = sub_141D4A150(10, &v20, v11);
+      *v12 = result;
+      v14 = v21;
+      *(_OWORD *)a2 = v20;
+    }
+  }
+  else
+  {
+    *(_OWORD *)a2 = *(_OWORD *)a3;
+    v14 = a3[2];
+  }
+  a2[2] = v14;
+  return result;
+}

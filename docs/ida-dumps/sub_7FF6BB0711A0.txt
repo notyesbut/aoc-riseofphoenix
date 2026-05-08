@@ -1,0 +1,355 @@
+const wchar_t *__fastcall sub_7FF6BB0711A0(int a1)
+{
+  const wchar_t *v1; // rax
+
+  v1 = L"::Invalid";
+  switch ( a1 )
+  {
+    case 0:
+      v1 = L"ENetCloseResult::NetDriverAlreadyExists";
+      goto LABEL_115;
+    case 1:
+      v1 = L"ENetCloseResult::NetDriverCreateFailure";
+      goto LABEL_115;
+    case 2:
+      v1 = L"ENetCloseResult::NetDriverListenFailure";
+      goto LABEL_115;
+    case 3:
+      v1 = L"ENetCloseResult::ConnectionLost";
+      goto LABEL_115;
+    case 4:
+      v1 = L"ENetCloseResult::ConnectionTimeout";
+      goto LABEL_115;
+    case 5:
+      v1 = L"ENetCloseResult::FailureReceived";
+      goto LABEL_115;
+    case 6:
+      v1 = L"ENetCloseResult::OutdatedClient";
+      goto LABEL_115;
+    case 7:
+      v1 = L"ENetCloseResult::OutdatedServer";
+      goto LABEL_115;
+    case 8:
+      v1 = L"ENetCloseResult::PendingConnectionFailure";
+      goto LABEL_115;
+    case 9:
+      v1 = L"ENetCloseResult::NetGuidMismatch";
+      goto LABEL_115;
+    case 10:
+      v1 = L"ENetCloseResult::NetChecksumMismatch";
+      goto LABEL_115;
+    case 11:
+      v1 = L"ENetCloseResult::SecurityMalformedPacket";
+      goto LABEL_115;
+    case 12:
+      v1 = L"ENetCloseResult::SecurityInvalidData";
+      goto LABEL_115;
+    case 13:
+      v1 = L"ENetCloseResult::SecurityClosed";
+      goto LABEL_115;
+    case 14:
+      v1 = L"ENetCloseResult::Unknown";
+      goto LABEL_115;
+    case 15:
+      v1 = L"ENetCloseResult::Success";
+      goto LABEL_115;
+    case 16:
+      v1 = L"ENetCloseResult::Extended";
+      goto LABEL_115;
+    case 17:
+      v1 = L"ENetCloseResult::HostClosedConnection";
+      goto LABEL_115;
+    case 18:
+      v1 = L"ENetCloseResult::Disconnect";
+      goto LABEL_115;
+    case 19:
+      v1 = L"ENetCloseResult::Upgrade";
+      goto LABEL_115;
+    case 20:
+      v1 = L"ENetCloseResult::PreLoginFailure";
+      goto LABEL_115;
+    case 21:
+      v1 = L"ENetCloseResult::JoinFailure";
+      goto LABEL_115;
+    case 22:
+      v1 = L"ENetCloseResult::JoinSplitFailure";
+      goto LABEL_115;
+    case 23:
+      v1 = L"ENetCloseResult::AddressResolutionFailed";
+      goto LABEL_115;
+    case 24:
+      v1 = L"ENetCloseResult::RPCDoS";
+      goto LABEL_115;
+    case 25:
+      v1 = L"ENetCloseResult::Cleanup";
+      goto LABEL_115;
+    case 26:
+      v1 = L"ENetCloseResult::MissingLevelPackage";
+      goto LABEL_115;
+    case 27:
+      v1 = L"ENetCloseResult::PacketHandlerIncomingError";
+      goto LABEL_115;
+    case 28:
+      v1 = L"ENetCloseResult::ZeroLastByte";
+      goto LABEL_115;
+    case 29:
+      v1 = L"ENetCloseResult::ZeroSize";
+      goto LABEL_115;
+    case 30:
+      v1 = L"ENetCloseResult::ReadHeaderFail";
+      goto LABEL_115;
+    case 31:
+      v1 = L"ENetCloseResult::ReadHeaderExtraFail";
+      goto LABEL_115;
+    case 32:
+      v1 = L"ENetCloseResult::AckSequenceMismatch";
+      goto LABEL_115;
+    case 33:
+      v1 = L"ENetCloseResult::BunchBadChannelIndex";
+      goto LABEL_115;
+    case 34:
+      v1 = L"ENetCloseResult::BunchChannelNameFail";
+      goto LABEL_115;
+    case 35:
+      v1 = L"ENetCloseResult::BunchWrongChannelType";
+      goto LABEL_115;
+    case 36:
+      v1 = L"ENetCloseResult::BunchHeaderOverflow";
+      goto LABEL_115;
+    case 37:
+      v1 = L"ENetCloseResult::BunchDataOverflow";
+      goto LABEL_115;
+    case 38:
+      v1 = L"ENetCloseResult::BunchServerPackageMapExports";
+      goto LABEL_115;
+    case 39:
+      v1 = L"ENetCloseResult::BunchPrematureControlChannel";
+      goto LABEL_115;
+    case 40:
+      v1 = L"ENetCloseResult::BunchPrematureChannel";
+      goto LABEL_115;
+    case 41:
+      v1 = L"ENetCloseResult::BunchPrematureControlClose";
+      goto LABEL_115;
+    case 42:
+      v1 = L"ENetCloseResult::UnknownChannelType";
+      goto LABEL_115;
+    case 43:
+      v1 = L"ENetCloseResult::PrematureSend";
+      goto LABEL_115;
+    case 44:
+      v1 = L"ENetCloseResult::CorruptData";
+      goto LABEL_115;
+    case 45:
+      v1 = L"ENetCloseResult::SocketSendFailure";
+      goto LABEL_115;
+    case 46:
+      v1 = L"ENetCloseResult::BadChildConnectionIndex";
+      goto LABEL_115;
+    case 47:
+      v1 = L"ENetCloseResult::LogLimitInstant";
+      goto LABEL_115;
+    case 48:
+      v1 = L"ENetCloseResult::LogLimitSustained";
+      goto LABEL_115;
+    case 49:
+      v1 = L"ENetCloseResult::EncryptionFailure";
+      goto LABEL_115;
+    case 50:
+      v1 = L"ENetCloseResult::EncryptionTokenMissing";
+      goto LABEL_115;
+    case 51:
+      v1 = L"ENetCloseResult::ReceivedNetGUIDBunchFail";
+      goto LABEL_115;
+    case 52:
+      v1 = L"ENetCloseResult::ReceivedNetExtBunchFail";
+      goto LABEL_115;
+    case 53:
+      v1 = L"ENetCloseResult::MaxReliableExceeded";
+      goto LABEL_115;
+    case 54:
+      v1 = L"ENetCloseResult::ReceivedNextBunchFail";
+      goto LABEL_115;
+    case 55:
+      v1 = L"ENetCloseResult::ReceivedNextBunchQueueFail";
+      goto LABEL_115;
+    case 56:
+      v1 = L"ENetCloseResult::PartialInitialReliableDestroy";
+      goto LABEL_115;
+    case 57:
+      v1 = L"ENetCloseResult::PartialMergeReliableDestroy";
+      goto LABEL_115;
+    case 58:
+      v1 = L"ENetCloseResult::PartialInitialNonByteAligned";
+      goto LABEL_115;
+    case 59:
+      v1 = L"ENetCloseResult::PartialNonByteAligned";
+      goto LABEL_115;
+    case 60:
+      v1 = L"ENetCloseResult::PartialFinalPackageMapExports";
+      goto LABEL_115;
+    case 61:
+      v1 = L"ENetCloseResult::PartialTooLarge";
+      goto LABEL_115;
+    case 62:
+      v1 = L"ENetCloseResult::AlreadyOpen";
+      goto LABEL_115;
+    case 63:
+      v1 = L"ENetCloseResult::ReliableBeforeOpen";
+      goto LABEL_115;
+    case 64:
+      v1 = L"ENetCloseResult::ReliableBufferOverflow";
+      goto LABEL_115;
+    case 65:
+      v1 = L"ENetCloseResult::RPCReliableBufferOverflow";
+      goto LABEL_115;
+    case 66:
+      v1 = L"ENetCloseResult::ControlChannelClose";
+      goto LABEL_115;
+    case 67:
+      v1 = L"ENetCloseResult::ControlChannelEndianCheck";
+      goto LABEL_115;
+    case 68:
+      v1 = L"ENetCloseResult::ControlChannelPlayerChannelFail";
+      goto LABEL_115;
+    case 69:
+      v1 = L"ENetCloseResult::ControlChannelMessageUnknown";
+      goto LABEL_115;
+    case 70:
+      v1 = L"ENetCloseResult::ControlChannelMessageFail";
+      goto LABEL_115;
+    case 71:
+      v1 = L"ENetCloseResult::ControlChannelMessagePayloadFail";
+      goto LABEL_115;
+    case 72:
+      v1 = L"ENetCloseResult::ControlChannelBunchOverflowed";
+      goto LABEL_115;
+    case 73:
+      v1 = L"ENetCloseResult::ControlChannelQueueBunchOverflowed";
+      goto LABEL_115;
+    case 74:
+      v1 = L"ENetCloseResult::ClientHasMustBeMappedGUIDs";
+      goto LABEL_115;
+    case 75:
+      v1 = L"ENetCloseResult::ClientSentDestructionInfo";
+      goto LABEL_115;
+    case 76:
+      v1 = L"ENetCloseResult::UnregisteredMustBeMappedGUID";
+      goto LABEL_115;
+    case 77:
+      v1 = L"ENetCloseResult::ObjectReplicatorReceivedBunchFail";
+      goto LABEL_115;
+    case 78:
+      v1 = L"ENetCloseResult::ContentBlockFail";
+      goto LABEL_115;
+    case 79:
+      v1 = L"ENetCloseResult::ContentBlockHeaderRepLayoutFail";
+      goto LABEL_115;
+    case 80:
+      v1 = L"ENetCloseResult::ContentBlockHeaderIsActorFail";
+      goto LABEL_115;
+    case 81:
+      v1 = L"ENetCloseResult::ContentBlockHeaderObjFail";
+      goto LABEL_115;
+    case 82:
+      v1 = L"ENetCloseResult::ContentBlockHeaderPrematureEnd";
+      goto LABEL_115;
+    case 83:
+      v1 = L"ENetCloseResult::ContentBlockHeaderSubObjectActor";
+      goto LABEL_115;
+    case 84:
+      v1 = L"ENetCloseResult::ContentBlockHeaderBadParent";
+      goto LABEL_115;
+    case 85:
+      v1 = L"ENetCloseResult::ContentBlockHeaderInvalidCreate";
+      goto LABEL_115;
+    case 86:
+      v1 = L"ENetCloseResult::ContentBlockHeaderStablyNamedFail";
+      goto LABEL_115;
+    case 87:
+      v1 = L"ENetCloseResult::ContentBlockHeaderNoSubObjectClass";
+      goto LABEL_115;
+    case 88:
+      v1 = L"ENetCloseResult::ContentBlockHeaderUObjectSubObject";
+      goto LABEL_115;
+    case 89:
+      v1 = L"ENetCloseResult::ContentBlockHeaderAActorSubObject";
+      goto LABEL_115;
+    case 90:
+      v1 = L"ENetCloseResult::ContentBlockHeaderFail";
+      goto LABEL_115;
+    case 91:
+      v1 = L"ENetCloseResult::ContentBlockPayloadBitsFail";
+      goto LABEL_115;
+    case 92:
+      v1 = L"ENetCloseResult::FieldHeaderRepIndex";
+      goto LABEL_115;
+    case 93:
+      v1 = L"ENetCloseResult::FieldHeaderBadRepIndex";
+      goto LABEL_115;
+    case 94:
+      v1 = L"ENetCloseResult::FieldHeaderPayloadBitsFail";
+      goto LABEL_115;
+    case 95:
+      v1 = L"ENetCloseResult::FieldPayloadFail";
+      goto LABEL_115;
+    case 96:
+      v1 = L"ENetCloseResult::ReplicationChannelCountMaxedOut";
+      goto LABEL_115;
+    case 97:
+      v1 = L"ENetCloseResult::BeaconControlFlowError";
+      goto LABEL_115;
+    case 98:
+      v1 = L"ENetCloseResult::BeaconUnableToParsePacket";
+      goto LABEL_115;
+    case 99:
+      v1 = L"ENetCloseResult::BeaconAuthenticationFailure";
+      goto LABEL_115;
+    case 100:
+      v1 = L"ENetCloseResult::BeaconLoginInvalidIdError";
+      goto LABEL_115;
+    case 101:
+      v1 = L"ENetCloseResult::BeaconLoginInvalidAuthHandlerError";
+      goto LABEL_115;
+    case 102:
+      v1 = L"ENetCloseResult::BeaconAuthError";
+      goto LABEL_115;
+    case 103:
+      v1 = L"ENetCloseResult::BeaconSpawnClientWorldPackageNameError";
+      goto LABEL_115;
+    case 104:
+      v1 = L"ENetCloseResult::BeaconSpawnExistingActorError";
+      goto LABEL_115;
+    case 105:
+      v1 = L"ENetCloseResult::BeaconSpawnFailureError";
+      goto LABEL_115;
+    case 106:
+      v1 = L"ENetCloseResult::BeaconSpawnNetGUIDAckNoActor";
+      goto LABEL_115;
+    case 107:
+      v1 = L"ENetCloseResult::BeaconSpawnNetGUIDAckNoHost";
+      goto LABEL_115;
+    case 108:
+      v1 = L"ENetCloseResult::BeaconSpawnUnexpectedError";
+      goto LABEL_115;
+    case 109:
+      v1 = L"ENetCloseResult::IrisProtocolMismatch";
+      goto LABEL_115;
+    case 110:
+      v1 = L"ENetCloseResult::IrisNetRefHandleError";
+      goto LABEL_115;
+    case 111:
+      v1 = L"ENetCloseResult::FaultDisconnect";
+      goto LABEL_115;
+    case 112:
+      v1 = L"ENetCloseResult::NotRecoverable";
+      do
+LABEL_115:
+        ++v1;
+      while ( *v1 != 58 );
+      break;
+    default:
+      return v1 + 2;
+  }
+  return v1 + 2;
+}

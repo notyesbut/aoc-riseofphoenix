@@ -1,0 +1,87 @@
+__int64 __fastcall sub_7FF6BD578510(unsigned int *a1, __int64 a2)
+{
+  __int64 result; // rax
+  const wchar_t *v5; // rdi
+  const wchar_t *v6; // rdx
+  const wchar_t *v7; // r9
+  __int64 v8; // rdx
+  __int64 v9; // rax
+  const wchar_t *v10; // rdi
+  const wchar_t *v11; // [rsp+20h] [rbp-48h] BYREF
+  int v12; // [rsp+28h] [rbp-40h]
+  _QWORD v13[3]; // [rsp+30h] [rbp-38h] BYREF
+  __int64 v14; // [rsp+48h] [rbp-20h]
+  __int64 v15; // [rsp+58h] [rbp-10h]
+
+  result = a1[101];
+  if ( (unsigned int)result >= 2 && *((_QWORD *)a1 + 15) )
+  {
+    if ( *(_BYTE *)a2 == 1 )
+    {
+      sub_7FF6BD5637F0(a1, a2 + 24);
+      return sub_7FF6BD578730(a1);
+    }
+    v5 = &pwszOutputURL;
+    switch ( *(_BYTE *)a2 )
+    {
+      case 0:
+        v6 = L"Failure";
+        break;
+      case 2:
+        v6 = L"InvalidToken";
+        break;
+      case 3:
+        v6 = L"NoKey";
+        break;
+      case 4:
+        v6 = L"SessionIdMismatch";
+        break;
+      case 5:
+        v6 = L"InvalidParams";
+        break;
+      default:
+        v6 = &pwszOutputURL;
+        break;
+    }
+    sub_7FF6BA66EDD0((__int64)&v11, v6);
+    if ( (unsigned __int8)byte_7FF6C6B68418 >= 3u )
+    {
+      if ( *(_DWORD *)(a2 + 16) )
+        v7 = *(const wchar_t **)(a2 + 8);
+      else
+        v7 = &pwszOutputURL;
+      if ( v12 )
+        v5 = v11;
+      sub_7FF6BA751C70((__int64)&byte_7FF6C6B68418, (__int64)&off_7FF6C3D04040, v5, v7);
+    }
+    sub_7FF6BD2474A0(v13, 0x31u);
+    sub_7FF6BD578A00(a1, v13);
+    if ( v15 )
+      (*(void (**)(void))(v15 - 16))();
+    if ( v14 )
+      sub_7FF6BA6E0B20(v14);
+    sub_7FF6BD578270(a1, &v11);
+    LOBYTE(v8) = 1;
+    (*(void (__fastcall **)(unsigned int *, __int64))(*(_QWORD *)a1 + 912LL))(a1, v8);
+    sub_7FF6BD2474A0(v13, 0x31u);
+    result = sub_7FF6BD55E810(a1, v13);
+    if ( v15 )
+      result = (*(__int64 (**)(void))(v15 - 16))();
+    if ( v14 )
+      result = sub_7FF6BA6E0B20(v14);
+  }
+  else
+  {
+    if ( (unsigned __int8)byte_7FF6C6B68418 < 3u )
+      return result;
+    v9 = (*(__int64 (__fastcall **)(unsigned int *, const wchar_t **))(*(_QWORD *)a1 + 872LL))(a1, &v11);
+    if ( *(_DWORD *)(v9 + 8) )
+      v10 = *(const wchar_t **)v9;
+    else
+      v10 = &pwszOutputURL;
+    result = sub_7FF6BA751C70((__int64)&byte_7FF6C6B68418, (__int64)&off_7FF6C3D040E0, v10);
+  }
+  if ( v11 )
+    return sub_7FF6BA6E0B20(v11);
+  return result;
+}

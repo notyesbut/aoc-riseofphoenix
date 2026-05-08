@@ -1,0 +1,298 @@
+void __fastcall sub_1462725E0(__int64 a1, __int64 a2, unsigned int a3)
+{
+  unsigned int v6; // ebx
+  _WORD *v7; // rcx
+  _WORD *v8; // rcx
+  _WORD *v9; // rcx
+  _WORD *v10; // rcx
+  const char *v11; // rax
+  int v12; // ecx
+  _WORD *v13; // rcx
+  const char *v14; // rax
+  int v15; // ecx
+  const wchar_t *v16; // rax
+  _WORD *v17; // rcx
+  _WORD *v18; // rcx
+  const char *v19; // rax
+  int v20; // ecx
+  const wchar_t *v21; // rax
+  const wchar_t *v22; // r8
+  int *v23; // rdi
+  __int64 v24; // r15
+  __int64 v25; // rsi
+  __int64 v26; // rdx
+  __int64 v27; // rax
+  const wchar_t *v28; // rcx
+  __int64 v29; // rcx
+  int v30; // ebx
+  int v31; // r8d
+  const wchar_t *v32; // rax
+  __int64 v33; // rax
+  const wchar_t *v34; // r8
+  const char *v35; // [rsp+60h] [rbp-A0h] BYREF
+  int v36; // [rsp+68h] [rbp-98h]
+  const wchar_t *v37; // [rsp+70h] [rbp-90h] BYREF
+  __int64 v38; // [rsp+78h] [rbp-88h]
+  __int128 v39; // [rsp+80h] [rbp-80h] BYREF
+  __int128 v40; // [rsp+90h] [rbp-70h] BYREF
+  _WORD *v41; // [rsp+A0h] [rbp-60h]
+  ULONG_PTR Parameter; // [rsp+A8h] [rbp-58h] BYREF
+  _QWORD v43[3]; // [rsp+B0h] [rbp-50h] BYREF
+  char v44; // [rsp+C8h] [rbp-38h]
+  __int16 v45; // [rsp+D0h] [rbp-30h]
+  char v46; // [rsp+D2h] [rbp-2Eh]
+  unsigned __int8 v47; // [rsp+108h] [rbp+8h]
+  const wchar_t *v48; // [rsp+110h] [rbp+10h] BYREF
+  _QWORD v49[3]; // [rsp+118h] [rbp+18h] BYREF
+  __int64 v50; // [rsp+130h] [rbp+30h] BYREF
+  __int64 v51; // [rsp+140h] [rbp+40h] BYREF
+  _OWORD v52[2]; // [rsp+150h] [rbp+50h] BYREF
+  _WORD *v53; // [rsp+170h] [rbp+70h]
+  _BYTE v54[152]; // [rsp+178h] [rbp+78h] BYREF
+  int v55; // [rsp+238h] [rbp+138h] BYREF
+
+  v6 = 0;
+  if ( (unsigned __int8)byte_14D940330 >= 6u )
+  {
+    v39 = 0u;
+    *(_QWORD *)&v40 = &unk_14D5AF3C0;
+    *((_QWORD *)&v40 + 1) = &unk_14D5AF3C0;
+    v41 = &unk_14D5AF3C2;
+    LOBYTE(Parameter) = 0;
+    v43[0] = &unk_14D5AF3C0;
+    v43[1] = &unk_14D5AF3C0;
+    v43[2] = &unk_14D5AF3C2;
+    v44 = 0;
+    v45 = 0;
+    v46 = 0;
+    if ( byte_14D1FCFD6 )
+    {
+      sub_144E7DAA0(&v39, L"FFastActorLocationArray::PostReplicatedAdd");
+      sub_144E7DAA0(&v39, L"FinalSize=");
+      if ( (_BYTE)v45 )
+      {
+        if ( v46 )
+        {
+          v7 = *((_WORD **)&v40 + 1);
+          if ( *((_QWORD *)&v40 + 1) + 2LL >= (unsigned __int64)v41 )
+          {
+            sub_1414D0E10(&v40, 1);
+            v7 = *((_WORD **)&v40 + 1);
+          }
+          *v7 = 34;
+          *((_QWORD *)&v40 + 1) += 2LL;
+          sub_1414CAE20(&v40, L"%d", a3);
+          v8 = *((_WORD **)&v40 + 1);
+          if ( *((_QWORD *)&v40 + 1) + 2LL >= (unsigned __int64)v41 )
+          {
+            sub_1414D0E10(&v40, 1);
+            v8 = *((_WORD **)&v40 + 1);
+          }
+          *v8 = 34;
+          v9 = (_WORD *)(*((_QWORD *)&v40 + 1) + 2LL);
+          *((_QWORD *)&v40 + 1) += 2LL;
+        }
+        else
+        {
+          sub_1414CAE20(&v40, L"%d", a3);
+          v9 = *((_WORD **)&v40 + 1);
+        }
+        if ( v9 + 1 >= v41 )
+        {
+          sub_1414D0E10(&v40, 1);
+          v9 = *((_WORD **)&v40 + 1);
+        }
+        *v9 = 44;
+        *((_QWORD *)&v40 + 1) += 2LL;
+        v45 = 0;
+        v46 = 0;
+      }
+      sub_144E7DAA0(&v39, L"Function+");
+      if ( (_BYTE)v45 )
+      {
+        if ( v46 )
+        {
+          v10 = *((_WORD **)&v40 + 1);
+          if ( *((_QWORD *)&v40 + 1) + 2LL >= (unsigned __int64)v41 )
+          {
+            sub_1414D0E10(&v40, 1);
+            v10 = *((_WORD **)&v40 + 1);
+          }
+          *v10 = 34;
+          *((_QWORD *)&v40 + 1) += 2LL;
+          v35 = "FFastActorLocationArray::PostReplicatedAdd";
+          v11 = "FFastActorLocationArray::PostReplicatedAdd";
+          v12 = 0;
+          do
+          {
+            ++v11;
+            ++v12;
+          }
+          while ( *v11 );
+          v36 = v12;
+          sub_1416CDE50(&v40, &v35);
+          v13 = *((_WORD **)&v40 + 1);
+          if ( *((_QWORD *)&v40 + 1) + 2LL >= (unsigned __int64)v41 )
+          {
+            sub_1414D0E10(&v40, 1);
+            v13 = *((_WORD **)&v40 + 1);
+          }
+          *v13 = 34;
+          *((_QWORD *)&v40 + 1) += 2LL;
+        }
+        else
+        {
+          v35 = "FFastActorLocationArray::PostReplicatedAdd";
+          v14 = "FFastActorLocationArray::PostReplicatedAdd";
+          v15 = 0;
+          do
+          {
+            ++v14;
+            ++v15;
+          }
+          while ( *v14 );
+          v36 = v15;
+          sub_1416CDE50(&v40, &v35);
+        }
+        v45 = 0;
+        v46 = 0;
+      }
+      v16 = (const wchar_t *)sub_144E7E0A0(&v39);
+      sub_14133EDD0((__int64)&v37, v16);
+      v6 = 2;
+      sub_1414C7300(v43);
+      sub_1414C7300(&v40);
+      if ( (_QWORD)v39 )
+        sub_1413B0B20(v39);
+    }
+    else
+    {
+      sub_144E7DF80(&v39, L"FFastActorLocationArray::PostReplicatedAdd");
+      sub_144E7DF80(&v39, L"FinalSize=");
+      if ( (_BYTE)v45 )
+      {
+        sub_1414CAE20(&v40, L"%d", a3);
+        v17 = *((_WORD **)&v40 + 1);
+        if ( *((_QWORD *)&v40 + 1) + 2LL >= (unsigned __int64)v41 )
+        {
+          sub_1414D0E10(&v40, 1);
+          v17 = *((_WORD **)&v40 + 1);
+        }
+        *v17 = 44;
+        v18 = (_WORD *)(*((_QWORD *)&v40 + 1) + 2LL);
+        *((_QWORD *)&v40 + 1) = v18;
+        if ( v18 + 1 >= v41 )
+        {
+          sub_1414D0E10(&v40, 1);
+          v18 = *((_WORD **)&v40 + 1);
+        }
+        *v18 = 32;
+        *((_QWORD *)&v40 + 1) += 2LL;
+        v45 = 0;
+        v46 = 0;
+      }
+      sub_144E7DF80(&v39, L"Function+");
+      if ( (_BYTE)v45 )
+      {
+        v35 = "FFastActorLocationArray::PostReplicatedAdd";
+        v19 = "FFastActorLocationArray::PostReplicatedAdd";
+        v20 = 0;
+        do
+        {
+          ++v19;
+          ++v20;
+        }
+        while ( *v19 );
+        v36 = v20;
+        sub_1416CDE50(&v40, &v35);
+        v45 = 0;
+        v46 = 0;
+      }
+      v21 = (const wchar_t *)sub_144E7E1A0(&v39);
+      sub_14133EDD0((__int64)&v37, v21);
+      v6 = 2;
+      sub_1414C7300(v43);
+      sub_1414C7300(&v40);
+      if ( (_QWORD)v39 )
+        sub_1413B0B20(v39);
+    }
+    v22 = &chText;
+    if ( (_DWORD)v38 )
+      v22 = v37;
+    sub_141421C70((__int64)&byte_14D940330, (__int64)&off_14B833010, v22);
+    if ( v37 )
+      sub_1413B0B20(v37);
+  }
+  v23 = *(int **)a2;
+  v24 = *(_QWORD *)a2 + 4LL * *(int *)(a2 + 8);
+  if ( *(_QWORD *)a2 != v24 )
+  {
+    v49[1] = &Parameter;
+    v49[2] = &v39;
+    v35 = v54;
+    do
+    {
+      v55 = *v23;
+      v25 = 160LL * v55;
+      v26 = v25 + *(_QWORD *)(a1 + 264);
+      v39 = *(_OWORD *)(v26 + 16);
+      v40 = *(_OWORD *)(v26 + 32);
+      v41 = *(_WORD **)(v26 + 48);
+      v47 = *(_BYTE *)(v26 + 152);
+      ((void (__fastcall *)(ULONG_PTR *))funcs_1458A6DE7[v47])(&Parameter);
+      v52[0] = v39;
+      v52[1] = v40;
+      v53 = v41;
+      v54[96] = v47;
+      ((void (__fastcall *)(_BYTE *))funcs_1458A6DE7[v47])(v54);
+      sub_146241B20(a1 + 304, v52);
+      ((void (__stdcall *)(ULONG_PTR))funcs_1458A6C67[v47])((ULONG_PTR)&Parameter);
+      if ( (unsigned __int8)byte_14D940330 >= 6u )
+      {
+        v27 = sub_1462C4FC0(v25 + *(_QWORD *)(a1 + 264) + 16LL, &v51);
+        if ( *(_DWORD *)(v27 + 8) )
+          v28 = *(const wchar_t **)v27;
+        else
+          v28 = &chText;
+        v48 = v28;
+        v29 = v25 + *(_QWORD *)(a1 + 264) + 16LL;
+        v37 = nullptr;
+        v38 = 0;
+        v30 = v6 | 1;
+        sub_1414A5570(v29, &v37, 0);
+        v32 = &chText;
+        if ( (_DWORD)v38 )
+          v32 = v37;
+        v49[0] = v32;
+        LOBYTE(v31) = 6;
+        v33 = sub_145ED7970(
+                (unsigned int)&v50,
+                (unsigned int)&byte_14D940330,
+                v31,
+                (unsigned int)L"FFastActorLocationArray::PostReplicatedAdd - Added Index",
+                (__int64)L"ActorGuid=",
+                (__int64)v49,
+                (__int64)L"ActorLocation=",
+                (__int64)&v48,
+                (__int64)L"Index=",
+                (__int64)&v55,
+                (__int64)L"Function+",
+                (__int64)"FFastActorLocationArray::PostReplicatedAdd");
+        if ( *(_DWORD *)(v33 + 8) )
+          v34 = *(const wchar_t **)v33;
+        else
+          v34 = &chText;
+        sub_141421C70((__int64)&byte_14D940330, (__int64)&off_14B833030, v34);
+        if ( v50 )
+          sub_1413B0B20(v50);
+        v6 = v30 & 0xFFFFFFFE;
+        if ( v37 )
+          sub_1413B0B20(v37);
+        if ( v51 )
+          sub_1413B0B20(v51);
+      }
+      ++v23;
+    }
+    while ( v23 != (int *)v24 );
+  }
+}

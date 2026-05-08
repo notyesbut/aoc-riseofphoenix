@@ -1,0 +1,145 @@
+__int64 __fastcall sub_145E1A9F0(_WORD *a1, __int64 a2, __int64 a3)
+{
+  const wchar_t *v3; // rax
+  __int64 v5; // rdi
+  char *v6; // r13
+  __int64 v7; // rsi
+  const void *v8; // rbx
+  __int64 result; // rax
+  int v10; // r12d
+  int v11; // ebx
+  char v12; // r14
+  int v13; // eax
+  int v14; // r15d
+  _WORD *v15; // rbx
+  __int64 v16; // rsi
+  __int64 v17; // rax
+  int v18; // r8d
+  const wchar_t *v19; // rbx
+  const wchar_t *v20; // rcx
+  __int64 v21; // rax
+  unsigned __int8 v22; // [rsp+60h] [rbp-A0h]
+  int v23; // [rsp+64h] [rbp-9Ch]
+  const wchar_t *v24; // [rsp+68h] [rbp-98h] BYREF
+  void *v25; // [rsp+70h] [rbp-90h] BYREF
+  int v26; // [rsp+78h] [rbp-88h]
+  int v27; // [rsp+7Ch] [rbp-84h] BYREF
+  _WORD *v28; // [rsp+80h] [rbp-80h] BYREF
+  _QWORD v29[2]; // [rsp+88h] [rbp-78h] BYREF
+  __int64 v30; // [rsp+98h] [rbp-68h] BYREF
+  char v31[24]; // [rsp+A8h] [rbp-58h] BYREF
+  _WORD v32[128]; // [rsp+C0h] [rbp-40h] BYREF
+  __int64 v33; // [rsp+1C0h] [rbp+C0h]
+  _WORD *v34; // [rsp+1C8h] [rbp+C8h]
+  int v35; // [rsp+1D0h] [rbp+D0h]
+
+  v22 = a3;
+  v3 = (const wchar_t *)a2;
+  v24 = (const wchar_t *)a2;
+  v28 = a1;
+  v5 = 0;
+  v6 = nullptr;
+  v25 = nullptr;
+  v7 = *(int *)(a2 + 8);
+  v8 = *(const void **)a2;
+  v26 = v7;
+  if ( (_DWORD)v7 )
+  {
+    sub_14131E740(16, 4, v7, 0, (__int64)&v25, v7, (__int64)&v27);
+    memcpy(v25, v8, 16 * v7);
+    LODWORD(v7) = v26;
+    v6 = (char *)v25;
+    v3 = v24;
+    a3 = v22;
+  }
+  else
+  {
+    v27 = 0;
+  }
+  v29[0] = a1;
+  if ( (_DWORD)v7 )
+  {
+    v10 = 0;
+    v11 = 0;
+    v12 = sub_145E182D0(v29, v6) ^ 1;
+    do
+    {
+      v13 = v11;
+      v23 = v11++;
+      if ( v11 < (int)v7 )
+      {
+        do
+        {
+          if ( v12 != ((unsigned __int8)sub_145E182D0(v29, &v6[16 * v11]) ^ 1) )
+            break;
+          ++v11;
+        }
+        while ( v11 < (int)v7 );
+        v13 = v23;
+      }
+      v14 = v11 - v13;
+      if ( v12 )
+      {
+        if ( v10 != v13 )
+          memmove(&v6[16 * v10], &v6[16 * v13], 16LL * v14);
+        v10 += v14;
+      }
+      v12 ^= 1u;
+    }
+    while ( v11 < (int)v7 );
+    v26 = v10;
+    v15 = v28;
+    result = sub_145D1FCE0(v28, v24, v22);
+    if ( (int)v7 - v10 > 0 && (unsigned __int8)byte_14D940010 >= 2u )
+    {
+      v16 = (*(__int64 (__fastcall **)(_WORD *, char *))(*((_QWORD *)v15 + 268) + 256LL))(v15 + 1072, v31);
+      v33 = 0;
+      v35 = 13;
+      v34 = v32;
+      do
+      {
+        v32[v5] = aAbandonquests[v5];
+        ++v5;
+      }
+      while ( v5 < 14 );
+      v28 = v34;
+      v17 = sub_14133EC00(&v30, "AbandonQuests");
+      v19 = &chText;
+      if ( *(_DWORD *)(v17 + 8) )
+        v20 = *(const wchar_t **)v17;
+      else
+        v20 = &chText;
+      v24 = v20;
+      LOBYTE(v18) = 2;
+      v21 = sub_145E11F00(
+              (unsigned int)v29,
+              (unsigned int)&byte_14D940010,
+              v18,
+              (unsigned int)L"Tried to abandon a quest not currently tracked",
+              (__int64)L"MethodName=",
+              (__int64)&v24,
+              (__int64)L"Function=",
+              (__int64)&v28,
+              (__int64)L"CharacterGuid=",
+              v16,
+              (__int64)L"Function+",
+              (__int64)"AAoCPlayerController::AbandonQuests");
+      if ( *(_DWORD *)(v21 + 8) )
+        v19 = *(const wchar_t **)v21;
+      result = sub_141421C70((__int64)&byte_14D940010, (__int64)&off_14B7C40D8, v19);
+      if ( v29[0] )
+        result = sub_1413B0B20(v29[0]);
+      if ( v30 )
+        result = sub_1413B0B20(v30);
+      if ( v33 )
+        result = sub_1413B0B20(v33);
+    }
+  }
+  else
+  {
+    result = sub_145D1FCE0(a1, v3, a3);
+  }
+  if ( v25 )
+    return sub_1413B0B20(v25);
+  return result;
+}

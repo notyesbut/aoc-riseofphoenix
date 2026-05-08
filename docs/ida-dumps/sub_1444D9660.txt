@@ -1,0 +1,79 @@
+__int64 __fastcall sub_1444D9660(_QWORD *a1, __int64 a2, unsigned int a3, unsigned int a4)
+{
+  __int64 v8; // rax
+  const wchar_t *v9; // rbx
+  const wchar_t *v10; // rcx
+  unsigned int v11; // ebp
+  __int64 v12; // rax
+  const wchar_t *v13; // rcx
+  unsigned int v14; // r14d
+  const wchar_t *v15; // rbp
+  unsigned int v16; // ebx
+  __int64 v17; // rcx
+  const wchar_t *v18; // [rsp+20h] [rbp-48h] BYREF
+  int v19; // [rsp+28h] [rbp-40h]
+  const wchar_t *v20; // [rsp+30h] [rbp-38h] BYREF
+  int v21; // [rsp+38h] [rbp-30h]
+  _QWORD v22[5]; // [rsp+40h] [rbp-28h] BYREF
+
+  if ( a2 && (*(_BYTE *)(a2 + 240) & 1) == 0 )
+    return 0;
+  if ( (unsigned __int8)sub_141484B10(a1, "FField::GetName") )
+    sub_14150CFA0(a1 + 4, &v18);
+  else
+    sub_14133EDD0(&v18, L"None");
+  v8 = sub_14135D910(&v18, v22);
+  v9 = &chText;
+  if ( *(_DWORD *)(v8 + 8) )
+    v10 = *(const wchar_t **)v8;
+  else
+    v10 = &chText;
+  v11 = sub_14139C4A0(v10, a4);
+  if ( v22[0] )
+    sub_1413B0B20(v22[0]);
+  if ( v18 )
+    sub_1413B0B20(v18);
+  v12 = (*(__int64 (__fastcall **)(_QWORD *, _QWORD *, _QWORD, __int64))(*a1 + 104LL))(a1, v22, 0, 256);
+  sub_14135D910(v12, &v20);
+  if ( v22[0] )
+    sub_1413B0B20(v22[0]);
+  v13 = &chText;
+  if ( v21 )
+    v13 = v20;
+  v14 = sub_14139C4A0(v13, v11);
+  if ( a2 && (unsigned int)sub_144236CB0(a2, &xmmword_14D5E3168) < 4 )
+  {
+    sub_141357530(&v18, L"%i", a3);
+    v15 = v18;
+    if ( v19 )
+      v9 = v18;
+    v16 = sub_14139C4A0(v9, v14);
+    if ( v15 )
+      sub_1413B0B20(v15);
+LABEL_26:
+    if ( (unsigned int)sub_144236CB0(a2, &xmmword_14D5E3168) < 0x11 )
+      goto LABEL_32;
+    goto LABEL_27;
+  }
+  v16 = off_14D1FAB50();
+  if ( a2 )
+    goto LABEL_26;
+LABEL_27:
+  v17 = *(_QWORD *)(a1[1] + 16LL);
+  if ( (v17 & 0x1000000000000LL) != 0 )
+  {
+    sub_1416397C0(a1);
+LABEL_31:
+    v16 = off_14D1FAB50();
+    goto LABEL_32;
+  }
+  if ( (v17 & 0x40) != 0 )
+  {
+    sub_141701660(a1);
+    goto LABEL_31;
+  }
+LABEL_32:
+  if ( v20 )
+    sub_1413B0B20(v20);
+  return v16;
+}

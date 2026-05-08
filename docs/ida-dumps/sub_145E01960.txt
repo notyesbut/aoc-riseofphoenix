@@ -1,0 +1,7 @@
+__int64 sub_145E01960()
+{
+  __int64 v0; // rax
+
+  v0 = sub_145DF19C0();
+  return sub_141609150(v0, &off_14B7C0D50, 12);
+}

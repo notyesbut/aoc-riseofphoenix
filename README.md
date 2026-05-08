@@ -40,7 +40,8 @@ This is **not** a complete game server. It's a wire-format emulator. There's no 
 - A **PC-tail splice mechanism** that takes the captured PC ActorOpen's RepLayout property tail and substitutes its captured per-session NetGUIDs with our minted ones at the correct bit offsets — the only way to get the PC's initial property state correct without a full RepLayout decoder.
 - A **NetGUID allocator** (`src/protocol/net_guid_allocator.h`) that hands fresh dynamic GUID blocks per connecting client.
 - **Reverse-engineering tooling** (`src/protocol/tools/`): Python decoders for captured replays, IDA scripts for client binary analysis, fixture extractors, a YLPR replay format walker.
-- **Captured-replay fixtures** (`src/net/captured_*.h`): bit-perfect snippets of the original AoC server's wire output, used as ground truth.
+- **Captured-replay fixtures** (`src/net/captured_*.h` and `fixtures/replay_data.bin`): bit-perfect snippets of the original AoC server's wire output, used as ground truth.
+- **IDA Pro decompilation dumps** (`docs/ida-dumps/`): ~350 raw RE artifacts — Hex-Rays pseudocode for individual functions, keyword-driven topic analyses (NetGUID, PackageMap, bunch parser, RPC tables), and working notes. This is the research substrate the wire-format work is built on. Every `sub_XXXXXXXX` or `0xXXXXXXXX` reference in source comments has a matching `.txt` in there.
 
 If you're here to bring up a populated game server, this isn't that yet. If you're here to study UE5 networking, AoC's specific protocol customizations, or to contribute to making the above happen — welcome.
 
@@ -123,6 +124,8 @@ Output binaries land in `dist\Release\`.
 
 On login, use `test222 / test` or register a new account through the launcher.
 
+> **Note on `launch_all.bat`:** the current emulator plays back **`fixtures/replay_data.bin`** — a captured S→C replay stream from a real pre-shutdown AoC session (~7.4 MB, plaintext YLPR format). The launcher boots the auth/tether/aoc_server stack, the client connects to loopback, and the server replays the captured packets while patching in our minted NetGUIDs and spawn coordinates. That's why you see the same captured character (`RandomChar`) in-world rather than your account's name — the live actor synthesis pipeline that would emit per-account state from scratch is what the PM148+ roadmap is building toward.
+
 ### Run tests only
 
 ```powershell
@@ -162,6 +165,7 @@ AoC-RiseOfPhoenix/
 │   └── replay_data.bin                  # captured S>C replay (~7.4 MB, plaintext)
 ├── scripts/                             # build / launch helpers
 ├── docs/                                # RE catalogs, architecture, roadmap
+│   └── ida-dumps/                       # ~350 raw IDA Pro decomp artifacts
 ├── CMakeLists.txt
 ├── vcpkg.json
 └── README.md

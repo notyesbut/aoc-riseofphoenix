@@ -1,0 +1,19 @@
+__int64 __fastcall sub_1414F6310(__int64 a1, __int64 a2)
+{
+  if ( byte_14D5E429C )
+  {
+    sub_141421C20(&byte_14D5E1C50, &off_149E23B18);
+    return sub_1414E84D0(a1);
+  }
+  else
+  {
+    if ( !dword_14D1FFD04 && (unsigned __int8)byte_14D5E1C50 >= 2u )
+      sub_141421C70(
+        (__int64)&byte_14D5E1C50,
+        (__int64)&off_149E23C30,
+        a2,
+        *(_QWORD *)(a1 + 160) - *(_QWORD *)(a1 + 168),
+        *(_QWORD *)(a1 + 160));
+    return sub_1414E84D0(a1);
+  }
+}

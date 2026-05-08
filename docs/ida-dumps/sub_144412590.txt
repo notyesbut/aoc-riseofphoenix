@@ -1,0 +1,9 @@
+__int64 __fastcall sub_144412590(__int64 a1, __int64 a2)
+{
+  __int64 v3; // rax
+  __int64 v5; // [rsp+30h] [rbp+8h] BYREF
+
+  v5 = a2;
+  v3 = sub_141741E80(a1, qword_14D856330);
+  return (*(__int64 (__fastcall **)(__int64, __int64, __int64 *))(*(_QWORD *)a1 + 744LL))(a1, v3, &v5);
+}

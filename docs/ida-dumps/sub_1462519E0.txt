@@ -1,0 +1,13 @@
+__int64 __fastcall sub_1462519E0(__int64 a1, __int64 a2)
+{
+  *(_QWORD *)a1 = off_14B0C0D40;
+  *(_OWORD *)(a1 + 8) = *(_OWORD *)(a2 + 8);
+  *(_OWORD *)(a1 + 24) = *(_OWORD *)(a2 + 24);
+  *(_OWORD *)(a1 + 40) = *(_OWORD *)(a2 + 40);
+  *(_QWORD *)(a1 + 56) = *(_QWORD *)(a2 + 56);
+  *(_QWORD *)a1 = off_14B0C0D58;
+  *(_DWORD *)(a1 + 64) = *(_DWORD *)(a2 + 64);
+  sub_14133E920((void *)(a1 + 72), (void *)(a2 + 72));
+  *(_DWORD *)(a1 + 88) = *(_DWORD *)(a2 + 88);
+  return a1;
+}

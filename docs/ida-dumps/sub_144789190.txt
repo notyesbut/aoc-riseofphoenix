@@ -1,0 +1,16 @@
+char __fastcall sub_144789190(__int64 a1, __int64 a2)
+{
+  __int64 v2; // rax
+  __int64 v5; // rcx
+
+  v2 = *(_QWORD *)(a1 + 96);
+  if ( !v2 )
+    v2 = sub_1416B8DA0();
+  if ( !(unsigned __int8)sub_144737980(v2) )
+    return 1;
+  v5 = *(_QWORD *)(a1 + 336);
+  if ( !v5 )
+    return 1;
+  ++*(_DWORD *)(a1 + 344);
+  return (*(__int64 (__fastcall **)(__int64, __int64))(*(_QWORD *)v5 + 880LL))(v5, a2);
+}

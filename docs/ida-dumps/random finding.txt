@@ -1,0 +1,890 @@
+                db    0
+                dq offset unk_14D934B36
+off_14B833808   dq offset aIcslogS      ; DATA XREF: _RTC_AllocaFailure(void *,_RTC_ALLOCA_NODE *,int)+B3F↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_364 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  85h
+                db    1
+                db    0
+                db    0
+                db    7
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B37
+aUfilteredactor_6 db 'UFilteredActorTrackingRegistry::IsLocationRelevantToTracker',0
+                                        ; DATA XREF: _RTC_AllocaFailure(void *,_RTC_ALLOCA_NODE *,int)+10C↑o
+                                        ; _RTC_AllocaFailure(void *,_RTC_ALLOCA_NODE *,int)+2FD↑o ...
+                align 10h
+aUfilteredactor_7:                      ; DATA XREF: _RTC_AllocaFailure(void *,_RTC_ALLOCA_NODE *,int)+E7E↑o
+                text "UTF-16LE", 'UFilteredActorTrackingRegistry::IsLocationRelevantT'
+                text "UTF-16LE", 'oTracker: UFilteredActorTrackingRegistry failed to '
+                text "UTF-16LE", 'find actor tracking service',0
+                align 20h
+aNormalControlC:                        ; DATA XREF: _RTC_AllocaFailure(void *,_RTC_ALLOCA_NODE *,int)+15F↑o
+                text "UTF-16LE", 'Normal control case - updated tracked actor locatio'
+                text "UTF-16LE", 'n no-longer exists',0
+                align 10h
+aNormalControlC_2:                      ; DATA XREF: _RTC_AllocaFailure(void *,_RTC_ALLOCA_NODE *,int)+DBF↑o
+                text "UTF-16LE", 'Normal control case - updated tracked actor locatio'
+                text "UTF-16LE", 'n isn',27h,'t registered as a filtered, tracked act'
+                text "UTF-16LE", 'or',0
+                align 20h
+aNormalControlC_0:                      ; DATA XREF: _RTC_AllocaFailure(void *,_RTC_ALLOCA_NODE *,int)+37A↑o
+                text "UTF-16LE", 'Normal control case - updated tracked actor is blac'
+                text "UTF-16LE", 'k listed from this tracker',0
+                align 20h
+aNormalControlC_1:                      ; DATA XREF: _RTC_AllocaFailure(void *,_RTC_ALLOCA_NODE *,int)+550↑o
+                text "UTF-16LE", 'Normal control case - updated tracked actor locatio'
+                text "UTF-16LE", 'n doesn',27h,'t match gameplay tag requirements for'
+                text "UTF-16LE", ' this tracker',0
+                align 20h
+aFailedToFindAc_1:                      ; DATA XREF: _RTC_AllocaFailure(void *,_RTC_ALLOCA_NODE *,int)+677↑o
+                text "UTF-16LE", 'Failed to find ActorLocation for tracker instigator'
+                text "UTF-16LE", 0
+aTrackerlocatio:                        ; DATA XREF: _RTC_AllocaFailure(void *,_RTC_ALLOCA_NODE *,int)+B0C↑o
+                text "UTF-16LE", 'TrackerLocation=',0
+                align 10h
+aActorLocationO:                        ; DATA XREF: _RTC_AllocaFailure(void *,_RTC_ALLOCA_NODE *,int)+B18↑o
+                text "UTF-16LE", 'Actor location out of range for tracker',0
+off_14B833D40   dq offset aIcslogS      ; DATA XREF: sub_14625E710+C0B↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_364 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  97h
+                db    1
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B38
+off_14B833D60   dq offset aIcslogS      ; DATA XREF: sub_14625E710+58B↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_364 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db 0B1h
+                db    1
+                db    0
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B39
+aUfilteredactor_4 db 'UFilteredActorTrackingRegistry::GetLocationUpdatesForServer',0
+                                        ; DATA XREF: sub_14625E710+236↑o
+                                        ; sub_14625E710+A94↑o ...
+                align 20h
+aUfilteredactor_5:                      ; DATA XREF: sub_14625E710+A1C↑o
+                text "UTF-16LE", 'UFilteredActorTrackingRegistry::GetTrackerInstigato'
+                text "UTF-16LE", 'rsForServer failed to find actor tracking service',0
+                align 10h
+aBadStateDetect:                        ; DATA XREF: sub_14625E710+38A↑o
+                text "UTF-16LE", 'Bad state detected - unexpected mismatch between FA'
+                text "UTF-16LE", 'ctorInformation and FActorTrackerRegistration. This'
+                text "UTF-16LE", ' should never happen',0
+                align 8
+off_14B833F88   dq offset aIcslogS      ; DATA XREF: sub_14625D390+4A0↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_364 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db 0D4h
+                db    1
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B3A
+aUfilteredactor_3 db 'UFilteredActorTrackingRegistry::GetAllActorLocations',0
+                                        ; DATA XREF: sub_14625D390+31A↑o
+                                        ; sub_14625D390:loc_14625D710↑o ...
+                align 20h
+off_14B833FE0   dq offset aIcslogS      ; DATA XREF: sub_1462C5ED0+C4D↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_364 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db 0EEh
+                db    1
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B3B
+off_14B834000   dq offset aIcslogS      ; DATA XREF: sub_1462C5ED0+5AF↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_364 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db 0FDh
+                db    1
+                db    0
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B3C
+off_14B834020   dq offset aIcslogS      ; DATA XREF: sub_1462C5ED0+99F↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_364 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db    5
+                db    2
+                db    0
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B3D
+aUfilteredactor_8 db 'UFilteredActorTrackingRegistry::UpdateServerRelevancyTable',0
+                                        ; DATA XREF: sub_1462C5ED0+241↑o
+                                        ; sub_1462C5ED0+ACE↑o ...
+                align 20h
+aFailedToFindTr:                        ; DATA XREF: sub_1462C5ED0+33D↑o
+                text "UTF-16LE", 'Failed to find tracker instance corresponding to tr'
+                text "UTF-16LE", 'acker guid when updating server relevancy table',0
+                align 10h
+aFailedToFindAc_2:                      ; DATA XREF: sub_1462C5ED0+727↑o
+                text "UTF-16LE", 'Failed to find actor info for tracker instigator, s'
+                text "UTF-16LE", 'o ServerID is unavailable when updating server rele'
+                text "UTF-16LE", 'vancy table',0
+                align 8
+aSmapiconrecord:                        ; DATA XREF: sub_14625E0E0+B8↑o
+                text "UTF-16LE", '%sMapIconRecord: %s',0
+aSmapiconrecord_0:                      ; DATA XREF: sub_14625E0E0+113↑o
+                text "UTF-16LE", '%sMapIconRecord: NONE',0
+                align 10h
+aSshipyawrotati:                        ; DATA XREF: sub_14625E250+A4↑o
+                text "UTF-16LE", '%sShipYawRotation: %f, %sOwnerName: %s, %sMaxShipHe'
+                text "UTF-16LE", 'alth: %f',0
+                align 10h
+aSchumtimeremai:                        ; DATA XREF: sub_14625DE20+76↑o
+                text "UTF-16LE", '%sChumTimeRemaining: N/A (Not Chummed)',0
+                align 20h
+aSchumtimeremai_0:                      ; DATA XREF: sub_14625DE20+20B↑o
+                text "UTF-16LE", '%sChumTimeRemaining: %f',0
+aSchumexpiratio:                        ; DATA XREF: sub_14625DE20+250↑o
+                text "UTF-16LE", '%sChumExpirationTimestamp: %f',0
+                align 10h
+off_14B8343D0   dq offset aS_8          ; DATA XREF: sub_14625D890+50C↑o
+                                        ; "%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  24h ; $
+                db    2
+                db    0
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B3E
+aFservicepacket_46 db 'FServicePacketRouter<class UActorTrackingService,enum EActorTrack'
+                                        ; DATA XREF: sub_14625D890+225↑o
+                                        ; sub_14625D890:loc_14625DB10↑o ...
+                db 'ingPacketType>::GetConnectionFromServerId',0
+                align 20h
+aFailedToFindCo_2:                      ; DATA XREF: sub_14625D890+DE↑o
+                text "UTF-16LE", 'Failed to find connection from server connection ma'
+                text "UTF-16LE", 'p',0
+                align 10h
+off_14B8344D0   dq offset aIcslogS      ; DATA XREF: sub_14624BD00+56A↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  56h ; V
+                db    4
+                db    0
+                db    0
+                db    7
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B3F
+off_14B8344F0   dq offset aIcslogS      ; DATA XREF: sub_14624BD00:loc_14624C772↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  70h ; p
+                db    4
+                db    0
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B40
+off_14B834510   dq offset aIcslogS      ; DATA XREF: sub_14624BD00+10F4↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  94h
+                db    4
+                db    0
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B41
+off_14B834530   dq offset aIcslogS      ; DATA XREF: sub_14624BD00+12BE↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  9Bh
+                db    4
+                db    0
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B42
+off_14B834550   dq offset aIcslogS      ; DATA XREF: sub_14624BD00+1340↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db 0A9h
+                db    4
+
+
+            db    0
+                db    0
+                db    0
+                dq offset unk_14D934B44
+aFservicepacket_40 db 'FServicePacketRouter<class UActorTrackingService,enum EActorTrack'
+                                        ; DATA XREF: sub_14624BD00+93↑o
+                db 'ingPacketType>::PollImpl',0
+                align 10h
+aPacketid:                              ; DATA XREF: sub_14624B430+202↑o
+                                        ; sub_14624B430+42D↑o ...
+                text "UTF-16LE", 'PacketId=',0
+                align 8
+aRecieveMessage:                        ; DATA XREF: sub_14624B430+1E1↑o
+                                        ; sub_14624BD00+20A↑o ...
+                text "UTF-16LE", 'Recieve message id',0
+                align 10h
+aOldconnection:                         ; DATA XREF: sub_14624BD00+A11↑o
+                                        ; sub_1462CF940+BB1↑o ...
+                text "UTF-16LE", 'OldConnection',0
+                align 10h
+aNewconnection:                         ; DATA XREF: sub_14624BD00+A29↑o
+                                        ; sub_1462CF940+BC6↑o ...
+                text "UTF-16LE", 'NewConnection',0
+                align 10h
+aServerid_2:                            ; DATA XREF: sub_14624BD00:loc_14624C665↑o
+                                        ; sub_14624BD00:loc_14624C863↑o ...
+                text "UTF-16LE", 'ServerId',0
+                align 10h
+aIncomingConnec:                        ; DATA XREF: sub_14624BD00+A44↑o
+                                        ; sub_1462CF940+BE8↑o ...
+                text "UTF-16LE", 'Incoming connection is attempting to register with '
+                text "UTF-16LE", 'the connection api, but its server ID already exist'
+                text "UTF-16LE", 's in the ServerConnection map. the old one will be '
+                text "UTF-16LE", 'overwritten',0
+                align 20h
+aNewbounds:                             ; DATA XREF: sub_14624BD00+108C↑o
+                                        ; sub_14624BD00+1254↑o ...
+                text "UTF-16LE", 'NewBounds',0
+                align 8
+aOldbounds:                             ; DATA XREF: sub_14624BD00+10A2↑o
+                                        ; sub_14624BD00+126C↑o ...
+                text "UTF-16LE", 'OldBounds',0
+                align 10h
+aReRegisteringP:                        ; DATA XREF: sub_14624BD00+10C4↑o
+                                        ; sub_1463080C0+10C4↑o
+                text "UTF-16LE", 'Re-registering previously connected server...',0
+                align 10h
+aServerWasAlrea:                        ; DATA XREF: sub_14624BD00+128E↑o
+                                        ; sub_1463080C0+128E↑o
+                text "UTF-16LE", 'Server was already registered, but old bounds were '
+                text "UTF-16LE", 'not valid / found....',0
+                align 10h
+aRegisteringBou:                        ; DATA XREF: sub_14624BD00+DFD↑o
+                                        ; sub_1463080C0+DFD↑o
+                text "UTF-16LE", 'Registering bounds for new server',0
+                align 20h
+aUnableToReadFs:                        ; DATA XREF: sub_14624B430+69F↑o
+                                        ; sub_14624BD00+6C5↑o ...
+                text "UTF-16LE", 'Unable to read FServiceBroadcast packet',0
+off_14B8349B0   dq offset aIcslogS      ; DATA XREF: sub_14624B430+56D↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  56h ; V
+                db    4
+                db    0
+                db    0
+                db    7
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B45
+off_14B8349D0   dq offset aIcslogS      ; DATA XREF: sub_14624B430+889↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db 0C8h
+                db    4
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B46
+aFservicepacket_39 db 'FServicePacketRouter<class UActorTrackingServiceHandler,enum EAct'
+                                        ; DATA XREF: sub_14624B430+7A↑o
+                db 'orTrackingPacketType>::PollImpl',0
+                align 8
+funcs_14625EDF1 dq offset sub_1458A69A0 ; DATA XREF: sub_14625E710+6CF↑r
+                                        ; sub_14625E710+898↑r
+                dq offset sub_1458A69B0
+                dq offset sub_146257AF0
+                dq offset sub_1458A6A50
+off_14B834A78   dq offset aIcslogS      ; DATA XREF: sub_14624E480:loc_14624E65C↑o
+                                        ; sub_14624E760:loc_14624E93C↑o ...
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  96h
+                db    2
+                db    0
+                db    0
+                db    6
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B47
+                align 20h
+aFservicepacket_43 db 'FServicePacketRouter<class UActorTrackingService,enum EActorTrack'
+                                        ; DATA XREF: sub_14624E480+EC↑o
+                                        ; sub_14624E480:loc_14624E70B↑o ...
+                db 'ingPacketType>::UpdateMetrics',0
+                align 20h
+aServicePacketS:                        ; DATA XREF: sub_14624E480+1AE↑o
+                                        ; sub_14624E760+1AE↑o ...
+                text "UTF-16LE", 'service packet sent',0
+                align 10h
+aPacketIdIHasNo:                        ; DATA XREF: sub_146244980+F↑o
+                                        ; sub_1462449B0+F↑o ...
+                text "UTF-16LE", 'Packet id %i has no handle function.',0
+                align 20h
+off_14B834B80   dq offset aIcslogS      ; DATA XREF: sub_14624D8A0+553↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  0Fh
+                db    4
+                db    0
+                db    0
+                db    5
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B48
+off_14B834BA0   dq offset aIcslogS      ; DATA XREF: sub_14624D8A0+6F3↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  1Ch
+                db    4
+                db    0
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B49
+aFservicepacket_42 db 'FServicePacketRouter<class UActorTrackingService,enum EActorTrack'
+                                        ; DATA XREF: sub_14624D8A0+49↑o
+                                        ; sub_14624D8A0+68A↑o
+                db 'ingPacketType>::ProcessDisconnect_Internal',0
+                align 10h
+aConnection_1:                          ; DATA XREF: sub_14624D120+109↑o
+                                        ; sub_14624D120+434↑o ...
+                text "UTF-16LE", 'Connection',0
+                align 10h
+aDisconnectHasA:                        ; DATA XREF: sub_14624D120+E9↑o
+                                        ; sub_14624D8A0+E9↑o ...
+                text "UTF-16LE", 'Disconnect has already been processed for this conn'
+                text "UTF-16LE", 'ection... its replacement connection likely registe'
+                text "UTF-16LE", 'red before the old connection timed out',0
+                align 10h
+aReconnectedsec:                        ; DATA XREF: sub_14624D120+6AB↑o
+                                        ; sub_14624D8A0+6AB↑o ...
+                text "UTF-16LE", 'ReconnectedSecondsAgo',0
+                align 20h
+aServerReconnec:                        ; DATA XREF: sub_14624D120+6CC↑o
+                                        ; sub_14624D8A0+6CC↑o ...
+                text "UTF-16LE", 'Server reconnected before we received its disconnec'
+                text "UTF-16LE", 'tion notification...',0
+off_14B834E30   dq offset aIcslogS      ; DATA XREF: sub_14624D120+553↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  0Fh
+                db    4
+                db    0
+                db    0
+                db    5
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B4A
+off_14B834E50   dq offset aIcslogS      ; DATA XREF: sub_14624D120+6F3↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  1Ch
+                db    4
+                db    0
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B4B
+aFservicepacket_41 db 'FServicePacketRouter<class UActorTrackingServiceHandler,enum EAct'
+                                        ; DATA XREF: sub_14624D120+49↑o
+                                        ; sub_14624D120+68A↑o
+                db 'orTrackingPacketType>::ProcessDisconnect_Internal',0
+                align 10h
+aSAttemptedToRo:                        ; DATA XREF: sub_1462C35C0+12B↑o
+                                        ; sub_1462C3740+12B↑o ...
+                text "UTF-16LE", '%s Attempted to route unknown packet id %i',0
+                align 8
+off_14B834F48   dq offset aIcslogS      ; DATA XREF: sub_146255990:loc_146255B7D↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  78h ; x
+                db    2
+                db    0
+                db    0
+                db    6
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B4C
+                align 10h
+aFservicepacket_44 db 'FServicePacketRouter<class UActorTrackingService,enum EActorTrack'
+                                        ; DATA XREF: sub_146255990+108↑o
+                db 'ingPacketType>::AttemptFlushSendMetrics',0
+                align 20h
+aMaxpacketbytes:                        ; DATA XREF: sub_146255990+133↑o
+                                        ; sub_146255C10+133↑o ...
+                text "UTF-16LE", 'MaxPacketBytes=',0
+aMinpacketbytes:                        ; DATA XREF: sub_146255990+14C↑o
+                                        ; sub_146255C10+14C↑o ...
+                text "UTF-16LE", 'MinPacketBytes=',0
+aTotalnumpacket:                        ; DATA XREF: sub_146255990+165↑o
+                                        ; sub_146255C10+165↑o ...
+                text "UTF-16LE", 'TotalNumPackets=',0
+                align 8
+aAvgpacketbytes:                        ; DATA XREF: sub_146255990+17E↑o
+                                        ; sub_146255C10+17E↑o ...
+                text "UTF-16LE", 'AvgPacketBytes=',0
+aTotalbytes:                            ; DATA XREF: sub_146255990+197↑o
+                                        ; sub_146255C10+197↑o ...
+                text "UTF-16LE", 'TotalBytes=',0
+aFlushServiceMe:                        ; DATA XREF: sub_146255990+1BC↑o
+                                        ; sub_146255C10+1BC↑o ...
+                text "UTF-16LE", 'Flush Service Metrics:',0
+                align 10h
+off_14B8350B0   dq offset aIcslogS      ; DATA XREF: sub_146255C10:loc_146255DFD↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_107 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  78h ; x
+                db    2
+                db    0
+                db    0
+                db    6
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D934B4D
+aFservicepacket_45 db 'FServicePacketRouter<class UActorTrackingServiceHandler,enum EAct'
+                                        ; DATA XREF: sub_146255C10+108↑o
+                db 'orTrackingPacketType>::AttemptFlushSendMetrics',0
+qword_14B835140 dq 3FEC744CEF5149DEh    ; DATA XREF: sub_1462C3400+6A↑r
+qword_14B835148 dq 0BFDD1745D1745D17h   ; DATA XREF: sub_1462C3400+8C↑r
+aLogaocChatserv:                        ; DATA XREF: sub_1411DC6D0+A↑o
+                text "UTF-16LE", 'LogAoC_ChatService',0
+                align 8
+aLogaocChatserv_0:                      ; DATA XREF: sub_1411DC720+A↑o
+                text "UTF-16LE", 'LogAoC_ChatServiceHandler',0
+                align 10h
+aEnablesGathera:                        ; DATA XREF: sub_1411DB8B0+1F↑o
+                text "UTF-16LE", 'Enables gatherables suppression flow.',0
+                align 20h
+aFeatureGathera:                        ; DATA XREF: sub_1411DB8B0+32↑o
+                text "UTF-16LE", 'Feature.Gatherables.Suppression',0
+aEnablesQuestGa:                        ; DATA XREF: sub_1411DBAB0+1F↑o
+                text "UTF-16LE", 'Enables quest gatherables spawn flow.',0
+                align 10h
+aFeatureQuestGa:                        ; DATA XREF: sub_1411DBAB0+32↑o
+                text "UTF-16LE", 'Feature.Quest.Gatherables.Spawn',0
+aVisualizeBoxCo:                        ; DATA XREF: sub_1411DBF30+1F↑o
+                text "UTF-16LE", 'Visualize box collision detection for gatherable de'
+                text "UTF-16LE", 'tection. Editor only (done on server).',0
+                align 10h
+aGatherablesEdi:                        ; DATA XREF: sub_1411DBF30+32↑o
+                text "UTF-16LE", 'Gatherables.Editor.ShowDebugVolumes',0
+                align 20h
+aWhetherOrNotTo_22:                     ; DATA XREF: sub_1411DBDB0+1F↑o
+                text "UTF-16LE", 'Whether or not to track packet statistics.  Has per'
+                text "UTF-16LE", 'formance implications.  Remember to turn this off.',0
+                align 10h
+aCitynodeservic:                        ; DATA XREF: sub_1411DBDB0+35↑o
+                text "UTF-16LE", 'CityNodeService.ShouldTrackStatistics',0
+                align 20h
+aAllowRelicsToS:                        ; DATA XREF: sub_1411DBBB0+1F↑o
+                text "UTF-16LE", 'Allow relics to spawn.',0
+                align 10h
+aFeatureRelicsp:                        ; DATA XREF: sub_1411DBBB0+32↑o
+                text "UTF-16LE", 'Feature.RelicSpawns.Allow',0
+                align 8
+aAllowNodesToGa:                        ; DATA XREF: sub_1411DB9B0+1F↑o
+                text "UTF-16LE", 'Allow nodes to gain XP.',0
+aFeatureNodesAl:                        ; DATA XREF: sub_1411DB9B0+32↑o
+                text "UTF-16LE", 'Feature.Nodes.AllowProgress',0
+aAdjustsTheNode:                        ; DATA XREF: sub_1411DBCB0+1F↑o
+                text "UTF-16LE", 'Adjusts the node experience throttle',0
+                align 20h
+aNodeXpThrottle:                        ; DATA XREF: sub_1411DBCB0+32↑o
+                text "UTF-16LE", 'Node_XP_Throttle',0
+                align 8
+aMessageSFromU:                         ; DATA XREF: sub_1462CDA60+77↑o
+                text "UTF-16LE", 'Message [%s] From: %u',0
+                align 8
+aContainsErrorU:                        ; DATA XREF: sub_1462CDA60+B6↑o
+                text "UTF-16LE", 'Contains Error [%u] %s',0
+                align 8
+aDataError      db 'Data Error',0       ; DATA XREF: sub_1462C8370:loc_1462C872F↑o
+                                        ; sub_1462C8370:loc_1462C88AC↑o
+                align 8
+aSubscribe      db 'Subscribe',0        ; DATA XREF: sub_1462C71B0+51↑o
+                align 8
+aKickbot        db 'KickBot',0          ; DATA XREF: sub_1462C6F50+25↑o
+aUiinfo         db 'UIInfo',0           ; DATA XREF: sub_1462C6FE0+1F↑o
+                align 8
+off_14B8356D8   dq offset aAutomationRunt ; DATA XREF: sub_1462CD1D0+3D↑o
+                                        ; "Automation Runtime Service: Error messa"...
+                dq offset aCP4RelAocue5Ga_365 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  37h ; 7
+                db    0
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D935330
+                align 20h
+aAutomationRunt:                        ; DATA XREF: .rdata:off_14B8356D8↑o
+                text "UTF-16LE", 'Automation Runtime Service: Error message received '
+                text "UTF-16LE", 'from AutomationRuntimeServiceHandler Connection=%d '
+                text "UTF-16LE", 'Message=%s',0
+                align 10h
+aCP4RelAocue5Ga_365 db 'C:\P4\rel\AOCUE5\Game\Plugins\GameSystems\Source\GameSystemsPlugi'
+                                        ; DATA XREF: .rdata:000000014B8356E0↑o
+                                        ; .rdata:000000014B835880↓o ...
+                db 'n\Private\GameService\AutomationRuntime\AutomationRuntimeService.'
+                db 'cpp',0
+                align 8
+off_14B835878   dq offset aAutomationRunt_0
+                                        ; DATA XREF: sub_1462CD0E0:loc_1462CD110↑o
+                                        ; "Automation Runtime Service: Received a "...
+                dq offset aCP4RelAocue5Ga_365 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  3Eh ; >
+                db    0
+                db    0
+                db    0
+                db    5
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D935331
+                align 20h
+aAutomationRunt_0:                      ; DATA XREF: .rdata:off_14B835878↑o
+                text "UTF-16LE", 'Automation Runtime Service: Received a new connecti'
+                text "UTF-16LE", 'on Connection=%s',0
+off_14B835928   dq offset aAutomationRunt_1
+                                        ; DATA XREF: sub_1462CD140:loc_1462CD179↑o
+                                        ; "Automation Runtime Service: Lost connec"...
+                dq offset aCP4RelAocue5Ga_365 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D935332
+                align 10h
+aAutomationRunt_1:                      ; DATA XREF: .rdata:off_14B835928↑o
+                text "UTF-16LE", 'Automation Runtime Service: Lost connection to UAut'
+                text "UTF-16LE", 'omationRuntimeServiceHandler Connection=%s',0
+                align 10h
+off_14B835A10   dq offset aS_8          ; DATA XREF: sub_1462CA870+21E↑o
+                                        ; "%s"
+                dq offset aCP4RelAocue5Ga_366 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  2Ch ; ,
+                db    0
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D935333
+aCP4RelAocue5Ga_366 db 'C:\P4\rel\AOCUE5\Game\Plugins\GameSystems\Source\GameSystemsPlugi'
+                                        ; DATA XREF: .rdata:000000014B835A18↑o
+                                        ; .rdata:000000014B835AC8↓o ...
+                db 'n\Private\GameService\CityNode\AoCCityNodeHandlerExpressionProvid'
+                db 'er.cpp',0
+                align 20h
+off_14B835AC0   dq offset aS_8          ; DATA XREF: sub_1462CA870+47C↑o
+                                        ; "%s"
+                dq offset aCP4RelAocue5Ga_366 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  35h ; 5
+                db    0
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D935334
+aUaoccitynodeha db 'UAoCCityNodeHandlerExpressionProvider::GetBuildingCount',0
+                                        ; DATA XREF: sub_1462C9EF0+187↑o
+                                        ; sub_1462C9EF0:loc_1462CA0D3↑o ...
+aBuildingstate:                         ; DATA XREF: sub_1462CA870+D8↑o
+                                        ; sub_1462CA870+30D↑o ...
+                text "UTF-16LE", 'BuildingState=',0
+                align 8
+aBuildingid_0:                          ; DATA XREF: sub_1462C9EF0+114↑o
+                                        ; sub_1462C9EF0+268↑o ...
+                text "UTF-16LE", 'BuildingId=',0
+aFailedToGetBui:                        ; DATA XREF: sub_1462C9EF0+F4↑o
+                                        ; sub_1462CA870+F9↑o ...
+                text "UTF-16LE", 'Failed to get building count, NodeGuid is invalid.',0
+                align 20h
+aFailedToGetBui_0:                      ; DATA XREF: sub_1462C9EF0+54F↑o
+                                        ; sub_1462CA870+343↑o ...
+                text "UTF-16LE", 'Failed to get building count, NodeData is invalid.',0
+                align 8
+off_14B835C28   dq offset aS_8          ; DATA XREF: sub_1462C9EF0+43C↑o
+                                        ; "%s"
+                dq offset aCP4RelAocue5Ga_366 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  58h ; X
+                db    0
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D935335
+off_14B835C48   dq offset aS_8          ; DATA XREF: sub_1462C9EF0+8EC↑o
+                                        ; "%s"
+                dq offset aCP4RelAocue5Ga_366 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  60h ; `
+                db    0
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D935336
+off_14B835C68   dq offset aS_8          ; DATA XREF: sub_1462CAD80+4FC↑o
+                                        ; "%s"
+                dq offset aCP4RelAocue5Ga_366 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  82h
+                db    0
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D935337
+off_14B835C88   dq offset aS_8          ; DATA XREF: sub_1462CAD80+70E↑o
+                                        ; "%s"
+                dq offset aCP4RelAocue5Ga_366 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  8Ah
+                db    0
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D935338
+off_14B835CA8   dq offset aS_8          ; DATA XREF: sub_1462CB8F0+43C↑o
+                                        ; "%s"
+                dq offset aCP4RelAocue5Ga_366 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db 0E1h
+                db    0
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D935339
+off_14B835CC8   dq offset aS_8          ; DATA XREF: sub_1462CB8F0+8EC↑o
+                                        ; "%s"
+                dq offset aCP4RelAocue5Ga_366 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db 0E9h
+                db    0
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D93533A
+aUaoccitynodeha_2 db 'UAoCCityNodeHandlerExpressionProvider::GetExpansionCount',0
+                                        ; DATA XREF: sub_1462CB8F0+187↑o
+                                        ; sub_1462CB8F0:loc_1462CBAD3↑o ...
+                align 8
+aExpansionid_0:                         ; DATA XREF: sub_1462CB8F0+114↑o
+                                        ; sub_1462CB8F0+268↑o ...
+                text "UTF-16LE", 'ExpansionId=',0
+                align 10h
+aFailedToGetExp:                        ; DATA XREF: sub_1462CB8F0+F4↑o
+                                        ; sub_1462CC270+F1↑o
+                text "UTF-16LE", 'Failed to get expansion count, NodeGuid is invalid.'
+                text "UTF-16LE", 0
+                align 20h
+aFailedToGetExp_0:                      ; DATA XREF: sub_1462CB8F0+54F↑o
+                                        ; sub_1462CC270+33E↑o
+                text "UTF-16LE", 'Failed to get expansion count, NodeData is invalid.'
+                text "UTF-16LE", 0
+off_14B835E28   dq offset aS_8          ; DATA XREF: sub_1462CC270+21C↑o
+                                        ; "%s"
+                dq offset aCP4RelAocue5Ga_366 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  0Dh
+                db    1
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D93533B
+off_14B835E48   dq offset aS_8          ; DATA XREF: sub_1462CC270+47C↑o
+                                        ; "%s"
+                dq offset aCP4RelAocue5Ga_366 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  16h
+                db    1
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D93533C
+aBisenabled_0:                          ; DATA XREF: sub_1462CC270+D0↑o
+                                        ; sub_1462CC270+308↑o
+                text "UTF-16LE", 'bIsEnabled=',0
+off_14B835E80   dq offset aIcslogS      ; DATA XREF: sub_1462CCD30+346↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_366 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  5Bh ; [
+                db    3
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D93533D
+aUaoccitynodeha_6 db 'UAoCCityNodeHandlerExpressionProvider::GetPlotContributionProgres'
+                                        ; DATA XREF: sub_1462CCD30+16C↑o
+                                        ; sub_1462CCD30:loc_1462CCEFE↑o ...
+                db 's',0
+                align 8
+aPlotid:                                ; DATA XREF: sub_1462CCD30+FB↑o
+                                        ; sub_1462CCD30+279↑o ...
+                text "UTF-16LE", 'PlotId=',0
+                align 20h
+aUaoccitynodeha_5:                      ; DATA XREF: sub_1462CCD30+B9↑o
+                text "UTF-16LE", 'UAoCCityNodeHandlerExpressionProvider::GetPlotContr'
+                text "UTF-16LE", 'ibutionProgress - Function does not run on handlers'
+                text "UTF-16LE", '/servers. Must be run on service',0
+                align 10h
+off_14B836010   dq offset aIcslogS      ; DATA XREF: sub_1462CC780+365↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_366 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  62h ; b
+                db    3
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D93533E
+aUaoccitynodeha_4 db 'UAoCCityNodeHandlerExpressionProvider::GetHighestLevelCharacterFo'
+                                        ; DATA XREF: sub_1462CC780+185↑o
+                                        ; sub_1462CC780:loc_1462CC95E↑o ...
+                db 'rPlayer',0
+                align 20h
+aUaoccitynodeha_3:                      ; DATA XREF: sub_1462CC780+D2↑o
+                text "UTF-16LE", 'UAoCCityNodeHandlerExpressionProvider::GetPlayerLev'
+                text "UTF-16LE", 'el - Function does not run on handlers/servers. Mus'
+                text "UTF-16LE", 't be run on service',0
+                align 8
+off_14B836178   dq offset aIcslogS      ; DATA XREF: sub_1462CB520+365↑o
+                                        ; "\"icslog\":%s"
+                dq offset aCP4RelAocue5Ga_366 ; "C:\\P4\\rel\\AOCUE5\\Game\\Plugins\\Gam"...
+                db  69h ; i
+                db    3
+                db    0
+                db    0
+                db    2
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D93533F
+aUaoccitynodeha_1 db 'UAoCCityNodeHandlerExpressionProvider::GetCitizenshipRank',0
+                                        ; DATA XREF: sub_1462CB520+185↑o
+                                        ; sub_1462CB520:loc_1462CB6FE↑o ...
+                align 20h
+aUaoccitynodeha_0:                      ; DATA XREF: sub_1462CB520+D2↑o
+                text "UTF-16LE", 'UAoCCityNodeHandlerExpressionProvider::GetCitizensh'
+                text "UTF-16LE", 'ipRank - Function does not run on handlers/servers.'
+                text "UTF-16LE", ' Must be run on service',0
+                align 20h
+aEnablesGaining:                        ; DATA XREF: sub_1411E1E00+1F↑o
+                text "UTF-16LE", 'Enables gaining guild exp, earning and using guild '
+                text "UTF-16LE", 'skill points, allow guild skills to apply',0
+                align 20h
+aFeatureGuildsP:                        ; DATA XREF: sub_1411E1E00+32↑o
+                text "UTF-16LE", 'Feature.Guilds.Progression',0
+                align 8
+; const char aGuildStorageIt[]
+aGuildStorageIt db 'guild_storage_item_warehouse',0
+                                        ; DATA XREF: sub_1462DA6B0+93C↑o
+                                        ; sub_1462DA6B0+9B1↑o ...
+                align 8
+; const char aGuildStorageRe[]
+aGuildStorageRe db 'guild_storage_resource_warehouse',0
+                                        ; DATA XREF: sub_1462DA6B0+AED↑o
+                                        ; sub_1462DA6B0+B62↑o ...
+                align 20h
+; const char aGuildguid_0[]
+aGuildguid_0    db 'GuildGuid',0        ; DATA XREF: sub_1462DA6B0+4A0↑o
+                                        ; sub_1462DA6B0+4DC↑o ...
+                align 10h
+; const char aNodeitemstorag_0[]
+aNodeitemstorag_0 db 'NodeItemStorageComponentIndex',0
+                                        ; DATA XREF: sub_1462DA6B0+54E↑o
+                                        ; sub_1462DA6B0+57B↑o ...
+                align 10h
+; const char aResourcestorag_0[]
+aResourcestorag_0 db 'ResourceStorageComponentIndex',0
+                                        ; DATA XREF: sub_1462DA6B0+7B3↑o
+                                        ; sub_1462DA6B0+7E6↑o ...
+                align 10h
+; const char aWarehouseidAre[]
+aWarehouseidAre db 'WarehouseId.AreaRecordGuid',0 ; DATA XREF: sub_1462DA6B0+6FD↑o
+                                        ; sub_1462DA6B0+730↑o ...
+                align 10h
+aAnal:                                  ; DATA XREF: sub_1411DE110+4↑o
+                                        ; sub_1411EC9F0+4↑o
+                text "UTF-16LE", 'anal',0
+                align 20h
+aAnus:                                  ; DATA XREF: sub_1411DE110+18↑o
+                                        ; sub_1411EC9F0+18↑o

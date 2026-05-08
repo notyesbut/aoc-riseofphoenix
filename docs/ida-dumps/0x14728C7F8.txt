@@ -1,0 +1,44 @@
+__int64 __fastcall sub_14728C7B0(__int64 a1, __int64 a2)
+{
+  int v4; // ebp
+  __int64 v5; // r14
+  int *v6; // rdi
+
+  sub_1416B8A40();
+  sub_1414E54E0(a2, (__int64)*(int *)(a1 + 88) << 7);
+  sub_1414E54E0(a2, 4LL * *(int *)(a1 + 104));
+  v4 = 0;
+  if ( *(int *)(a1 + 136) > 0 )
+  {
+    v5 = 0;
+    do
+    {
+      v6 = (int *)(v5 + *(_QWORD *)(a1 + 128));
+      sub_1414E57B0(a2, 12LL * v6[2]);
+      sub_1414E57B0(a2, 8LL * v6[6]);
+      sub_1414E57B0(a2, 4LL * v6[10]);
+      sub_1414E57B0(a2, 4LL * v6[14]);
+      sub_1414E57B0(a2, 4LL * v6[18]);
+      sub_1414E57B0(a2, 12LL * v6[26]);
+      sub_1414E57B0(a2, 12LL * v6[30]);
+      sub_1414E57B0(a2, 16);
+      sub_1414E57B0(a2, 16);
+      sub_1414E57B0(a2, 16);
+      sub_1414E57B0(a2, 16);
+      sub_1414E57B0(a2, 16);
+      sub_1414E57B0(a2, 16);
+      sub_1414E57B0(a2, 28);
+      sub_1414E57B0(a2, 4LL * v6[42]);
+      sub_1414E57B0(a2, 4LL * v6[22]);
+      sub_1414E57B0(a2, 16);
+      sub_1414E57B0(a2, 9);
+      ++v4;
+      v5 += 216;
+    }
+    while ( v4 < *(_DWORD *)(a1 + 136) );
+  }
+  sub_1414E54E0(a2, 16);
+  sub_1414E54E0(a2, 4LL * *(int *)(a1 + 152));
+  sub_1414E54E0(a2, 16);
+  return sub_1414E54E0(a2, 4);
+}

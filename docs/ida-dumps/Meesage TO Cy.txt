@@ -1,0 +1,6 @@
+When I first started building this, I reached out to someone who was working on a similar project after a month or 2, I asked him if he had made any progress, he told me he had stopped working on his project he have a lot of useful work done though so I asked him if he could shared his projectwith me.
+It included things like captured replay-data.bin and other useful parts, but replay itself wasn’t actually working. I took that as a base and integrated it into my own project, then worked on it further I got replay fully working and did quite a bit of reverse engineering on the network and other parts of the client along the way, he is a collaborator right now on the github i pushed 2 days ago but i dont know if he is willing to commit, and its not only about my credit and things ive done he is included too so without him i probably would not come so far.
+okay give me your github ill invite you
+lets make it work
+but you will share you project with me too
+we might transit to your poject

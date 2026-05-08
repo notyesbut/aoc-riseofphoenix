@@ -1,0 +1,99 @@
+__int64 __fastcall sub_1415E6F70(
+        __int64 a1,
+        _WORD *a2,
+        __int64 *a3,
+        __int64 (*a4)(void),
+        int a5,
+        int a6,
+        int a7,
+        __int64 a8,
+        _WORD *a9,
+        __int64 a10,
+        __int64 a11,
+        _QWORD *a12,
+        __int64 (*a13)(void),
+        __int64 (*a14)(void))
+{
+  __int64 (*v14)(void); // rbp
+  __int64 v18; // rdi
+  __int64 v19; // rbx
+  __int64 v20; // rax
+  void (__fastcall *v21)(__int64, __int64); // r8
+  __int64 v22; // rdx
+  void (__fastcall *v23)(__int64); // rdx
+  __int64 v25; // [rsp+78h] [rbp+20h] BYREF
+
+  v14 = a4;
+  LOBYTE(a4) = 1;
+  v18 = sub_141762A50(&unk_14D6D1D34, 576, 8, a4);
+  sub_1414FE830(&v25, a2, 1u);
+  sub_1415F1E90(v18, 0, a5, a6, 199);
+  *(_QWORD *)v18 = &off_149E544F8;
+  *(_QWORD *)(v18 + 208) = a10;
+  *(_QWORD *)(v18 + 216) = a11;
+  *(_QWORD *)(v18 + 224) = *a12;
+  *(_QWORD *)(v18 + 232) = 0;
+  *(_WORD *)(v18 + 240) = 0;
+  *(_DWORD *)(v18 + 244) = a7 | 0x80;
+  *(_QWORD *)(v18 + 248) = a8;
+  *(_QWORD *)(v18 + 256) = 0;
+  sub_1414FE830((_QWORD *)(v18 + 264), a9, 1u);
+  *(_QWORD *)(v18 + 272) = 0;
+  *(_QWORD *)(v18 + 280) = 0;
+  *(_QWORD *)(v18 + 288) = 0;
+  *(_QWORD *)(v18 + 296) = 0;
+  *(_QWORD *)(v18 + 304) = 0;
+  *(_QWORD *)(v18 + 312) = 0;
+  *(_QWORD *)(v18 + 320) = 0;
+  *(_QWORD *)(v18 + 328) = 0;
+  *(_QWORD *)(v18 + 336) = 0;
+  *(_QWORD *)(v18 + 344) = 0;
+  *(_QWORD *)(v18 + 352) = 0;
+  *(_QWORD *)(v18 + 360) = 0;
+  *(_QWORD *)(v18 + 368) = 0;
+  *(_QWORD *)(v18 + 392) = 0;
+  *(_DWORD *)(v18 + 400) = 0;
+  *(_DWORD *)(v18 + 404) = 128;
+  *(_DWORD *)(v18 + 408) = -1;
+  *(_DWORD *)(v18 + 412) = 0;
+  *(_QWORD *)(v18 + 424) = 0;
+  *(_DWORD *)(v18 + 432) = 0;
+  InitializeSRWLock((PSRWLOCK)(v18 + 440));
+  *(_QWORD *)(v18 + 448) = 0;
+  *(_QWORD *)(v18 + 456) = 0;
+  *(_QWORD *)(v18 + 480) = 0;
+  *(_DWORD *)(v18 + 488) = 0;
+  *(_DWORD *)(v18 + 492) = 128;
+  *(_DWORD *)(v18 + 496) = -1;
+  *(_DWORD *)(v18 + 500) = 0;
+  *(_QWORD *)(v18 + 512) = 0;
+  *(_DWORD *)(v18 + 520) = 0;
+  InitializeSRWLock((PSRWLOCK)(v18 + 528));
+  *(_QWORD *)(v18 + 536) = 0;
+  *(_QWORD *)(v18 + 544) = 0;
+  *(_QWORD *)(v18 + 552) = 0;
+  *(_QWORD *)(v18 + 560) = 0;
+  *(_QWORD *)(v18 + 568) = 0;
+  *a3 = v18;
+  v19 = a14();
+  v20 = a13();
+  v21 = *(void (__fastcall **)(__int64, __int64))(*(_QWORD *)v18 + 936LL);
+  if ( v20 == v18 )
+    v22 = 0;
+  else
+    v22 = v20;
+  if ( (char *)v21 == (char *)sub_141613520 )
+    sub_141613520(v18, v22);
+  else
+    v21(v18, v22);
+  if ( byte_14D6B7288 && v19 )
+    sub_14163E750(v19);
+  *(_QWORD *)(v18 + 256) = v19;
+  v23 = *(void (__fastcall **)(__int64))(*(_QWORD *)v18 + 8LL);
+  if ( (char *)v23 == (char *)sub_1416090B0 )
+    sub_1416090B0(v18);
+  else
+    v23(v18);
+  sub_141770610(v18, sub_141587100, a1, a2);
+  return v14();
+}

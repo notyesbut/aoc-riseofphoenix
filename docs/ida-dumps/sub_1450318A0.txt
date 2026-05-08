@@ -1,0 +1,70 @@
+_QWORD *__fastcall sub_1450318A0(__int64 a1, _QWORD *a2, _DWORD *a3)
+{
+  bool v6; // cl
+  __int64 v7; // rcx
+  __int128 v9; // [rsp+20h] [rbp-28h] BYREF
+  _QWORD v10[3]; // [rsp+30h] [rbp-18h] BYREF
+
+  if ( !a3 || (a3[2] & 0x40000000) != 0 )
+  {
+    v6 = 1;
+    if ( !a3 )
+    {
+LABEL_25:
+      *a2 = 0;
+      a2[1] = 0;
+      return a2;
+    }
+  }
+  else
+  {
+    sub_145031660(a1, v10);
+    if ( v10[0] )
+    {
+      v6 = 1;
+    }
+    else if ( (unsigned __int8)sub_145036780(a3) )
+    {
+      v6 = 1;
+    }
+    else if ( (*(unsigned __int8 (__fastcall **)(_DWORD *))(*(_QWORD *)a3 + 656LL))(a3) )
+    {
+      v6 = 1;
+    }
+    else
+    {
+      v6 = false;
+      if ( (*(unsigned __int8 (__fastcall **)(_DWORD *))(*(_QWORD *)a3 + 664LL))(a3) )
+      {
+        v7 = *((_QWORD *)a3 + 4);
+        if ( v7 )
+        {
+          if ( (*(_DWORD *)(v7 + 8) & 0x40000000) == 0 && (unsigned __int8)sub_145036780(v7) )
+            v6 = true;
+        }
+      }
+    }
+  }
+  if ( (a3[2] & 0x40000000) != 0 || !v6 )
+    goto LABEL_25;
+  sub_145031660(a1, &v9);
+  if ( (_QWORD)v9 )
+  {
+LABEL_24:
+    *(_OWORD *)a2 = v9;
+    return a2;
+  }
+  if ( (a3[2] & 0x40000000) == 0 )
+  {
+    v9 = *(_OWORD *)(*(__int64 (__fastcall **)(_QWORD, _QWORD *, _DWORD *))(**(_QWORD **)(a1 + 512) + 8LL))(
+                      *(_QWORD *)(a1 + 512),
+                      v10,
+                      a3);
+    sub_145036290(a1, &v9, a3);
+    goto LABEL_24;
+  }
+  if ( (unsigned __int8)byte_14D897340 >= 3u )
+    sub_141421C70(&byte_14D897340, &off_14AE2C7F0);
+  *(_OWORD *)a2 = xmmword_14D8975F8;
+  return a2;
+}

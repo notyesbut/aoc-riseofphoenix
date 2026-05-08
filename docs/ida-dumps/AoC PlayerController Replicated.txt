@@ -1,0 +1,126 @@
+============================================================
+
+  AoC PlayerController replicated-property hunt
+
+============================================================
+
+
+
+--- CharacterArchetype ---
+
+  [.rdata] string @ 0x14B57E7A8
+
+
+
+--- PrimaryArchetype ---
+
+  [.rdata] string @ 0x14B5E1340
+
+
+
+--- CharacterName ---
+
+  [.rdata] string @ 0x14B12E7F8
+
+
+
+--- CharacterRace ---
+
+  [.rdata] string @ 0x14B202250
+
+
+
+--- CharacterGender ---
+
+  [.rdata] string @ 0x14B220320
+
+
+
+--- CharacterGuildName ---
+
+  [.rdata] string @ 0x14B57E7C0
+
+
+
+--- CharacterCitizenNodeId ---
+
+  [.rdata] string @ 0x14B57E7D8
+
+
+
+--- PlayerState ---
+
+  [.rdata] string @ 0x14A6FC2E0
+
+
+
+--- PlayerCameraManager ---
+
+  [.rdata] string @ 0x14A4FB4D8
+
+
+
+--- ControlRotation ---
+
+  [.rdata] string @ 0x14A878348
+
+
+
+--- bIsGM ---
+
+  [.rdata] string @ 0x14B6BFD68
+
+
+
+--- bIsDev ---
+
+  [.rdata] string @ 0x14B31D7A8
+
+
+
+--- bIsSpectator ---
+
+  [.rdata] string @ 0x14AA494B0
+
+
+
+--- SpectatorState ---
+
+  NOT FOUND
+
+
+
+--- PlayerIndex ---
+
+  [.rdata] string @ 0x14A338300
+
+
+
+--- CombatSettings ---
+
+  [.rdata] string @ 0x14B12B6B0
+
+
+
+--- RemoteRole ---
+
+  [.rdata] string @ 0x149E283D8
+
+      xref 0x141500C54  in  sub_1414FE8F0
+
+
+
+--- ViewTarget ---
+
+  [.rdata] string @ 0x14A6F7F88
+
+
+
+============================================================
+
+  Hunt complete.  Paste this Output back to Claude.
+
+============================================================
+
+
+

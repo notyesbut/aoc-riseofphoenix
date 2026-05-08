@@ -1,0 +1,34 @@
+bool __fastcall sub_7FF6BD1F6B40(__int64 a1)
+{
+  __int64 v1; // rax
+  __int64 v3; // rdx
+  __int64 v4; // r8
+  __int64 v5; // rax
+  __int64 (__fastcall *v7)(ULONG_PTR); // [rsp+80h] [rbp+8h] BYREF
+
+  v1 = qword_7FF6C6B66170;
+  if ( !qword_7FF6C6B66170 )
+  {
+    v7 = sub_7FF6BD24B7B0;
+    sub_7FF6BA92FF50(
+      (int)L"/Script/Engine",
+      (int)L"CompositeDataTable",
+      (int)&qword_7FF6C6B66170,
+      (int)AK::MemoryMgr::VerifyMemoryArenaIntegrity,
+      248,
+      8,
+      0x10000000,
+      0,
+      (__int64)L"Engine",
+      (__int64)sub_7FF6BD1F6310,
+      (__int64)AK::SoundEngine::UnregisterResourceMonitorCallback,
+      (__int64)&v7,
+      (__int64)sub_7FF6BCFE9D50,
+      (__int64)sub_7FF6BA8B7130);
+    v1 = qword_7FF6C6B66170;
+  }
+  v3 = *(_QWORD *)(a1 + 16);
+  v4 = v1 + 80;
+  v5 = *(int *)(v1 + 88);
+  return (int)v5 <= *(_DWORD *)(v3 + 88) && *(_QWORD *)(*(_QWORD *)(v3 + 80) + 8 * v5) == v4;
+}

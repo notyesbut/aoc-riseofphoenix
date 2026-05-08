@@ -1,0 +1,418 @@
+__int64 __fastcall sub_14624B430(__int64 a1, __int64 a2)
+{
+  int v4; // ebx
+  int v5; // r14d
+  __int64 v6; // r8
+  __int64 v7; // r8
+  const char *v8; // rdi
+  const wchar_t *v9; // r12
+  _WORD *v10; // rcx
+  _WORD *v11; // rcx
+  _WORD *v12; // rcx
+  _WORD *v13; // rcx
+  const char *v14; // rax
+  int v15; // ecx
+  _WORD *v16; // rcx
+  const char *v17; // rax
+  int v18; // ecx
+  const wchar_t *v19; // rax
+  _WORD *v20; // rcx
+  _WORD *v21; // rax
+  _WORD *v22; // rcx
+  const char *v23; // rax
+  int v24; // ecx
+  const wchar_t *v25; // rax
+  const wchar_t *v26; // r8
+  _WORD *v28; // rcx
+  _WORD *v29; // rcx
+  const wchar_t *v30; // rax
+  const wchar_t *v31; // rax
+  __int64 v32; // [rsp+20h] [rbp-E0h] BYREF
+  __int64 v33; // [rsp+28h] [rbp-D8h]
+  void *v34; // [rsp+30h] [rbp-D0h] BYREF
+  _WORD *v35; // [rsp+38h] [rbp-C8h]
+  _WORD *v36; // [rsp+40h] [rbp-C0h]
+  char v37; // [rsp+48h] [rbp-B8h]
+  void *v38; // [rsp+50h] [rbp-B0h] BYREF
+  void *v39; // [rsp+58h] [rbp-A8h]
+  void *v40; // [rsp+60h] [rbp-A0h]
+  char v41; // [rsp+68h] [rbp-98h]
+  __int16 v42; // [rsp+70h] [rbp-90h]
+  char v43; // [rsp+72h] [rbp-8Eh]
+  __int128 v44; // [rsp+80h] [rbp-80h] BYREF
+  _BYTE *v45; // [rsp+90h] [rbp-70h] BYREF
+  const wchar_t *v46; // [rsp+98h] [rbp-68h] BYREF
+  int v47; // [rsp+A0h] [rbp-60h]
+  __int128 v48; // [rsp+B0h] [rbp-50h] BYREF
+  __int64 v49; // [rsp+C0h] [rbp-40h]
+  __int128 v50; // [rsp+D0h] [rbp-30h] BYREF
+  _BYTE v51[16]; // [rsp+E0h] [rbp-20h] BYREF
+  __int128 v52; // [rsp+F0h] [rbp-10h]
+  _BYTE v53[4]; // [rsp+100h] [rbp+0h] BYREF
+  unsigned int v54; // [rsp+104h] [rbp+4h] BYREF
+  _QWORD v55[5]; // [rsp+108h] [rbp+8h] BYREF
+  char v56; // [rsp+130h] [rbp+30h]
+  char v57; // [rsp+131h] [rbp+31h]
+  int v58; // [rsp+1C8h] [rbp+C8h]
+  _QWORD v59[2]; // [rsp+1D0h] [rbp+D0h] BYREF
+  _BYTE v60[4]; // [rsp+1E0h] [rbp+E0h] BYREF
+  unsigned int v61; // [rsp+1E4h] [rbp+E4h]
+  _BYTE v62[192]; // [rsp+1E8h] [rbp+E8h] BYREF
+  int v63; // [rsp+2A8h] [rbp+1A8h]
+  _QWORD v64[8]; // [rsp+2B0h] [rbp+1B0h] BYREF
+
+  v4 = 0;
+  v5 = 0;
+  LODWORD(v45) = 0;
+  v53[0] = 2;
+  v54 = 0;
+  sub_14161FEC0(v55, 0, 0, 0);
+  v58 = 0;
+  v59[0] = 0;
+  v59[1] = 0;
+  LOBYTE(v6) = 1;
+  if ( !(*(unsigned __int8 (__fastcall **)(__int64, _BYTE *, __int64))(*(_QWORD *)a2 + 32LL))(a2, v53, v6) )
+  {
+LABEL_62:
+    sub_146255C10(a1);
+    goto LABEL_63;
+  }
+  v8 = "FServicePacketRouter<class UActorTrackingServiceHandler,enum EActorTrackingPacketType>::PollImpl";
+  v9 = &chText;
+  while ( 1 )
+  {
+    switch ( v53[0] )
+    {
+      case 2:
+        (*(void (__fastcall **)(__int64, _BYTE *))(*(_QWORD *)a1 + 8LL))(a1, v53);
+        goto LABEL_61;
+      case 0:
+        sub_141462460(a1 + 800, v51, &v54, 0);
+        (*(void (__fastcall **)(__int64, _BYTE *))(*(_QWORD *)a1 + 16LL))(a1, v53);
+        goto LABEL_61;
+      case 1:
+        v45 = v60;
+        sub_14161FEC0(v62, 0, 0, 0);
+        v63 = 0;
+        v64[0] = 0;
+        v64[1] = 0;
+        v60[0] = v53[0];
+        if ( v53[0] == 2 )
+        {
+          v63 = v58;
+          sub_141368500(v64, v59);
+        }
+        else if ( v53[0] == 3 )
+        {
+          sub_141621EE0(v62, v55);
+        }
+        v61 = v54;
+        sub_14624D120(a1, v60);
+        goto LABEL_61;
+    }
+    if ( v53[0] == 3 )
+      break;
+LABEL_61:
+    LOBYTE(v7) = 1;
+    if ( !(*(unsigned __int8 (__fastcall **)(__int64, _BYTE *, __int64))(*(_QWORD *)a2 + 32LL))(a2, v53, v7) )
+      goto LABEL_62;
+  }
+  LODWORD(v45) = 0;
+  (*(void (__fastcall **)(_QWORD *, _BYTE **))(v55[0] + 408LL))(v55, &v45);
+  if ( (unsigned __int8)byte_14D93FDF0 >= 7u )
+  {
+    v32 = 0;
+    v33 = 0;
+    v34 = &unk_14D5AF3C0;
+    v35 = &unk_14D5AF3C0;
+    v36 = &unk_14D5AF3C2;
+    v37 = 0;
+    v38 = &unk_14D5AF3C0;
+    v39 = &unk_14D5AF3C0;
+    v40 = &unk_14D5AF3C2;
+    v41 = 0;
+    v42 = 0;
+    v43 = 0;
+    if ( byte_14D1FCFD6 )
+    {
+      sub_144E7DAA0(&v32, L"Recieve message id");
+      sub_144E7DAA0(&v32, L"PacketId=");
+      if ( (_BYTE)v42 )
+      {
+        if ( v43 )
+        {
+          v10 = v35;
+          if ( v35 + 1 >= v36 )
+          {
+            sub_1414D0E10(&v34, 1);
+            v10 = v35;
+          }
+          *v10 = 34;
+          ++v35;
+          sub_1414CAE20(&v34, L"%u", (unsigned int)v45);
+          v11 = v35;
+          if ( v35 + 1 >= v36 )
+          {
+            sub_1414D0E10(&v34, 1);
+            v11 = v35;
+          }
+          *v11 = 34;
+          v12 = ++v35;
+        }
+        else
+        {
+          sub_1414CAE20(&v34, L"%u", (unsigned int)v45);
+          v12 = v35;
+        }
+        if ( v12 + 1 >= v36 )
+        {
+          sub_1414D0E10(&v34, 1);
+          v12 = v35;
+        }
+        *v12 = 44;
+        ++v35;
+        v42 = 0;
+        v43 = 0;
+      }
+      sub_144E7DAA0(&v32, L"Function+");
+      if ( (_BYTE)v42 )
+      {
+        if ( v43 )
+        {
+          v13 = v35;
+          if ( v35 + 1 >= v36 )
+          {
+            sub_1414D0E10(&v34, 1);
+            v13 = v35;
+          }
+          *v13 = 34;
+          ++v35;
+          *(_QWORD *)&v52 = "FServicePacketRouter<class UActorTrackingServiceHandler,enum EActorTrackingPacketType>::PollImpl";
+          v14 = "FServicePacketRouter<class UActorTrackingServiceHandler,enum EActorTrackingPacketType>::PollImpl";
+          v15 = 0;
+          do
+          {
+            ++v14;
+            ++v15;
+          }
+          while ( *v14 );
+          DWORD2(v52) = v15;
+          v50 = v52;
+          sub_1416CDE50(&v34, &v50);
+          v16 = v35;
+          if ( v35 + 1 >= v36 )
+          {
+            sub_1414D0E10(&v34, 1);
+            v16 = v35;
+          }
+          *v16 = 34;
+          ++v35;
+        }
+        else
+        {
+          *(_QWORD *)&v48 = "FServicePacketRouter<class UActorTrackingServiceHandler,enum EActorTrackingPacketType>::PollImpl";
+          v17 = "FServicePacketRouter<class UActorTrackingServiceHandler,enum EActorTrackingPacketType>::PollImpl";
+          v18 = 0;
+          do
+          {
+            ++v17;
+            ++v18;
+          }
+          while ( *v17 );
+          DWORD2(v48) = v18;
+          v50 = v48;
+          sub_1416CDE50(&v34, &v50);
+        }
+        v42 = 0;
+        v43 = 0;
+      }
+      v19 = (const wchar_t *)sub_144E7E0A0(&v32);
+      sub_14133EDD0((__int64)&v46, v19);
+      sub_1414C7300(&v38);
+      sub_1414C7300(&v34);
+      if ( v32 )
+        sub_1413B0B20(v32);
+    }
+    else
+    {
+      sub_144E7DF80(&v32, L"Recieve message id");
+      sub_144E7DF80(&v32, L"PacketId=");
+      if ( (_BYTE)v42 )
+      {
+        sub_1414CAE20(&v34, L"%u", (unsigned int)v45);
+        v20 = v35;
+        if ( v35 + 1 >= v36 )
+        {
+          sub_1414D0E10(&v34, 1);
+          v20 = v35;
+        }
+        *v20 = 44;
+        v21 = v35;
+        v22 = ++v35;
+        if ( v21 + 2 >= v36 )
+        {
+          sub_1414D0E10(&v34, 1);
+          v22 = v35;
+        }
+        *v22 = 32;
+        ++v35;
+        v42 = 0;
+        v43 = 0;
+      }
+      sub_144E7DF80(&v32, L"Function+");
+      if ( (_BYTE)v42 )
+      {
+        *(_QWORD *)&v44 = "FServicePacketRouter<class UActorTrackingServiceHandler,enum EActorTrackingPacketType>::PollImpl";
+        v23 = "FServicePacketRouter<class UActorTrackingServiceHandler,enum EActorTrackingPacketType>::PollImpl";
+        v24 = 0;
+        do
+        {
+          ++v23;
+          ++v24;
+        }
+        while ( *v23 );
+        DWORD2(v44) = v24;
+        v50 = v44;
+        sub_1416CDE50(&v34, &v50);
+        v42 = 0;
+        v43 = 0;
+      }
+      v25 = (const wchar_t *)sub_144E7E1A0(&v32);
+      sub_14133EDD0((__int64)&v46, v25);
+      sub_1414C7300(&v38);
+      sub_1414C7300(&v34);
+      if ( v32 )
+        sub_1413B0B20(v32);
+    }
+    v5 |= 1u;
+    v26 = &chText;
+    if ( v47 )
+      v26 = v46;
+    sub_141421C70((__int64)&byte_14D93FDF0, (__int64)&off_14B8349B0, v26);
+    if ( v46 )
+      sub_1413B0B20(v46);
+  }
+  if ( (_DWORD)v45 != 9998 )
+  {
+    sub_1462C3740(a1, (unsigned int)v45, v54, v55);
+    goto LABEL_61;
+  }
+  LODWORD(v48) = 9998;
+  *((_QWORD *)&v48 + 1) = 0;
+  v49 = 0;
+  if ( (v56 & 4) != 0 )
+    (*(void (__fastcall **)(_QWORD *, __int128 *))(v55[0] + 408LL))(v55, &v48);
+  sub_141340770(v55, (char *)&v48 + 8);
+  if ( (v57 & 2) != 0 )
+  {
+    if ( (unsigned __int8)byte_14D93FDF0 >= 2u )
+    {
+      v32 = 0;
+      v33 = 0;
+      v34 = &unk_14D5AF3C0;
+      v35 = &unk_14D5AF3C0;
+      v36 = &unk_14D5AF3C2;
+      v37 = 0;
+      v38 = &unk_14D5AF3C0;
+      v39 = &unk_14D5AF3C0;
+      v40 = &unk_14D5AF3C2;
+      v41 = 0;
+      v42 = 0;
+      v43 = 0;
+      if ( byte_14D1FCFD6 )
+      {
+        sub_144E7DAA0(&v32, L"Unable to read FServiceBroadcast packet");
+        sub_144E7DAA0(&v32, L"Function+");
+        if ( (_BYTE)v42 )
+        {
+          if ( v43 )
+          {
+            v28 = v35;
+            if ( v35 + 1 >= v36 )
+            {
+              sub_1414D0E10(&v34, 1);
+              v28 = v35;
+            }
+            *v28 = 34;
+            ++v35;
+            *(_QWORD *)&v44 = "FServicePacketRouter<class UActorTrackingServiceHandler,enum EActorTrackingPacketType>::PollImpl";
+            do
+            {
+              ++v8;
+              ++v4;
+            }
+            while ( *v8 );
+            DWORD2(v44) = v4;
+            sub_1416CDE50(&v34, &v44);
+            v29 = v35;
+            if ( v35 + 1 >= v36 )
+            {
+              sub_1414D0E10(&v34, 1);
+              v29 = v35;
+            }
+            *v29 = 34;
+            ++v35;
+          }
+          else
+          {
+            *(_QWORD *)&v44 = "FServicePacketRouter<class UActorTrackingServiceHandler,enum EActorTrackingPacketType>::PollImpl";
+            do
+            {
+              ++v8;
+              ++v4;
+            }
+            while ( *v8 );
+            DWORD2(v44) = v4;
+            sub_1416CDE50(&v34, &v44);
+          }
+          v42 = 0;
+          v43 = 0;
+        }
+        v30 = (const wchar_t *)sub_144E7E0A0(&v32);
+        sub_14133EDD0((__int64)&v46, v30);
+        sub_1414C7300(&v38);
+        sub_1414C7300(&v34);
+      }
+      else
+      {
+        sub_144E7DF80(&v32, L"Unable to read FServiceBroadcast packet");
+        sub_144E7DF80(&v32, L"Function+");
+        if ( (_BYTE)v42 )
+        {
+          *(_QWORD *)&v44 = "FServicePacketRouter<class UActorTrackingServiceHandler,enum EActorTrackingPacketType>::PollImpl";
+          do
+          {
+            ++v8;
+            ++v4;
+          }
+          while ( *v8 );
+          DWORD2(v44) = v4;
+          sub_1416CDE50(&v34, &v44);
+          v42 = 0;
+          v43 = 0;
+        }
+        v31 = (const wchar_t *)sub_144E7E1A0(&v32);
+        sub_14133EDD0((__int64)&v46, v31);
+        sub_1414C7300(&v38);
+        sub_1414C7300(&v34);
+      }
+      if ( v32 )
+        sub_1413B0B20(v32);
+      if ( v47 )
+        v9 = v46;
+      sub_141421C70((__int64)&byte_14D93FDF0, (__int64)&off_14B8349D0, v9);
+      if ( v46 )
+        sub_1413B0B20(v46);
+    }
+  }
+  else
+  {
+    sub_1462D8940((char *)&v48 + 8);
+  }
+  if ( *((_QWORD *)&v48 + 1) )
+    sub_1413B0B20(*((_QWORD *)&v48 + 1));
+LABEL_63:
+  if ( v59[0] )
+    sub_1413B0B20(v59[0]);
+  return sub_141620F20(v55);
+}

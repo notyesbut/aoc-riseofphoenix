@@ -1,0 +1,81 @@
+__int64 __fastcall sub_143A20150(__int64 a1, int a2)
+{
+  __int64 result; // rax
+
+  switch ( a2 )
+  {
+    case 0:
+      sub_14133EDD0(a1, L"MediaBuffering");
+      result = a1;
+      break;
+    case 1:
+      sub_14133EDD0(a1, L"MediaBufferingComplete");
+      result = a1;
+      break;
+    case 2:
+      sub_14133EDD0(a1, L"MediaClosed");
+      result = a1;
+      break;
+    case 3:
+      sub_14133EDD0(a1, L"MediaConnecting");
+      result = a1;
+      break;
+    case 4:
+      sub_14133EDD0(a1, L"MediaOpened");
+      result = a1;
+      break;
+    case 5:
+      sub_14133EDD0(a1, L"MediaOpenFailed");
+      result = a1;
+      break;
+    case 6:
+      sub_14133EDD0(a1, L"PlaybackEndReached");
+      result = a1;
+      break;
+    case 7:
+      sub_14133EDD0(a1, L"PlaybackResumed");
+      result = a1;
+      break;
+    case 8:
+      sub_14133EDD0(a1, L"PlaybackSuspended");
+      result = a1;
+      break;
+    case 9:
+      sub_14133EDD0(a1, L"SeekCompleted");
+      result = a1;
+      break;
+    case 10:
+      sub_14133EDD0(a1, L"TracksChanged");
+      result = a1;
+      break;
+    case 11:
+      sub_14133EDD0(a1, L"MetadataChanged");
+      result = a1;
+      break;
+    case 12:
+      sub_14133EDD0(a1, L"Internal: PurgeVideoSamplesHint");
+      result = a1;
+      break;
+    case 13:
+      sub_14133EDD0(a1, L"Internal: VideoSamplesAvailable");
+      result = a1;
+      break;
+    case 14:
+      sub_14133EDD0(a1, L"Internal: VideoSamplesUnavailable");
+      result = a1;
+      break;
+    case 15:
+      sub_14133EDD0(a1, L"Internal: AudioSamplesAvailable");
+      result = a1;
+      break;
+    case 16:
+      sub_14133EDD0(a1, L"Internal: AudioSamplesUnavailable");
+      result = a1;
+      break;
+    default:
+      sub_14133EDD0(a1, L"Unknown");
+      result = a1;
+      break;
+  }
+  return result;
+}

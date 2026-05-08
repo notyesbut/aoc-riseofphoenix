@@ -1,0 +1,32 @@
+__int64 __fastcall sub_7FF6BD222EA0(__int64 a1, __int64 a2)
+{
+  __int64 v3; // rax
+  __int64 result; // rax
+  _QWORD *v5; // rbx
+  _QWORD *i; // rsi
+  __int64 v7; // rdi
+  __int64 v8; // rax
+  __int64 v9; // [rsp+30h] [rbp+8h] BYREF
+
+  v9 = a2;
+  v3 = sub_7FF6BA821880(&v9);
+  if ( (*(_BYTE *)(v3 + 40) & 1) != 0 )
+    *(_BYTE *)(a1 + 240) |= 1u;
+  result = sub_7FF6BD26DAD0(a1, v3);
+  if ( (*(_BYTE *)(a1 + 240) & 1) != 0 )
+  {
+    v5 = *(_QWORD **)(a1 + 208);
+    for ( i = &v5[*(int *)(a1 + 216)]; v5 != i; ++v5 )
+    {
+      v7 = *v5;
+      if ( *v5 && (*(_DWORD *)(v7 + 8) & 0x400) != 0 )
+      {
+        v8 = sub_7FF6BAAB00B0(*v5);
+        if ( v8 )
+          sub_7FF6BA9D8DF0(v8 + 616, v7);
+      }
+    }
+    return sub_7FF6BD21B1F0(a1, 1);
+  }
+  return result;
+}

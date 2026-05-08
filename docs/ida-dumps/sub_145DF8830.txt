@@ -1,0 +1,9 @@
+__int64 __fastcall sub_145DF8830(__int64 *a1)
+{
+  __int64 result; // rax
+
+  result = *a1;
+  if ( *a1 )
+    return sub_146BEE450(*a1, a1);
+  return result;
+}

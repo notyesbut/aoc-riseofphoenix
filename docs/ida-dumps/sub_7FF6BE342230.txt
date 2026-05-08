@@ -1,0 +1,30 @@
+void __fastcall sub_7FF6BE342230(__int64 *a1)
+{
+  __int64 v1; // rbx
+  __int64 v2; // rax
+
+  v1 = *a1;
+  if ( *a1 )
+  {
+    v2 = sub_7FF6BAA97CD0();
+    sub_7FF6BE137780(v1, v2);
+    *(_QWORD *)v1 = &UIntrepidNetConnection_VFT;
+    *(_QWORD *)(v1 + 72) = off_7FF6C4152DB8;
+    *(_QWORD *)(v1 + 8128) = 0;
+    sub_7FF6BB0940E0(v1 + 8136);
+    *(_QWORD *)(v1 + 8176) = 0;
+    *(_QWORD *)(v1 + 8184) = 0;
+    *(_QWORD *)(v1 + 0x2000) = 0;
+    *(_QWORD *)(v1 + 8200) = 0;
+    *(_WORD *)(v1 + 8208) = 0;
+    *(_QWORD *)(v1 + 8216) = 0;
+    *(_QWORD *)(v1 + 8224) = 0;
+    *(_QWORD *)(v1 + 8248) = 0;
+    *(_DWORD *)(v1 + 8256) = 0;
+    *(_DWORD *)(v1 + 8260) = 128;
+    *(_DWORD *)(v1 + 8264) = -1;
+    *(_DWORD *)(v1 + 8268) = 0;
+    *(_QWORD *)(v1 + 8280) = 0;
+    *(_DWORD *)(v1 + 8288) = 0;
+  }
+}

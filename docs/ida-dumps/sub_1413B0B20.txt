@@ -1,0 +1,17 @@
+__int64 __fastcall sub_1413B0B20(__int64 a1)
+{
+  __int64 v2; // rcx
+  __int64 result; // rax
+
+  if ( a1 )
+  {
+    v2 = qword_14D5E1E28;
+    if ( !qword_14D5E1E28 )
+    {
+      sub_1413B0B70();
+      v2 = qword_14D5E1E28;
+    }
+    return (*(__int64 (__fastcall **)(__int64, __int64))(*(_QWORD *)v2 + 72LL))(v2, a1);
+  }
+  return result;
+}

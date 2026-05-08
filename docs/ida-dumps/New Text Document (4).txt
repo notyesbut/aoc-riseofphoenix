@@ -1,0 +1,4888 @@
+[
+  {
+    "Type": "ActionResponseComponent",
+    "Name": "Action Response Component_GEN_VARIABLE",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'ActionResponseComponent'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    }
+  },
+  {
+    "Type": "ActorTrackingComponent",
+    "Name": "ActorTrackingComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'ActorTrackingComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "AIPerceptionStimuliSourceComponent",
+    "Name": "AIPerceptionStimuliSource",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'AIPerceptionStimuliSourceComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "AlignmentComponent",
+    "Name": "AlignmentComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'AlignmentComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "AoCAbilityComponent",
+    "Name": "AbilityComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'AoCAbilityComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "AoCCharacterMovement",
+    "Name": "CharMoveComp",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'AoCCharacterMovement'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "AoCMantleComponent",
+    "Name": "MantleComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'AoCMantleComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "AoCStatsComponent",
+    "Name": "StatsComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'AoCStatsComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "AreaMapListenerComponent",
+    "Name": "AreaMapListenerComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'AreaMapListenerComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "ArrowComponent",
+    "Name": "Arrow_AbilityZoom_GEN_VARIABLE",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'ArrowComponent'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "RelativeLocation": {
+        "X": 0.0,
+        "Y": 40.0,
+        "Z": 55.0
+      },
+      "PrimaryComponentTick": {
+        "bStartWithTickEnabled": false,
+        "bAllowTickOnDedicatedServer": false
+      }
+    }
+  },
+  {
+    "Type": "BlueprintGeneratedClass",
+    "Name": "PlayerPawn_C",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'BlueprintGeneratedClass'",
+    "Package": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn",
+    "Properties": {
+      "Timelines": [
+        {
+          "ObjectName": "TimelineTemplate'PlayerPawn_C:Timeline_0_Template'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.127"
+        },
+        {
+          "ObjectName": "TimelineTemplate'PlayerPawn_C:Timeline_4_Template'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.129"
+        },
+        {
+          "ObjectName": "TimelineTemplate'PlayerPawn_C:GapCloseCameraLagEnd_Template'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.125"
+        },
+        {
+          "ObjectName": "TimelineTemplate'PlayerPawn_C:DodgeCameraLagEnd_Template'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.123"
+        },
+        {
+          "ObjectName": "TimelineTemplate'PlayerPawn_C:InternalBlur_Template'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.126"
+        },
+        {
+          "ObjectName": "TimelineTemplate'PlayerPawn_C:FOVZoom_Template'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.124"
+        },
+        {
+          "ObjectName": "TimelineTemplate'PlayerPawn_C:Timeline_2_Template'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.128"
+        }
+      ],
+      "SimpleConstructionScript": {
+        "ObjectName": "SimpleConstructionScript'PlayerPawn_C:SimpleConstructionScript_0'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.118"
+      },
+      "UberGraphFunction": {
+        "ObjectName": "Function'PlayerPawn_C:ExecuteUbergraph_PlayerPawn'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.31"
+      }
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'PlayerCharacter'",
+      "ObjectPath": "/Script/GameSystemsPlugin"
+    },
+    "Children": [
+      {
+        "ObjectName": "Function'PlayerPawn_C:GetDrivenSiegeWeapon'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.37"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:PCFlag_Set'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.71"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:PCFlag_Clear'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.70"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:GetCameraManager'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.36"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:SprintLogic'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.77"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:EnableCursor'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.30"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:SetTargetingMeshDistance'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.76"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:Set Targeting Decal Distance'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.75"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:UpdateQuestSidebar'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.88"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:CreateAndShowDeathWidget'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.25"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:Timeline_0__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.82"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:Timeline_0__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.83"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:GapCloseCameraLagEnd__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.34"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:GapCloseCameraLagEnd__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.35"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:Timeline_2__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.84"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:Timeline_2__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.85"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:Timeline_4__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.86"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:Timeline_4__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.87"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:FOVZoom__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.32"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:FOVZoom__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.33"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:DodgeCameraLagEnd__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.28"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:DodgeCameraLagEnd__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.29"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:InternalBlur__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.38"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:InternalBlur__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.39"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnNotifyEnd_1F40CC6D49EF4D93F75E2E94FCC7F325'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.59"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnNotifyBegin_1F40CC6D49EF4D93F75E2E94FCC7F325'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.58"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnInterrupted_1F40CC6D49EF4D93F75E2E94FCC7F325'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.57"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnBlendOut_1F40CC6D49EF4D93F75E2E94FCC7F325'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.42"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnCompleted_1F40CC6D49EF4D93F75E2E94FCC7F325'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.49"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:ReceiveBeginPlay'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.72"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:Left Click On Hover'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.40"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnDeathBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.52"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:ReceiveDestroyed'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.73"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:Mouse Mode Changed'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.41"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnReviveBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.61"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnCameraZoomClient'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.44"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnSuccessfulBlockServerBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.67"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnSuccessfulEvasionServerBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.68"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:StartCameraLag'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.78"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:StopCameraLag'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.80"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:CaravanQuestCompletedBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.23"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnChannelingBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.48"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnStopChannelingBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.66"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:ReceivePossessed'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.74"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:CaravanQuestFailedBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.24"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:DamageFlinchBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.26"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:DialogueServerEvent'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.27"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:StartCameraLagBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.79"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:StopCameraLagBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.81"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnSetLastDeathLocationBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.63"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnUpdateQuestSidebar'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.69"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:ExecuteUbergraph_PlayerPawn'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.31"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnSetLastDeathLocation__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.62"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnStackSizeChangedEvent__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.64"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnResurrectionTimer__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.60"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnExperienceEarned__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.55"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnCastAbilityClient__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.47"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnDealDamageServer__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.51"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnFire__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.56"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnEndChanneling__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.53"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnStartChanneling__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.65"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnBlock__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.43"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnCastAbility__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.46"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnCast__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.45"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnEvasion__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.54"
+      },
+      {
+        "ObjectName": "Function'PlayerPawn_C:OnDamageReceived__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.50"
+      }
+    ],
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "UberGraphFrame",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 16,
+        "PropertyFlags": "Transient | DuplicateTransient",
+        "Struct": {
+          "ObjectName": "Class'PointerToUberGraphFrame'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Action Response Component",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference | NonTransactional",
+        "PropertyClass": {
+          "ObjectName": "Class'ActionResponseComponent'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Nameplate",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference | NonTransactional",
+        "PropertyClass": {
+          "ObjectName": "Class'NameplateComponent'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "MapRegistrationComponentBP",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference | NonTransactional",
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'MapRegistrationComponentBP_C'",
+          "ObjectPath": "/Game/GameBlueprints/MapRegistrationComponentBP.0"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Arrow_AbilityZoom",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference | NonTransactional",
+        "PropertyClass": {
+          "ObjectName": "Class'ArrowComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "Timeline_2_NewTrack_0_4FBCB1214BA0CA801C4918BA98BD1CB2",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "Timeline_2__Direction_4FBCB1214BA0CA801C4918BA98BD1CB2",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ETimelineDirection'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Timeline_2",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'TimelineComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "FOVZoom_NewTrack_0_C00923114234D47E3BF353977B564A03",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "FOVZoom__Direction_C00923114234D47E3BF353977B564A03",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ETimelineDirection'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "FOVZoom",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'TimelineComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "InternalBlur_NewTrack_0_63DBE07544F10E79CE1D418A3B9108AD",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "InternalBlur__Direction_63DBE07544F10E79CE1D418A3B9108AD",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ETimelineDirection'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "InternalBlur",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'TimelineComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "DodgeCameraLagEnd_NewTrack_0_998EEA624B675203C1066D9972DC5A25",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "DodgeCameraLagEnd__Direction_998EEA624B675203C1066D9972DC5A25",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ETimelineDirection'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "DodgeCameraLagEnd",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'TimelineComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "GapCloseCameraLagEnd_NewTrack_0_EE809A294297C94F15DE85BB4556598E",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "GapCloseCameraLagEnd__Direction_EE809A294297C94F15DE85BB4556598E",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ETimelineDirection'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "GapCloseCameraLagEnd",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'TimelineComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "Timeline_4_NewTrack_0_A044A8D4403210D966316DB92D3F9710",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "Timeline_4__Direction_A044A8D4403210D966316DB92D3F9710",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ETimelineDirection'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Timeline_4",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'TimelineComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "Timeline_0_Percent_7C7585A743652924969B9CAADCEA8654",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 4
+      },
+      {
+        "Type": "ByteProperty",
+        "Name": "Timeline_0__Direction_7C7585A743652924969B9CAADCEA8654",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "Enum": {
+          "ObjectName": "Class'ETimelineDirection'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Timeline_0",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'TimelineComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnDamageReceived",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnDamageReceived__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.50"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "IsSwimming",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "InitialCameraArmLength",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance"
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnEvasion",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnEvasion__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.54"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnCast",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnCast__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.45"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnCastAbility",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnCastAbility__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.46"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnBlock",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnBlock__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.43"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "IsDodgeLag",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "IsGapCloseLag",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CachedDefaultFOV",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance"
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "DodgeSound",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'SoundCue'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnStartChanneling",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnStartChanneling__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.65"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnEndChanneling",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnEndChanneling__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.53"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnFire",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnFire__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.56"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnDealDamageServer",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnDealDamageServer__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.51"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnCastAbilityClient",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnCastAbilityClient__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.47"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnExperienceEarned",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnExperienceEarned__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.55"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnResurrectionTimer",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnResurrectionTimer__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.60"
+        }
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnStackSizeChangedEvent",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnStackSizeChangedEvent__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.64"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "doFaceTarget",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "FaceTargetTime",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance"
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "Face Target",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnTemplate | DisableEditOnInstance",
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "NameProperty",
+        "Name": "LavaDamageName",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 12,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "doFaceLocation",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "FaceTargetLocation",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "doFaceDefensiveTarget",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "FaceTargetTimer",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "Struct": {
+          "ObjectName": "Class'TimerHandle'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "FaceTargetIsCaravan",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 1,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CachedSprintIntensity",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance"
+      },
+      {
+        "Type": "MulticastInlineDelegateProperty",
+        "Name": "OnSetLastDeathLocation",
+        "Flags": "RF_Public | RF_LoadCompleted",
+        "ElementSize": 24,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnInstance | BlueprintAssignable | BlueprintCallable",
+        "SignatureFunction": {
+          "ObjectName": "Function'PlayerPawn_C:OnSetLastDeathLocation__DelegateSignature'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.62"
+        }
+      }
+    ],
+    "FuncMap": {
+      "OnDamageReceived__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnDamageReceived__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.50"
+      },
+      "OnEvasion__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnEvasion__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.54"
+      },
+      "OnCast__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnCast__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.45"
+      },
+      "OnCastAbility__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnCastAbility__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.46"
+      },
+      "OnBlock__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnBlock__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.43"
+      },
+      "OnStartChanneling__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnStartChanneling__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.65"
+      },
+      "OnEndChanneling__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnEndChanneling__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.53"
+      },
+      "OnFire__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnFire__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.56"
+      },
+      "OnDealDamageServer__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnDealDamageServer__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.51"
+      },
+      "OnCastAbilityClient__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnCastAbilityClient__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.47"
+      },
+      "OnExperienceEarned__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnExperienceEarned__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.55"
+      },
+      "OnResurrectionTimer__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnResurrectionTimer__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.60"
+      },
+      "OnStackSizeChangedEvent__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnStackSizeChangedEvent__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.64"
+      },
+      "OnSetLastDeathLocation__DelegateSignature": {
+        "ObjectName": "Function'PlayerPawn_C:OnSetLastDeathLocation__DelegateSignature'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.62"
+      },
+      "ExecuteUbergraph_PlayerPawn": {
+        "ObjectName": "Function'PlayerPawn_C:ExecuteUbergraph_PlayerPawn'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.31"
+      },
+      "OnUpdateQuestSidebar": {
+        "ObjectName": "Function'PlayerPawn_C:OnUpdateQuestSidebar'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.69"
+      },
+      "OnSetLastDeathLocationBP": {
+        "ObjectName": "Function'PlayerPawn_C:OnSetLastDeathLocationBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.63"
+      },
+      "StopCameraLagBP": {
+        "ObjectName": "Function'PlayerPawn_C:StopCameraLagBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.81"
+      },
+      "StartCameraLagBP": {
+        "ObjectName": "Function'PlayerPawn_C:StartCameraLagBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.79"
+      },
+      "DialogueServerEvent": {
+        "ObjectName": "Function'PlayerPawn_C:DialogueServerEvent'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.27"
+      },
+      "DamageFlinchBP": {
+        "ObjectName": "Function'PlayerPawn_C:DamageFlinchBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.26"
+      },
+      "CaravanQuestFailedBP": {
+        "ObjectName": "Function'PlayerPawn_C:CaravanQuestFailedBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.24"
+      },
+      "ReceivePossessed": {
+        "ObjectName": "Function'PlayerPawn_C:ReceivePossessed'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.74"
+      },
+      "OnStopChannelingBP": {
+        "ObjectName": "Function'PlayerPawn_C:OnStopChannelingBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.66"
+      },
+      "OnChannelingBP": {
+        "ObjectName": "Function'PlayerPawn_C:OnChannelingBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.48"
+      },
+      "CaravanQuestCompletedBP": {
+        "ObjectName": "Function'PlayerPawn_C:CaravanQuestCompletedBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.23"
+      },
+      "StopCameraLag": {
+        "ObjectName": "Function'PlayerPawn_C:StopCameraLag'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.80"
+      },
+      "StartCameraLag": {
+        "ObjectName": "Function'PlayerPawn_C:StartCameraLag'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.78"
+      },
+      "OnSuccessfulEvasionServerBP": {
+        "ObjectName": "Function'PlayerPawn_C:OnSuccessfulEvasionServerBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.68"
+      },
+      "OnSuccessfulBlockServerBP": {
+        "ObjectName": "Function'PlayerPawn_C:OnSuccessfulBlockServerBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.67"
+      },
+      "OnCameraZoomClient": {
+        "ObjectName": "Function'PlayerPawn_C:OnCameraZoomClient'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.44"
+      },
+      "OnReviveBP": {
+        "ObjectName": "Function'PlayerPawn_C:OnReviveBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.61"
+      },
+      "Mouse Mode Changed": {
+        "ObjectName": "Function'PlayerPawn_C:Mouse Mode Changed'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.41"
+      },
+      "ReceiveDestroyed": {
+        "ObjectName": "Function'PlayerPawn_C:ReceiveDestroyed'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.73"
+      },
+      "OnDeathBP": {
+        "ObjectName": "Function'PlayerPawn_C:OnDeathBP'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.52"
+      },
+      "Left Click On Hover": {
+        "ObjectName": "Function'PlayerPawn_C:Left Click On Hover'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.40"
+      },
+      "ReceiveBeginPlay": {
+        "ObjectName": "Function'PlayerPawn_C:ReceiveBeginPlay'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.72"
+      },
+      "OnCompleted_1F40CC6D49EF4D93F75E2E94FCC7F325": {
+        "ObjectName": "Function'PlayerPawn_C:OnCompleted_1F40CC6D49EF4D93F75E2E94FCC7F325'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.49"
+      },
+      "OnBlendOut_1F40CC6D49EF4D93F75E2E94FCC7F325": {
+        "ObjectName": "Function'PlayerPawn_C:OnBlendOut_1F40CC6D49EF4D93F75E2E94FCC7F325'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.42"
+      },
+      "OnInterrupted_1F40CC6D49EF4D93F75E2E94FCC7F325": {
+        "ObjectName": "Function'PlayerPawn_C:OnInterrupted_1F40CC6D49EF4D93F75E2E94FCC7F325'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.57"
+      },
+      "OnNotifyBegin_1F40CC6D49EF4D93F75E2E94FCC7F325": {
+        "ObjectName": "Function'PlayerPawn_C:OnNotifyBegin_1F40CC6D49EF4D93F75E2E94FCC7F325'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.58"
+      },
+      "OnNotifyEnd_1F40CC6D49EF4D93F75E2E94FCC7F325": {
+        "ObjectName": "Function'PlayerPawn_C:OnNotifyEnd_1F40CC6D49EF4D93F75E2E94FCC7F325'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.59"
+      },
+      "InternalBlur__UpdateFunc": {
+        "ObjectName": "Function'PlayerPawn_C:InternalBlur__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.39"
+      },
+      "InternalBlur__FinishedFunc": {
+        "ObjectName": "Function'PlayerPawn_C:InternalBlur__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.38"
+      },
+      "DodgeCameraLagEnd__UpdateFunc": {
+        "ObjectName": "Function'PlayerPawn_C:DodgeCameraLagEnd__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.29"
+      },
+      "DodgeCameraLagEnd__FinishedFunc": {
+        "ObjectName": "Function'PlayerPawn_C:DodgeCameraLagEnd__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.28"
+      },
+      "FOVZoom__UpdateFunc": {
+        "ObjectName": "Function'PlayerPawn_C:FOVZoom__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.33"
+      },
+      "FOVZoom__FinishedFunc": {
+        "ObjectName": "Function'PlayerPawn_C:FOVZoom__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.32"
+      },
+      "Timeline_4__UpdateFunc": {
+        "ObjectName": "Function'PlayerPawn_C:Timeline_4__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.87"
+      },
+      "Timeline_4__FinishedFunc": {
+        "ObjectName": "Function'PlayerPawn_C:Timeline_4__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.86"
+      },
+      "Timeline_2__UpdateFunc": {
+        "ObjectName": "Function'PlayerPawn_C:Timeline_2__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.85"
+      },
+      "Timeline_2__FinishedFunc": {
+        "ObjectName": "Function'PlayerPawn_C:Timeline_2__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.84"
+      },
+      "GapCloseCameraLagEnd__UpdateFunc": {
+        "ObjectName": "Function'PlayerPawn_C:GapCloseCameraLagEnd__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.35"
+      },
+      "GapCloseCameraLagEnd__FinishedFunc": {
+        "ObjectName": "Function'PlayerPawn_C:GapCloseCameraLagEnd__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.34"
+      },
+      "Timeline_0__UpdateFunc": {
+        "ObjectName": "Function'PlayerPawn_C:Timeline_0__UpdateFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.83"
+      },
+      "Timeline_0__FinishedFunc": {
+        "ObjectName": "Function'PlayerPawn_C:Timeline_0__FinishedFunc'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.82"
+      },
+      "CreateAndShowDeathWidget": {
+        "ObjectName": "Function'PlayerPawn_C:CreateAndShowDeathWidget'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.25"
+      },
+      "UpdateQuestSidebar": {
+        "ObjectName": "Function'PlayerPawn_C:UpdateQuestSidebar'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.88"
+      },
+      "Set Targeting Decal Distance": {
+        "ObjectName": "Function'PlayerPawn_C:Set Targeting Decal Distance'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.75"
+      },
+      "SetTargetingMeshDistance": {
+        "ObjectName": "Function'PlayerPawn_C:SetTargetingMeshDistance'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.76"
+      },
+      "EnableCursor": {
+        "ObjectName": "Function'PlayerPawn_C:EnableCursor'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.30"
+      },
+      "SprintLogic": {
+        "ObjectName": "Function'PlayerPawn_C:SprintLogic'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.77"
+      },
+      "GetCameraManager": {
+        "ObjectName": "Function'PlayerPawn_C:GetCameraManager'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.36"
+      },
+      "PCFlag_Clear": {
+        "ObjectName": "Function'PlayerPawn_C:PCFlag_Clear'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.70"
+      },
+      "PCFlag_Set": {
+        "ObjectName": "Function'PlayerPawn_C:PCFlag_Set'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.71"
+      },
+      "GetDrivenSiegeWeapon": {
+        "ObjectName": "Function'PlayerPawn_C:GetDrivenSiegeWeapon'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.37"
+      }
+    },
+    "ClassFlags": "CLASS_Config | CLASS_NoExport | CLASS_CompiledFromBlueprint | CLASS_HasInstancedReference"
+  },
+  {
+    "Type": "CameraComponent",
+    "Name": "FollowCamera",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'CameraComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    },
+    "Properties": {
+      "OrthoWidth": 512.0,
+      "bAutoCalculateOrthoPlanes": false,
+      "OrthoNearClipPlane": 0.0,
+      "PostProcessSettings": {
+        "WeightedBlendables": {
+          "Array": [
+            {
+              "Weight": 1.0,
+              "Object": {
+                "ObjectName": "Material'M_NameplatePP'",
+                "ObjectPath": "/Game/Levels/TestLevels/bgans/NamePlateExploration/M_NameplatePP.0"
+              }
+            }
+          ]
+        }
+      },
+      "AttachParent": {
+        "ObjectName": "SpringArmComponent'Default__PlayerPawn_C:CameraBoom'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.119"
+      },
+      "RelativeRotation": {
+        "Pitch": 2.670288E-05,
+        "Yaw": 0.0,
+        "Roll": 0.0
+      }
+    }
+  },
+  {
+    "Type": "CapsuleComponent",
+    "Name": "CollisionCylinder",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'CapsuleComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    },
+    "Properties": {
+      "bUseSystemDefaultObstacleAreaClass": false,
+      "AreaClassOverride": {
+        "ObjectName": "Class'NavArea_Obstacle'",
+        "ObjectPath": "/Script/NavigationSystem"
+      },
+      "BodyInstance": {
+        "CollisionProfileName": "Custom",
+        "CollisionResponses": {
+          "ResponseArray": [
+            {
+              "Channel": "Visibility",
+              "Response": "ECollisionResponse::ECR_Ignore"
+            },
+            {
+              "Channel": "Camera",
+              "Response": "ECollisionResponse::ECR_Overlap"
+            },
+            {
+              "Channel": "Audio",
+              "Response": "ECollisionResponse::ECR_Ignore"
+            },
+            {
+              "Channel": "Interactable",
+              "Response": "ECollisionResponse::ECR_Ignore"
+            },
+            {
+              "Channel": "GapClosing",
+              "Response": "ECollisionResponse::ECR_Block"
+            },
+            {
+              "Channel": "Pawn",
+              "Response": "ECollisionResponse::ECR_Overlap"
+            },
+            {
+              "Channel": "Weapon",
+              "Response": "ECollisionResponse::ECR_Overlap"
+            }
+          ]
+        }
+      },
+      "OnComponentHit": {
+        "InvocationList": [
+          {
+            "Object": {
+              "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+              "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+            },
+            "FunctionName": "OnHitActor"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Type": "CharacterAppearanceComponent",
+    "Name": "Character Appearance",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'CharacterAppearanceComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "CharacterSecondaryInfo",
+    "Name": "InteractInfo",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'CharacterSecondaryInfo'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "CurveFloat",
+    "Name": "CurveFloat_0",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'CurveFloat'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "FloatCurve": {
+        "Keys": [
+          {
+            "InterpMode": "RCIM_Cubic",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": 0.0,
+            "Value": 1.0,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          },
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": 0.3,
+            "Value": 0.0,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Type": "CurveFloat",
+    "Name": "CurveFloat_2",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'CurveFloat'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "FloatCurve": {
+        "Keys": [
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": -0.00046508014,
+            "Value": 0.0016671419,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          },
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": 0.99861217,
+            "Value": 1.0008531,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Type": "CurveFloat",
+    "Name": "CurveFloat_3",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'CurveFloat'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "FloatCurve": {
+        "Keys": [
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": -0.0007817298,
+            "Value": 0.0,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          },
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": 0.9962869,
+            "Value": 0.99824816,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Type": "CurveFloat",
+    "Name": "CurveFloat_4",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'CurveFloat'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "FloatCurve": {
+        "Keys": [
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": -0.0045589507,
+            "Value": 0.0,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          },
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": 0.99680364,
+            "Value": 0.9991594,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Type": "CurveFloat",
+    "Name": "CurveFloat_5",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'CurveFloat'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "FloatCurve": {
+        "Keys": [
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": -0.0029865801,
+            "Value": 0.0,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          },
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": 0.2500494,
+            "Value": 0.9996293,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Type": "CurveFloat",
+    "Name": "CurveFloat_6",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'CurveFloat'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "FloatCurve": {
+        "Keys": [
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": 0.0014231205,
+            "Value": 0.0,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          },
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": 0.49833357,
+            "Value": 0.9974585,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Type": "CurveFloat",
+    "Name": "CurveFloat_7",
+    "Flags": "RF_Public | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'CurveFloat'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "FloatCurve": {
+        "Keys": [
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": 0.0014231205,
+            "Value": 0.0,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          },
+          {
+            "InterpMode": "RCIM_Linear",
+            "TangentMode": "RCTM_Auto",
+            "TangentWeightMode": "RCTWM_WeightedNone",
+            "Time": 0.9936059,
+            "Value": 1.0053996,
+            "ArriveTangent": 0.0,
+            "ArriveTangentWeight": 0.0,
+            "LeaveTangent": 0.0,
+            "LeaveTangentWeight": 0.0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Type": "FloatingTextComponent",
+    "Name": "FloatingText",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'FloatingTextComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "Function",
+    "Name": "CaravanQuestCompletedBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "CaravanQuestFailedBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "CreateAndShowDeathWidget",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetController_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Controller'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsAo_CPlayer_Controller",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCPlayerController'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "DamageFlinchBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ClassProperty",
+        "Name": "DamageType",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | UObjectWrapper",
+        "PropertyClass": {
+          "ObjectName": "Class'Class'",
+          "ObjectPath": "/Script/CoreUObject"
+        },
+        "MetaClass": {
+          "ObjectName": "Class'DamageType'",
+          "ObjectPath": "/Script/Engine"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "DialogueServerEvent",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "NPC",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'NPCPawn_C'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/NPCPawn.7"
+        }
+      },
+      {
+        "Type": "StrProperty",
+        "Name": "Tag",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Net | FUNC_NetReliable | FUNC_NetServer | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "DodgeCameraLagEnd__FinishedFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "DodgeCameraLagEnd__UpdateFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "EnableCursor",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetController_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Controller'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsAo_CPlayer_Controller",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCPlayerController'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ExecuteUbergraph_PlayerPawn",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "IntProperty",
+        "Name": "EntryPoint",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Lerp_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_SwitchEnum_CmpSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "NameProperty",
+        "Name": "K2Node_CustomEvent_NotifyName_4",
+        "Flags": "RF_Public",
+        "ElementSize": 12
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'OnMontagePlayDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/AnimGraphRuntime"
+        }
+      },
+      {
+        "Type": "NameProperty",
+        "Name": "K2Node_CustomEvent_NotifyName_3",
+        "Flags": "RF_Public",
+        "ElementSize": 12
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_1",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'OnMontagePlayDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/AnimGraphRuntime"
+        }
+      },
+      {
+        "Type": "NameProperty",
+        "Name": "K2Node_CustomEvent_NotifyName_2",
+        "Flags": "RF_Public",
+        "ElementSize": 12
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_2",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'OnMontagePlayDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/AnimGraphRuntime"
+        }
+      },
+      {
+        "Type": "NameProperty",
+        "Name": "K2Node_CustomEvent_NotifyName_1",
+        "Flags": "RF_Public",
+        "ElementSize": 12
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_3",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'OnMontagePlayDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/AnimGraphRuntime"
+        }
+      },
+      {
+        "Type": "NameProperty",
+        "Name": "K2Node_CustomEvent_NotifyName",
+        "Flags": "RF_Public",
+        "ElementSize": 12
+      },
+      {
+        "Type": "DelegateProperty",
+        "Name": "K2Node_CreateDelegate_OutputDelegate_4",
+        "Flags": "RF_Public",
+        "ElementSize": 32,
+        "SignatureFunction": {
+          "ObjectName": "Class'OnMontagePlayDelegate__DelegateSignature'",
+          "ObjectPath": "/Script/AnimGraphRuntime"
+        }
+      },
+      {
+        "Type": "NameProperty",
+        "Name": "Temp_name_Variable",
+        "Flags": "RF_Public",
+        "ElementSize": 12
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsHarvestable_Resource",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'HarvestableResource_C'",
+          "ObjectPath": "/Game/ENV/Gatherables/Blueprints/HarvestableResource.7"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_SwitchEnum_CmpSuccess_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_Event_Target",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_Event_RevHealthPercent",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_Event_ReviveManaPercent",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_Event_ReviveStaminaPercent",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_Event_bZoomIn",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_CreateProxyObjectForPlayMontage_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'PlayMontageCallbackProxy'",
+          "ObjectPath": "/Script/AnimGraphRuntime"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetController_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Controller'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsDead_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetGameState_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'GameStateBase'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_Event_Attacker_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsAo_CGame_State_Base",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCGameStateBase'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_Event_Attacker",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_CustomEvent_CameraLagSpeed",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_Falling",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_Dodging_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_WasFalling",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_CustomEvent_Dodging",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_CustomEvent_PreviousCameraLagValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Lerp_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Lerp_ReturnValue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsServer_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetController_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Controller'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetController_ReturnValue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Controller'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsAo_CPlayer_Controller",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCPlayerController'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_2",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsAo_CPlayer_Controller_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCPlayerController'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess_3",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_Event_NewController",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Controller'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ClassProperty",
+        "Name": "K2Node_Event_DamageType",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "UObjectWrapper",
+        "PropertyClass": {
+          "ObjectName": "Class'Class'",
+          "ObjectPath": "/Script/CoreUObject"
+        },
+        "MetaClass": {
+          "ObjectName": "Class'DamageType'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_CustomEvent_NPC",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "BlueprintGeneratedClass'NPCPawn_C'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/NPCPawn.7"
+        }
+      },
+      {
+        "Type": "StrProperty",
+        "Name": "K2Node_CustomEvent_Tag",
+        "Flags": "RF_Public",
+        "ElementSize": 16
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_Event_CameraLagSpeed",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_Event_OldCameraLagSpeed",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "K2Node_Event_Location",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "PropertyFlags": "ConstParm",
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_HasAuthority_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsServer_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_HasAuthority_ReturnValue_1",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Lerp_ReturnValue_3",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Lerp_ReturnValue_4",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetPlayerController_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'PlayerController'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_2",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Lerp_ReturnValue_5",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_K2_GetPawn_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'Pawn'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_3",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_VLerp_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_K2_SetRelativeLocation_SweepHitResult",
+        "Flags": "RF_Public",
+        "ElementSize": 264,
+        "PropertyFlags": "ContainsInstancedReference",
+        "Struct": {
+          "ObjectName": "Class'HitResult'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Multiply_DoubleDouble_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_K2_GetComponentRotation_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Rotator'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_BreakRotator_Roll",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_BreakRotator_Pitch",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_BreakRotator_Yaw",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_ClampAngle_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetCameraManager_CameraManager",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCCameraManager'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "CallFunc_MakeRotator_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "Struct": {
+          "ObjectName": "Class'Rotator'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_4",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetCameraManager_CameraManager_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCCameraManager'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetGameMode_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'GameModeBase'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_5",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue_6",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Lerp_Alpha_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_VariableSet_DefaultTargetingFov_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Lerp_Alpha_ImplicitCast_1",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_VariableSet_InitialCameraArmLength_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Lerp_Alpha_ImplicitCast_2",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_VariableSet_CameraLagSpeed_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_VariableSet_CameraLagSpeed_ImplicitCast_1",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_VariableSet_CameraLagSpeed_ImplicitCast_2",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "K2Node_VariableSet_CachedDefaultFOV_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_VariableSet_DefaultFov_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_StartCameraLag_CameraLagSpeed_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_StopCameraLag_PreviousCameraLagValue_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Lerp_Alpha_ImplicitCast_3",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Lerp_Alpha_ImplicitCast_4",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_VariableSet_CameraLagSpeed_ImplicitCast_3",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_VariableSet_CameraLagSpeed_ImplicitCast_4",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Lerp_Alpha_ImplicitCast_5",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_VariableSet_CameraLagSpeed_ImplicitCast_5",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_Multiply_DoubleDouble_A_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "K2Node_VariableSet_TargetArmLength_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "CallFunc_ClampAngle_AngleDegrees_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "CallFunc_MakeRotator_Pitch_ImplicitCast",
+        "Flags": "RF_Public",
+        "ElementSize": 4
+      }
+    ],
+    "FunctionFlags": "FUNC_Final | FUNC_UbergraphFunction | FUNC_HasDefaults"
+  },
+  {
+    "Type": "Function",
+    "Name": "FOVZoom__FinishedFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "FOVZoom__UpdateFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "GapCloseCameraLagEnd__FinishedFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "GapCloseCameraLagEnd__UpdateFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "GetCameraManager",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "CameraManager",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "Parm | OutParm",
+        "PropertyClass": {
+          "ObjectName": "Class'AoCCameraManager'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetPlayerCameraManager_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'PlayerCameraManager'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsAo_CCamera_Manager",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCCameraManager'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "GetDrivenSiegeWeapon",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "SiegeWeaponComponent",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "Parm | OutParm | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'SiegeWeaponComponent'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetSiegeWeapon_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'SiegeWeaponComponent'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "InternalBlur__FinishedFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "InternalBlur__UpdateFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Left Click On Hover",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_Net | FUNC_NetReliable | FUNC_NetClient | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Mouse Mode Changed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnBlendOut_1F40CC6D49EF4D93F75E2E94FCC7F325",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "NameProperty",
+        "Name": "NotifyName",
+        "Flags": "RF_Public",
+        "ElementSize": 12,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnBlock__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Attacker",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnCameraZoomClient",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'BaseCharacter:OnCameraZoomClient'",
+      "ObjectPath": "/Script/GameSystemsPlugin"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "bZoomIn",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnCast__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Attacker",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnCastAbility__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "AbilityCast",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'Object'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "AbilityData",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'Object'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "Targets",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm",
+        "Inner": {
+          "Type": "ObjectProperty",
+          "Name": "Targets",
+          "Flags": "RF_Public",
+          "ElementSize": 8,
+          "PropertyClass": {
+            "ObjectName": "Class'BaseCharacter'",
+            "ObjectPath": "/Script/GameSystemsPlugin"
+          }
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnCastAbilityClient__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "CastingAbility",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'Object'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "AbilityData",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'Object'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "ArrayProperty",
+        "Name": "Targets",
+        "Flags": "RF_Public",
+        "ElementSize": 16,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm",
+        "Inner": {
+          "Type": "ObjectProperty",
+          "Name": "Targets",
+          "Flags": "RF_Public",
+          "ElementSize": 8,
+          "PropertyClass": {
+            "ObjectName": "Class'BaseCharacter'",
+            "ObjectPath": "/Script/GameSystemsPlugin"
+          }
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnChannelingBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'BaseCharacter:OnChannelingBP'",
+      "ObjectPath": "/Script/GameSystemsPlugin"
+    },
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnCompleted_1F40CC6D49EF4D93F75E2E94FCC7F325",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "NameProperty",
+        "Name": "NotifyName",
+        "Flags": "RF_Public",
+        "ElementSize": 12,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnDamageReceived__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "DamageCauser",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "Damage",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnDealDamageServer__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "DoubleProperty",
+        "Name": "Damage",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "bCrit",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "TargetCharacter",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "WeaponId",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnDeathBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'BaseCharacter:OnDeathBP'",
+      "ObjectPath": "/Script/GameSystemsPlugin"
+    },
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnEndChanneling__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnEvasion__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Attacker",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnExperienceEarned__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnFire__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnInterrupted_1F40CC6D49EF4D93F75E2E94FCC7F325",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "NameProperty",
+        "Name": "NotifyName",
+        "Flags": "RF_Public",
+        "ElementSize": 12,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnNotifyBegin_1F40CC6D49EF4D93F75E2E94FCC7F325",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "NameProperty",
+        "Name": "NotifyName",
+        "Flags": "RF_Public",
+        "ElementSize": 12,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnNotifyEnd_1F40CC6D49EF4D93F75E2E94FCC7F325",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "NameProperty",
+        "Name": "NotifyName",
+        "Flags": "RF_Public",
+        "ElementSize": 12,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnResurrectionTimer__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnReviveBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Target",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "RevHealthPercent",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "ReviveManaPercent",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "FloatProperty",
+        "Name": "ReviveStaminaPercent",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnSetLastDeathLocation__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Location",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnSetLastDeathLocationBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'PlayerCharacter:OnSetLastDeathLocationBP'",
+      "ObjectPath": "/Script/GameSystemsPlugin"
+    },
+    "ChildProperties": [
+      {
+        "Type": "StructProperty",
+        "Name": "Location",
+        "Flags": "RF_Public",
+        "ElementSize": 24,
+        "PropertyFlags": "ConstParm | BlueprintVisible | BlueprintReadOnly | Parm | OutParm | ReferenceParm",
+        "Struct": {
+          "ObjectName": "Class'Vector'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnStackSizeChangedEvent__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Item",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'Object'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "IntProperty",
+        "Name": "Slot",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnStartChanneling__DelegateSignature",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_Public | FUNC_Delegate | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnStopChannelingBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'BaseCharacter:OnStopChannelingBP'",
+      "ObjectPath": "/Script/GameSystemsPlugin"
+    },
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnSuccessfulBlockServerBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Attacker",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnSuccessfulEvasionServerBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "Attacker",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'BaseCharacter'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "OnUpdateQuestSidebar",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'PlayerCharacter:OnUpdateQuestSidebar'",
+      "ObjectPath": "/Script/GameSystemsPlugin"
+    },
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "PCFlag_Clear",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "NameProperty",
+        "Name": "FlagName",
+        "Flags": "RF_Public",
+        "ElementSize": 12,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Success",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "Parm | OutParm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_SwitchName_CmpSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "PCFlag_Set",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "NameProperty",
+        "Name": "FlagName",
+        "Flags": "RF_Public",
+        "ElementSize": 12,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Success",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "Parm | OutParm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_SwitchName_CmpSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasOutParms | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ReceiveBeginPlay",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'Actor:ReceiveBeginPlay'",
+      "ObjectPath": "/Script/Engine"
+    },
+    "FunctionFlags": "FUNC_Event | FUNC_Protected | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ReceiveDestroyed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'Actor:ReceiveDestroyed'",
+      "ObjectPath": "/Script/Engine"
+    },
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "ReceivePossessed",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'Pawn:ReceivePossessed'",
+      "ObjectPath": "/Script/Engine"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "NewController",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "PropertyClass": {
+          "ObjectName": "Class'Controller'",
+          "ObjectPath": "/Script/Engine"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_BlueprintAuthorityOnly | FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Set Targeting Decal Distance",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "DoubleProperty",
+        "Name": "Distance",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "SetTargetingMeshDistance",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "DoubleProperty",
+        "Name": "Distance",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "SprintLogic",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "DoubleProperty",
+        "Name": "DeltaTime",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "SprintActive",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "StructProperty",
+        "Name": "ParticleSpawnTransform",
+        "Flags": "RF_Public",
+        "ElementSize": 96,
+        "PropertyFlags": "Edit | BlueprintVisible",
+        "Struct": {
+          "ObjectName": "Class'Transform'",
+          "ObjectPath": "/Script/CoreUObject"
+        }
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "TickDeltaTime",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible"
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "LocalCameraBoom",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | InstancedReference",
+        "PropertyClass": {
+          "ObjectName": "Class'SpringArmComponent'",
+          "ObjectPath": "/Script/Engine"
+        }
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_HasDefaults | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "StartCameraLag",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "DoubleProperty",
+        "Name": "CameraLagSpeed",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Falling",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Dodging",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Net | FUNC_NetReliable | FUNC_NetClient | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "StartCameraLagBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'PlayerCharacter:StartCameraLagBP'",
+      "ObjectPath": "/Script/GameSystemsPlugin"
+    },
+    "ChildProperties": [
+      {
+        "Type": "FloatProperty",
+        "Name": "CameraLagSpeed",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "StopCameraLag",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "BoolProperty",
+        "Name": "WasFalling",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "Dodging",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm",
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "DoubleProperty",
+        "Name": "PreviousCameraLagValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Net | FUNC_NetReliable | FUNC_NetClient | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "StopCameraLagBP",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "SuperStruct": {
+      "ObjectName": "Class'PlayerCharacter:StopCameraLagBP'",
+      "ObjectPath": "/Script/GameSystemsPlugin"
+    },
+    "ChildProperties": [
+      {
+        "Type": "FloatProperty",
+        "Name": "OldCameraLagSpeed",
+        "Flags": "RF_Public",
+        "ElementSize": 4,
+        "PropertyFlags": "BlueprintVisible | BlueprintReadOnly | Parm"
+      }
+    ],
+    "FunctionFlags": "FUNC_Event | FUNC_Public | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Timeline_0__FinishedFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Timeline_0__UpdateFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Timeline_2__FinishedFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Timeline_2__UpdateFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Timeline_4__FinishedFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "Timeline_4__UpdateFunc",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "FunctionFlags": "FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "Function",
+    "Name": "UpdateQuestSidebar",
+    "Flags": "RF_Public | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'Function'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "ChildProperties": [
+      {
+        "Type": "ObjectProperty",
+        "Name": "LocalController",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyFlags": "Edit | BlueprintVisible | DisableEditOnTemplate",
+        "PropertyClass": {
+          "ObjectName": "Class'Controller'",
+          "ObjectPath": "/Script/Engine"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "CallFunc_GetActualController_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCPlayerController'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "ObjectProperty",
+        "Name": "K2Node_DynamicCast_AsAo_CPlayer_Controller",
+        "Flags": "RF_Public",
+        "ElementSize": 8,
+        "PropertyClass": {
+          "ObjectName": "Class'AoCPlayerController'",
+          "ObjectPath": "/Script/GameSystemsPlugin"
+        }
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "K2Node_DynamicCast_bSuccess",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_IsValid_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_GetQuestsDrawDirty_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      },
+      {
+        "Type": "BoolProperty",
+        "Name": "CallFunc_BooleanOR_ReturnValue",
+        "Flags": "RF_Public",
+        "ElementSize": 1,
+        "FieldSize": 1,
+        "ByteOffset": 0,
+        "ByteMask": 1,
+        "FieldMask": 255,
+        "BoolSize": 1,
+        "bIsNativeBool": true
+      }
+    ],
+    "FunctionFlags": "FUNC_Public | FUNC_BlueprintCallable | FUNC_BlueprintEvent"
+  },
+  {
+    "Type": "HeldItemAppearanceComponent",
+    "Name": "MainHand",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'HeldItemAppearanceComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "HeldItemAppearanceComponent",
+    "Name": "OffHand",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'HeldItemAppearanceComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "InteractWidgetComponent",
+    "Name": "InteractWidgetComponent_0",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'InteractWidgetComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "InteractWidgetComponent",
+    "Name": "InteractWidgetComponent_1",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'InteractWidgetComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "InteractWidgetComponent",
+    "Name": "InteractWidgetComponent_2",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'InteractWidgetComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "InteractWidgetComponent",
+    "Name": "InteractWidgetComponent_3",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'InteractWidgetComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "InteractWidgetComponent",
+    "Name": "InteractWidgetComponent_4",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'InteractWidgetComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "InteractWidgetComponent",
+    "Name": "InteractWidgetComponent_5",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'InteractWidgetComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "InteractWidgetComponent",
+    "Name": "InteractWidgetComponent_6",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'InteractWidgetComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "InteractWidgetComponent",
+    "Name": "InteractWidgetComponent_7",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'InteractWidgetComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "IntrepidAudioComponent",
+    "Name": "IntrepidAudioComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'IntrepidAudioComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "IntrepidGuildComponent",
+    "Name": "GuildComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'IntrepidGuildComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "ItemStorageComponent",
+    "Name": "BackpackComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'ItemStorageComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "ItemStorageComponent",
+    "Name": "EquipmentComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'ItemStorageComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "ItemStorageComponent",
+    "Name": "QuestStorageComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'ItemStorageComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "MapRegistrationComponentBP_C",
+    "Name": "MapRegistrationComponentBP_GEN_VARIABLE",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "BlueprintGeneratedClass'/Game/GameBlueprints/MapRegistrationComponentBP.MapRegistrationComponentBP_C'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Template": {
+      "ObjectName": "MapRegistrationComponentBP_C'Default__MapRegistrationComponentBP_C'",
+      "ObjectPath": "/Game/GameBlueprints/MapRegistrationComponentBP.1"
+    }
+  },
+  {
+    "Type": "MergeableSkeletalMeshComponent",
+    "Name": "CharacterMesh0",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'MergeableSkeletalMeshComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "NameplateComponent",
+    "Name": "Nameplate_GEN_VARIABLE",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'NameplateComponent'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    }
+  },
+  {
+    "Type": "OwnerInfoComponent",
+    "Name": "OwnerInfo",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'OwnerInfoComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "PlayerCombatInfo",
+    "Name": "CombatInfo",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'PlayerCombatInfo'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "PlayerInfo",
+    "Name": "BaseCharacterInfo",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'PlayerInfo'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "PlayerPawn_C",
+    "Name": "Default__PlayerPawn_C",
+    "Flags": "RF_Public | RF_Transactional | RF_ClassDefaultObject | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "BlueprintGeneratedClass'/Game/ThirdPersonCPP/Blueprints/PlayerPawn.PlayerPawn_C'",
+    "Package": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn",
+    "Properties": {
+      "UberGraphFrame": {},
+      "OnDamageReceived": {
+        "InvocationList": []
+      },
+      "OnEvasion": {
+        "InvocationList": []
+      },
+      "OnCast": {
+        "InvocationList": []
+      },
+      "OnCastAbility": {
+        "InvocationList": []
+      },
+      "OnBlock": {
+        "InvocationList": []
+      },
+      "OnStartChanneling": {
+        "InvocationList": []
+      },
+      "OnEndChanneling": {
+        "InvocationList": []
+      },
+      "OnFire": {
+        "InvocationList": []
+      },
+      "OnDealDamageServer": {
+        "InvocationList": []
+      },
+      "OnCastAbilityClient": {
+        "InvocationList": []
+      },
+      "OnExperienceEarned": {
+        "InvocationList": []
+      },
+      "OnResurrectionTimer": {
+        "InvocationList": []
+      },
+      "OnStackSizeChangedEvent": {
+        "InvocationList": []
+      },
+      "FaceTargetTime": 1.0,
+      "FaceTargetLocation": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "FaceTargetTimer": {
+        "Handle": 0
+      },
+      "OnSetLastDeathLocation": {
+        "InvocationList": []
+      }
+    }
+  },
+  {
+    "Type": "RewardStorageComponent",
+    "Name": "RewardStorageComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'RewardStorageComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "SceneComponent",
+    "Name": "DefaultSceneRoot_GEN_VARIABLE",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SceneComponent'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    }
+  },
+  {
+    "Type": "SCS_Node",
+    "Name": "SCS_Node_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SCS_Node'",
+    "Outer": {
+      "ObjectName": "SimpleConstructionScript'PlayerPawn_C:SimpleConstructionScript_0'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.118"
+    },
+    "Properties": {
+      "ComponentClass": {
+        "ObjectName": "Class'SceneComponent'",
+        "ObjectPath": "/Script/Engine"
+      },
+      "ComponentTemplate": {
+        "ObjectName": "SceneComponent'PlayerPawn_C:DefaultSceneRoot_GEN_VARIABLE'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.112"
+      },
+      "VariableGuid": "46812F1C-492DE504-52412284-6B411B3D",
+      "InternalVariableName": "DefaultSceneRoot"
+    }
+  },
+  {
+    "Type": "SCS_Node",
+    "Name": "SCS_Node_1",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SCS_Node'",
+    "Outer": {
+      "ObjectName": "SimpleConstructionScript'PlayerPawn_C:SimpleConstructionScript_0'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.118"
+    },
+    "Properties": {
+      "ComponentClass": {
+        "ObjectName": "Class'ActionResponseComponent'",
+        "ObjectPath": "/Script/GameSystemsPlugin"
+      },
+      "ComponentTemplate": {
+        "ObjectName": "ActionResponseComponent'PlayerPawn_C:Action Response Component_GEN_VARIABLE'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.0"
+      },
+      "VariableGuid": "8C8CBEB0-4C82DFCB-1383E18D-9BF35674",
+      "InternalVariableName": "Action Response Component"
+    }
+  },
+  {
+    "Type": "SCS_Node",
+    "Name": "SCS_Node_11",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SCS_Node'",
+    "Outer": {
+      "ObjectName": "SimpleConstructionScript'PlayerPawn_C:SimpleConstructionScript_0'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.118"
+    },
+    "Properties": {
+      "ComponentClass": {
+        "ObjectName": "BlueprintGeneratedClass'MapRegistrationComponentBP_C'",
+        "ObjectPath": "/Game/GameBlueprints/MapRegistrationComponentBP.0"
+      },
+      "ComponentTemplate": {
+        "ObjectName": "MapRegistrationComponentBP_C'PlayerPawn_C:MapRegistrationComponentBP_GEN_VARIABLE'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.104"
+      },
+      "VariableGuid": "DC7AA774-4618E655-EA90E6B3-86F9400B",
+      "InternalVariableName": "MapRegistrationComponentBP"
+    }
+  },
+  {
+    "Type": "SCS_Node",
+    "Name": "SCS_Node_3",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SCS_Node'",
+    "Outer": {
+      "ObjectName": "SimpleConstructionScript'PlayerPawn_C:SimpleConstructionScript_0'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.118"
+    },
+    "Properties": {
+      "ComponentClass": {
+        "ObjectName": "Class'ArrowComponent'",
+        "ObjectPath": "/Script/Engine"
+      },
+      "ComponentTemplate": {
+        "ObjectName": "ArrowComponent'PlayerPawn_C:Arrow_AbilityZoom_GEN_VARIABLE'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.9"
+      },
+      "ParentComponentOrVariableName": "CollisionCylinder",
+      "bIsParentComponentNative": true,
+      "VariableGuid": "3B4E5438-4DBE372B-E34D7FAA-32CE9A99",
+      "InternalVariableName": "Arrow_AbilityZoom"
+    }
+  },
+  {
+    "Type": "SCS_Node",
+    "Name": "SCS_Node_6",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SCS_Node'",
+    "Outer": {
+      "ObjectName": "SimpleConstructionScript'PlayerPawn_C:SimpleConstructionScript_0'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.118"
+    },
+    "Properties": {
+      "ComponentClass": {
+        "ObjectName": "Class'NameplateComponent'",
+        "ObjectPath": "/Script/GameSystemsPlugin"
+      },
+      "ComponentTemplate": {
+        "ObjectName": "NameplateComponent'PlayerPawn_C:Nameplate_GEN_VARIABLE'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.106"
+      },
+      "AttachToName": "root",
+      "ParentComponentOrVariableName": "CharacterMesh0",
+      "bIsParentComponentNative": true,
+      "VariableGuid": "E5FA77D5-41B98A45-27C4E38B-6132CEAC",
+      "InternalVariableName": "Nameplate"
+    }
+  },
+  {
+    "Type": "SimpleConstructionScript",
+    "Name": "SimpleConstructionScript_0",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SimpleConstructionScript'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "RootNodes": [
+        {
+          "ObjectName": "SCS_Node'PlayerPawn_C:SimpleConstructionScript_0.SCS_Node_3'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.116"
+        },
+        {
+          "ObjectName": "SCS_Node'PlayerPawn_C:SimpleConstructionScript_0.SCS_Node_11'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.115"
+        },
+        {
+          "ObjectName": "SCS_Node'PlayerPawn_C:SimpleConstructionScript_0.SCS_Node_6'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.117"
+        },
+        {
+          "ObjectName": "SCS_Node'PlayerPawn_C:SimpleConstructionScript_0.SCS_Node_1'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.114"
+        }
+      ],
+      "AllNodes": [
+        {
+          "ObjectName": "SCS_Node'PlayerPawn_C:SimpleConstructionScript_0.SCS_Node_3'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.116"
+        },
+        {
+          "ObjectName": "SCS_Node'PlayerPawn_C:SimpleConstructionScript_0.SCS_Node_11'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.115"
+        },
+        {
+          "ObjectName": "SCS_Node'PlayerPawn_C:SimpleConstructionScript_0.SCS_Node_6'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.117"
+        },
+        {
+          "ObjectName": "SCS_Node'PlayerPawn_C:SimpleConstructionScript_0.SCS_Node_1'",
+          "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.114"
+        }
+      ],
+      "DefaultSceneRootNode": {
+        "ObjectName": "SCS_Node'PlayerPawn_C:SimpleConstructionScript_0.SCS_Node_0'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.113"
+      }
+    }
+  },
+  {
+    "Type": "SpringArmComponent",
+    "Name": "CameraBoom",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SpringArmComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    },
+    "Properties": {
+      "TargetArmLength": 800.0,
+      "bInheritRoll": false,
+      "CameraLagSpeed": 12.0,
+      "CameraRotationLagSpeed": 12.0,
+      "CameraLagMaxDistance": 2500.0,
+      "AttachParent": {
+        "ObjectName": "CapsuleComponent'Default__PlayerPawn_C:CollisionCylinder'",
+        "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.12"
+      },
+      "RelativeLocation": {
+        "X": 0.0,
+        "Y": 4.5776367E-05,
+        "Z": 0.0
+      }
+    }
+  },
+  {
+    "Type": "TargetingDecal",
+    "Name": "TargetingDecal",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'TargetingDecal'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "TargetingMesh",
+    "Name": "TargetingMesh",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'TargetingMesh'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "TimelineComponent",
+    "Name": "MantleTimelineComponent",
+    "Flags": "RF_Public | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'TimelineComponent'",
+    "Outer": {
+      "ObjectName": "AoCMantleComponent'Default__PlayerPawn_C:MantleComponent'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.6"
+    }
+  },
+  {
+    "Type": "TimelineTemplate",
+    "Name": "DodgeCameraLagEnd_Template",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'TimelineTemplate'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "TimelineLength": 1.0,
+      "LengthMode": "ETimelineLengthMode::TL_LastKeyFrame",
+      "FloatTracks": [
+        {
+          "CurveFloat": {
+            "ObjectName": "CurveFloat'PlayerPawn_C:CurveFloat_3'",
+            "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.17"
+          },
+          "PropertyName": "DodgeCameraLagEnd_NewTrack_0_998EEA624B675203C1066D9972DC5A25",
+          "TrackName": "NewTrack_0",
+          "bIsExternalCurve": false
+        }
+      ],
+      "TimelineGuid": "998EEA62-4B675203-C1066D99-72DC5A25",
+      "VariableName": "DodgeCameraLagEnd",
+      "DirectionPropertyName": "DodgeCameraLagEnd__Direction_998EEA624B675203C1066D9972DC5A25",
+      "UpdateFunctionName": "DodgeCameraLagEnd__UpdateFunc",
+      "FinishedFunctionName": "DodgeCameraLagEnd__FinishedFunc"
+    }
+  },
+  {
+    "Type": "TimelineTemplate",
+    "Name": "FOVZoom_Template",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'TimelineTemplate'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "TimelineLength": 0.5,
+      "FloatTracks": [
+        {
+          "CurveFloat": {
+            "ObjectName": "CurveFloat'PlayerPawn_C:CurveFloat_6'",
+            "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.20"
+          },
+          "PropertyName": "FOVZoom_NewTrack_0_C00923114234D47E3BF353977B564A03",
+          "TrackName": "NewTrack_0",
+          "bIsExternalCurve": false
+        }
+      ],
+      "TimelineGuid": "C0092311-4234D47E-3BF35397-7B564A03",
+      "VariableName": "FOVZoom",
+      "DirectionPropertyName": "FOVZoom__Direction_C00923114234D47E3BF353977B564A03",
+      "UpdateFunctionName": "FOVZoom__UpdateFunc",
+      "FinishedFunctionName": "FOVZoom__FinishedFunc"
+    }
+  },
+  {
+    "Type": "TimelineTemplate",
+    "Name": "GapCloseCameraLagEnd_Template",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'TimelineTemplate'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "TimelineLength": 1.0,
+      "FloatTracks": [
+        {
+          "CurveFloat": {
+            "ObjectName": "CurveFloat'PlayerPawn_C:CurveFloat_2'",
+            "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.16"
+          },
+          "PropertyName": "GapCloseCameraLagEnd_NewTrack_0_EE809A294297C94F15DE85BB4556598E",
+          "TrackName": "NewTrack_0",
+          "bIsExternalCurve": false
+        }
+      ],
+      "TimelineGuid": "EE809A29-4297C94F-15DE85BB-4556598E",
+      "VariableName": "GapCloseCameraLagEnd",
+      "DirectionPropertyName": "GapCloseCameraLagEnd__Direction_EE809A294297C94F15DE85BB4556598E",
+      "UpdateFunctionName": "GapCloseCameraLagEnd__UpdateFunc",
+      "FinishedFunctionName": "GapCloseCameraLagEnd__FinishedFunc"
+    }
+  },
+  {
+    "Type": "TimelineTemplate",
+    "Name": "InternalBlur_Template",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'TimelineTemplate'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "TimelineLength": 0.25,
+      "FloatTracks": [
+        {
+          "CurveFloat": {
+            "ObjectName": "CurveFloat'PlayerPawn_C:CurveFloat_5'",
+            "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.19"
+          },
+          "PropertyName": "InternalBlur_NewTrack_0_63DBE07544F10E79CE1D418A3B9108AD",
+          "TrackName": "NewTrack_0",
+          "bIsExternalCurve": false
+        }
+      ],
+      "TimelineGuid": "63DBE075-44F10E79-CE1D418A-3B9108AD",
+      "VariableName": "InternalBlur",
+      "DirectionPropertyName": "InternalBlur__Direction_63DBE07544F10E79CE1D418A3B9108AD",
+      "UpdateFunctionName": "InternalBlur__UpdateFunc",
+      "FinishedFunctionName": "InternalBlur__FinishedFunc"
+    }
+  },
+  {
+    "Type": "TimelineTemplate",
+    "Name": "Timeline_0_Template",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'TimelineTemplate'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "TimelineLength": 0.3,
+      "FloatTracks": [
+        {
+          "CurveFloat": {
+            "ObjectName": "CurveFloat'PlayerPawn_C:CurveFloat_0'",
+            "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.15"
+          },
+          "PropertyName": "Timeline_0_Percent_7C7585A743652924969B9CAADCEA8654",
+          "TrackName": "Percent",
+          "bIsExternalCurve": false
+        }
+      ],
+      "TimelineGuid": "7C7585A7-43652924-969B9CAA-DCEA8654",
+      "VariableName": "Timeline_0",
+      "DirectionPropertyName": "Timeline_0__Direction_7C7585A743652924969B9CAADCEA8654",
+      "UpdateFunctionName": "Timeline_0__UpdateFunc",
+      "FinishedFunctionName": "Timeline_0__FinishedFunc"
+    }
+  },
+  {
+    "Type": "TimelineTemplate",
+    "Name": "Timeline_2_Template",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'TimelineTemplate'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "TimelineLength": 1.0,
+      "FloatTracks": [
+        {
+          "CurveFloat": {
+            "ObjectName": "CurveFloat'PlayerPawn_C:CurveFloat_7'",
+            "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.21"
+          },
+          "PropertyName": "Timeline_2_NewTrack_0_4FBCB1214BA0CA801C4918BA98BD1CB2",
+          "TrackName": "NewTrack_0",
+          "bIsExternalCurve": false
+        }
+      ],
+      "TimelineGuid": "4FBCB121-4BA0CA80-1C4918BA-98BD1CB2",
+      "VariableName": "Timeline_2",
+      "DirectionPropertyName": "Timeline_2__Direction_4FBCB1214BA0CA801C4918BA98BD1CB2",
+      "UpdateFunctionName": "Timeline_2__UpdateFunc",
+      "FinishedFunctionName": "Timeline_2__FinishedFunc"
+    }
+  },
+  {
+    "Type": "TimelineTemplate",
+    "Name": "Timeline_4_Template",
+    "Flags": "RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'TimelineTemplate'",
+    "Outer": {
+      "ObjectName": "BlueprintGeneratedClass'PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.10"
+    },
+    "Properties": {
+      "FloatTracks": [
+        {
+          "CurveFloat": {
+            "ObjectName": "CurveFloat'PlayerPawn_C:CurveFloat_4'",
+            "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.18"
+          },
+          "PropertyName": "Timeline_4_NewTrack_0_A044A8D4403210D966316DB92D3F9710",
+          "TrackName": "NewTrack_0",
+          "bIsExternalCurve": false
+        }
+      ],
+      "TimelineGuid": "A044A8D4-403210D9-66316DB9-2D3F9710",
+      "VariableName": "Timeline_4",
+      "DirectionPropertyName": "Timeline_4__Direction_A044A8D4403210D966316DB92D3F9710",
+      "UpdateFunctionName": "Timeline_4__UpdateFunc",
+      "FinishedFunctionName": "Timeline_4__FinishedFunc"
+    }
+  },
+  {
+    "Type": "TrackedActorComponent",
+    "Name": "TrackedActorComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'TrackedActorComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  },
+  {
+    "Type": "VisualModifierComponent",
+    "Name": "VisualModifierComponent",
+    "Flags": "RF_Public | RF_Transactional | RF_ArchetypeObject | RF_DefaultSubObject | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'VisualModifierComponent'",
+    "Outer": {
+      "ObjectName": "PlayerPawn_C'Default__PlayerPawn_C'",
+      "ObjectPath": "/Game/ThirdPersonCPP/Blueprints/PlayerPawn.110"
+    }
+  }
+]

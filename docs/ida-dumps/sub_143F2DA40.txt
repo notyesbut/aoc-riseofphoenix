@@ -1,0 +1,88 @@
+__int64 __fastcall sub_143F2DA40(__int64 a1, _BYTE *a2, __int64 a3)
+{
+  char v5; // di
+  __int64 v6; // rax
+  __int64 v7; // rsi
+  __int64 v8; // rax
+  const wchar_t *v9; // r8
+  __int64 v11; // rax
+  const wchar_t *v12; // r8
+  unsigned int v13; // [rsp+24h] [rbp-64h] BYREF
+  _QWORD v14[2]; // [rsp+28h] [rbp-60h] BYREF
+  _BYTE v15[24]; // [rsp+38h] [rbp-50h] BYREF
+  __int64 v16; // [rsp+50h] [rbp-38h]
+  __int64 v17; // [rsp+60h] [rbp-28h]
+  char v18; // [rsp+98h] [rbp+10h] BYREF
+
+  v5 = 0;
+  v18 = 0;
+  v6 = sub_143F2C340(a1, a2, &v18);
+  v7 = v6;
+  if ( (a2[41] & 2) != 0 )
+  {
+    if ( (unsigned __int8)byte_14D838418 >= 2u )
+    {
+      if ( v6 )
+      {
+        v8 = sub_141768740(v6, v14, 0, 0);
+        v5 = 1;
+        v9 = *(_DWORD *)(v8 + 8) ? *(const wchar_t **)v8 : &chText;
+      }
+      else
+      {
+        v9 = L"NULL";
+      }
+      sub_141421C70(&byte_14D838418, &off_14A8A87F8, v9);
+      if ( (v5 & 1) != 0 )
+      {
+        if ( v14[0] )
+          sub_1413B0B20(v14[0]);
+      }
+    }
+    sub_143F174A0(v15, 90);
+    sub_143F1BB50(a2 + 184, v15);
+    if ( v17 )
+      (*(void (**)(void))(v17 - 16))();
+  }
+  else
+  {
+    if ( v18 )
+    {
+      sub_1414F5CB0(a3, a2, 0);
+      return 0;
+    }
+    v13 = 0;
+    (*(void (__fastcall **)(_BYTE *, unsigned int *))(*(_QWORD *)a2 + 408LL))(a2, &v13);
+    if ( (a2[41] & 2) == 0 )
+    {
+      sub_1414F5CB0(a3, a2, v13);
+      return v7;
+    }
+    if ( (unsigned __int8)byte_14D838418 >= 2u )
+    {
+      if ( v7 )
+      {
+        v11 = sub_141768740(v7, v14, 0, 0);
+        v5 = 2;
+        v12 = *(_DWORD *)(v11 + 8) ? *(const wchar_t **)v11 : &chText;
+      }
+      else
+      {
+        v12 = L"NULL";
+      }
+      sub_141421C70(&byte_14D838418, &off_14A8A8938, v12);
+      if ( (v5 & 2) != 0 )
+      {
+        if ( v14[0] )
+          sub_1413B0B20(v14[0]);
+      }
+    }
+    sub_143F174A0(v15, 91);
+    sub_143F1BB50(a2 + 184, v15);
+    if ( v17 )
+      (*(void (**)(void))(v17 - 16))();
+  }
+  if ( v16 )
+    sub_1413B0B20(v16);
+  return 0;
+}

@@ -1,0 +1,87 @@
+__int64 __fastcall sub_144DEDA40(__int64 a1, char a2)
+{
+  __int64 result; // rax
+
+  switch ( a2 )
+  {
+    case 0:
+      *(_OWORD *)a1 = 0;
+      *(_QWORD *)a1 = 0;
+      *(_QWORD *)(a1 + 8) = 0;
+      result = a1;
+      break;
+    case 1:
+      sub_14133EDD0(a1, L"no_connection");
+      result = a1;
+      break;
+    case 2:
+      sub_14133EDD0(a1, L"request_failure");
+      result = a1;
+      break;
+    case 3:
+      sub_14133EDD0(a1, L"invalid_creds");
+      result = a1;
+      break;
+    case 4:
+      sub_14133EDD0(a1, L"invalid_user");
+      result = a1;
+      break;
+    case 5:
+      sub_14133EDD0(a1, L"invalid_auth");
+      result = a1;
+      break;
+    case 6:
+      sub_14133EDD0(a1, L"access_denied");
+      result = a1;
+      break;
+    case 7:
+      sub_14133EDD0(a1, L"too_many_requests");
+      result = a1;
+      break;
+    case 8:
+      sub_14133EDD0(a1, L"already_pending");
+      result = a1;
+      break;
+    case 9:
+      sub_14133EDD0(a1, L"invalid_params");
+      result = a1;
+      break;
+    case 10:
+      sub_14133EDD0(a1, L"cant_parse");
+      result = a1;
+      break;
+    case 11:
+      sub_14133EDD0(a1, L"invalid_results");
+      result = a1;
+      break;
+    case 12:
+      sub_14133EDD0(a1, L"incompatible_version");
+      result = a1;
+      break;
+    case 13:
+      sub_14133EDD0(a1, L"not_configured");
+      result = a1;
+      break;
+    case 14:
+      sub_14133EDD0(a1, L"not_implemented");
+      result = a1;
+      break;
+    case 15:
+      sub_14133EDD0(a1, L"missing_interface");
+      result = a1;
+      break;
+    case 16:
+      sub_14133EDD0(a1, L"canceled");
+      result = a1;
+      break;
+    case 17:
+      sub_14133EDD0(a1, L"fail_extended");
+      result = a1;
+      break;
+    default:
+      sub_14133EDD0(a1, L"unknown_error_result");
+      result = a1;
+      break;
+  }
+  return result;
+}

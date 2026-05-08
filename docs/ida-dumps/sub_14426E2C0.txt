@@ -1,0 +1,174 @@
+void __fastcall sub_14426E2C0(RTL_SRWLOCK *a1, _QWORD *a2, __int64 a3)
+{
+  RTL_SRWLOCK *v6; // r13
+  unsigned int v7; // eax
+  int v8; // eax
+  __int64 v9; // rbx
+  bool v10; // zf
+  __int64 v11; // rbx
+  char v12; // al
+  __int64 v13; // rcx
+  const wchar_t *v14; // rdi
+  const wchar_t *v15; // r12
+  __int64 v16; // rax
+  const wchar_t *v17; // r8
+  const wchar_t *v18; // rbx
+  __int64 v19; // r8
+  const wchar_t *v20; // rcx
+  const wchar_t *v21; // r8
+  __int64 v22; // r8
+  __int64 v23; // rax
+  const wchar_t *v24; // rdi
+  const wchar_t *v25; // rbx
+  __int64 v26; // r8
+  const wchar_t *v27; // r8
+  __int64 v28; // r8
+  const wchar_t *v29; // [rsp+30h] [rbp-40h] BYREF
+  __int64 v30; // [rsp+38h] [rbp-38h]
+  const wchar_t *v31; // [rsp+40h] [rbp-30h] BYREF
+  int v32; // [rsp+48h] [rbp-28h]
+  const wchar_t *v33; // [rsp+50h] [rbp-20h] BYREF
+  __int64 v34; // [rsp+58h] [rbp-18h]
+  RTL_SRWLOCK *v35; // [rsp+60h] [rbp-10h]
+  int v36; // [rsp+68h] [rbp-8h]
+  __int64 v37; // [rsp+A8h] [rbp+38h] BYREF
+
+  if ( !*a2 )
+    return;
+  v6 = a1 + 1;
+  v35 = a1 + 1;
+  v36 = 0;
+  AcquireSRWLockShared(a1 + 1);
+  v7 = sub_1413A6340(a2, 16);
+  v8 = sub_143F4DBF0(&a1[2], v7, a2);
+  if ( v8 == -1 )
+    goto LABEL_52;
+  v9 = 80LL * v8;
+  v10 = (char *)a1[2].Ptr + v9 == nullptr;
+  v11 = (__int64)a1[2].Ptr + v9 + 16;
+  if ( v10 )
+    v11 = 0;
+  if ( !v11 )
+  {
+LABEL_52:
+    sub_141357530(
+      &v31,
+      L"ObjectId: %llu | ServerId: %u | Randomizer: %u",
+      *a2,
+      *((unsigned int *)a2 + 2),
+      *((_DWORD *)a2 + 3));
+    v27 = &chText;
+    if ( v32 )
+      v27 = v31;
+    sub_141357530(&v33, L"[%s]NOT_IN_CACHE", v27);
+    v28 = (unsigned int)(v34 - 1);
+    if ( !(_DWORD)v34 )
+      v28 = 0;
+    sub_141343D10(a3, v33, v28);
+    if ( v33 )
+      sub_1413B0B20(v33);
+  }
+  else
+  {
+    sub_14426E2C0(a1, v11 + 8, a3);
+    if ( *(int *)(a3 + 8) > 1 )
+      sub_141343D10(a3, L".", 1);
+    v12 = sub_141782600(v11);
+    v13 = *(_QWORD *)(v11 + 24);
+    if ( v12 )
+    {
+      v14 = &chText;
+      if ( v13 && *(_QWORD *)(sub_14177FAD0(v11) + 24) != *(_QWORD *)(v11 + 24) && (unsigned __int8)byte_14D5E1C40 >= 3u )
+      {
+        v37 = *(_QWORD *)(sub_14177FAD0(v11) + 24);
+        sub_14150CFA0(&v37, &v29);
+        v15 = &chText;
+        if ( (_DWORD)v30 )
+          v15 = v29;
+        v16 = sub_14150CFA0(v11 + 24, &v33);
+        if ( *(_DWORD *)(v16 + 8) )
+          v17 = *(const wchar_t **)v16;
+        else
+          v17 = &chText;
+        sub_141421C70((__int64)&byte_14D5E1C40, (__int64)&off_14A9EBF08, v17, v15);
+        if ( v33 )
+          sub_1413B0B20(v33);
+        if ( v29 )
+          sub_1413B0B20(v29);
+      }
+      v37 = *(_QWORD *)(sub_14177FAD0(v11) + 24);
+      sub_14150CFA0(&v37, &v33);
+      v18 = &chText;
+      if ( (_DWORD)v34 )
+        v18 = v33;
+      sub_141357530(
+        &v31,
+        L"ObjectId: %llu | ServerId: %u | Randomizer: %u",
+        *a2,
+        *((unsigned int *)a2 + 2),
+        *((_DWORD *)a2 + 3));
+      if ( v32 )
+        v14 = v31;
+      sub_141357530(&v29, L"[%s]%s", v14, v18);
+      v19 = (unsigned int)(v30 - 1);
+      if ( !(_DWORD)v30 )
+        v19 = 0;
+      sub_141343D10(a3, v29, v19);
+      if ( v29 )
+        sub_1413B0B20(v29);
+      if ( v31 )
+        sub_1413B0B20(v31);
+      v20 = v33;
+      goto LABEL_59;
+    }
+    if ( v13 )
+    {
+      v23 = sub_14150CFA0(v11 + 24, &v29);
+      v24 = &chText;
+      if ( *(_DWORD *)(v23 + 8) )
+        v25 = *(const wchar_t **)v23;
+      else
+        v25 = &chText;
+      sub_141357530(
+        &v31,
+        L"ObjectId: %llu | ServerId: %u | Randomizer: %u",
+        *a2,
+        *((unsigned int *)a2 + 2),
+        *((_DWORD *)a2 + 3));
+      if ( v32 )
+        v24 = v31;
+      sub_141357530(&v33, L"[%s]%s", v24, v25);
+      v26 = (unsigned int)(v34 - 1);
+      if ( !(_DWORD)v34 )
+        v26 = 0;
+      sub_141343D10(a3, v33, v26);
+      if ( v33 )
+        sub_1413B0B20(v33);
+      if ( v31 )
+        sub_1413B0B20(v31);
+      v20 = v29;
+      goto LABEL_59;
+    }
+    sub_141357530(
+      &v31,
+      L"ObjectId: %llu | ServerId: %u | Randomizer: %u",
+      *a2,
+      *((unsigned int *)a2 + 2),
+      *((_DWORD *)a2 + 3));
+    v21 = &chText;
+    if ( v32 )
+      v21 = v31;
+    sub_141357530(&v33, L"[%s]EMPTY", v21);
+    v22 = (unsigned int)(v34 - 1);
+    if ( !(_DWORD)v34 )
+      v22 = 0;
+    sub_141343D10(a3, v33, v22);
+    if ( v33 )
+      sub_1413B0B20(v33);
+  }
+  v20 = v31;
+LABEL_59:
+  if ( v20 )
+    sub_1413B0B20(v20);
+  ReleaseSRWLockShared(v6);
+}

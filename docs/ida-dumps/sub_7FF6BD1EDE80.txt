@@ -1,0 +1,28 @@
+__int64 sub_7FF6BD1EDE80()
+{
+  __int64 result; // rax
+  __int64 (__fastcall *v1)(ULONG_PTR); // [rsp+80h] [rbp+8h] BYREF
+
+  result = qword_7FF6C6B66170;
+  if ( !qword_7FF6C6B66170 )
+  {
+    v1 = sub_7FF6BD24B7B0;
+    sub_7FF6BA92FF50(
+      (int)L"/Script/Engine",
+      (int)L"CompositeDataTable",
+      (int)&qword_7FF6C6B66170,
+      (int)AK::MemoryMgr::VerifyMemoryArenaIntegrity,
+      248,
+      8,
+      0x10000000,
+      0,
+      (__int64)L"Engine",
+      (__int64)sub_7FF6BD1F6310,
+      (__int64)AK::SoundEngine::UnregisterResourceMonitorCallback,
+      (__int64)&v1,
+      (__int64)sub_7FF6BCFE9D50,
+      (__int64)sub_7FF6BA8B7130);
+    return qword_7FF6C6B66170;
+  }
+  return result;
+}

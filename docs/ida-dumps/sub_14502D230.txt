@@ -1,0 +1,116 @@
+bool __fastcall sub_14502D230(__int64 a1, int a2, int *a3, __int64 a4)
+{
+  int v4; // edi
+  __int64 v8; // r10
+  __int64 v9; // rax
+  int v10; // ecx
+  int v11; // ebp
+  int v12; // eax
+  _DWORD *v13; // rcx
+  __int64 v14; // rdx
+  int v15; // eax
+  __int64 v16; // rdx
+  __int64 v17; // rcx
+  _DWORD *v19; // rax
+  __int64 v20; // r8
+  int *v21; // r8
+  __int64 v22; // rdx
+  int v23; // eax
+  __int64 v24; // rdx
+  __int64 v25; // rcx
+  __int64 v26; // rdx
+  __int64 v27; // rax
+
+  v4 = 0;
+  if ( *(_DWORD *)(a1 + 8) == *(_DWORD *)(a1 + 52) )
+    goto LABEL_7;
+  v8 = *(_QWORD *)(a1 + 64);
+  v9 = a1 + 56;
+  v10 = *(_DWORD *)(a1 + 72);
+  v11 = a2;
+  if ( !v8 )
+    v8 = v9;
+  v12 = *(_DWORD *)(v8 + 4LL * (a2 & (unsigned int)(v10 - 1)));
+  if ( v12 == -1 )
+  {
+LABEL_7:
+    v11 = a2;
+  }
+  else
+  {
+    while ( 1 )
+    {
+      v13 = (_DWORD *)(*(_QWORD *)a1 + 32LL * v12);
+      if ( *v13 == a2 )
+        break;
+      v12 = v13[6];
+      if ( v12 == -1 )
+        goto LABEL_7;
+    }
+    v19 = v13 + 2;
+    if ( !v13 )
+      v19 = nullptr;
+    if ( v19 )
+    {
+      v20 = *((_QWORD *)v19 + 1);
+      if ( v20 )
+        return (*(unsigned __int8 (__fastcall **)(int *, __int64, __int64, _QWORD))(*(_QWORD *)a3 + 184LL))(
+                 a3,
+                 a4 + a3[17],
+                 v20,
+                 0) == 0;
+    }
+  }
+  if ( *(_DWORD *)(a1 + 88) == *(_DWORD *)(a1 + 132) )
+    return 1;
+  v14 = *(_QWORD *)(a1 + 144);
+  if ( !v14 )
+    v14 = a1 + 136;
+  v15 = *(_DWORD *)(v14 + 4LL * (v11 & (unsigned int)(*(_DWORD *)(a1 + 152) - 1)));
+  if ( v15 == -1 )
+    return 1;
+  v16 = *(_QWORD *)(a1 + 80);
+  while ( 1 )
+  {
+    v17 = 16LL * v15;
+    if ( *(_DWORD *)(v17 + v16) == a2 )
+      break;
+    v15 = *(_DWORD *)(v17 + v16 + 8);
+    if ( v15 == -1 )
+      return 1;
+  }
+  v21 = (int *)(v17 + v16 + 4);
+  if ( !(v17 + v16) )
+    v21 = nullptr;
+  if ( !v21 )
+    return 1;
+  if ( *(_DWORD *)(a1 + 168) != *(_DWORD *)(a1 + 212) )
+  {
+    v22 = *(_QWORD *)(a1 + 224);
+    if ( !v22 )
+      v22 = a1 + 216;
+    v23 = *(_DWORD *)(v22 + 4LL * (v11 & (unsigned int)(*(_DWORD *)(a1 + 232) - 1)));
+    if ( v23 != -1 )
+    {
+      v24 = *(_QWORD *)(a1 + 160);
+      while ( 1 )
+      {
+        v25 = 16LL * v23;
+        if ( *(_DWORD *)(v24 + v25) == a2 )
+          break;
+        v23 = *(_DWORD *)(v24 + v25 + 8);
+        if ( v23 == -1 )
+          goto LABEL_34;
+      }
+      v26 = v25 + v24;
+      if ( v26 )
+        v4 = *(_DWORD *)(v26 + 4);
+    }
+  }
+LABEL_34:
+  v27 = *v21;
+  if ( (_DWORD)v27 == -1 )
+    return v4 != -1;
+  else
+    return v4 != *(_DWORD *)(v27 + a4 + a3[17]);
+}

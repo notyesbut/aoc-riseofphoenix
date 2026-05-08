@@ -1,0 +1,24 @@
+void __fastcall sub_1442804D0(RTL_SRWLOCK *a1, __int64 a2, __int64 a3)
+{
+  RTL_SRWLOCK *v6; // rbx
+  __int64 v7; // [rsp+20h] [rbp-28h] BYREF
+  __int64 v8; // [rsp+28h] [rbp-20h]
+  RTL_SRWLOCK *v9; // [rsp+30h] [rbp-18h]
+  int v10; // [rsp+38h] [rbp-10h]
+  char v11; // [rsp+50h] [rbp+8h] BYREF
+
+  v6 = a1 + 1;
+  v9 = a1 + 1;
+  v10 = 1;
+  AcquireSRWLockExclusive(a1 + 1);
+  v7 = a2;
+  v8 = a3;
+  ((void (__fastcall *)(RTL_SRWLOCK *, char *, __int64 *, _QWORD))sub_144259B70)(&a1[2], &v11, &v7, 0);
+  if ( !(unsigned __int8)sub_141F38810(a3, 0) )
+  {
+    v7 = a3;
+    v8 = a2;
+    ((void (__fastcall *)(RTL_SRWLOCK *, char *, __int64 *, _QWORD))sub_143F4D510)(&a1[12], &v11, &v7, 0);
+  }
+  ReleaseSRWLockExclusive(v6);
+}

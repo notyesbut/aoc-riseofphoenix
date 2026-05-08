@@ -1,0 +1,291 @@
+__int64 __fastcall sub_7FF6BF211970(__int64 a1, __int64 a2, __int64 a3)
+{
+  __int64 v7; // rax
+  __int64 v8; // rdx
+  __int64 v9; // r8
+  __int64 v10; // rax
+  int v11; // eax
+  __int64 v12; // r8
+  __int64 v13; // rbx
+  __int64 v14; // rsi
+  void *v15; // r14
+  __int64 v16; // rsi
+  __int64 v17; // r14
+  __int64 v18; // r8
+  __int64 v19; // rdi
+  __int64 v20; // rax
+  __int64 v21; // rdx
+  __int64 v22; // rax
+  char *v23; // rcx
+  __int64 v24; // rax
+  __int64 v25; // rdx
+  __int64 v26; // rax
+  __int64 v27; // rdx
+  __int64 v28; // r8
+  __int64 v29; // r9
+  __int64 v30; // rsi
+  __int64 v31; // r11
+  __int64 v32; // rax
+  __int64 v33; // rax
+  void ***v34; // rax
+  __int64 v35; // rax
+  _QWORD *v36; // rax
+  __int64 v37; // r8
+  __int64 v38; // rbx
+  const wchar_t *v39; // r8
+  __int64 v40; // rax
+  const wchar_t *v41; // rbx
+  volatile signed __int32 *v42; // rbx
+  __int64 v43; // rax
+  __int64 v44; // r8
+  __int64 v45; // rax
+  const wchar_t *v46; // rbx
+  const wchar_t *v47; // r14
+  void **v48; // [rsp+90h] [rbp-80h] BYREF
+  int v49; // [rsp+98h] [rbp-78h] BYREF
+  void *v50; // [rsp+A0h] [rbp-70h] BYREF
+  int v51; // [rsp+A8h] [rbp-68h]
+  int v52; // [rsp+ACh] [rbp-64h] BYREF
+  __int128 v53; // [rsp+B0h] [rbp-60h] BYREF
+  void *Src; // [rsp+C0h] [rbp-50h] BYREF
+  __int64 v55; // [rsp+C8h] [rbp-48h]
+  __int128 v56; // [rsp+D0h] [rbp-40h] BYREF
+  __m256i v57; // [rsp+E0h] [rbp-30h]
+  __int64 v58; // [rsp+100h] [rbp-10h]
+  char v59[64]; // [rsp+110h] [rbp+0h] BYREF
+  _BYTE v60[16]; // [rsp+150h] [rbp+40h] BYREF
+  __int64 v61; // [rsp+160h] [rbp+50h]
+  __int64 v62; // [rsp+168h] [rbp+58h]
+  __int16 v63; // [rsp+180h] [rbp+70h]
+  char v64; // [rsp+182h] [rbp+72h]
+  __int64 v65; // [rsp+190h] [rbp+80h]
+  char v66; // [rsp+1A0h] [rbp+90h] BYREF
+  char *v67; // [rsp+1B8h] [rbp+A8h]
+
+  if ( a2 )
+  {
+    Src = nullptr;
+    v55 = 0;
+    v7 = sub_7FF6BF03C440();
+    v8 = *(_QWORD *)(a2 + 16);
+    v9 = v7 + 80;
+    v10 = *(int *)(v7 + 88);
+    if ( (int)v10 <= *(_DWORD *)(v8 + 88) && *(_QWORD *)(*(_QWORD *)(v8 + 80) + 8 * v10) == v9 )
+    {
+      v11 = *(_DWORD *)(a2 + 5136);
+      v12 = (unsigned int)(v11 - 1);
+      if ( !v11 )
+        v12 = 0;
+      sub_7FF6BA674310(&Src, *(_QWORD *)(a2 + 5128), v12);
+      v13 = a2;
+    }
+    else
+    {
+      v13 = 0;
+    }
+    v48 = &v50;
+    v50 = nullptr;
+    v14 = (int)v55;
+    v15 = Src;
+    v51 = v55;
+    if ( (_DWORD)v55 )
+    {
+      sub_7FF6BA64E740(2, 2, v55, 0, (__int64)&v50, v55, (__int64)&v52);
+      memcpy(v50, v15, 2 * v14);
+    }
+    else
+    {
+      v52 = 0;
+    }
+    v16 = sub_7FF6BF21F6C0(a1, a2, &v50);
+    v17 = sub_7FF6BCEB2890(a1);
+    sub_7FF6BDA4DC90(v60);
+    v63 = 258;
+    v61 = a2;
+    v62 = 0;
+    v64 |= 4u;
+    if ( !v16
+      || (v19 = sub_7FF6BD4C4180(v17, v16, a3, v60)) == 0
+      || (v20 = sub_7FF6BD6482B0(),
+          v21 = *(_QWORD *)(v19 + 16),
+          v18 = v20 + 80,
+          v22 = *(int *)(v20 + 88),
+          (int)v22 > *(_DWORD *)(v21 + 88))
+      || *(_QWORD *)(*(_QWORD *)(v21 + 80) + 8 * v22) != v18 )
+    {
+      v19 = 0;
+    }
+    if ( v65 )
+    {
+      v23 = &v66;
+      if ( v67 )
+        v23 = v67;
+      (*(void (__fastcall **)(char *))(*(_QWORD *)v23 + 16LL))(v23);
+    }
+    if ( v19
+      && (v24 = sub_7FF6BF11F450(),
+          v25 = *(_QWORD *)(v19 + 16),
+          v18 = v24 + 80,
+          v26 = *(int *)(v24 + 88),
+          (int)v26 <= *(_DWORD *)(v25 + 88))
+      && *(_QWORD *)(*(_QWORD *)(v25 + 80) + 8 * v26) == v18
+      && v13 )
+    {
+      sub_7FF6BFF790B0(v19);
+      sub_7FF6BFF566A0(v19, v13);
+      v56 = *(_OWORD *)(v13 + 6336);
+      v57.m256i_i64[0] = *(_QWORD *)(v13 + 6352);
+      sub_7FF6BFF57F30(v19, &v56);
+      v48 = nullptr;
+      v30 = *(_QWORD *)(v13 + 9128);
+      v31 = v13;
+      if ( v30 )
+      {
+        v32 = sub_7FF6BFF41110(v19, v59);
+        v56 = *(_OWORD *)v32;
+        v57 = *(__m256i *)(v32 + 16);
+        v58 = *(_QWORD *)(v32 + 48);
+        v29 = (unsigned int)sub_7FF6BEB3E660(&v56);
+        v31 = v13;
+        if ( *(_DWORD *)(v30 + 600) != *(_DWORD *)(v30 + 644) )
+        {
+          v27 = *(_QWORD *)(v30 + 656);
+          if ( !v27 )
+            v27 = v30 + 648;
+          v28 = *(unsigned int *)(v27 + 4LL * ((unsigned int)v29 & (*(_DWORD *)(v30 + 664) - 1)));
+          if ( (_DWORD)v28 != -1 )
+          {
+            v29 = *(_QWORD *)(v30 + 592);
+            v27 = *((_QWORD *)&v56 + 1);
+            while ( *(_OWORD *)(v29 + 72LL * (int)v28) != v56 )
+            {
+              v28 = *(unsigned int *)(v29 + 72LL * (int)v28 + 64);
+              if ( (_DWORD)v28 == -1 )
+                goto LABEL_39;
+            }
+            v33 = v29 + 72LL * (int)v28;
+            if ( v33 )
+            {
+              v34 = (void ***)(v33 + 56);
+              if ( v34 )
+                v48 = *v34;
+            }
+          }
+        }
+      }
+LABEL_39:
+      if ( (unsigned __int8)byte_7FF6C6C6FDA0 >= 3u )
+      {
+        v35 = (*(__int64 (__fastcall **)(__int64, __int64, __int64, __int64))(*(_QWORD *)v31 + 1616LL))(
+                v31,
+                v27,
+                v28,
+                v29);
+        v36 = (_QWORD *)(*(__int64 (__fastcall **)(__int64, __int128 *))(*(_QWORD *)v35 + 960LL))(v35, &v56);
+        LOBYTE(v37) = 1;
+        v38 = (*(__int64 (__fastcall **)(_QWORD, void **, __int64))(*(_QWORD *)*v36 + 128LL))(*v36, &v50, v37);
+        v49 = sub_7FF6BFE6D0F0(v19);
+        v39 = L"Level";
+        LOBYTE(v39) = 3;
+        v40 = sub_7FF6BF208640(
+                (unsigned int)&v53,
+                (unsigned int)&byte_7FF6C6C6FDA0,
+                (_DWORD)v39,
+                (unsigned int)L"[SECURITY] AAoCGameModeBase::AoCSpawnDefaultPawnAtTransform",
+                (__int64)L"CharacterId",
+                v19 + 11840,
+                (__int64)L"AccountId",
+                v19 + 11856,
+                (__int64)L"CharacterName",
+                v19 + 11904,
+                (__int64)L"Level",
+                (__int64)&v49,
+                (__int64)L"Experience",
+                (__int64)&v48,
+                (__int64)L"ip",
+                v38,
+                (__int64)L"Function+",
+                (__int64)"AAoCGameModeBase::AoCSpawnDefaultPawnAtTransform_Implementation");
+        if ( *(_DWORD *)(v40 + 8) )
+          v41 = *(const wchar_t **)v40;
+        else
+          v41 = &pwszOutputURL;
+        sub_7FF6BA751C70((__int64)&byte_7FF6C6C6FDA0, (__int64)&off_7FF6C4B04A50, v41);
+        if ( (_QWORD)v53 )
+          sub_7FF6BA6E0B20(v53);
+        if ( v50 )
+          sub_7FF6BA6E0B20(v50);
+        v42 = *((volatile signed __int32 **)&v56 + 1);
+        if ( *((_QWORD *)&v56 + 1) )
+        {
+          if ( _InterlockedExchangeAdd((volatile signed __int32 *)(*((_QWORD *)&v56 + 1) + 8LL), 0xFFFFFFFF) == 1 )
+          {
+            (**(void (__fastcall ***)(volatile signed __int32 *))v42)(v42);
+            if ( _InterlockedExchangeAdd(v42 + 3, 0xFFFFFFFF) == 1 )
+              (*(void (__fastcall **)(volatile signed __int32 *, __int64))(*(_QWORD *)v42 + 8LL))(v42, 1);
+          }
+        }
+      }
+      v43 = sub_7FF6BCEB2890(a1);
+      if ( v43 && (*(_DWORD *)(v43 + 8) & 0x40000000) == 0 )
+      {
+        if ( (unsigned __int8)sub_7FF6BA6ED6C0() )
+        {
+          sub_7FF6BA69EAB0(&qword_7FF6C67BACF8, v19);
+        }
+        else
+        {
+          *(_QWORD *)&v53 = v19;
+          *((_QWORD *)&v53 + 1) = &qword_7FF6C67BACF8;
+          v57.m256i_i64[3] = 0;
+          v57.m256i_i64[0] = (__int64)&off_7FF6C314DC10;
+          *(_OWORD *)&v57.m256i_u64[1] = v53;
+          *(_QWORD *)&v56 = sub_7FF6BF214150;
+          sub_7FF6BA654C20(1, &v56);
+        }
+      }
+      sub_7FF6BEC1D770(a1, v19);
+      LOBYTE(v44) = 1;
+      sub_7FF6BD33E470(v19, a3, v44);
+    }
+    else
+    {
+      LOBYTE(v18) = 1;
+      sub_7FF6BD33E470(v19, a3, v18);
+      if ( !v19 && (unsigned __int8)byte_7FF6C6C6FDA0 >= 3u )
+      {
+        v45 = sub_7FF6BA777530(a3, &v56);
+        v46 = &pwszOutputURL;
+        if ( *(_DWORD *)(v45 + 8) )
+          v47 = *(const wchar_t **)v45;
+        else
+          v47 = &pwszOutputURL;
+        if ( v16 )
+        {
+          v48 = *(void ***)(v16 + 24);
+          sub_7FF6BA83CFA0(&v48, &v53);
+        }
+        else
+        {
+          sub_7FF6BA66EDD0((__int64)&v53, L"None");
+        }
+        if ( DWORD2(v53) )
+          v46 = (const wchar_t *)v53;
+        sub_7FF6BA751C70((__int64)&byte_7FF6C6C6FDA0, (__int64)&off_7FF6C4B04A70, v46, v47);
+        if ( (_QWORD)v53 )
+          sub_7FF6BA6E0B20(v53);
+        if ( (_QWORD)v56 )
+          sub_7FF6BA6E0B20(v56);
+      }
+    }
+    if ( Src )
+      sub_7FF6BA6E0B20(Src);
+    return v19;
+  }
+  else
+  {
+    if ( (unsigned __int8)byte_7FF6C6C6FDA0 >= 3u )
+      sub_7FF6BA751C70((__int64)&byte_7FF6C6C6FDA0, (__int64)&off_7FF6C4B049A0);
+    return 0;
+  }
+}

@@ -1,0 +1,7 @@
+__int64 __fastcall sub_144412660(__int64 a1)
+{
+  __int64 v2; // rax
+
+  v2 = sub_141741E80(a1, qword_14D856338);
+  return (*(__int64 (__fastcall **)(__int64, __int64, _QWORD))(*(_QWORD *)a1 + 744LL))(a1, v2, 0);
+}

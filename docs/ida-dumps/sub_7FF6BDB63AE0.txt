@@ -1,0 +1,52 @@
+__int64 __fastcall sub_7FF6BDB63AE0(__int64 a1, unsigned int a2, int a3, __int64 a4)
+{
+  __int64 v5; // rbp
+  __int64 *v8; // rdi
+  __int64 result; // rax
+  int v10; // ebx
+  int v11; // eax
+  int i; // ebx
+  int v13; // eax
+  __int64 v14; // rcx
+
+  v5 = a2;
+  sub_7FF6BB7FD8C0(a1 + 512);
+  sub_7FF6BA698500(a1 + 512, a4);
+  sub_7FF6BA698500(a1 + 528, a4);
+  *(_BYTE *)(a1 + 576) |= 1u;
+  v8 = (__int64 *)(a1 + 560);
+  *(_DWORD *)(a1 + 552) = a3;
+  *(_DWORD *)(a1 + 544) = v5;
+  *(_DWORD *)(a1 + 556) = 1;
+  result = *(unsigned int *)(a1 + 568);
+  if ( (int)v5 <= (int)result )
+  {
+    if ( (int)v5 < 0 )
+    {
+      sub_7FF6BA685830(v5);
+      JUMPOUT(0x7FF6BDB63C30LL);
+    }
+    if ( (int)v5 < (int)result )
+    {
+      *(_DWORD *)(a1 + 568) = v5;
+      result = sub_7FF6BA64F250(4, 4, (int)a1 + 560, v5, a1 + 572);
+    }
+  }
+  else
+  {
+    v10 = v5 - result;
+    v11 = sub_7FF6BA64EF30(4, 4, (int)v5 - (int)result, (int)a1 + 560, a1 + 568, a1 + 572);
+    result = (__int64)memset((void *)(*v8 + 4LL * v11), 0, 4LL * v10);
+  }
+  for ( i = 0; i < (int)v5; ++i )
+  {
+    v13 = *(_DWORD *)(a1 + 568);
+    if ( v13 == *(_DWORD *)(a1 + 572) )
+      v13 = sub_7FF6BA64EC90(0x404u, (int)a1 + 560, (unsigned int *)(a1 + 572));
+    *(_DWORD *)(a1 + 568) = v13 + 1;
+    v14 = v13;
+    result = *v8;
+    *(_DWORD *)(*v8 + 4 * v14) = i;
+  }
+  return result;
+}

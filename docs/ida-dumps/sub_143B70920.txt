@@ -1,0 +1,5 @@
+void __fastcall sub_143B70920(ULONG_PTR Parameter, __int64 a2)
+{
+  sub_1417625E0(a2, Parameter + 752);
+  AK::MemoryMgr::VerifyMemoryArenaIntegrity(Parameter);
+}

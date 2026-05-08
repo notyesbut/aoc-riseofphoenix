@@ -1,0 +1,10 @@
+__int64 __fastcall sub_7FF6BA950F20(_QWORD *a1)
+{
+  __int64 v2; // rcx
+
+  *a1 = off_7FF6C31904D0;
+  v2 = a1[23];
+  if ( v2 )
+    (*(void (**)(void))(v2 - 16))();
+  return sub_7FF6BA81C120(a1);
+}

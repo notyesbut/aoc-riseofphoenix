@@ -1,0 +1,38 @@
+void __fastcall sub_144238C80(__int64 a1, unsigned int a2)
+{
+  char v4; // bl
+  __int64 v5; // rdi
+  char v6; // di
+  _QWORD v7[3]; // [rsp+20h] [rbp-38h] BYREF
+  __int64 v8; // [rsp+38h] [rbp-20h]
+  __int64 v9; // [rsp+48h] [rbp-10h]
+
+  v4 = 0;
+  v5 = *(_QWORD *)(a1 + 7248);
+  if ( v5 )
+  {
+    sub_143F174A0(v7, a2);
+    v4 = 1;
+    v6 = sub_141D40180(v5, v7);
+  }
+  else
+  {
+    v6 = 2;
+  }
+  if ( (v4 & 1) != 0 )
+  {
+    if ( v9 )
+      (*(void (**)(void))(v9 - 16))();
+    if ( v8 )
+      sub_1413B0B20(v8);
+  }
+  if ( v6 == 2 )
+  {
+    sub_143F174A0(v7, a2);
+    sub_14422E810(a1, v7);
+    if ( v9 )
+      (*(void (**)(void))(v9 - 16))();
+    if ( v8 )
+      sub_1413B0B20(v8);
+  }
+}

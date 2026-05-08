@@ -1,0 +1,1158 @@
+[
+  {
+    "Type": "SkeletalMeshLODSettings",
+    "Name": "CharacterLODSettings",
+    "Flags": "RF_Public | RF_Standalone | RF_Transactional | RF_WasLoaded | RF_LoadCompleted",
+    "Class": "UScriptClass'SkeletalMeshLODSettings'",
+    "Package": "/Game/Characters/CharacterLODSettings",
+    "Properties": {
+      "LODGroups": [
+        {
+          "ScreenSize": {
+            "bCooked": true,
+            "Default": 1.0,
+            "PerPlatform": null,
+            "Value": 1.0
+          },
+          "LODHysteresis": 0.0,
+          "BoneFilterActionOption": "EBoneFilterActionOption::Remove",
+          "BoneList": [],
+          "BonesToPrioritize": [
+            "hand_r",
+            "index_01_r",
+            "index_02_r",
+            "index_03_r",
+            "middle_01_r",
+            "middle_02_r",
+            "middle_03_r",
+            "pinky_01_r",
+            "pinky_02_r",
+            "pinky_03_r",
+            "ring_01_r",
+            "ring_02_r",
+            "ring_03_r",
+            "thumb_01_r",
+            "thumb_02_r",
+            "thumb_03_r",
+            "neck_01",
+            "head",
+            "face_base",
+            "hand_l",
+            "index_01_l",
+            "index_02_l",
+            "index_03_l",
+            "middle_01_l",
+            "middle_02_l",
+            "middle_03_l",
+            "pinky_01_l",
+            "pinky_02_l",
+            "pinky_03_l",
+            "ring_01_l",
+            "ring_02_l",
+            "ring_03_l",
+            "thumb_01_l",
+            "thumb_02_l",
+            "thumb_03_l",
+            "spine_03",
+            "upperarm_r",
+            "upperarm_l",
+            "clavicle_r",
+            "clavicle_l"
+          ],
+          "SectionsToPrioritize": [],
+          "WeightOfPrioritization": 1.0,
+          "BakePose": null,
+          "ReductionSettings": {
+            "TerminationCriterion": "SkeletalMeshTerminationCriterion::SMTC_NumOfTriangles",
+            "NumOfTrianglesPercentage": 1.0,
+            "NumOfVertPercentage": 0.5,
+            "MaxNumOfTriangles": 4,
+            "MaxNumOfVerts": 6,
+            "MaxDeviationPercentage": 0.5,
+            "ReductionMethod": "SkeletalMeshOptimizationType::SMOT_NumOfTriangles",
+            "SilhouetteImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "TextureImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "ShadingImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "SkinningImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "bRemapMorphTargets": false,
+            "bRecalcNormals": true,
+            "WeldingThreshold": 0.1,
+            "NormalsThreshold": 60.0,
+            "MaxBonesPerVertex": 4,
+            "bEnforceBoneBoundaries": false,
+            "bMergeCoincidentVertBones": true,
+            "VolumeImportance": 1.0,
+            "bLockEdges": true,
+            "bLockColorBounaries": false,
+            "bImproveTrianglesForCloth": true,
+            "BaseLOD": 0
+          },
+          "bAllowMeshDeformer": true
+        },
+        {
+          "ScreenSize": {
+            "bCooked": true,
+            "Default": 0.6,
+            "PerPlatform": null,
+            "Value": 0.6
+          },
+          "LODHysteresis": 0.0,
+          "BoneFilterActionOption": "EBoneFilterActionOption::Remove",
+          "BoneList": [],
+          "BonesToPrioritize": [
+            "hand_r",
+            "index_01_r",
+            "index_02_r",
+            "index_03_r",
+            "middle_01_r",
+            "middle_02_r",
+            "middle_03_r",
+            "pinky_01_r",
+            "pinky_02_r",
+            "pinky_03_r",
+            "ring_01_r",
+            "ring_02_r",
+            "ring_03_r",
+            "thumb_01_r",
+            "thumb_02_r",
+            "thumb_03_r",
+            "neck_01",
+            "head",
+            "face_base",
+            "hand_l",
+            "index_01_l",
+            "index_02_l",
+            "index_03_l",
+            "middle_01_l",
+            "middle_02_l",
+            "middle_03_l",
+            "pinky_01_l",
+            "pinky_02_l",
+            "pinky_03_l",
+            "ring_01_l",
+            "ring_02_l",
+            "ring_03_l",
+            "thumb_01_l",
+            "thumb_02_l",
+            "thumb_03_l",
+            "spine_03",
+            "upperarm_r",
+            "upperarm_l",
+            "clavicle_r",
+            "clavicle_l"
+          ],
+          "SectionsToPrioritize": [],
+          "WeightOfPrioritization": 1.0,
+          "BakePose": null,
+          "ReductionSettings": {
+            "TerminationCriterion": "SkeletalMeshTerminationCriterion::SMTC_NumOfTriangles",
+            "NumOfTrianglesPercentage": 0.5,
+            "NumOfVertPercentage": 0.5,
+            "MaxNumOfTriangles": 4,
+            "MaxNumOfVerts": 6,
+            "MaxDeviationPercentage": 0.5,
+            "ReductionMethod": "SkeletalMeshOptimizationType::SMOT_NumOfTriangles",
+            "SilhouetteImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "TextureImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "ShadingImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "SkinningImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "bRemapMorphTargets": true,
+            "bRecalcNormals": true,
+            "WeldingThreshold": 0.1,
+            "NormalsThreshold": 60.0,
+            "MaxBonesPerVertex": 4,
+            "bEnforceBoneBoundaries": false,
+            "bMergeCoincidentVertBones": true,
+            "VolumeImportance": 1.0,
+            "bLockEdges": true,
+            "bLockColorBounaries": false,
+            "bImproveTrianglesForCloth": true,
+            "BaseLOD": 0
+          },
+          "bAllowMeshDeformer": true
+        },
+        {
+          "ScreenSize": {
+            "bCooked": true,
+            "Default": 0.3,
+            "PerPlatform": null,
+            "Value": 0.3
+          },
+          "LODHysteresis": 0.0,
+          "BoneFilterActionOption": "EBoneFilterActionOption::Remove",
+          "BoneList": [],
+          "BonesToPrioritize": [
+            "hand_r",
+            "index_01_r",
+            "index_02_r",
+            "index_03_r",
+            "middle_01_r",
+            "middle_02_r",
+            "middle_03_r",
+            "pinky_01_r",
+            "pinky_02_r",
+            "pinky_03_r",
+            "ring_01_r",
+            "ring_02_r",
+            "ring_03_r",
+            "thumb_01_r",
+            "thumb_02_r",
+            "thumb_03_r",
+            "neck_01",
+            "head",
+            "face_base",
+            "hand_l",
+            "index_01_l",
+            "index_02_l",
+            "index_03_l",
+            "middle_01_l",
+            "middle_02_l",
+            "middle_03_l",
+            "pinky_01_l",
+            "pinky_02_l",
+            "pinky_03_l",
+            "ring_01_l",
+            "ring_02_l",
+            "ring_03_l",
+            "thumb_01_l",
+            "thumb_02_l",
+            "thumb_03_l",
+            "spine_03",
+            "upperarm_r",
+            "upperarm_l",
+            "clavicle_r",
+            "clavicle_l"
+          ],
+          "SectionsToPrioritize": [],
+          "WeightOfPrioritization": 1.0,
+          "BakePose": null,
+          "ReductionSettings": {
+            "TerminationCriterion": "SkeletalMeshTerminationCriterion::SMTC_NumOfTriangles",
+            "NumOfTrianglesPercentage": 0.25,
+            "NumOfVertPercentage": 0.5,
+            "MaxNumOfTriangles": 4,
+            "MaxNumOfVerts": 6,
+            "MaxDeviationPercentage": 0.5,
+            "ReductionMethod": "SkeletalMeshOptimizationType::SMOT_NumOfTriangles",
+            "SilhouetteImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "TextureImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "ShadingImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "SkinningImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "bRemapMorphTargets": true,
+            "bRecalcNormals": true,
+            "WeldingThreshold": 0.1,
+            "NormalsThreshold": 60.0,
+            "MaxBonesPerVertex": 4,
+            "bEnforceBoneBoundaries": false,
+            "bMergeCoincidentVertBones": true,
+            "VolumeImportance": 1.0,
+            "bLockEdges": false,
+            "bLockColorBounaries": false,
+            "bImproveTrianglesForCloth": true,
+            "BaseLOD": 0
+          },
+          "bAllowMeshDeformer": true
+        },
+        {
+          "ScreenSize": {
+            "bCooked": true,
+            "Default": 0.2,
+            "PerPlatform": null,
+            "Value": 0.2
+          },
+          "LODHysteresis": 0.0,
+          "BoneFilterActionOption": "EBoneFilterActionOption::Remove",
+          "BoneList": [],
+          "BonesToPrioritize": [
+            "hand_r",
+            "index_01_r",
+            "index_02_r",
+            "index_03_r",
+            "middle_01_r",
+            "middle_02_r",
+            "middle_03_r",
+            "pinky_01_r",
+            "pinky_02_r",
+            "pinky_03_r",
+            "ring_01_r",
+            "ring_02_r",
+            "ring_03_r",
+            "thumb_01_r",
+            "thumb_02_r",
+            "thumb_03_r",
+            "neck_01",
+            "head",
+            "face_base",
+            "hand_l",
+            "index_01_l",
+            "index_02_l",
+            "index_03_l",
+            "middle_01_l",
+            "middle_02_l",
+            "middle_03_l",
+            "pinky_01_l",
+            "pinky_02_l",
+            "pinky_03_l",
+            "ring_01_l",
+            "ring_02_l",
+            "ring_03_l",
+            "thumb_01_l",
+            "thumb_02_l",
+            "thumb_03_l",
+            "spine_03",
+            "upperarm_r",
+            "upperarm_l",
+            "clavicle_r",
+            "clavicle_l"
+          ],
+          "SectionsToPrioritize": [],
+          "WeightOfPrioritization": 1.0,
+          "BakePose": null,
+          "ReductionSettings": {
+            "TerminationCriterion": "SkeletalMeshTerminationCriterion::SMTC_NumOfTriangles",
+            "NumOfTrianglesPercentage": 0.166,
+            "NumOfVertPercentage": 0.5,
+            "MaxNumOfTriangles": 4,
+            "MaxNumOfVerts": 6,
+            "MaxDeviationPercentage": 0.5,
+            "ReductionMethod": "SkeletalMeshOptimizationType::SMOT_NumOfTriangles",
+            "SilhouetteImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "TextureImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "ShadingImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "SkinningImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "bRemapMorphTargets": true,
+            "bRecalcNormals": true,
+            "WeldingThreshold": 0.1,
+            "NormalsThreshold": 60.0,
+            "MaxBonesPerVertex": 3,
+            "bEnforceBoneBoundaries": false,
+            "bMergeCoincidentVertBones": true,
+            "VolumeImportance": 1.0,
+            "bLockEdges": false,
+            "bLockColorBounaries": false,
+            "bImproveTrianglesForCloth": true,
+            "BaseLOD": 0
+          },
+          "bAllowMeshDeformer": true
+        },
+        {
+          "ScreenSize": {
+            "bCooked": true,
+            "Default": 0.15,
+            "PerPlatform": null,
+            "Value": 0.15
+          },
+          "LODHysteresis": 0.0,
+          "BoneFilterActionOption": "EBoneFilterActionOption::Remove",
+          "BoneList": [
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_center"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_inner_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_inner_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_outer_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_outer_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "cheek_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "cheek_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "ear_01_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "ear_01_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_inner_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_inner_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_outer_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_outer_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eyelid_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eyelid_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "jaw"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lipupper_center"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lipupper_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lipupper_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "mouth_corner_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "mouth_corner_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "nose"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "nose_bridge"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "nose_tip"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "smiler_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "smiler_r"
+            }
+          ],
+          "BonesToPrioritize": [
+            "hand_r",
+            "index_01_r",
+            "index_02_r",
+            "index_03_r",
+            "middle_01_r",
+            "middle_02_r",
+            "middle_03_r",
+            "pinky_01_r",
+            "pinky_02_r",
+            "pinky_03_r",
+            "ring_01_r",
+            "ring_02_r",
+            "ring_03_r",
+            "thumb_01_r",
+            "thumb_02_r",
+            "thumb_03_r",
+            "neck_01",
+            "head",
+            "face_base",
+            "hand_l",
+            "index_01_l",
+            "index_02_l",
+            "index_03_l",
+            "middle_01_l",
+            "middle_02_l",
+            "middle_03_l",
+            "pinky_01_l",
+            "pinky_02_l",
+            "pinky_03_l",
+            "ring_01_l",
+            "ring_02_l",
+            "ring_03_l",
+            "thumb_01_l",
+            "thumb_02_l",
+            "thumb_03_l",
+            "spine_03",
+            "upperarm_r",
+            "upperarm_l",
+            "clavicle_r",
+            "clavicle_l"
+          ],
+          "SectionsToPrioritize": [],
+          "WeightOfPrioritization": 1.0,
+          "BakePose": null,
+          "ReductionSettings": {
+            "TerminationCriterion": "SkeletalMeshTerminationCriterion::SMTC_NumOfTriangles",
+            "NumOfTrianglesPercentage": 0.125,
+            "NumOfVertPercentage": 0.5,
+            "MaxNumOfTriangles": 4,
+            "MaxNumOfVerts": 6,
+            "MaxDeviationPercentage": 0.5,
+            "ReductionMethod": "SkeletalMeshOptimizationType::SMOT_NumOfTriangles",
+            "SilhouetteImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "TextureImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "ShadingImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "SkinningImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "bRemapMorphTargets": false,
+            "bRecalcNormals": true,
+            "WeldingThreshold": 0.1,
+            "NormalsThreshold": 60.0,
+            "MaxBonesPerVertex": 3,
+            "bEnforceBoneBoundaries": false,
+            "bMergeCoincidentVertBones": true,
+            "VolumeImportance": 1.0,
+            "bLockEdges": false,
+            "bLockColorBounaries": false,
+            "bImproveTrianglesForCloth": true,
+            "BaseLOD": 0
+          },
+          "bAllowMeshDeformer": true
+        },
+        {
+          "ScreenSize": {
+            "bCooked": true,
+            "Default": 0.05,
+            "PerPlatform": null,
+            "Value": 0.05
+          },
+          "LODHysteresis": 0.0,
+          "BoneFilterActionOption": "EBoneFilterActionOption::Remove",
+          "BoneList": [
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_center"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_inner_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_inner_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_outer_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_outer_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "cheek_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "cheek_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "ear_01_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "ear_01_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_inner_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_inner_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_outer_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_outer_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eyelid_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eyelid_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "jaw"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lipupper_center"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lipupper_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lipupper_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "mouth_corner_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "mouth_corner_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "nose"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "nose_bridge"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "nose_tip"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "smiler_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "smiler_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "breast_l_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "breast_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "hand_l_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "index_02_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "middle_02_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "pinky_02_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "ring_02_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "thumb_02_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lowerarm_l_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lowerarm_twist_01_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "upperarm_l_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "upperarm_twist_01_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "hand_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "index_02_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "middle_02_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "pinky_02_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "ring_02_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "thumb_02_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lowerarm_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lowerarm_twist_01_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "upperarm_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "upperarm_twist_01_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "neck_01_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "spine_03_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "spine_02_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "spine_01_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "foot_l_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "thigh_l_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "thigh_twist_01_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "calf_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "calf_twist_01_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "ball_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "foot_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "thigh_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "thigh_twist_01_r"
+            }
+          ],
+          "BonesToPrioritize": [
+            "hand_r",
+            "index_01_r",
+            "middle_01_r",
+            "pinky_01_r",
+            "ring_01_r",
+            "thumb_01_r",
+            "neck_01",
+            "head",
+            "face_base",
+            "hand_l",
+            "index_01_l",
+            "middle_01_l",
+            "pinky_01_l",
+            "ring_01_l",
+            "thumb_01_l",
+            "spine_03",
+            "upperarm_r",
+            "upperarm_l",
+            "clavicle_r",
+            "clavicle_l"
+          ],
+          "SectionsToPrioritize": [],
+          "WeightOfPrioritization": 1.0,
+          "BakePose": null,
+          "ReductionSettings": {
+            "TerminationCriterion": "SkeletalMeshTerminationCriterion::SMTC_NumOfTriangles",
+            "NumOfTrianglesPercentage": 0.0415,
+            "NumOfVertPercentage": 0.5,
+            "MaxNumOfTriangles": 4,
+            "MaxNumOfVerts": 6,
+            "MaxDeviationPercentage": 0.5,
+            "ReductionMethod": "SkeletalMeshOptimizationType::SMOT_NumOfTriangles",
+            "SilhouetteImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "TextureImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "ShadingImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "SkinningImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "bRemapMorphTargets": false,
+            "bRecalcNormals": true,
+            "WeldingThreshold": 0.1,
+            "NormalsThreshold": 60.0,
+            "MaxBonesPerVertex": 2,
+            "bEnforceBoneBoundaries": false,
+            "bMergeCoincidentVertBones": true,
+            "VolumeImportance": 1.0,
+            "bLockEdges": false,
+            "bLockColorBounaries": false,
+            "bImproveTrianglesForCloth": true,
+            "BaseLOD": 0
+          },
+          "bAllowMeshDeformer": true
+        },
+        {
+          "ScreenSize": {
+            "bCooked": true,
+            "Default": 0.025,
+            "PerPlatform": null,
+            "Value": 0.025
+          },
+          "LODHysteresis": 0.0,
+          "BoneFilterActionOption": "EBoneFilterActionOption::Remove",
+          "BoneList": [
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_center"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_inner_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_inner_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_outer_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "brow_outer_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "cheek_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "cheek_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "ear_01_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "ear_01_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_inner_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_inner_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_outer_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_outer_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eyelid_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eyelid_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "jaw"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lipupper_center"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lipupper_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lipupper_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "mouth_corner_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "mouth_corner_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "nose"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "nose_bridge"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "nose_tip"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "smiler_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "smiler_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "breast_l_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "breast_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "hand_l_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "index_02_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "middle_02_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "pinky_02_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "ring_02_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "thumb_02_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lowerarm_l_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lowerarm_twist_01_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "upperarm_l_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "upperarm_twist_01_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "hand_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "index_02_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "middle_02_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "pinky_02_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "ring_02_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "thumb_02_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lowerarm_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "lowerarm_twist_01_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "upperarm_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "upperarm_twist_01_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "eye_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "neck_01_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "spine_03_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "spine_02_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "spine_01_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "foot_l_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "thigh_l_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "thigh_twist_01_l"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "calf_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "calf_twist_01_r"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "ball_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "foot_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "thigh_r_helper"
+            },
+            {
+              "bExcludeSelf": false,
+              "BoneName": "thigh_twist_01_r"
+            }
+          ],
+          "BonesToPrioritize": [
+            "hand_r",
+            "index_01_r",
+            "middle_01_r",
+            "pinky_01_r",
+            "ring_01_r",
+            "thumb_01_r",
+            "neck_01",
+            "head",
+            "face_base",
+            "hand_l",
+            "index_01_l",
+            "middle_01_l",
+            "pinky_01_l",
+            "ring_01_l",
+            "thumb_01_l",
+            "spine_03",
+            "upperarm_r",
+            "upperarm_l",
+            "clavicle_r",
+            "clavicle_l"
+          ],
+          "SectionsToPrioritize": [],
+          "WeightOfPrioritization": 1.0,
+          "BakePose": null,
+          "ReductionSettings": {
+            "TerminationCriterion": "SkeletalMeshTerminationCriterion::SMTC_NumOfTriangles",
+            "NumOfTrianglesPercentage": 0.033,
+            "NumOfVertPercentage": 0.5,
+            "MaxNumOfTriangles": 4,
+            "MaxNumOfVerts": 6,
+            "MaxDeviationPercentage": 0.5,
+            "ReductionMethod": "SkeletalMeshOptimizationType::SMOT_NumOfTriangles",
+            "SilhouetteImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "TextureImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "ShadingImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "SkinningImportance": "SkeletalMeshOptimizationImportance::SMOI_Normal",
+            "bRemapMorphTargets": false,
+            "bRecalcNormals": true,
+            "WeldingThreshold": 0.1,
+            "NormalsThreshold": 60.0,
+            "MaxBonesPerVertex": 2,
+            "bEnforceBoneBoundaries": false,
+            "bMergeCoincidentVertBones": true,
+            "VolumeImportance": 1.0,
+            "bLockEdges": false,
+            "bLockColorBounaries": false,
+            "bImproveTrianglesForCloth": true,
+            "BaseLOD": 0
+          },
+          "bAllowMeshDeformer": true
+        }
+      ]
+    }
+  }
+]

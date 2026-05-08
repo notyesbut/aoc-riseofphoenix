@@ -1,0 +1,6 @@
+_QWORD *__fastcall sub_7FF6BA81AFE0(_QWORD *a1, __int64 a2)
+{
+  a1[1] = a2;
+  *a1 = &off_7FF6C3152E70;
+  return a1;
+}

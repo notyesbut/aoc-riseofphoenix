@@ -1,0 +1,22 @@
+void *sub_1417127A0()
+{
+  __int64 v1; // rax
+
+  if ( dword_14D6BFE40 <= *(_DWORD *)(*((_QWORD *)NtCurrentTeb()->ThreadLocalStoragePointer + (unsigned int)TlsIndex)
+                                    + 6160LL) )
+    return &unk_14D6BFE00;
+  sub_1496E08D0(&dword_14D6BFE40);
+  if ( dword_14D6BFE40 != -1 )
+    return &unk_14D6BFE00;
+  v1 = sub_1416E4F80();
+  sub_14161FA50(
+    (unsigned int)&unk_14D6BFE00,
+    (unsigned int)L"FBoolProperty",
+    0x20000,
+    163841,
+    v1,
+    (__int64)sub_1416F3DF0);
+  atexit(sub_149BCE150);
+  Init_thread_footer(&dword_14D6BFE40);
+  return &unk_14D6BFE00;
+}

@@ -1,0 +1,4 @@
+__int64 __fastcall sub_7FF6BA821880(_QWORD **a1)
+{
+  return (*(__int64 (__fastcall **)(_QWORD))(*(_QWORD *)**a1 + 8LL))(**a1);
+}

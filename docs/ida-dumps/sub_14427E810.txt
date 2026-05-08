@@ -1,0 +1,91 @@
+__int64 __fastcall sub_14427E810(__int64 a1, __int64 a2)
+{
+  bool v4; // al
+  __int64 v5; // r9
+  bool v6; // zf
+  __int64 result; // rax
+  char v8; // bp
+  int **v9; // rcx
+  int *v10; // rdx
+  int v11; // ecx
+  int v12; // edi
+  __int64 v13; // r8
+  char v14; // [rsp+40h] [rbp-38h] BYREF
+  int v15; // [rsp+88h] [rbp+10h] BYREF
+  __int64 v16; // [rsp+90h] [rbp+18h] BYREF
+
+  v4 = 0;
+  if ( (*(_BYTE *)(a2 + 41) & 2) == 0 )
+  {
+    v5 = *(_QWORD *)(a2 + 168);
+    if ( v5 < *(_QWORD *)(a2 + 160) )
+    {
+      v6 = (*(_BYTE *)((int)(v5 >> 3) + *(_QWORD *)(a2 + 144)) & (unsigned __int8)(1 << (v5 & 7))) == 0;
+      *(_QWORD *)(a2 + 168) = v5 + 1;
+      v4 = !v6;
+    }
+    else
+    {
+      sub_1414F6310(a2, 1);
+      v4 = 0;
+    }
+  }
+  if ( v4 )
+    return sub_14427E120(a1, a2);
+  v8 = *(_BYTE *)(a1 + 336);
+  *(_BYTE *)(a1 + 336) = 1;
+  v15 = 0;
+  v9 = *(int ***)(a2 + 8);
+  v10 = *v9;
+  if ( *v9 + 1 > v9[1] )
+  {
+    if ( (*(_BYTE *)(a2 + 42) & 1) != 0 )
+      result = sub_1414E72C0(a2, &v15);
+    else
+      result = (*(__int64 (__fastcall **)(__int64, int *, __int64))(*(_QWORD *)a2 + 384LL))(a2, &v15, 4);
+  }
+  else
+  {
+    result = (unsigned int)*v10;
+    v15 = *v10;
+    ++*v9;
+  }
+  v11 = v15;
+  if ( v15 <= dword_14D294D9C )
+  {
+    if ( (unsigned __int8)byte_14D5E1C40 >= 5u )
+    {
+      result = sub_141421C70(&byte_14D5E1C40, &off_14A9E8928, (unsigned int)v15);
+      v11 = v15;
+    }
+    v12 = 0;
+    if ( v11 <= 0 )
+    {
+LABEL_21:
+      if ( (unsigned __int8)byte_14D5E1C40 >= 5u )
+        result = sub_141421C70(&byte_14D5E1C40, &off_14A9E8AD8, *(_QWORD *)(a2 + 168));
+    }
+    else
+    {
+      while ( 1 )
+      {
+        v16 = 0;
+        result = sub_1442740F0(a1, (unsigned int)&v14, a2, (unsigned int)&v16, 0);
+        if ( (*(_BYTE *)(a2 + 41) & 2) != 0 )
+          break;
+        if ( ++v12 >= v15 )
+          goto LABEL_21;
+      }
+      if ( (unsigned __int8)byte_14D5E1C40 >= 2u )
+        result = sub_141421C70(&byte_14D5E1C40, &off_14A9E8A08, v13);
+    }
+  }
+  else
+  {
+    if ( (unsigned __int8)byte_14D5E1C40 >= 2u )
+      sub_141421C70(&byte_14D5E1C40, &off_14A9E8850, (unsigned int)v15);
+    result = sub_1414E84D0(a2);
+  }
+  *(_BYTE *)(a1 + 336) = v8;
+  return result;
+}

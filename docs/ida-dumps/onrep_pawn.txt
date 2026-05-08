@@ -1,0 +1,92 @@
+============================================================
+ find_onrep_pawn.idc - Pawn property tables across binary
+============================================================
+
+.rdata: 0x7ff6c30756c0 - 0x7ff6c6527000
+
+Searching for 'OnRep_Pawn' string in .rdata...
+  Match at 0x7ff6c3bbb6b8 (prev=0x00)
+
+Using onrep_addr = 0x7ff6c3bbb6b8
+
+============================================================
+All data xrefs to OnRep_Pawn (each = a Pawn property entry)
+============================================================
+
+=========================================
+  ENTRY #1  (valid Pawn property table)
+=========================================
+  OnRep_Pawn xref:    0x7ff6c3ba7ba8 (.rdata)
+  Pawn entry start:   0x7ff6c3ba7ba0
+
+  ── Entry contents (8 qwords) ──
+ >>> 0x7ff6c3ba7ba0  0x00007ff6c31581bc  aPawn  "Pawn"
+     0x7ff6c3ba7ba8  0x00007ff6c3bbb6b8  aOnrepPawn  "OnRep_Pawn"
+     0x7ff6c3ba7bb0  0x4144000100000020
+     0x7ff6c3ba7bb8  0x0000004500000052
+     0x7ff6c3ba7bc0  0x0000000000000000
+     0x7ff6c3ba7bc8  0x0000000000000000
+     0x7ff6c3ba7bd0  0x0000000003a80001
+     0x7ff6c3ba7bd8  0x00007ff6bd6482b0  sub_7FF6BD6482B0  "L"
+
+  ── 8 qwords BEFORE entry (previous property) ──
+     0x7ff6c3ba7b60  0x00007ff6c3ba7ae0  off_7FF6C3BA7AE0
+     0x7ff6c3ba7b68  0x00007ff6c3287200  aStatename  "StateName"
+     0x7ff6c3ba7b70  0x0000000000000000
+     0x7ff6c3ba7b78  0x4010000000000000
+     0x7ff6c3ba7b80  0x0000004500000014
+     0x7ff6c3ba7b88  0x0000000000000000
+     0x7ff6c3ba7b90  0x0000000000000000
+     0x7ff6c3ba7b98  0x0000000003a00001
+
+  ── 32 qwords AFTER entry (next 4 properties) ──
+     0x7ff6c3ba7be0  0x00007ff6c3b26bb8  aCharacter_0  "Character"
+     0x7ff6c3ba7be8  0x0000000000000000
+     0x7ff6c3ba7bf0  0x0144000000000000
+     0x7ff6c3ba7bf8  0x0000004500000052
+     0x7ff6c3ba7c00  0x0000000000000000
+     0x7ff6c3ba7c08  0x0000000000000000
+     0x7ff6c3ba7c10  0x0000000003b80001
+     0x7ff6c3ba7c18  0x00007ff6bd069260  sub_7FF6BD069260  "L"
+     0x7ff6c3ba7c20  0x00007ff6c38dcbc8  aTransformcompo_1  "TransformComponent"
+     0x7ff6c3ba7c28  0x0000000000000000
+     0x7ff6c3ba7c30  0x0144000000080008
+     0x7ff6c3ba7c38  0x0000004500000052
+     0x7ff6c3ba7c40  0x0000000000000000
+     0x7ff6c3ba7c48  0x0000000000000000
+     0x7ff6c3ba7c50  0x0000000003c00001
+     0x7ff6c3ba7c58  0x00007ff6bce61200  sub_7FF6BCE61200  "L"
+     0x7ff6c3ba7c60  0x00007ff6c3ba8348  aControlrotatio_1  "ControlRotation"
+     0x7ff6c3ba7c68  0x0000000000000000
+     0x7ff6c3ba7c70  0x8020080000000000
+     0x7ff6c3ba7c78  0x0000004500000019
+     0x7ff6c3ba7c80  0x0000000000000000
+     0x7ff6c3ba7c88  0x0000000000000000
+     0x7ff6c3ba7c90  0x0000000003e00001
+     0x7ff6c3ba7c98  0x00007ff6ba9f6320  sub_7FF6BA9F6320  "H"
+     0x7ff6c3ba7ca0  0x00007ff6c3ba8358  aBattachtopawn  "bAttachToPawn"
+     0x7ff6c3ba7ca8  0x0000000000000000
+     0x7ff6c3ba7cb0  0x0020080000010001
+     0x7ff6c3ba7cb8  0x000000450000000c
+     0x7ff6c3ba7cc0  0x0000000000000000
+     0x7ff6c3ba7cc8  0x0000000000000000
+     0x7ff6c3ba7cd0  0x0000040000010001
+     0x7ff6c3ba7cd8  0x00007ff6bd1ed700  sub_7FF6BD1ED700
+
+  [skip] xref at 0x7ff6c3ba7e18 (.rdata) - qw0 not Pawn (got 'H')
+
+  [skip] xref at 0x7ff6c3bc6000 (.rdata) - qw0 not Pawn (got 'H')
+
+  [skip] xref at 0x7ff6c65a8f20 (.data) - qw0 not Pawn (got '')
+
+============================================================
+  SUMMARY: 4 total xrefs scanned, 1 valid Pawn property tables
+============================================================
+
+
+============================================================
+PART 3: Search for AOC PC class hint strings
+============================================================
+  AAoCPlayerControllerBP_C: 0xffffffffffffffff
+  AoCPlayerControllerBP_C: 0xffffffffffffffff
+  PlayerController (bare): 0x7ff6c34dda98

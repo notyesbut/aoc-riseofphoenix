@@ -1,0 +1,1032 @@
+Address	Function	Instruction
+.text:0000000140C8D933	sub_140C8D910	                lea     rdx, aHeaderPPayload ; "Header = %p, Payload = %p...%p, Page St"...
+.text:0000000140E08749	sub_140E08720	                lea     r9, aWhenLogRespons ; "When log response payload, log json con"...
+.text:0000000140E08DE5	sub_140E08DB0	                lea     rdx, aAnalyticsetPay ; "AnalyticsET.PayloadFlushTimeSecForWarni"...
+.text:0000000140E08E3F	sub_140E08E20	                lea     r9, aPercentageOfTh ; "Percentage of the maximum payload for a"...
+.text:0000000140E08E55	sub_140E08E20	                lea     rdx, aAnalyticsetPay_0 ; "AnalyticsET.PayloadPercentageOfMaxForWa"...
+.text:0000000140E0EB55	sub_140E0EB20	                lea     rdx, aPAabbtreeUpdat ; "p.aabbtree.updatedirtyelementpayloads"
+.text:0000000140E19065	sub_140E19030	                lea     rdx, aPMaxpayloadsiz ; "p.MaxPayloadSize"
+.text:00000001410FC146	sub_1410FC140	                lea     rdx, aSendstoragepay ; "SendStoragePayload"
+.text:0000000141186D76	sub_141186D70	                lea     rdx, aAuthrecievesto ; "AuthRecieveStoragePayload"
+.text:0000000141187976	sub_141187970	                lea     rdx, aClientreceivea ; "ClientReceiveActionbarSlotPayload"
+.text:0000000141187AD6	sub_141187AD0	                lea     rdx, aClientreceivel_0 ; "ClientReceiveLootStoragePayload"
+.text:0000000141187C76	sub_141187C70	                lea     rdx, aClientreceives_3 ; "ClientReceiveStoragePayload"
+.text:00000001411889B6	sub_1411889B0	                lea     rdx, aInterserverrec_1 ; "InterServerReceiveLootStoragePayload"
+.text:00000001411889F6	sub_1411889F0	                lea     rdx, aInterserverrec_3 ; "InterServerReceiveStoragePayload"
+.text:0000000141188A96	sub_141188A90	                lea     rdx, aInterserverret ; "InterServerRetrieveStoragePayload"
+.text:000000014118C996	sub_14118C990	                lea     rdx, aServerretrieve ; "ServerRetrieveStoragePayload"
+.text:000000014119BAF6	sub_14119BAF0	                lea     rdx, aClientreceiveg_1 ; "ClientReceiveGuildStorageItemPayload"
+.text:000000014119BBB6	sub_14119BBB0	                lea     rdx, aClientreceives_3 ; "ClientReceiveStoragePayload"
+.text:00000001412964C4	sub_1412964C0	                lea     rdx, aPayload   ; "_Payload"
+.text:0000000141296E54	sub_141296E50	                lea     rdx, aPayloadBakemes ; "__Payload__BakeMeshes"
+.text:0000000141296E84	sub_141296E80	                lea     rdx, aPayloadMeshglo ; "__Payload__MeshGlobalTransform"
+.text:0000000141296EB4	sub_141296EB0	                lea     rdx, aPayloadRootjoi ; "__Payload__RootJointGlobalTransform"
+.text:00000001412971C4	sub_1412971C0	                lea     rdx, aPayloadBakemes ; "__Payload__BakeMeshes"
+.text:0000000141297244	sub_141297240	                lea     rdx, aPayloadMeshglo ; "__Payload__MeshGlobalTransform"
+.text:00000001412972D4	sub_1412972D0	                lea     rdx, aPayloadRootjoi ; "__Payload__RootJointGlobalTransform"
+.text:000000014129AC64	sub_14129AC60	                lea     rdx, aPayloadBakemes ; "__Payload__BakeMeshes"
+.text:000000014129BA14	sub_14129BA10	                lea     rdx, aPayloadMeshglo ; "__Payload__MeshGlobalTransform"
+.text:000000014129C4A4	sub_14129C4A0	                lea     rdx, aPayloadRootjoi ; "__Payload__RootJointGlobalTransform"
+.text:000000014129D6B4	sub_14129D6B0	                lea     rdx, aPayloadBakemes ; "__Payload__BakeMeshes"
+.text:000000014129D6E4	sub_14129D6E0	                lea     rdx, aPayloadMeshglo ; "__Payload__MeshGlobalTransform"
+.text:000000014129D714	sub_14129D710	                lea     rdx, aPayloadRootjoi ; "__Payload__RootJointGlobalTransform"
+.text:000000014129DAC4	sub_14129DAC0	                lea     rdx, aPayloadBakemes ; "__Payload__BakeMeshes"
+.text:000000014129DE54	sub_14129DE50	                lea     rdx, aPayloadMeshglo ; "__Payload__MeshGlobalTransform"
+.text:000000014129DE84	sub_14129DE80	                lea     rdx, aPayloadRootjoi ; "__Payload__RootJointGlobalTransform"
+.text:000000014129E844	sub_14129E840	                lea     rdx, aPayloadBakemes ; "__Payload__BakeMeshes"
+.text:00000001412A0C24	sub_1412A0C20	                lea     rdx, aPayloadMeshglo ; "__Payload__MeshGlobalTransform"
+.text:00000001412A1CE4	sub_1412A1CE0	                lea     rdx, aPayloadRootjoi ; "__Payload__RootJointGlobalTransform"
+.text:00000001412A53C4	sub_1412A53C0	                lea     rdx, aPayloadBakemes ; "__Payload__BakeMeshes"
+.text:00000001412A6314	sub_1412A6310	                lea     rdx, aPayloadMeshglo ; "__Payload__MeshGlobalTransform"
+.text:00000001412A6D64	sub_1412A6D60	                lea     rdx, aPayloadRootjoi ; "__Payload__RootJointGlobalTransform"
+.text:00000001412A93C4	sub_1412A93C0	                lea     rdx, aPayloadBakemes ; "__Payload__BakeMeshes"
+.text:00000001412AB394	sub_1412AB390	                lea     rdx, aPayloadMeshglo ; "__Payload__MeshGlobalTransform"
+.text:00000001412AC494	sub_1412AC490	                lea     rdx, aPayloadRootjoi ; "__Payload__RootJointGlobalTransform"
+.text:0000000141522199	sub_141522150	                lea     rdx, off_149E2A8C0 ; "Cannot pull payload '%s' as the virtual"...
+.text:00000001415222DD	sub_1415222D0	                lea     rdx, off_149E2A820 ; "Cannot push payloads as the virtualizat"...
+.text:00000001415C9873	sub_1415C9810	                lea     rax, aUpayload  ; jumptable 00000001415C9829 case 11
+.text:00000001415CD00F	sub_1415CCDF0	                lea     rdx, aUpayload  ; ".upayload"
+.text:00000001415DEA38	sub_1415DE970	                lea     rdx, off_149E51AB0 ; "Virtualized payload '%s' is corrupt! Ch"...
+.text:00000001415DEADD	sub_1415DE970	                lea     rdx, off_149E51B50 ; "Failed to load payload '%s"
+.text:00000001415DEB54	sub_1415DE970	                lea     rdx, off_149E51BA8 ; "Payload '%s' loaded from package '%s' i"...
+.text:00000001415E076A	sub_1415E0720	                lea     rdx, off_149E50F20 ; "Cannot load a payload as the package pa"...
+.text:00000001415E0896	sub_1415E0720	                lea     rdx, off_149E50FA8 ; "Cannot attempt to load the payload '%s'"...
+.text:00000001415E093B	sub_1415E0720	                lea     rdx, off_149E51118 ; "Cannot attempt to load the payload '%s'"...
+.text:00000001415E0A10	sub_1415E0720	                lea     rdx, off_149E51280 ; "Cannot attempt to load the payload '%s'"...
+.text:00000001415E0B13	sub_1415E0AB0	                lea     rdx, off_149E513E0 ; "Attempting to load payload from the pac"...
+.text:00000001415E0DF4	sub_1415E0D90	                lea     rdx, off_149E51470 ; "Attempting to load a payload via the pa"...
+.text:00000001415E0FE9	sub_1415E0D90	                lea     rdx, off_149E51518 ; "Could not find the payload '%s' in the "...
+.text:00000001415E1193	sub_1415E1130	                lea     rdx, off_149E51740 ; "Attempting to load payload from the sid"...
+.text:00000001415E15AB	sub_1415E1400	                lea     rdx, off_149E516D0 ; "Could not find the payload '%s' in '%s'"
+.text:00000001415E2849	sub_1415E27B0	                lea     rdx, off_149E51998 ; "Failed to pull payload '%s'%s"
+.text:00000001415E2902	sub_1415E27B0	                lea     rdx, off_149E519F8 ; "Failed to pull payload '%s' as the virt"...
+.text:0000000141BFB2BA	sub_141BFB140	                lea     rdx, off_149F28350 ; "Empty payload"
+.text:0000000141BFB33B	sub_141BFB140	                lea     rdx, off_149F28390 ; "Unable to read full payload"
+.text:0000000141BFB375	sub_141BFB140	                lea     rdx, off_149F283E8 ; "Payload Crc failure."
+.text:0000000141C027F3	sub_141C022B0	                lea     rdx, off_149F29F50 ; "Failed to send payload."
+.text:0000000141C24573	sub_141C24540	                lea     rdx, off_149F33420 ; "Payload is incomplete. Response still p"...
+.text:0000000141C2AC77	sub_141C2AC00	                lea     rdx, off_149F36270 ; "FRequestPayloadInFileStream::Open Faile"...
+.text:0000000141C30AC5	sub_141C309C0	                lea     rdx, off_149F32C70 ; "%p: Payload size=%llu"
+.text:0000000141C387E4	sub_141C384E0	                lea     r8, aMaximumpayload ; "MaximumPayloadSize"
+.text:0000000141C3C361	sub_141C3C050	                lea     rdx, off_149F3A008 ; "EventCache payload exceeded the maximum"...
+.text:0000000141F2B468	sub_141F2B450	                lea     r8, aChaosvdaabbtre_0 ; "ChaosVDAABBTreePayloadBoundsElement"
+.text:000000014247DB08	sub_14247DAF0	                lea     r8, aUniversalobjec_1 ; "UniversalObjectLocatorEmptyPayload"
+.text:0000000142482334	sub_142481F10	                lea     r8, aUniversalobjec_1 ; "UniversalObjectLocatorEmptyPayload"
+.text:0000000142482E1B	sub_142482C40	                lea     rdx, aPayloadI  ; "payload%i="
+.text:0000000142482F3A	sub_142482EC0	                lea     r9, aUnableToParseA ; "Unable to parse a payload for an uninit"...
+.text:00000001424830D7	sub_142482EC0	                lea     r9, aUnableToParseA_0 ; "Unable to parse a payload for a fragmen"...
+.text:0000000142483BA5	sub_142483550	                movups  xmm1, xmmword ptr cs:off_149FF2D78 ; "payload"
+.text:0000000142483E82	sub_142483550	                lea     rdx, aErrorInvalidpa ; "Error_InvalidPayload"
+.text:0000000142483EA6	sub_142483550	                lea     r9, aPayloadIsInval ; "Payload is invalid for fragment type {0"...
+.text:00000001425F2D6A	sub_1425F2750	                lea     rdx, off_14A19E218 ; "Index FPakEntry does not match Payload "...
+.text:000000014263214B	sub_142631F10	                lea     rdx, aPayloadInt32DD ; "\r\n\t\t\tPayload [ int32]: %d %d %d %d"
+.text:00000001426321A6	sub_142631F10	                lea     rdx, aPayloadUint32U ; "\r\n\t\t\tPayload [uint32]: %u %u %u %u"
+.text:0000000142632201	sub_142631F10	                lea     rdx, aPayloadHex0x08 ; "\r\n\t\t\tPayload [   hex]: 0x%08X 0x%0"...
+.text:000000014263227C	sub_142631F10	                lea     rdx, aPayloadFloatFF ; "\r\n\t\t\tPayload [ float]: %f %f %f %f"
+.text:0000000142740B01	sub_142740670	                lea     rax, aInstancepayloa ; "InstancePayloadUploadBuffer"
+.text:0000000142741239	sub_142740E10	                lea     rax, aInstancepayloa ; "InstancePayloadUploadBuffer"
+.text:0000000142775792	sub_142775550	                lea     r9, aGpusceneInstan_0 ; "GPUScene.InstancePayloadData"
+.text:0000000142780456	sub_142780450	                lea     rax, aGpusceneinstan_2 ; "GPUSceneInstancePayloadData"
+.text:0000000142780876	sub_142780870	                lea     rax, aGpusceneinstan_4 ; "GPUSceneInstancePayloadDataRW"
+.text:0000000142780DE6	sub_142780DE0	                lea     rax, aGpusceneinstan_4 ; "GPUSceneInstancePayloadDataRW"
+.text:00000001428C96A1	sub_1428C8F70	                lea     rdx, aInstancecullin_9 ; "InstanceCulling.PayloadData"
+.text:00000001428D116D	sub_1428CFEF0	                lea     rdx, aInstancecullin_9 ; "InstanceCulling.PayloadData"
+.text:00000001428F78F6	sub_1428F78F0	                lea     rax, aInstancecullin_22 ; "InstanceCullingPayloads"
+.text:0000000142D0CC36	sub_142D0CC30	                lea     rax, aGpusceneinstan_2 ; "GPUSceneInstancePayloadData"
+.text:0000000142D0D26E	sub_142D0D250	                lea     rax, aRwstructuredbu_50 ; "RWStructuredBuffer<FIntersectionPayload"...
+.text:00000001430F0725	sub_1430F06E0	                lea     rdx, off_14A355BC8 ; "GPU timeout: A payload (0x%p) on the [0"...
+.text:000000014327A1AF	sub_14327A0F0	                lea     rdx, aDefaultpayload ; "DefaultPayloadMS"
+.text:000000014327A1C7	sub_14327A0F0	                lea     r9, aFdefaultpayloa ; "FDefaultPayloadMS"
+.text:000000014327C2EF	sub_14327C230	                lea     rdx, aPackedmaterial ; "PackedMaterialClosestHitPayloadMS"
+.text:000000014327C307	sub_14327C230	                lea     r9, aFpackedmateria ; "FPackedMaterialClosestHitPayloadMS"
+.text:0000000143283768	sub_143283610	                lea     rdx, aMessageOffsetD ; "  Message[Offset: %d, ID: %d, PayloadSi"...
+.text:000000014328378F	sub_143283610	                lea     rdx, aPayloadSizeDEx ; "!payload size %d exceeds buffer size (R"...
+.text:000000014328380F	sub_143283610	                lea     rdx, aPayload_0 ; " Payload: { "
+.text:000000014328FB77	sub_14328FB50	                lea     rax, aFdefaultpayloa ; "FDefaultPayloadMS"
+.text:0000000143292497	sub_143292470	                lea     rax, aFpackedmateria ; "FPackedMaterialClosestHitPayloadMS"
+.text:000000014357A618	sub_14357A600	                lea     r8, aMoviescenedyna ; "MovieSceneDynamicBindingPayloadVariable"
+.text:00000001436D80D8	sub_1436D80C0	                lea     r8, aMoviesceneeven_0 ; "MovieSceneEventPayloadVariable"
+.text:00000001436FCF48	sub_1436FCF30	                lea     r8, aEventpayload ; "EventPayload"
+.text:0000000143A0C512	sub_143A0C390	                lea     rdx, aFramegrabberAp ; "FrameGrabber_AppendFramePayload"
+.text:0000000143A0F4E9	sub_143A0F4E0	                lea     r9, aUframegrabberp ; "UFrameGrabberProtocol::GetFramePayload"
+.text:0000000143A9D3AB	sub_143A9CFF0	                lea     rdx, aEhttpreplayres_5 ; "EHttpReplayResult::InvalidPayload"
+.text:0000000143AC1E28	sub_143AC1E10	                lea     r8, aEmptypayload ; "EmptyPayload"
+.text:0000000143AC1E68	sub_143AC1E50	                lea     r8, aBracketpayload ; "BracketPayload"
+.text:0000000143AC1EA8	sub_143AC1E90	                lea     r8, aAnimationtrack ; "AnimationTrackPayload"
+.text:0000000143AC1EE8	sub_143AC1ED0	                lea     r8, aAnimationtrack_0 ; "AnimationTrackAddedPayload"
+.text:0000000143AC1F28	sub_143AC1F10	                lea     r8, aSequencelength ; "SequenceLengthChangedPayload"
+.text:0000000143AC1F68	sub_143AC1F50	                lea     r8, aFrameratechang ; "FrameRateChangedPayload"
+.text:0000000143AC1FA8	sub_143AC1F90	                lea     r8, aCurvepayload ; "CurvePayload"
+.text:0000000143AC1FE8	sub_143AC1FD0	                lea     r8, aCurvescaledpay ; "CurveScaledPayload"
+.text:0000000143AC2028	sub_143AC2010	                lea     r8, aCurverenamedpa ; "CurveRenamedPayload"
+.text:0000000143AC2068	sub_143AC2050	                lea     r8, aCurveflagschan ; "CurveFlagsChangedPayload"
+.text:0000000143AC20E8	sub_143AC20D0	                lea     r8, aAttributepaylo ; "AttributePayload"
+.text:0000000143AC2138	sub_143AC2120	                lea     r8, aAnimdatamodeln ; "AnimDataModelNotifPayload"
+.text:0000000143ADA878	sub_143ADA860	                lea     r8, aExternalspatia ; "ExternalSpatialAccelerationPayload"
+.text:0000000143C18098	sub_143C18080	                lea     r8, aBranchingpoint_3 ; "BranchingPointNotifyPayload"
+.text:0000000143F2DAC7	sub_143F2DA40	                lea     rdx, off_14A8A87F8 ; "UActorChannel::ReadContentBlockPayload:"...
+.text:0000000143F2DCF8	sub_143F2DC60	                lea     rdx, off_14A8A8A60 ; "ReadFieldHeaderAndPayload: NetFieldExpo"...
+.text:0000000143F2DD7C	sub_143F2DC60	                lea     rdx, off_14A8A8B08 ; "ReadFieldHeaderAndPayload: Error readin"...
+.text:0000000143F2DDF7	sub_143F2DC60	                lea     rdx, off_14A8A8BC8 ; "ReadFieldHeaderAndPayload: NetFieldExpo"...
+.text:0000000143F2DE93	sub_143F2DC60	                lea     rdx, off_14A8A8CB0 ; "ReadFieldHeaderAndPayload: NetFieldExpo"...
+.text:0000000143F2DFBA	sub_143F2DC60	                lea     rdx, off_14A8A8DC0 ; "ReadFieldHeaderAndPayload: GetFromCheck"...
+.text:0000000143F2E04A	sub_143F2DC60	                lea     rdx, off_14A8A8EB0 ; "ReadFieldHeaderAndPayload: Error readin"...
+.text:0000000143F2E0E2	sub_143F2DC60	                lea     rdx, off_14A8A8F50 ; "ReadFieldHeaderAndPayload: RepIndex too"...
+.text:0000000143F2E1B5	sub_143F2DC60	                lea     rdx, off_14A8A8FE8 ; "ReadFieldHeaderAndPayload: GetFromIndex"...
+.text:0000000143F2E263	sub_143F2DC60	                lea     rdx, off_14A8A9088 ; "ReadFieldHeaderAndPayload: Error readin"...
+.text:0000000143F2E356	sub_143F2DC60	                lea     rdx, off_14A8A9148 ; "ReadFieldHeaderAndPayload: Error readin"...
+.text:00000001445299F6	sub_1445299F0	                lea     rax, aInstancepayloa_0 ; "InstancePayloadDataOffset"
+.text:0000000144529AA6	sub_144529AA0	                lea     rax, aInstancepayloa_1 ; "InstancePayloadDataStride"
+.text:0000000144529B56	sub_144529B50	                lea     rax, aInstancepayloa_2 ; "InstancePayloadExtensionSize"
+.text:000000014463CC86	sub_14463CC80	                lea     rax, aUpdatepayloado ; "UpdatePayloadOffset"
+.text:0000000144B6BA48	sub_144B6BA30	                lea     r8, aNiagaracollisi_3 ; "NiagaraCollisionEventPayload"
+.text:0000000144B84976	sub_144B83640	                lea     r8, aNiagaracollisi_3 ; "NiagaraCollisionEventPayload"
+.text:0000000145041E21	sub_145040DB0	                lea     rdx, aErrorProcessin ; "Error Processing PayloadObjects (Reason"...
+.text:000000014508B70B	sub_14508B490	                lea     rcx, aPayload_1 ; " Payload: '"
+.text:000000014508B754	sub_14508B490	                lea     rdx, aPayload_1 ; " Payload: '"
+.text:00000001450BC826	sub_1450BC820	                lea     rax, aInpayloaddataf ; "InPayloadDataFlags"
+.text:00000001458E1376	sub_1458E1330	                lea     rdx, aDroppayloadint ; "DropPayloadInterface"
+.text:0000000145B4D968	sub_145B4D950	                lea     r8, aMouseoveruidat ; "MouseoverUIDataPayload"
+.text:0000000145B6A9A8	sub_145B6A990	                lea     r8, aNodelevelingme ; "NodeLevelingMessagePayload"
+.text:0000000146F795A6	sub_146F79120	                lea     rdx, aNanWithPayload ; " NaN with payload [redacted]"
+.text:0000000146F795C4	sub_146F79120	                lea     r9, aNanWithPayload ; " NaN with payload [redacted]"
+.text:0000000148127748	sub_148127730	                lea     r8, aEinterchangean ; "EInterchangeAnimationPayLoadType"
+.text:00000001481279F8	sub_1481279E0	                lea     r8, aInterchangeani ; "InterchangeAnimationPayLoadKey"
+.text:00000001481289E1	sub_148128960	                lea     rdx, aAnimationpaylo ; "AnimationPayloadUid"
+.text:0000000148128A01	sub_148128960	                lea     rdx, aAnimationpaylo_0 ; "AnimationPayloadType"
+.text:000000014812F637	sub_14812F540	                lea     rdx, aUinterchangete ; "UInterchangeTextureNode.GetPayLoadKey"
+.text:000000014812F8BB	sub_14812F860	                lea     rdx, aPayloadsourcef ; "__PayloadSourceFile__"
+.text:000000014812F94B	sub_14812F900	                lea     rdx, aUinterchangete_0 ; "UInterchangeTextureNode.SetPayLoadKey"
+.text:0000000148136638	sub_148136620	                lea     r8, aInterchangemes_0 ; "InterchangeMeshPayLoadKey"
+.text:0000000148136B58	sub_148136B40	                lea     r8, aEinterchangeme_0 ; "EInterchangeMeshPayLoadType"
+.text:000000014813B5FD	sub_14813B400	                lea     rdx, aScenenodeanima ; "__SceneNodeAnimationPayloadKeyUidMap__"
+.text:000000014813B689	sub_14813B400	                lea     rdx, aScenenodeanima_0 ; "__SceneNodeAnimationPayloadKeyTypeMap__"
+.text:000000014813B710	sub_14813B400	                lea     rdx, aMorphtargetpay ; "__MorphTargetPayloadKeyUidMap__"
+.text:000000014813B79B	sub_14813B400	                lea     rdx, aMorphtargetpay_0 ; "__MorphTargetPayloadKeyTypeMap__"
+.text:000000014813B983	sub_14813B920	                lea     rdx, aVariantspayloa ; "VariantsPayload"
+.text:000000014813CE1B	sub_14813CDD0	                lea     rdx, aAnimationpaylo_1 ; "__AnimationPayloadTypeKey__"
+.text:000000014813CEAB	sub_14813CE60	                lea     rdx, aAnimationpaylo_2 ; "__AnimationPayloadUidKey__"
+.text:000000014813E24B	sub_14813E180	                lea     rdx, aUinterchangeme ; "UInterchangeMeshNode.GetPayLoadKey"
+.text:000000014813E33A	sub_14813E180	                lea     rdx, aUinterchangeme_0 ; "UInterchangeMeshNode.GetPayLoadTypeKey"
+.text:00000001481430DD	sub_148143000	                lea     rdx, aUinterchangeme ; "UInterchangeMeshNode.GetPayLoadKey"
+.text:00000001481432A9	sub_148143000	                lea     rdx, aUinterchangeme_0 ; "UInterchangeMeshNode.GetPayLoadTypeKey"
+.text:000000014814679B	sub_148146750	                lea     rdx, aPayloadkey ; "__PayloadKey__"
+.text:000000014814682B	sub_1481467E0	                lea     rdx, aPayloadtypekey ; "__PayloadTypeKey__"
+.text:000000014814BD37	sub_14814BD10	                lea     r8, aSetvariantspay ; ".SetVariantsPayload"
+.text:000000014814CF03	sub_14814CEB0	                lea     rdx, aUinterchangeme_1 ; "UInterchangeMeshNode.SetPayLoadKey"
+.text:000000014814CF4A	sub_14814CEB0	                lea     rdx, aUinterchangeme_2 ; "UInterchangeMeshNode.SetPayLoadTypeKey"
+.text:00000001481534D0	sub_148153430	                lea     r8, aGetvariantspay ; ".GetVariantsPayload"
+.text:000000014815B200	sub_14815B170	                lea     r8, aSetvariantspay ; ".SetVariantsPayload"
+.text:000000014819E288	sub_14819DC50	                lea     rdx, aMorphtargetnod ; "__MorphTargetNodePayloadKeyTypeMap__"
+.text:000000014819E453	sub_14819DC50	                lea     rdx, aScenenodeanima ; "__SceneNodeAnimationPayloadKeyUidMap__"
+.text:000000014819E4AE	sub_14819DC50	                lea     rdx, aScenenodeanima_0 ; "__SceneNodeAnimationPayloadKeyTypeMap__"
+.text:000000014819E509	sub_14819DC50	                lea     rdx, aMorphtargetnod_0 ; "__MorphTargetNodePayloadKeyUidMap__"
+.text:00000001481A38CC	sub_1481A3830	                lea     rdx, aPayloadPrefix ; "__PAYLOAD_PREFIX__"
+.text:00000001481A38FC	sub_1481A3830	                lea     rdx, aPayloadPrefix ; "__PAYLOAD_PREFIX__"
+.text:00000001481C5CB3	sub_1481C5BF0	                lea     rdx, aPayloadPrefix ; "__PAYLOAD_PREFIX__"
+.text:00000001481C5DDA	sub_1481C5D10	                lea     rdx, aPayloadPrefix ; "__PAYLOAD_PREFIX__"
+.text:00000001481C5EF9	sub_1481C5E30	                lea     rdx, aPayloadPrefix ; "__PAYLOAD_PREFIX__"
+.text:00000001481C6011	sub_1481C5F50	                lea     rdx, aPayloadPrefix ; "__PAYLOAD_PREFIX__"
+.text:00000001481C613F	sub_1481C6070	                lea     rdx, aPayloadPrefix ; "__PAYLOAD_PREFIX__"
+.text:00000001481D2183	sub_1481D20B0	                lea     rdx, aPayloadPrefix ; "__PAYLOAD_PREFIX__"
+.text:00000001481D22B7	sub_1481D21E0	                lea     rdx, aPayloadPrefix ; "__PAYLOAD_PREFIX__"
+.text:00000001481D23F6	sub_1481D2320	                lea     rdx, aPayloadPrefix ; "__PAYLOAD_PREFIX__"
+.text:00000001481D2532	sub_1481D2460	                lea     rdx, aPayloadPrefix ; "__PAYLOAD_PREFIX__"
+.text:00000001481D2670	sub_1481D2590	                lea     rdx, aPayloadPrefix ; "__PAYLOAD_PREFIX__"
+.text:00000001481F2141	sub_1481F2080	                lea     rdx, aPayloadkey_0 ; "PayloadKey"
+.text:00000001481F7AC5	sub_1481F7A10	                lea     rdx, aPayloadkeyUniq ; "PayloadKey.UniqueID"
+.text:00000001481F7B03	sub_1481F7A10	                lea     rdx, aPayloadkeyType ; "PayloadKey.Type"
+.text:00000001481F9DA6	sub_1481F9D60	                lea     rdx, aInterchangeblo ; "InterchangeBlockedTexturePayloadInterfa"...
+.text:00000001481FA016	sub_1481F9FD0	                lea     rdx, aInterchangevar_0 ; "InterchangeVariantSetPayloadInterface"
+.text:00000001481FA306	sub_1481FA2C0	                lea     rdx, aInterchangesli ; "InterchangeSlicedTexturePayloadInterfac"...
+.text:00000001481FA3E6	sub_1481FA3A0	                lea     rdx, aInterchangetex_12 ; "InterchangeTextureLightProfilePayloadIn"...
+.text:00000001481FA4C6	sub_1481FA480	                lea     rdx, aInterchangevol_4 ; "InterchangeVolumePayloadInterface"
+.text:00000001481FF37F	sub_1481FF310	                lea     rdx, off_14BFAA5A8 ; "Expected mesh payload file does not exi"...
+.text:00000001481FF6B7	sub_1481FF310	                lea     rdx, aGetmeshpayload ; "GetMeshPayloadData_ValidateMeshDescript"...
+.text:0000000148203AD1	sub_148203A10	                lea     rdx, aPayload_3 ; "Payload"
+.text:0000000148206FA9	sub_148206FA0	                lea     r9, aIinterchangete ; "IInterchangeTexturePayloadInterface::Ge"...
+.text:000000014820AD56	sub_14820AD10	                lea     rdx, aInterchangeani_6 ; "InterchangeAnimationPayloadInterface"
+.text:000000014820AE06	sub_14820ADC0	                lea     rdx, aInterchangemes_5 ; "InterchangeMeshPayloadInterface"
+.text:000000014820AEB6	sub_14820AE70	                lea     rdx, aInterchangetex_13 ; "InterchangeTexturePayloadInterface"
+.text:0000000148217C49	sub_148217C40	                lea     r9, aIinterchangete_0 ; "IInterchangeTextureLightProfilePayloadI"...
+.text:000000014821888F	sub_148218510	                lea     rdx, aGetmeshpayload ; "GetMeshPayloadData_ValidateMeshDescript"...
+.text:000000014822FBEA	sub_14822F970	                lea     rdx, off_14BFB7E68 ; "Empty mesh reference payload when impor"...
+.text:000000014823024A	sub_14822FFD0	                lea     rdx, off_14BFB7F68 ; "Empty mesh reference payload when impor"...
+.text:0000000148232835	sub_148231950	                lea     rdx, off_14BFBA6D0 ; "Empty LOD mesh reference payload when i"...
+.text:000000014823D2C3	sub_14823CF70	                lea     rdx, aGetmeshpayload ; "GetMeshPayloadData_ValidateMeshDescript"...
+.text:000000014823E7B9	sub_14823E050	                lea     rdx, off_14BFBAAE8 ; "Invalid static mesh payload key for Sta"...
+.text:000000014823F1BD	sub_14823E050	                lea     rdx, off_14BFBAA10 ; "LOD %d do not have any valid payload to"...
+.text:00000001482503AD	sub_148250150	                lea     rdx, aTexturefactory_5 ; "TextureFactory_InvalidPayloadKey"
+.text:0000000148255089	sub_148255080	                lea     r9, aIinterchangesl ; "IInterchangeSlicedTexturePayloadInterfa"...
+.text:000000014825A9F7	sub_14825A4A0	                lea     rdx, aTexturefactory_11 ; "TextureFactory_Async_InvalidPayloadKey"
+.text:000000014825B047	sub_14825A4A0	                lea     rdx, aInvalidpayload ; "InvalidPayload"
+.text:000000014825B068	sub_14825A4A0	                lea     r9, aUnableToRetrie_11 ; "Unable to retrieve the payload from the"...
+.text:00000001482FFAE3	sub_1482FF680	                lea     rdx, aMfMtAacPayload ; "MF_MT_AAC_PAYLOAD_TYPE"
+.text:000000014832052D	sub_1483203A0	                lea     rdx, off_14BFF44C8 ; "Payload size write failed with code %d"
+.text:00000001483205B9	sub_1483203A0	                lea     rdx, off_14BFF48E0 ; "Payload write failed with code %d"
+.text:0000000148320703	sub_1483203A0	                lea     rdx, off_14BFF45C0 ; "Payload write failed with code %d"
+.text:0000000148E5803D	sub_148E57EB0	                lea     rdx, aZuBytesWebsock ; "%zu bytes websocket payload"
+.text:0000000148E58692	sub_148E58250	                lea     rdx, aEagainFlushing ; "EAGAIN flushing sendbuf, payload_encode"...
+.text:0000000148E58912	sub_148E58810	                lea     rdx, aWebsocketDecod_0 ; "websocket, decoded %s [%s%s payload=%ll"...
+.text:0000000148E58B77	sub_148E589B0	                lea     rdx, aWebsocketPasse ; "websocket, passed %zd bytes payload, %l"...
+.text:0000000148E58F01	sub_148E58E90	                lea     rdx, aWsEncSSSSPaylo ; "WS-ENC: %s [%s%s%s payload=%lld/%lld]"
+.text:0000000148E99526	sub_148E99100	                lea     r8, aAssertionFaile_277 ; "Assertion Failed: pPayloadPtr <= helper"...
+.text:0000000148E9954F	sub_148E99100	                lea     r8, aPayloadExceede ; "Payload exceeded max size of %d\n"
+.text:0000000148E99F06	sub_148E995B0	                lea     r8, aAssertionFaile_277 ; "Assertion Failed: pPayloadPtr <= helper"...
+.text:0000000148E99F31	sub_148E995B0	                lea     r8, aPayloadExceede ; "Payload exceeded max size of %d\n"
+.text:0000000148E9A522	sub_148E99F90	                lea     r8, aAssertionFaile_277 ; "Assertion Failed: pPayloadPtr <= helper"...
+.text:0000000148E9A54D	sub_148E99F90	                lea     r8, aPayloadExceede ; "Payload exceeded max size of %d\n"
+.text:0000000148E9AC5E	sub_148E9A5C0	                lea     r8, aAssertionFaile_277 ; "Assertion Failed: pPayloadPtr <= helper"...
+.text:0000000148E9AC8D	sub_148E9A5C0	                lea     r8, aPayloadExceede ; "Payload exceeded max size of %d\n"
+.text:0000000148E9B4E3	sub_148E9B3F0	                lea     r8, aAssertionFaile_287 ; "Assertion Failed: pPayloadPtr+pSeg->m_c"...
+.text:0000000148E9B83B	sub_148E9B740	                lea     r8, aAssertionFaile_287 ; "Assertion Failed: pPayloadPtr+pSeg->m_c"...
+.text:000000014925EFC5	sub_14925EF40	                lea     rax, aMongocCmdAppen ; "_mongoc_cmd_append_payload_as_array"
+.text:000000014925F032	sub_14925EF40	                lea     rax, aMongocCmdAppen ; "_mongoc_cmd_append_payload_as_array"
+.text:000000014925F134	sub_14925EF40	                lea     rax, aMongocCmdAppen ; "_mongoc_cmd_append_payload_as_array"
+.text:000000014925F16E	sub_14925EF40	                lea     rax, aCmdPayloadCmdP ; "cmd->payload && cmd->payload_size"
+.text:000000014925F17A	sub_14925EF40	                lea     rax, aMongocCmdAppen ; "_mongoc_cmd_append_payload_as_array"
+.text:000000014926462A	sub_1492643E0	                lea     rdx, aPayload_2 ; "payload"
+.text:0000000149264E47	sub_149264D00	                lea     rdx, aPayload_2 ; "payload"
+.text:0000000149265144	sub_149264F90	                lea     rdx, aPayload_2 ; "payload"
+.text:00000001492656E5	sub_149265590	                lea     rdx, aPayload_2 ; "payload"
+.text:0000000149265C4E	sub_149265B10	                lea     r8, aPayload_2  ; "payload"
+.text:000000014927C8AB	sub_14927C5E0	                lea     r8, aUnknownPayload ; "Unknown Payload Type: %d"
+.text:0000000149280C5A	sub_149280C00	                lea     rdx, aPayload_2 ; "payload"
+.text:0000000149280CF2	sub_149280C80	                lea     rdx, aPayload_2 ; "payload"
+.text:0000000149281610	sub_149281340	                lea     rax, aPayload_2 ; "payload"
+.text:0000000149281726	sub_149281340	                lea     r8, aPayload_2  ; "payload"
+.text:00000001492817AB	sub_149281340	                lea     r9, aServerPayloadI ; "server payload is invalid BSON"
+.text:0000000149281A3D	sub_149281340	                lea     r9, aServerPayloadD ; "server payload did not contain nonce"
+.text:0000000149281A46	sub_149281340	                lea     r9, aServerPayloadD_0 ; "server payload did not contain string S"...
+.text:0000000149281FB8	sub_149281AC0	                lea     r9, aFailedToAppend_0 ; "Failed to append payload"
+.text:0000000149282243	sub_149281AC0	                lea     rax, aPayload_2 ; "payload"
+.text:00000001492898CC	sub_1492895E0	                lea     r9, aMalformedBsonP ; "Malformed BSON payload from server"
+.text:000000014928B1C8	sub_14928AF60	                lea     r8, aPayload_2  ; "payload"
+.text:00000001496F8EA5	sub_1496F8DA0	                lea     r9, aSettingsAckAnd ; "SETTINGS: ACK and payload != 0"
+.text:0000000149702FDB	sub_149702FB0	                lea     rcx, aPayloadlen4 ; "payloadlen >= 4"
+.text:00000001497F6B94	sub_1497F6B60	                lea     rax, aSendMessagePay ; "send_message_payload_ == nullptr"
+.text:00000001497F72B4	sub_1497F71F0	                lea     rax, aSendMessagePay_0 ; "send_message_payload_ != nullptr"
+.text:000000014982A662	sub_14982A3C0	                lea     rax, aSendMessagePay_0 ; "send_message_payload_ != nullptr"
+.text:000000014987AA56	sub_14987A930	                lea     rax, aOpPayloadSendI ; "!op->payload->send_initial_metadata.sen"...
+.text:000000014987AA87	sub_14987A930	                lea     rax, aOpPayloadSendT ; "!op->payload->send_trailing_metadata.se"...
+.text:00000001498967F2	sub_149896440	                lea     rax, aBatchPayloadRe ; "batch->payload->recv_initial_metadata.r"...
+.text:000000014989D9AC	sub_14989D990	                lea     rax, aBatchPayloadRe ; "batch->payload->recv_initial_metadata.r"...
+.text:00000001498DCDFC	sub_1498DCD10	                lea     r12, aGrpcMaxPayload ; "grpc.max_payload_size_for_get"
+.text:00000001498E0556	sub_1498E0480	                lea     rax, aOpPayloadRecvI ; "op->payload->recv_initial_metadata.recv"...
+.rdata:0000000149E2A820		                                        ; "Cannot push payloads as the virtualizat"...
+.rdata:0000000149E2A840		                text "UTF-16LE", 'Cannot push payloads as the virtualization system i'
+.rdata:0000000149E2A8C0		                                        ; "Cannot pull payload '%s' as the virtual"...
+.rdata:0000000149E2A8E0		                text "UTF-16LE", 'Cannot pull payload ',27h,'%s',27h,' as the virtual'
+.rdata:0000000149E482F0		aUpayload:                              ; DATA XREF: sub_1415C9810:loc_1415C9873↑o
+.rdata:0000000149E4F4F0		                text "UTF-16LE", 'When true FEditorBulkData will load payloads via th'
+.rdata:0000000149E4F600		                text "UTF-16LE", 's .upayload file via sourcecontrol if the first att'
+.rdata:0000000149E50E20		                text "UTF-16LE", 'he payload. Bytes required: %lld vs bytes remaining'
+.rdata:0000000149E50F20		                                        ; "Cannot load a payload as the package pa"...
+.rdata:0000000149E50F40		                text "UTF-16LE", 'Cannot load a payload as the package path is empty!'
+.rdata:0000000149E50FA8		                                        ; "Cannot attempt to load the payload '%s'"...
+.rdata:0000000149E50FD0		                text "UTF-16LE", 'Cannot attempt to load the payload ',27h,'%s',27h,' '
+.rdata:0000000149E51118		                                        ; "Cannot attempt to load the payload '%s'"...
+.rdata:0000000149E51140		                text "UTF-16LE", 'Cannot attempt to load the payload ',27h,'%s',27h,' '
+.rdata:0000000149E51280		                                        ; "Cannot attempt to load the payload '%s'"...
+.rdata:0000000149E512A0		                text "UTF-16LE", 'Cannot attempt to load the payload ',27h,'%s',27h,' '
+.rdata:0000000149E513E0		                                        ; "Attempting to load payload from the pac"...
+.rdata:0000000149E51400		                text "UTF-16LE", 'Attempting to load payload from the package file ',27h
+.rdata:0000000149E51470		                                        ; "Attempting to load a payload via the pa"...
+.rdata:0000000149E51490		                text "UTF-16LE", 'Attempting to load a payload via the package traile'
+.rdata:0000000149E51518		                                        ; "Could not find the payload '%s' in the "...
+.rdata:0000000149E51540		                text "UTF-16LE", 'Could not find the payload ',27h,'%s',27h,' in the '
+.rdata:0000000149E516D0		                                        ; "Could not find the payload '%s' in '%s'"
+.rdata:0000000149E516F0		                text "UTF-16LE", 'Could not find the payload ',27h,'%s',27h,' in ',27h
+.rdata:0000000149E51740		                                        ; "Attempting to load payload from the sid"...
+.rdata:0000000149E51760		                text "UTF-16LE", 'Attempting to load payload from the sidecar file: ',27h
+.rdata:0000000149E51998		                                        ; "Failed to pull payload '%s'%s"
+.rdata:0000000149E519B8		                text "UTF-16LE", 'Failed to pull payload ',27h,'%s',27h,'%s',0
+.rdata:0000000149E519F8		                                        ; "Failed to pull payload '%s' as the virt"...
+.rdata:0000000149E51A20		                text "UTF-16LE", 'Failed to pull payload ',27h,'%s',27h,' as the virt'
+.rdata:0000000149E51AB0		                                        ; "Virtualized payload '%s' is corrupt! Ch"...
+.rdata:0000000149E51AD0		                text "UTF-16LE", 'Virtualized payload ',27h,'%s',27h,' is corrupt! Ch'
+.rdata:0000000149E51B50		                                        ; "Failed to load payload '%s"
+.rdata:0000000149E51B70		                text "UTF-16LE", 'Failed to load payload ',27h,'%s',0
+.rdata:0000000149E51BA8		off_149E51BA8   dq offset aPayloadSLoaded ; DATA XREF: sub_1415DE970+1E4↑o
+.rdata:0000000149E51BD0		aPayloadSLoaded:                        ; DATA XREF: .rdata:off_149E51BA8↑o
+.rdata:0000000149F28350		off_149F28350   dq offset aEmptyPayload ; DATA XREF: sub_141BFB140+17A↑o
+.rdata:0000000149F28370		aEmptyPayload:                          ; DATA XREF: .rdata:off_149F28350↑o
+.rdata:0000000149F28390		                                        ; "Unable to read full payload"
+.rdata:0000000149F283B0		                text "UTF-16LE", 'Unable to read full payload',0
+.rdata:0000000149F283E8		                                        ; "Payload Crc failure."
+.rdata:0000000149F28408		aPayloadCrcFail:                        ; DATA XREF: .rdata:off_149F283E8↑o
+.rdata:0000000149F29F50		                                        ; "Failed to send payload."
+.rdata:0000000149F29F70		                text "UTF-16LE", 'Failed to send payload.',0
+.rdata:0000000149F30FB0		                text "UTF-16LE", 'When log response payload, log json content only',0
+.rdata:0000000149F32C70		off_149F32C70   dq offset aPPayloadSizeLl ; DATA XREF: sub_141C309C0+105↑o
+.rdata:0000000149F32C90		aPPayloadSizeLl:                        ; DATA XREF: .rdata:off_149F32C70↑o
+.rdata:0000000149F33070		                text "UTF-16LE", 'TTP code: %d, content length: %llu, actual payload '
+.rdata:0000000149F33420		off_149F33420   dq offset aPayloadIsIncom
+.rdata:0000000149F33440		aPayloadIsIncom:                        ; DATA XREF: .rdata:off_149F33420↑o
+.rdata:0000000149F35F50		                text "UTF-16LE", 'An HTTP Get request cannot contain a payload.',0
+.rdata:0000000149F36270		                                        ; "FRequestPayloadInFileStream::Open Faile"...
+.rdata:0000000149F36290		                text "UTF-16LE", 'FRequestPayloadInFileStream::Open Failed to open %s'
+.rdata:0000000149F36310		                db 'cPlatform\HttpRequestPayload.cpp',0
+.rdata:0000000149F38F40		                text "UTF-16LE", 'Percentage of the maximum payload for an EventCache'
+.rdata:0000000149F390D0		                text "UTF-16LE", 'AnalyticsET.PayloadPercentageOfMaxForWarning',0
+.rdata:0000000149F39130		                text "UTF-16LE", 'Time in seconds that flushing an EventCache payload'
+.rdata:0000000149F392D0		                text "UTF-16LE", 'AnalyticsET.PayloadFlushTimeSecForWarning',0
+.rdata:0000000149F39D48		aMaximumpayload:                        ; DATA XREF: sub_141C384E0+304↑o
+.rdata:0000000149F39DD0		                text "UTF-16LE", 'adSize (%d). Payload is currently (%d) bytes, and e'
+.rdata:0000000149F3A008		                                        ; "EventCache payload exceeded the maximum"...
+.rdata:0000000149F3A030		                text "UTF-16LE", 'EventCache payload exceeded the maximum allowed siz'
+.rdata:0000000149F3A1B0		                text "UTF-16LE", 's). Payload size: %.3f KB, %d events. Listing event'
+.rdata:0000000149F3AC80		                text "UTF-16LE", ' Payload:%s',0
+.rdata:0000000149F3B060		                text "UTF-16LE", '[%s] ET response for [%s]. Code: %d. Payload: %s',0
+.rdata:0000000149F53540		                text "UTF-16LE", 'tArrayReplicationKey: %d. Current Payload: [%d/%d]',0
+.rdata:0000000149F5AFF0		                dq offset aEnetcloseresul_204 ; "ENetCloseResult::ContentBlockPayloadBit"...
+.rdata:0000000149F5B020		                dq offset aEnetcloseresul_207 ; "ENetCloseResult::FieldHeaderPayloadBits"...
+.rdata:0000000149F5B030		                dq offset aEnetcloseresul_208 ; "ENetCloseResult::FieldPayloadFail"
+.rdata:0000000149F5C1D0		aEnetcloseresul_184 db 'ENetCloseResult::ControlChannelMessagePayloadFail',0
+.rdata:0000000149F5C5F0		aEnetcloseresul_204 db 'ENetCloseResult::ContentBlockPayloadBitsFail',0
+.rdata:0000000149F5C670		aEnetcloseresul_207 db 'ENetCloseResult::FieldHeaderPayloadBitsFail',0
+.rdata:0000000149F5C6A0		aEnetcloseresul_208 db 'ENetCloseResult::FieldPayloadFail',0
+.rdata:0000000149F60720		                text "UTF-16LE", 'ENetCloseResult::ControlChannelMessagePayloadFail',0
+.rdata:0000000149F60F20		                text "UTF-16LE", 'ENetCloseResult::ContentBlockPayloadBitsFail',0
+.rdata:0000000149F61020		                text "UTF-16LE", 'ENetCloseResult::FieldHeaderPayloadBitsFail',0
+.rdata:0000000149F61080		                text "UTF-16LE", 'ENetCloseResult::FieldPayloadFail',0
+.rdata:0000000149F893D8		off_149F893D8   dq offset aMaxpayloadboun ; DATA XREF: .rdata:off_149F89410↓o
+.rdata:0000000149F89410		                                        ; "MaxPayloadBounds"
+.rdata:0000000149F89538		aMaxpayloadboun db 'MaxPayloadBounds',0 ; DATA XREF: .rdata:off_149F893D8↑o
+.rdata:0000000149F89870		                text "UTF-16LE", 'ChaosVDAABBTreePayloadBoundsElement',0
+.rdata:0000000149F89A28		aChaosvdaabbtre_4 db 'ChaosVDAABBTreePayloadBoundsElement',0
+.rdata:0000000149F89FB0		off_149F89FB0   dq offset aMaxpayloadboun ; DATA XREF: .rdata:0000000149F8A028↓o
+.rdata:0000000149F8A028		                dq offset off_149F89FB0 ; "MaxPayloadBounds"
+.rdata:0000000149F8A2A0		                dq offset aChaosvdaabbtre_0 ; "ChaosVDAABBTreePayloadBoundsElement"
+.rdata:0000000149FA1630		                text "UTF-16LE", 'Allow AABB tree elements to update internal payload'
+.rdata:0000000149FA16F0		                text "UTF-16LE", 'p.aabbtree.updatedirtyelementpayloads',0
+.rdata:0000000149FB9D70		aPMaxpayloadsiz:                        ; DATA XREF: sub_140E19030+35↑o
+.rdata:0000000149FF26D0		                text "UTF-16LE", 'UniversalObjectLocatorEmptyPayload',0
+.rdata:0000000149FF2718		aUniversalobjec_5 db 'UniversalObjectLocatorEmptyPayload',0
+.rdata:0000000149FF2778		                dq offset aUniversalobjec_1 ; "UniversalObjectLocatorEmptyPayload"
+.rdata:0000000149FF2D60		aPayloadI:                              ; DATA XREF: sub_142482C40+1DB↑o
+.rdata:0000000149FF2D78		off_149FF2D78   dq offset aPayload_4    ; DATA XREF: sub_142483550+655↑r
+.rdata:0000000149FF2D88		aPayload_4:                             ; DATA XREF: .rdata:off_149FF2D78↑o
+.rdata:0000000149FF2F00		aPayloadIsInval:                        ; DATA XREF: sub_142483550+956↑o
+.rdata:0000000149FF2F60		                text "UTF-16LE", 'Error_InvalidPayload',0
+.rdata:0000000149FF3150		                text "UTF-16LE", 'Unable to parse a payload for an uninitialized frag'
+.rdata:0000000149FF31F0		                text "UTF-16LE", 'Unable to parse a payload for a fragment whose type'
+.rdata:000000014A19E218		                                        ; "Index FPakEntry does not match Payload "...
+.rdata:000000014A19E240		                text "UTF-16LE", 'Index FPakEntry does not match Payload FPakEntry fo'
+.rdata:000000014A1AACA0		aPayloadInt32DD:                        ; DATA XREF: sub_142631F10+23B↑o
+.rdata:000000014A1AACF0		aPayloadUint32U:                        ; DATA XREF: sub_142631F10+296↑o
+.rdata:000000014A1AAD40		aPayloadHex0x08:                        ; DATA XREF: sub_142631F10+2F1↑o
+.rdata:000000014A1AADB0		aPayloadFloatFF:                        ; DATA XREF: sub_142631F10+36C↑o
+.rdata:000000014A1D61F8		                text "UTF-16LE", 'GPUSceneInstancePayloadDataRW',0
+.rdata:000000014A1D6460		                text "UTF-16LE", 'GPUSceneInstancePayloadData',0
+.rdata:000000014A1DB670		                text "UTF-16LE", 'GPUScene.InstancePayloadData',0
+.rdata:000000014A1DC580		                text "UTF-16LE", 'InstancePayloadUploadBuffer',0
+.rdata:000000014A20C8F0		                text "UTF-16LE", 'StructuredBuffer< FInstanceCullingContext::FPayload'
+.rdata:000000014A20C968		                text "UTF-16LE", 'InstanceCullingPayloads',0
+.rdata:000000014A20CF18		                text "UTF-16LE", 'InstanceCulling.PayloadData',0
+.rdata:000000014A2888B0		                text "UTF-16LE", 'visualize payload fields and perform basic lighting'
+.rdata:000000014A2BFB00		                text "UTF-16LE", 'RWStructuredBuffer<FIntersectionPayload>',0
+.rdata:000000014A355BC8		                                        ; "GPU timeout: A payload (0x%p) on the [0"...
+.rdata:000000014A355BF0		                text "UTF-16LE", 'GPU timeout: A payload (0x%p) on the [0x%p, %s] que'
+.rdata:000000014A357E90		aQueueD3dcomman_0 db 'Queue.D3DCommandQueue->Signal(Queue.Fence.D3DFence, Payload->Comp'
+.rdata:000000014A357EF0		aPayloadQueueD3 db 'Payload->Queue.D3DCommandQueue->GetClockCalibration(&LocalTiming-'
+.rdata:000000014A357F60		aPayloadQueueD3_0 db 'Payload->Queue.D3DCommandQueue->GetTimestampFrequency(&LocalTimin'
+.rdata:000000014A357FC0		aCurrentqueueFe db 'CurrentQueue.Fence.D3DFence->SetEventOnCompletion(Payload->Comple'
+.rdata:000000014A3B0718		                text "UTF-16LE", 'FDefaultPayloadMS',0
+.rdata:000000014A3B0740		aDefaultpayload:                        ; DATA XREF: sub_14327A0F0+BF↑o
+.rdata:000000014A3B0770		                text "UTF-16LE", 'FPackedMaterialClosestHitPayloadMS',0
+.rdata:000000014A3B07C0		                text "UTF-16LE", 'PackedMaterialClosestHitPayloadMS',0
+.rdata:000000014A3B32E0		                text "UTF-16LE", '  Message[Offset: %d, ID: %d, PayloadSize: %d, ',0
+.rdata:000000014A3B3340		                text "UTF-16LE", '!payload size %d exceeds buffer size (ReadOffset=%d'
+.rdata:000000014A3B3428		aPayload_0:                             ; DATA XREF: sub_143283610+1FF↑o
+.rdata:000000014A493FA0		                dq offset aMoviescenedyna ; "MovieSceneDynamicBindingPayloadVariable"
+.rdata:000000014A499EB0		                text "UTF-16LE", 'MovieSceneDynamicBindingPayloadVariable',0
+.rdata:000000014A49A470		aMoviescenedyna_4 db 'MovieSceneDynamicBindingPayloadVariable',0
+.rdata:000000014A4D0450		                                        ; "BranchingPointNotifyPayload"
+.rdata:000000014A4D0498		                dq offset off_14A4D0450 ; "BranchingPointNotifyPayload"
+.rdata:000000014A4D04A0		aBranchingpoint_4 db 'BranchingPointNotifyPayload',0
+.rdata:000000014A4D0510		                                        ; "BranchingPointNotifyPayload"
+.rdata:000000014A4D0558		                dq offset off_14A4D0510 ; "BranchingPointNotifyPayload"
+.rdata:000000014A4F9538		                text "UTF-16LE", 'MovieSceneEventPayloadVariable',0
+.rdata:000000014A4F9870		aMoviesceneeven_15 db 'MovieSceneEventPayloadVariable',0
+.rdata:000000014A4FA2E0		                dq offset aMoviesceneeven_0 ; "MovieSceneEventPayloadVariable"
+.rdata:000000014A4FA920		                text "UTF-16LE", 'MovieSceneDirectorBlueprintConditionPayloadVariable'
+.rdata:000000014A4FAC08		aMoviescenedire_2 db 'MovieSceneDirectorBlueprintConditionPayloadVariable',0
+.rdata:000000014A5025C8		                dq offset aEventpayload ; "EventPayload"
+.rdata:000000014A50D920		aEventpayload:                          ; DATA XREF: sub_1436FCF30+18↑o
+.rdata:000000014A50E610		aEventpayload_0 db 'EventPayload',0     ; DATA XREF: .data:000000014D23F720↓o
+.rdata:000000014A599910		off_14A599910   dq offset aPayload_5    ; DATA XREF: .rdata:000000014A599B18↓o
+.rdata:000000014A599B18		                dq offset off_14A599910 ; "Payload"
+.rdata:000000014A599CD0		aPayload_5      db 'Payload',0          ; DATA XREF: .rdata:off_14A599910↑o
+.rdata:000000014A5C65E0		                text "UTF-16LE", 'FrameGrabber_AppendFramePayload',0
+.rdata:000000014A5C69E0		                text "UTF-16LE", 'UFrameGrabberProtocol::GetFramePayload',0
+.rdata:000000014A5F5020		                dq offset aEhttpreplayres_12 ; "EHttpReplayResult::InvalidPayload"
+.rdata:000000014A5F5128		aEhttpreplayres_12 db 'EHttpReplayResult::InvalidPayload',0
+.rdata:000000014A5FB630		                text "UTF-16LE", 'EHttpReplayResult::InvalidPayload',0
+.rdata:000000014A6061B8		aEmptypayload:                          ; DATA XREF: sub_143AC1E10+18↑o
+.rdata:000000014A6061E8		aEmptypayload_0 db 'EmptyPayload',0     ; DATA XREF: .data:000000014D2516C8↓o
+.rdata:000000014A6061F8		aBracketpayload:                        ; DATA XREF: sub_143AC1E50+18↑o
+.rdata:000000014A6063F0		aBracketpayload_0 db 'BracketPayload',0 ; DATA XREF: .data:000000014D251700↓o
+.rdata:000000014A606400		                text "UTF-16LE", 'AnimationTrackPayload',0
+.rdata:000000014A606470		aAnimationtrack_8 db 'AnimationTrackPayload',0
+.rdata:000000014A606488		                text "UTF-16LE", 'AnimationTrackAddedPayload',0
+.rdata:000000014A6065E8		aAnimationtrack_9 db 'AnimationTrackAddedPayload',0
+.rdata:000000014A606608		                text "UTF-16LE", 'SequenceLengthChangedPayload',0
+.rdata:000000014A606A68		aSequencelength_1 db 'SequenceLengthChangedPayload',0
+.rdata:000000014A606A88		                text "UTF-16LE", 'FrameRateChangedPayload',0
+.rdata:000000014A606EB0		aFrameratechang_0 db 'FrameRateChangedPayload',0
+.rdata:000000014A606F28		aCurvepayload:                          ; DATA XREF: sub_143AC1F90+18↑o
+.rdata:000000014A6072D0		aCurvepayload_0 db 'CurvePayload',0     ; DATA XREF: .data:000000014D251818↓o
+.rdata:000000014A6072E0		                text "UTF-16LE", 'CurveScaledPayload',0
+.rdata:000000014A607668		aCurvescaledpay_0 db 'CurveScaledPayload',0 ; DATA XREF: .data:000000014D251850↓o
+.rdata:000000014A607788		                text "UTF-16LE", 'CurveRenamedPayload',0
+.rdata:000000014A608008		aCurverenamedpa_0 db 'CurveRenamedPayload',0 ; DATA XREF: .data:000000014D251888↓o
+.rdata:000000014A608128		                text "UTF-16LE", 'CurveFlagsChangedPayload',0
+.rdata:000000014A608D08		aCurveflagschan_0 db 'CurveFlagsChangedPayload',0
+.rdata:000000014A608D48		                text "UTF-16LE", 'AttributePayload',0
+.rdata:000000014A609188		aAttributepaylo_0 db 'AttributePayload',0 ; DATA XREF: .data:000000014D2518F8↓o
+.rdata:000000014A6091A0		                text "UTF-16LE", 'AnimDataModelNotifPayload',0
+.rdata:000000014A609578		aAnimdatamodeln_0 db 'AnimDataModelNotifPayload',0
+.rdata:000000014A609A70		off_14A609A70   dq offset aPayload_5    ; DATA XREF: .rdata:000000014A609AC8↓o
+.rdata:000000014A609AC8		                dq offset off_14A609A70 ; "Payload"
+.rdata:000000014A60A070		                dq offset aEmptypayload ; "EmptyPayload"
+.rdata:000000014A60A098		                dq offset aBracketpayload ; "BracketPayload"
+.rdata:000000014A60A0C0		                dq offset aAnimationtrack ; "AnimationTrackPayload"
+.rdata:000000014A60A0E8		                dq offset aAnimationtrack_0 ; "AnimationTrackAddedPayload"
+.rdata:000000014A60A110		                dq offset aSequencelength ; "SequenceLengthChangedPayload"
+.rdata:000000014A60A138		                dq offset aFrameratechang ; "FrameRateChangedPayload"
+.rdata:000000014A60A160		                dq offset aCurvepayload ; "CurvePayload"
+.rdata:000000014A60A188		                dq offset aCurvescaledpay ; "CurveScaledPayload"
+.rdata:000000014A60A1B0		                dq offset aCurverenamedpa ; "CurveRenamedPayload"
+.rdata:000000014A60A1D8		                dq offset aCurveflagschan ; "CurveFlagsChangedPayload"
+.rdata:000000014A60A200		                dq offset aAttributepaylo ; "AttributePayload"
+.rdata:000000014A60A228		                dq offset aAnimdatamodeln ; "AnimDataModelNotifPayload"
+.rdata:000000014A6398C0		                text "UTF-16LE", 'ExternalSpatialAccelerationPayload',0
+.rdata:000000014A63A298		aExternalspatia_0 db 'ExternalSpatialAccelerationPayload',0
+.rdata:000000014A63A2E8		                dq offset aExternalspatia ; "ExternalSpatialAccelerationPayload"
+.rdata:000000014A793A40		                                        ; "BranchingPointPayload"
+.rdata:000000014A793A88		                dq offset off_14A793A40 ; "BranchingPointPayload"
+.rdata:000000014A793A90		aBranchingpoint_5 db 'BranchingPointPayload',0 ; DATA XREF: .rdata:off_14A793A40↑o
+.rdata:000000014A7ABF60		                text "UTF-16LE", 'BranchingPointNotifyPayload',0
+.rdata:000000014A7AD298		                dq offset aBranchingpoint_3 ; "BranchingPointNotifyPayload"
+.rdata:000000014A8A87F8		                                        ; "UActorChannel::ReadContentBlockPayload:"...
+.rdata:000000014A8A8820		                text "UTF-16LE", 'UActorChannel::ReadContentBlockPayload: ReadContent'
+.rdata:000000014A8A8960		                text "UTF-16LE", 'UActorChannel::ReceivedBunch: Read NumPayloadBits F'
+.rdata:000000014A8A8A60		                                        ; "ReadFieldHeaderAndPayload: NetFieldExpo"...
+.rdata:000000014A8A8A80		                text "UTF-16LE", 'ReadFieldHeaderAndPayload: NetFieldExportGroup was '
+.rdata:000000014A8A8B08		                                        ; "ReadFieldHeaderAndPayload: Error readin"...
+.rdata:000000014A8A8B30		                text "UTF-16LE", 'ReadFieldHeaderAndPayload: Error reading NetFieldEx'
+.rdata:000000014A8A8BC8		                                        ; "ReadFieldHeaderAndPayload: NetFieldExpo"...
+.rdata:000000014A8A8BF0		                text "UTF-16LE", 'ReadFieldHeaderAndPayload: NetFieldExportHandle too'
+.rdata:000000014A8A8CB0		                                        ; "ReadFieldHeaderAndPayload: NetFieldExpo"...
+.rdata:000000014A8A8CD0		                text "UTF-16LE", 'ReadFieldHeaderAndPayload: NetFieldExport.Compatibl'
+.rdata:000000014A8A8DC0		                                        ; "ReadFieldHeaderAndPayload: GetFromCheck"...
+.rdata:000000014A8A8DE0		                text "UTF-16LE", 'ReadFieldHeaderAndPayload: GetFromChecksum failed ('
+.rdata:000000014A8A8EB0		                                        ; "ReadFieldHeaderAndPayload: Error readin"...
+.rdata:000000014A8A8ED0		                text "UTF-16LE", 'ReadFieldHeaderAndPayload: Error reading RepIndex. '
+.rdata:000000014A8A8F50		                                        ; "ReadFieldHeaderAndPayload: RepIndex too"...
+.rdata:000000014A8A8F70		                text "UTF-16LE", 'ReadFieldHeaderAndPayload: RepIndex too large. Obje'
+.rdata:000000014A8A8FE8		                                        ; "ReadFieldHeaderAndPayload: GetFromIndex"...
+.rdata:000000014A8A9010		                text "UTF-16LE", 'ReadFieldHeaderAndPayload: GetFromIndex failed. Obj'
+.rdata:000000014A8A9088		                                        ; "ReadFieldHeaderAndPayload: Error readin"...
+.rdata:000000014A8A90B0		                text "UTF-16LE", 'ReadFieldHeaderAndPayload: Error reading numbits. O'
+.rdata:000000014A8A9148		                                        ; "ReadFieldHeaderAndPayload: Error readin"...
+.rdata:000000014A8A9170		                text "UTF-16LE", 'ReadFieldHeaderAndPayload: Error reading payload. O'
+.rdata:000000014AA7C5C0		                text "UTF-16LE", 'ing payload. Owner: %s, Name: %s, NetFieldExportHan'
+.rdata:000000014AA7CE20		                text "UTF-16LE", 'ing array index element payload. Index: %i, Owner: '
+.rdata:000000014AA90AE0		                text "UTF-16LE", 'InstancePayloadDataOffset',0
+.rdata:000000014AA90B50		                text "UTF-16LE", 'InstancePayloadDataStride',0
+.rdata:000000014AA90B88		                text "UTF-16LE", 'InstancePayloadExtensionSize',0
+.rdata:000000014AACF078		aUpdatepayloado:                        ; DATA XREF: sub_14463CC80+6↑o
+.rdata:000000014AC37E50		                text "UTF-16LE", 'NiagaraCollisionEventPayload',0
+.rdata:000000014AC38038		aNiagaracollisi_5 db 'NiagaraCollisionEventPayload',0
+.rdata:000000014AC38160		                dq offset aNiagaracollisi_3 ; "NiagaraCollisionEventPayload"
+.rdata:000000014AE31120		                text "UTF-16LE", 'Error Processing PayloadObjects (Reason: ({0})',0
+.rdata:000000014AE34D20		                text "UTF-16LE", ') | Payload: %s',0
+.rdata:000000014AE34F80		                text "UTF-16LE", 'Interserver RPC - Failed to Find Owner | Payload: %'
+.rdata:000000014AE4AD90		off_14AE4AD90   dq offset aPayload_5    ; DATA XREF: .rdata:000000014AE4AE10↓o
+.rdata:000000014AE4AE10		                dq offset off_14AE4AD90 ; "Payload"
+.rdata:000000014AE52C80		                text "UTF-16LE", '%s: An event with an invalid tag and payload has be'
+.rdata:000000014AE54E70		aPayload_1:                             ; DATA XREF: sub_14508B490:loc_14508B70B↑o
+.rdata:000000014AE576F0		off_14AE576F0   dq offset aPayloadstruct ; DATA XREF: .rdata:off_14AE57770↓o
+.rdata:000000014AE57770		                                        ; "PayloadStruct"
+.rdata:000000014AE57780		aPayloadstruct  db 'PayloadStruct',0    ; DATA XREF: .rdata:off_14AE576F0↑o
+.rdata:000000014AE64830		aInpayloaddataf:                        ; DATA XREF: sub_1450BC820+6↑o
+.rdata:000000014B11F1E8		                dq offset aUdroppayloadin ; "UDropPayloadInterface"
+.rdata:000000014B11F2C8		aUdroppayloadin:                        ; DATA XREF: .rdata:000000014B11F1E8↑o
+.rdata:000000014B126070		aDroppayloadint:                        ; DATA XREF: sub_1458E1330+46↑o
+.rdata:000000014B2794E0		off_14B2794E0   dq offset aPayloadname  ; DATA XREF: .rdata:off_14B279588↓o
+.rdata:000000014B279588		                                        ; "PayloadName"
+.rdata:000000014B2797D0		aPayloadname    db 'PayloadName',0      ; DATA XREF: .rdata:off_14B2794E0↑o
+.rdata:000000014B3FF0E0		                                        ; "bRequestItemPayload"
+.rdata:000000014B3FF128		                dq offset off_14B3FF0E0 ; "bRequestItemPayload"
+.rdata:000000014B3FF158		aBrequestitempa db 'bRequestItemPayload',0 ; DATA XREF: .rdata:off_14B3FF0E0↑o
+.rdata:000000014B402E60		                text "UTF-16LE", 'SendStoragePayload',0
+.rdata:000000014B402ED8		aSendstoragepay_0 db 'SendStoragePayload',0 ; DATA XREF: .rdata:000000014B403AC8↓o
+.rdata:000000014B403AC8		                dq offset aSendstoragepay_0 ; "SendStoragePayload"
+.rdata:000000014B405BD0		                dq offset aSendstoragepay_0 ; "SendStoragePayload"
+.rdata:000000014B463EE8		                text "UTF-16LE", 'MouseoverUIDataPayload',0
+.rdata:000000014B4640E8		aMouseoveruidat_1 db 'MouseoverUIDataPayload',0
+.rdata:000000014B464210		                dq offset aMouseoveruidat ; "MouseoverUIDataPayload"
+.rdata:000000014B48DC08		                dq offset aNodelevelingme ; "NodeLevelingMessagePayload"
+.rdata:000000014B4913C0		                text "UTF-16LE", 'NodeLevelingMessagePayload',0
+.rdata:000000014B491560		aNodelevelingme_0 db 'NodeLevelingMessagePayload',0
+.rdata:000000014B6AD540		                                        ; "MouseoverUIDataPayload"
+.rdata:000000014B6AD580		                                        ; "MouseoverUIDataPayload"
+.rdata:000000014B6B74B8		                text "UTF-16LE", 'AuthRecieveStoragePayload',0
+.rdata:000000014B6B93E0		aAuthrecievesto_0 db 'AuthRecieveStoragePayload',0
+.rdata:000000014B6BD080		                                        ; "bRequestItemPayload"
+.rdata:000000014B6BD0F8		                dq offset off_14B6BD080 ; "bRequestItemPayload"
+.rdata:000000014B6CA248		                text "UTF-16LE", 'ServerRetrieveStoragePayload',0
+.rdata:000000014B6CA470		                text "UTF-16LE", 'ClientReceiveActionbarSlotPayload',0
+.rdata:000000014B6CA738		aServerretrieve_0 db 'ServerRetrieveStoragePayload',0
+.rdata:000000014B6CB220		aClientreceivea_3 db 'ClientReceiveActionbarSlotPayload',0
+.rdata:000000014B6D2CF0		                                        ; "bRequestItemPayload"
+.rdata:000000014B6D2D90		                dq offset off_14B6D2CF0 ; "bRequestItemPayload"
+.rdata:000000014B6D4E70		                text "UTF-16LE", 'ServerNotifyClientNeedsHousingStoragePayload',0
+.rdata:000000014B6D5F08		                dq offset aAuthrecievesto_0 ; "AuthRecieveStoragePayload"
+.rdata:000000014B6D6938		                dq offset aClientreceivea_3 ; "ClientReceiveActionbarSlotPayload"
+.rdata:000000014B6D69E8		                dq offset aClientreceivel_2 ; "ClientReceiveLootStoragePayload"
+.rdata:000000014B6D6AB8		                dq offset aClientreceives_8 ; "ClientReceiveStoragePayload"
+.rdata:000000014B6D84B8		                dq offset aInterserverrec_13 ; "InterServerReceiveLootStoragePayload"
+.rdata:000000014B6D84D8		                dq offset aInterserverrec_15 ; "InterServerReceiveStoragePayload"
+.rdata:000000014B6D8528		                dq offset aInterserverret_0 ; "InterServerRetrieveStoragePayload"
+.rdata:000000014B6DB578		                dq offset aServerretrieve_0 ; "ServerRetrieveStoragePayload"
+.rdata:000000014B6DD440		aServernotifycl_1 db 'ServerNotifyClientNeedsHousingStoragePayload',0
+.rdata:000000014B6F4130		                text "UTF-16LE", 'ClientReceiveLootStoragePayload',0
+.rdata:000000014B6F4CB8		aClientreceivel_2 db 'ClientReceiveLootStoragePayload',0
+.rdata:000000014B701C00		                text "UTF-16LE", 'InterServerReceiveLootStoragePayload',0
+.rdata:000000014B702648		aInterserverrec_13 db 'InterServerReceiveLootStoragePayload',0
+.rdata:000000014B703BB0		                text "UTF-16LE", 'InterServerReceiveStoragePayload',0
+.rdata:000000014B704360		aInterserverrec_15 db 'InterServerReceiveStoragePayload',0
+.rdata:000000014B707980		                text "UTF-16LE", 'InterServerRetrieveStoragePayload',0
+.rdata:000000014B707F48		aInterserverret_0 db 'InterServerRetrieveStoragePayload',0
+.rdata:000000014B709DF8		                text "UTF-16LE", 'ClientReceiveStoragePayload',0
+.rdata:000000014B70A718		aClientreceives_8 db 'ClientReceiveStoragePayload',0
+.rdata:000000014B71A990		                text "UTF-16LE", 'ServerNotifyClientNeedsHousingStoragePayload_Valida'
+.rdata:000000014B71C000		                dq offset aAuthrecievesto_0 ; "AuthRecieveStoragePayload"
+.rdata:000000014B71CA10		                dq offset aClientreceivea_3 ; "ClientReceiveActionbarSlotPayload"
+.rdata:000000014B71CAC0		                dq offset aClientreceivel_2 ; "ClientReceiveLootStoragePayload"
+.rdata:000000014B71CB90		                dq offset aClientreceives_8 ; "ClientReceiveStoragePayload"
+.rdata:000000014B71E540		                dq offset aInterserverrec_13 ; "InterServerReceiveLootStoragePayload"
+.rdata:000000014B71E560		                dq offset aInterserverrec_15 ; "InterServerReceiveStoragePayload"
+.rdata:000000014B71E5B0		                dq offset aInterserverret_0 ; "InterServerRetrieveStoragePayload"
+.rdata:000000014B721490		                dq offset aServerretrieve_0 ; "ServerRetrieveStoragePayload"
+.rdata:000000014B7B3F60		                text "UTF-16LE", 'ClientReceiveGuildStorageItemPayload',0
+.rdata:000000014B7B4200		off_14B7B4200   dq offset aStoragepayload ; DATA XREF: .rdata:off_14B7B4240↓o
+.rdata:000000014B7B4240		                                        ; "StoragePayload"
+.rdata:000000014B7B4270		aStoragepayload db 'StoragePayload',0   ; DATA XREF: .rdata:off_14B7B4200↑o
+.rdata:000000014B7B4280		aClientreceiveg_6 db 'ClientReceiveGuildStorageItemPayload',0
+.rdata:000000014B7B6870		                text "UTF-16LE", 'ClientReceiveGuildStorageResourcePayload',0
+.rdata:000000014B7B6D60		off_14B7B6D60   dq offset aStoragepayload ; DATA XREF: .rdata:off_14B7B6DD8↓o
+.rdata:000000014B7B6DD8		                                        ; "StoragePayload"
+.rdata:000000014B7B70D0		aClientreceiveg_7 db 'ClientReceiveGuildStorageResourcePayload',0
+.rdata:000000014B7B9BD8		                dq offset aClientreceiveg_6 ; "ClientReceiveGuildStorageItemPayload"
+.rdata:000000014B7B9C38		                dq offset aClientreceives_8 ; "ClientReceiveStoragePayload"
+.rdata:000000014B7C14F0		                dq offset aClientreceiveg_6 ; "ClientReceiveGuildStorageItemPayload"
+.rdata:000000014B7C1550		                dq offset aClientreceives_8 ; "ClientReceiveStoragePayload"
+.rdata:000000014B8C08F0		                text "UTF-16LE", 'Invalid relic Drag Drop operation payload..',0
+.rdata:000000014B908420		                text "UTF-16LE", 'ory payload.',0
+.rdata:000000014B9084C0		aAaocplayercont_31 db 'AAoCPlayerController::ClientReceiveStoragePayload_Implementation',0
+.rdata:000000014B921890		aAplayercharact_29 db 'APlayerCharacter::ClientReceiveStoragePayload_Implementation',0
+.rdata:000000014BA11EB0		aNanWithPayload db ' NaN with payload [redacted]',0
+.rdata:000000014BE7F7B0		                dq offset aEoodlenetresul_9 ; "EOodleNetResult::OodleSerializePayloadF"...
+.rdata:000000014BE7F848		aEoodlenetresul_9 db 'EOodleNetResult::OodleSerializePayloadFail',0
+.rdata:000000014BE823F0		                text "UTF-16LE", 'EOodleNetResult::OodleSerializePayloadFail',0
+.rdata:000000014BF2BD80		off_14BF2BD80   dq offset aPayloadkey_1 ; DATA XREF: .rdata:000000014BF2BED8↓o
+.rdata:000000014BF2BED8		                dq offset off_14BF2BD80 ; "PayloadKey"
+.rdata:000000014BF2BF20		aPayloadkey_1   db 'PayloadKey',0       ; DATA XREF: .rdata:off_14BF2BD80↑o
+.rdata:000000014BF2C0D0		off_14BF2C0D0   dq offset aPayloadkey_1 ; DATA XREF: .rdata:000000014BF2C1A8↓o
+.rdata:000000014BF2C1A8		                dq offset off_14BF2C0D0 ; "PayloadKey"
+.rdata:000000014BF2C3D0		off_14BF2C3D0   dq offset aPayloadkey_1 ; DATA XREF: .rdata:000000014BF2C4A8↓o
+.rdata:000000014BF2C4A8		                dq offset off_14BF2C3D0 ; "PayloadKey"
+.rdata:000000014BF2C7E0		off_14BF2C7E0   dq offset aPayloadkey_1 ; DATA XREF: .rdata:000000014BF2C8B8↓o
+.rdata:000000014BF2C8B8		                dq offset off_14BF2C7E0 ; "PayloadKey"
+.rdata:000000014BF2CAA0		off_14BF2CAA0   dq offset aPayloadkey_1 ; DATA XREF: .rdata:000000014BF2CB78↓o
+.rdata:000000014BF2CB78		                dq offset off_14BF2CAA0 ; "PayloadKey"
+.rdata:000000014BF2CDD0		off_14BF2CDD0   dq offset aOutpayloadkey ; DATA XREF: .rdata:000000014BF2CE68↓o
+.rdata:000000014BF2CE68		                dq offset off_14BF2CDD0 ; "OutPayloadKey"
+.rdata:000000014BF2CE78		aOutpayloadkey  db 'OutPayloadKey',0    ; DATA XREF: .rdata:off_14BF2CDD0↑o
+.rdata:000000014BF2CF60		off_14BF2CF60   dq offset aOutpayloadkey ; DATA XREF: .rdata:000000014BF2CFF8↓o
+.rdata:000000014BF2CFF8		                dq offset off_14BF2CF60 ; "OutPayloadKey"
+.rdata:000000014BF2D0E0		off_14BF2D0E0   dq offset aOutpayloadkey ; DATA XREF: .rdata:000000014BF2D178↓o
+.rdata:000000014BF2D178		                dq offset off_14BF2D0E0 ; "OutPayloadKey"
+.rdata:000000014BF2D260		off_14BF2D260   dq offset aOutpayloadkey ; DATA XREF: .rdata:000000014BF2D2F8↓o
+.rdata:000000014BF2D2F8		                dq offset off_14BF2D260 ; "OutPayloadKey"
+.rdata:000000014BF2D3E0		off_14BF2D3E0   dq offset aOutpayloadkey ; DATA XREF: .rdata:000000014BF2D478↓o
+.rdata:000000014BF2D478		                dq offset off_14BF2D3E0 ; "OutPayloadKey"
+.rdata:000000014BF2DDF8		aPayload:                               ; DATA XREF: sub_1412964C0+4↑o
+.rdata:000000014BF37FD0		                text "UTF-16LE", 'EInterchangeAnimationPayLoadType',0
+.rdata:000000014BF38020		                                        ; "EInterchangeAnimationPayLoadType::NONE"
+.rdata:000000014BF38030		                dq offset aEinterchangean_3 ; "EInterchangeAnimationPayLoadType::CURVE"
+.rdata:000000014BF38040		                dq offset aEinterchangean_4 ; "EInterchangeAnimationPayLoadType::MORPH"...
+.rdata:000000014BF38050		                dq offset aEinterchangean_5 ; "EInterchangeAnimationPayLoadType::STEPC"...
+.rdata:000000014BF38060		                dq offset aEinterchangean_6 ; "EInterchangeAnimationPayLoadType::BAKED"
+.rdata:000000014BF38070		                dq offset aEinterchangean_7 ; "EInterchangeAnimationPayLoadType::MORPH"...
+.rdata:000000014BF38080		aEinterchangean_2 db 'EInterchangeAnimationPayLoadType::NONE',0
+.rdata:000000014BF380A8		aEinterchangean_3 db 'EInterchangeAnimationPayLoadType::CURVE',0
+.rdata:000000014BF380D0		aEinterchangean_4 db 'EInterchangeAnimationPayLoadType::MORPHTARGETCURVE',0
+.rdata:000000014BF38108		aEinterchangean_5 db 'EInterchangeAnimationPayLoadType::STEPCURVE',0
+.rdata:000000014BF38138		aEinterchangean_6 db 'EInterchangeAnimationPayLoadType::BAKED',0
+.rdata:000000014BF38160		aEinterchangean_7 db 'EInterchangeAnimationPayLoadType::MORPHTARGETCURVEWEIGHTINSTANCE',0
+.rdata:000000014BF381A8		aEinterchangean_8 db 'EInterchangeAnimationPayLoadType',0
+.rdata:000000014BF381D0		                text "UTF-16LE", 'InterchangeAnimationPayLoadKey',0
+.rdata:000000014BF383D0		aInterchangeani_7 db 'InterchangeAnimationPayLoadKey',0
+.rdata:000000014BF392D0		                                        ; "AnimationPayLoadKey"
+.rdata:000000014BF39350		                                        ; "AnimationPayLoadKey"
+.rdata:000000014BF39360		aAnimationpaylo_3 db 'AnimationPayLoadKey',0 ; DATA XREF: .rdata:off_14BF392D0↑o
+.rdata:000000014BF39378		aGetcustomanima_7 db 'GetCustomAnimationPayloadKey',0
+.rdata:000000014BF39710		aSetcustomanima_1 db 'SetCustomAnimationPayloadKey',0
+.rdata:000000014BF398E8		                dq offset aGetcustomanima_7 ; "GetCustomAnimationPayloadKey"
+.rdata:000000014BF39928		                dq offset aSetcustomanima_1 ; "SetCustomAnimationPayloadKey"
+.rdata:000000014BF39FE8		                                        ; "OutMorphTargetNodeAnimationPayloadKeyUi"...
+.rdata:000000014BF3A020		                                        ; "OutMorphTargetNodeAnimationPayloadKeyUi"...
+.rdata:000000014BF3A058		                                        ; "OutMorphTargetNodeAnimationPayloadKeyUi"...
+.rdata:000000014BF3A090		                                        ; "OutMorphTargetNodeAnimationPayloadKeyTy"...
+.rdata:000000014BF3A0D0		                                        ; "OutMorphTargetNodeAnimationPayloadKeyTy"...
+.rdata:000000014BF3A108		                                        ; "OutMorphTargetNodeAnimationPayloadKeyTy"...
+.rdata:000000014BF3A140		                                        ; "OutMorphTargetNodeAnimationPayloadKeyUi"...
+.rdata:000000014BF3A148		                dq offset off_14BF3A020 ; "OutMorphTargetNodeAnimationPayloadKeyUi"...
+.rdata:000000014BF3A150		                dq offset off_14BF3A058 ; "OutMorphTargetNodeAnimationPayloadKeyUi"...
+.rdata:000000014BF3A158		                dq offset off_14BF3A090 ; "OutMorphTargetNodeAnimationPayloadKeyTy"...
+.rdata:000000014BF3A160		                dq offset off_14BF3A0D0 ; "OutMorphTargetNodeAnimationPayloadKeyTy"...
+.rdata:000000014BF3A168		                dq offset off_14BF3A108 ; "OutMorphTargetNodeAnimationPayloadKeyTy"...
+.rdata:000000014BF3A170		aOutmorphtarget db 'OutMorphTargetNodeAnimationPayloadKeyUids',0
+.rdata:000000014BF3A1A0		aOutmorphtarget_0 db 'OutMorphTargetNodeAnimationPayloadKeyUids_Key',0
+.rdata:000000014BF3A1D0		aOutmorphtarget_1 db 'OutMorphTargetNodeAnimationPayloadKeyTypes',0
+.rdata:000000014BF3A200		aOutmorphtarget_2 db 'OutMorphTargetNodeAnimationPayloadKeyTypes_Key',0
+.rdata:000000014BF3A230		aGetmorphtarget_1 db 'GetMorphTargetNodeAnimationPayloadKeys',0
+.rdata:000000014BF3B670		                                        ; "OutSceneNodeAnimationPayloadKeyUids"
+.rdata:000000014BF3B6A8		                                        ; "OutSceneNodeAnimationPayloadKeyUids_Key"
+.rdata:000000014BF3B6E0		                                        ; "OutSceneNodeAnimationPayloadKeyUids"
+.rdata:000000014BF3B720		                                        ; "OutSceneNodeAnimationPayloadKeyTypes"
+.rdata:000000014BF3B760		                                        ; "OutSceneNodeAnimationPayloadKeyTypes_Ke"...
+.rdata:000000014BF3B798		                                        ; "OutSceneNodeAnimationPayloadKeyTypes"
+.rdata:000000014BF3B7D0		                                        ; "OutSceneNodeAnimationPayloadKeyUids"
+.rdata:000000014BF3B7D8		                dq offset off_14BF3B6A8 ; "OutSceneNodeAnimationPayloadKeyUids_Key"
+.rdata:000000014BF3B7E0		                dq offset off_14BF3B6E0 ; "OutSceneNodeAnimationPayloadKeyUids"
+.rdata:000000014BF3B7E8		                dq offset off_14BF3B720 ; "OutSceneNodeAnimationPayloadKeyTypes"
+.rdata:000000014BF3B7F0		                dq offset off_14BF3B760 ; "OutSceneNodeAnimationPayloadKeyTypes_Ke"...
+.rdata:000000014BF3B7F8		                dq offset off_14BF3B798 ; "OutSceneNodeAnimationPayloadKeyTypes"
+.rdata:000000014BF3B800		aOutscenenodean db 'OutSceneNodeAnimationPayloadKeyUids',0
+.rdata:000000014BF3B828		aOutscenenodean_0 db 'OutSceneNodeAnimationPayloadKeyUids_Key',0
+.rdata:000000014BF3B850		aOutscenenodean_1 db 'OutSceneNodeAnimationPayloadKeyTypes',0
+.rdata:000000014BF3B878		aOutscenenodean_2 db 'OutSceneNodeAnimationPayloadKeyTypes_Key',0
+.rdata:000000014BF3B8A8		aGetscenenodean db 'GetSceneNodeAnimationPayloadKeys',0
+.rdata:000000014BF3BB00		aSetanimationpa db 'SetAnimationPayloadKeyForMorphTargetNodeUid',0
+.rdata:000000014BF3C1D8		aSetanimationpa_0 db 'SetAnimationPayloadKeyForSceneNodeUid',0
+.rdata:000000014BF41978		                dq offset aGetmorphtarget_1 ; "GetMorphTargetNodeAnimationPayloadKeys"
+.rdata:000000014BF41988		                dq offset aGetscenenodean ; "GetSceneNodeAnimationPayloadKeys"
+.rdata:000000014BF419A8		                dq offset aSetanimationpa ; "SetAnimationPayloadKeyForMorphTargetNod"...
+.rdata:000000014BF419B8		                dq offset aSetanimationpa_0 ; "SetAnimationPayloadKeyForSceneNodeUid"
+.rdata:000000014BF41A78		                dq offset aEinterchangean ; "EInterchangeAnimationPayLoadType"
+.rdata:000000014BF41AC0		                dq offset aInterchangeani ; "InterchangeAnimationPayLoadKey"
+.rdata:000000014BF43660		                dq offset aGetcustomanima_7 ; "GetCustomAnimationPayloadKey"
+.rdata:000000014BF436A0		                dq offset aSetcustomanima_1 ; "SetCustomAnimationPayloadKey"
+.rdata:000000014BF43730		                text "UTF-16LE", 'AnimationPayloadUid',0
+.rdata:000000014BF43758		                text "UTF-16LE", 'AnimationPayloadType',0
+.rdata:000000014BF438C0		                dq offset aGetmorphtarget_1 ; "GetMorphTargetNodeAnimationPayloadKeys"
+.rdata:000000014BF438D0		                dq offset aGetscenenodean ; "GetSceneNodeAnimationPayloadKeys"
+.rdata:000000014BF438F0		                dq offset aSetanimationpa ; "SetAnimationPayloadKeyForMorphTargetNod"...
+.rdata:000000014BF43900		                dq offset aSetanimationpa_0 ; "SetAnimationPayloadKeyForSceneNodeUid"
+.rdata:000000014BF44BB0		aPayloadRootjoi:                        ; DATA XREF: sub_141296EB0+4↑o
+.rdata:000000014BF44BF8		aPayloadMeshglo:                        ; DATA XREF: sub_141296E80+4↑o
+.rdata:000000014BF44C38		aPayloadBakemes:                        ; DATA XREF: sub_141296E50+4↑o
+.rdata:000000014BF47220		off_14BF47220   dq offset aPayloadkey_1 ; DATA XREF: .rdata:off_14BF47258↓o
+.rdata:000000014BF47258		                                        ; "PayloadKey"
+.rdata:000000014BF47308		                dq offset aSetpayloadkey ; "SetPayLoadKey"
+.rdata:000000014BF4B860		aPayloadsourcef:                        ; DATA XREF: sub_14812F860+5B↑o
+.rdata:000000014BF4BC40		                text "UTF-16LE", 'UInterchangeTextureNode.GetPayLoadKey',0
+.rdata:000000014BF4BC90		                text "UTF-16LE", 'UInterchangeTextureNode.SetPayLoadKey',0
+.rdata:000000014BF4CE60		                dq offset aSetpayloadkey ; "SetPayLoadKey"
+.rdata:000000014BF4FAB0		off_14BF4FAB0   dq offset aPayloadkey_1 ; DATA XREF: .rdata:off_14BF4FB40↓o
+.rdata:000000014BF4FB40		                                        ; "PayloadKey"
+.rdata:000000014BF4FBA0		aGetcustomvaria db 'GetCustomVariantsPayloadKey',0
+.rdata:000000014BF50080		off_14BF50080   dq offset aPayloadkey_1 ; DATA XREF: .rdata:off_14BF50100↓o
+.rdata:000000014BF50100		                                        ; "PayloadKey"
+.rdata:000000014BF50140		aSetcustomvaria db 'SetCustomVariantsPayloadKey',0
+.rdata:000000014BF50368		                dq offset aGetcustomvaria ; "GetCustomVariantsPayloadKey"
+.rdata:000000014BF50398		                dq offset aSetcustomvaria ; "SetCustomVariantsPayloadKey"
+.rdata:000000014BF517A0		off_14BF517A0   dq offset aPayloadkey_2 ; DATA XREF: .rdata:off_14BF518E0↓o
+.rdata:000000014BF51860		off_14BF51860   dq offset aPayloadtype  ; DATA XREF: .rdata:000000014BF518F0↓o
+.rdata:000000014BF518E0		                                        ; "PayLoadKey"
+.rdata:000000014BF518F0		                dq offset off_14BF51860 ; "PayLoadType"
+.rdata:000000014BF51908		aPayloadkey_2   db 'PayLoadKey',0       ; DATA XREF: .rdata:off_14BF517A0↑o
+.rdata:000000014BF51918		aPayloadtype    db 'PayLoadType',0      ; DATA XREF: .rdata:off_14BF51860↑o
+.rdata:000000014BF52298		                dq offset aSetpayloadkey ; "SetPayLoadKey"
+.rdata:000000014BF53270		                dq offset aEinterchangeme_0 ; "EInterchangeMeshPayLoadType"
+.rdata:000000014BF532E0		                dq offset aInterchangemes_0 ; "InterchangeMeshPayLoadKey"
+.rdata:000000014BF56768		                text "UTF-16LE", 'EInterchangeMeshPayLoadType',0
+.rdata:000000014BF567A0		                                        ; "EInterchangeMeshPayLoadType::NONE"
+.rdata:000000014BF567B0		                dq offset aEinterchangeme_12 ; "EInterchangeMeshPayLoadType::STATIC"
+.rdata:000000014BF567C0		                dq offset aEinterchangeme_13 ; "EInterchangeMeshPayLoadType::SKELETAL"
+.rdata:000000014BF567D0		                dq offset aEinterchangeme_14 ; "EInterchangeMeshPayLoadType::MORPHTARGE"...
+.rdata:000000014BF567E0		                dq offset aEinterchangeme_15 ; "EInterchangeMeshPayLoadType::ANIMATED"
+.rdata:000000014BF567F0		aEinterchangeme_11 db 'EInterchangeMeshPayLoadType::NONE',0
+.rdata:000000014BF56818		aEinterchangeme_12 db 'EInterchangeMeshPayLoadType::STATIC',0
+.rdata:000000014BF56840		aEinterchangeme_13 db 'EInterchangeMeshPayLoadType::SKELETAL',0
+.rdata:000000014BF56868		aEinterchangeme_14 db 'EInterchangeMeshPayLoadType::MORPHTARGET',0
+.rdata:000000014BF56898		aEinterchangeme_15 db 'EInterchangeMeshPayLoadType::ANIMATED',0
+.rdata:000000014BF568C0		aEinterchangeme_16 db 'EInterchangeMeshPayLoadType',0
+.rdata:000000014BF568E0		                text "UTF-16LE", 'InterchangeMeshPayLoadKey',0
+.rdata:000000014BF56E70		aInterchangemes_8 db 'InterchangeMeshPayLoadKey',0
+.rdata:000000014BF581C0		                dq offset aGetcustomvaria ; "GetCustomVariantsPayloadKey"
+.rdata:000000014BF581F0		                dq offset aSetcustomvaria ; "SetCustomVariantsPayloadKey"
+.rdata:000000014BF58250		                text "UTF-16LE", 'VariantsPayload',0
+.rdata:000000014BF590A0		                text "UTF-16LE", '__AnimationPayloadUidKey__',0
+.rdata:000000014BF590D8		                text "UTF-16LE", '__AnimationPayloadTypeKey__',0
+.rdata:000000014BF59220		                text "UTF-16LE", 'UInterchangeMeshNode.GetPayLoadKey',0
+.rdata:000000014BF59270		                text "UTF-16LE", 'UInterchangeMeshNode.GetPayLoadTypeKey',0
+.rdata:000000014BF592C0		                text "UTF-16LE", 'UInterchangeAnimationTrackNode.SetPayLoadKey',0
+.rdata:000000014BF59320		                text "UTF-16LE", 'UInterchangeAnimationTrackNode.SetPayLoadTypeKey',0
+.rdata:000000014BF595A0		                text "UTF-16LE", '__SceneNodeAnimationPayloadKeyUidMap__',0
+.rdata:000000014BF595F0		                text "UTF-16LE", '__SceneNodeAnimationPayloadKeyTypeMap__',0
+.rdata:000000014BF59640		                text "UTF-16LE", '__MorphTargetPayloadKeyUidMap__',0
+.rdata:000000014BF59680		                text "UTF-16LE", '__MorphTargetPayloadKeyTypeMap__',0
+.rdata:000000014BF5BCD0		                dq offset aSetpayloadkey ; "SetPayLoadKey"
+.rdata:000000014BF5BF38		aPayloadkey:                            ; DATA XREF: sub_148146750+4B↑o
+.rdata:000000014BF5BF58		aPayloadtypekey:                        ; DATA XREF: sub_1481467E0+4B↑o
+.rdata:000000014BF5C140		                text "UTF-16LE", 'UInterchangeMeshNode.SetPayLoadKey',0
+.rdata:000000014BF5C190		                text "UTF-16LE", 'UInterchangeMeshNode.SetPayLoadTypeKey',0
+.rdata:000000014BF5E7B0		                text "UTF-16LE", '.GetVariantsPayload',0
+.rdata:000000014BF5E7D8		                text "UTF-16LE", '.SetVariantsPayload',0
+.rdata:000000014BF76F80		                                        ; "MorphTargetAnimationPayloadKeyUids"
+.rdata:000000014BF77000		                                        ; "MorphTargetAnimationPayloadKeyUids_Key"
+.rdata:000000014BF77038		                                        ; "MorphTargetAnimationPayloadKeyUids"
+.rdata:000000014BF77070		                                        ; "MorphTargetAnimationPayloadKeyTypes"
+.rdata:000000014BF770B0		                                        ; "MorphTargetAnimationPayloadKeyTypes_Key"
+.rdata:000000014BF770E8		                                        ; "MorphTargetAnimationPayloadKeyTypes"
+.rdata:000000014BF77120		                                        ; "MorphTargetAnimationPayloadKeyUids"
+.rdata:000000014BF77128		                dq offset off_14BF77000 ; "MorphTargetAnimationPayloadKeyUids_Key"
+.rdata:000000014BF77130		                dq offset off_14BF77038 ; "MorphTargetAnimationPayloadKeyUids"
+.rdata:000000014BF77138		                dq offset off_14BF77070 ; "MorphTargetAnimationPayloadKeyTypes"
+.rdata:000000014BF77140		                dq offset off_14BF770B0 ; "MorphTargetAnimationPayloadKeyTypes_Key"
+.rdata:000000014BF77148		                dq offset off_14BF770E8 ; "MorphTargetAnimationPayloadKeyTypes"
+.rdata:000000014BF77150		aMorphtargetani db 'MorphTargetAnimationPayloadKeyUids',0
+.rdata:000000014BF77178		aMorphtargetani_0 db 'MorphTargetAnimationPayloadKeyUids_Key',0
+.rdata:000000014BF771A0		aMorphtargetani_1 db 'MorphTargetAnimationPayloadKeyTypes',0
+.rdata:000000014BF771C8		aMorphtargetani_2 db 'MorphTargetAnimationPayloadKeyTypes_Key',0
+.rdata:000000014BF77240		aSetanimationpa_2 db 'SetAnimationPayloadKeysForMorphTargetNodeUids',0
+.rdata:000000014BF77380		                                        ; "SceneNodeAnimationPayloadKeyUids"
+.rdata:000000014BF773B8		                                        ; "SceneNodeAnimationPayloadKeyUids_Key"
+.rdata:000000014BF773F0		                                        ; "SceneNodeAnimationPayloadKeyUids"
+.rdata:000000014BF77430		                                        ; "SceneNodeAnimationPayloadKeyTypes"
+.rdata:000000014BF77470		                                        ; "SceneNodeAnimationPayloadKeyTypes_Key"
+.rdata:000000014BF774A8		                                        ; "SceneNodeAnimationPayloadKeyTypes"
+.rdata:000000014BF774F8		                                        ; "SceneNodeAnimationPayloadKeyUids"
+.rdata:000000014BF77500		                dq offset off_14BF773B8 ; "SceneNodeAnimationPayloadKeyUids_Key"
+.rdata:000000014BF77508		                dq offset off_14BF773F0 ; "SceneNodeAnimationPayloadKeyUids"
+.rdata:000000014BF77510		                dq offset off_14BF77430 ; "SceneNodeAnimationPayloadKeyTypes"
+.rdata:000000014BF77518		                dq offset off_14BF77470 ; "SceneNodeAnimationPayloadKeyTypes_Key"
+.rdata:000000014BF77520		                dq offset off_14BF774A8 ; "SceneNodeAnimationPayloadKeyTypes"
+.rdata:000000014BF77528		aScenenodeanima_1 db 'SceneNodeAnimationPayloadKeyUids',0
+.rdata:000000014BF77550		aScenenodeanima_2 db 'SceneNodeAnimationPayloadKeyUids_Key',0
+.rdata:000000014BF77578		aScenenodeanima_3 db 'SceneNodeAnimationPayloadKeyTypes',0
+.rdata:000000014BF775A0		aScenenodeanima_4 db 'SceneNodeAnimationPayloadKeyTypes_Key',0
+.rdata:000000014BF775C8		aSetanimationpa_1 db 'SetAnimationPayloadKeysForSceneNodeUids',0
+.rdata:000000014BF7A418		                dq offset aGetmorphtarget_1 ; "GetMorphTargetNodeAnimationPayloadKeys"
+.rdata:000000014BF7A428		                dq offset aGetscenenodean ; "GetSceneNodeAnimationPayloadKeys"
+.rdata:000000014BF7A4A8		                dq offset aSetanimationpa_2 ; "SetAnimationPayloadKeysForMorphTargetNo"...
+.rdata:000000014BF7A4B8		                dq offset aSetanimationpa_1 ; "SetAnimationPayloadKeysForSceneNodeUids"
+.rdata:000000014BF80EC8		off_14BF80EC8   dq offset aPayloadattribu ; DATA XREF: .rdata:off_14BF80FA0↓o
+.rdata:000000014BF80FA0		                                        ; "PayloadAttributeKey"
+.rdata:000000014BF80FD0		aPayloadattribu db 'PayloadAttributeKey',0 ; DATA XREF: .rdata:off_14BF80EC8↑o
+.rdata:000000014BF81140		aAddpayloadkeyb db 'AddPayloadKeyBooleanAttribute',0
+.rdata:000000014BF81280		off_14BF81280   dq offset aPayloadattribu ; DATA XREF: .rdata:off_14BF81350↓o
+.rdata:000000014BF81350		                                        ; "PayloadAttributeKey"
+.rdata:000000014BF81400		aAddpayloadkeyd db 'AddPayloadKeyDoubleAttribute',0
+.rdata:000000014BF81680		off_14BF81680   dq offset aPayloadattribu ; DATA XREF: .rdata:off_14BF81790↓o
+.rdata:000000014BF81790		                                        ; "PayloadAttributeKey"
+.rdata:000000014BF81850		aAddpayloadkeyf db 'AddPayloadKeyFloatAttribute',0
+.rdata:000000014BF81A60		off_14BF81A60   dq offset aPayloadattribu ; DATA XREF: .rdata:off_14BF81B70↓o
+.rdata:000000014BF81B70		                                        ; "PayloadAttributeKey"
+.rdata:000000014BF81BA8		aAddpayloadkeyi db 'AddPayloadKeyInt32Attribute',0
+.rdata:000000014BF81CA8		off_14BF81CA8   dq offset aPayloadattribu ; DATA XREF: .rdata:off_14BF81D60↓o
+.rdata:000000014BF81D60		                                        ; "PayloadAttributeKey"
+.rdata:000000014BF81DF0		aAddpayloadkeys db 'AddPayloadKeyStringAttribute',0
+.rdata:000000014BF83C30		off_14BF83C30   dq offset aPayloadattribu ; DATA XREF: .rdata:off_14BF83D60↓o
+.rdata:000000014BF83D60		                                        ; "PayloadAttributeKey"
+.rdata:000000014BF83F00		aGetpayloadkeyb db 'GetPayloadKeyBooleanAttribute',0
+.rdata:000000014BF83FE0		off_14BF83FE0   dq offset aPayloadattribu ; DATA XREF: .rdata:off_14BF84090↓o
+.rdata:000000014BF84090		                                        ; "PayloadAttributeKey"
+.rdata:000000014BF84278		aGetpayloadkeyd db 'GetPayloadKeyDoubleAttribute',0
+.rdata:000000014BF84360		off_14BF84360   dq offset aPayloadattribu ; DATA XREF: .rdata:off_14BF84410↓o
+.rdata:000000014BF84410		                                        ; "PayloadAttributeKey"
+.rdata:000000014BF84590		aGetpayloadkeyf db 'GetPayloadKeyFloatAttribute',0
+.rdata:000000014BF84678		off_14BF84678   dq offset aPayloadattribu ; DATA XREF: .rdata:off_14BF84750↓o
+.rdata:000000014BF84750		                                        ; "PayloadAttributeKey"
+.rdata:000000014BF848D0		aGetpayloadkeyi db 'GetPayloadKeyInt32Attribute',0
+.rdata:000000014BF84A58		off_14BF84A58   dq offset aPayloadattribu ; DATA XREF: .rdata:off_14BF84B10↓o
+.rdata:000000014BF84B10		                                        ; "PayloadAttributeKey"
+.rdata:000000014BF84CD0		aGetpayloadkeys db 'GetPayloadKeyStringAttribute',0
+.rdata:000000014BF84D90		                                        ; "OutMorphTargetNodeAnimationPayloads"
+.rdata:000000014BF84DD0		                                        ; "OutMorphTargetNodeAnimationPayloads_Key"
+.rdata:000000014BF84E08		                                        ; "OutMorphTargetNodeAnimationPayloads"
+.rdata:000000014BF84E40		                                        ; "OutMorphTargetNodeAnimationPayloads"
+.rdata:000000014BF84E48		                dq offset off_14BF84DD0 ; "OutMorphTargetNodeAnimationPayloads_Key"
+.rdata:000000014BF84E50		                dq offset off_14BF84E08 ; "OutMorphTargetNodeAnimationPayloads"
+.rdata:000000014BF84EC0		aOutmorphtarget_6 db 'OutMorphTargetNodeAnimationPayloads',0
+.rdata:000000014BF84F20		aOutmorphtarget_7 db 'OutMorphTargetNodeAnimationPayloads_Key',0
+.rdata:000000014BF85220		                                        ; "OutSceneNodeAnimationPayloadKeys"
+.rdata:000000014BF85260		                                        ; "OutSceneNodeAnimationPayloadKeys_Key"
+.rdata:000000014BF852E0		                                        ; "OutSceneNodeAnimationPayloadKeys"
+.rdata:000000014BF85370		                                        ; "OutSceneNodeAnimationPayloadKeys"
+.rdata:000000014BF85378		                dq offset off_14BF85260 ; "OutSceneNodeAnimationPayloadKeys_Key"
+.rdata:000000014BF85380		                dq offset off_14BF852E0 ; "OutSceneNodeAnimationPayloadKeys"
+.rdata:000000014BF85538		aOutscenenodean_3 db 'OutSceneNodeAnimationPayloadKeys',0
+.rdata:000000014BF85560		aOutscenenodean_4 db 'OutSceneNodeAnimationPayloadKeys_Key',0
+.rdata:000000014BF89878		                dq offset aAddpayloadkeyb ; "AddPayloadKeyBooleanAttribute"
+.rdata:000000014BF89888		                dq offset aAddpayloadkeyd ; "AddPayloadKeyDoubleAttribute"
+.rdata:000000014BF89898		                dq offset aAddpayloadkeyf ; "AddPayloadKeyFloatAttribute"
+.rdata:000000014BF898A8		                dq offset aAddpayloadkeyi ; "AddPayloadKeyInt32Attribute"
+.rdata:000000014BF898B8		                dq offset aAddpayloadkeys ; "AddPayloadKeyStringAttribute"
+.rdata:000000014BF899C8		                dq offset aGetpayloadkeyb ; "GetPayloadKeyBooleanAttribute"
+.rdata:000000014BF899D8		                dq offset aGetpayloadkeyd ; "GetPayloadKeyDoubleAttribute"
+.rdata:000000014BF899E8		                dq offset aGetpayloadkeyf ; "GetPayloadKeyFloatAttribute"
+.rdata:000000014BF899F8		                dq offset aGetpayloadkeyi ; "GetPayloadKeyInt32Attribute"
+.rdata:000000014BF89A08		                dq offset aGetpayloadkeys ; "GetPayloadKeyStringAttribute"
+.rdata:000000014BF8A1B0		aPayloadPrefix:                         ; DATA XREF: sub_1481A3830+9C↑o
+.rdata:000000014BF8E1C0		                dq offset aGetmorphtarget_1 ; "GetMorphTargetNodeAnimationPayloadKeys"
+.rdata:000000014BF8E1D0		                dq offset aGetscenenodean ; "GetSceneNodeAnimationPayloadKeys"
+.rdata:000000014BF8E250		                dq offset aSetanimationpa_2 ; "SetAnimationPayloadKeysForMorphTargetNo"...
+.rdata:000000014BF8E260		                dq offset aSetanimationpa_1 ; "SetAnimationPayloadKeysForSceneNodeUids"
+.rdata:000000014BF8E800		                text "UTF-16LE", '__MorphTargetNodePayloadKeyUidMap__',0
+.rdata:000000014BF8E850		                text "UTF-16LE", '__MorphTargetNodePayloadKeyTypeMap__',0
+.rdata:000000014BF934A0		                dq offset aAddpayloadkeyb ; "AddPayloadKeyBooleanAttribute"
+.rdata:000000014BF934B0		                dq offset aAddpayloadkeyd ; "AddPayloadKeyDoubleAttribute"
+.rdata:000000014BF934C0		                dq offset aAddpayloadkeyf ; "AddPayloadKeyFloatAttribute"
+.rdata:000000014BF934D0		                dq offset aAddpayloadkeyi ; "AddPayloadKeyInt32Attribute"
+.rdata:000000014BF934E0		                dq offset aAddpayloadkeys ; "AddPayloadKeyStringAttribute"
+.rdata:000000014BF935F0		                dq offset aGetpayloadkeyb ; "GetPayloadKeyBooleanAttribute"
+.rdata:000000014BF93600		                dq offset aGetpayloadkeyd ; "GetPayloadKeyDoubleAttribute"
+.rdata:000000014BF93610		                dq offset aGetpayloadkeyf ; "GetPayloadKeyFloatAttribute"
+.rdata:000000014BF93620		                dq offset aGetpayloadkeyi ; "GetPayloadKeyInt32Attribute"
+.rdata:000000014BF93630		                dq offset aGetpayloadkeys ; "GetPayloadKeyStringAttribute"
+.rdata:000000014BFA2750		aPayloadkey_0:                          ; DATA XREF: sub_1481F2080+C1↑o
+.rdata:000000014BFA46A0		aPayloadkeyUniq:                        ; DATA XREF: sub_1481F7A10:loc_1481F7AC5↑o
+.rdata:000000014BFA46C8		aPayloadkeyType:                        ; DATA XREF: sub_1481F7A10+F3↑o
+.rdata:000000014BFA5670		                dq offset aUinterchangean_7 ; "UInterchangeAnimationPayloadInterface"
+.rdata:000000014BFA5690		                text "UTF-16LE", 'UInterchangeAnimationPayloadInterface',0
+.rdata:000000014BFA5908		                dq offset aUinterchangeme_7 ; "UInterchangeMeshPayloadInterface"
+.rdata:000000014BFA5920		                text "UTF-16LE", 'UInterchangeMeshPayloadInterface',0
+.rdata:000000014BFA5F80		                dq offset aUinterchangebl_0 ; "UInterchangeBlockedTexturePayloadInterf"...
+.rdata:000000014BFA5FA0		                text "UTF-16LE", 'UInterchangeBlockedTexturePayloadInterface',0
+.rdata:000000014BFA61A0		                dq offset aUinterchangesl ; "UInterchangeSlicedTexturePayloadInterfa"...
+.rdata:000000014BFA61C0		                text "UTF-16LE", 'UInterchangeSlicedTexturePayloadInterface',0
+.rdata:000000014BFA6280		                dq offset aUinterchangete_23 ; "UInterchangeTextureLightProfilePayloadI"...
+.rdata:000000014BFA62A0		                text "UTF-16LE", 'UInterchangeTextureLightProfilePayloadInterface',0
+.rdata:000000014BFA6380		                dq offset aUinterchangevo_5 ; "UInterchangeVolumePayloadInterface"
+.rdata:000000014BFA63A0		                text "UTF-16LE", 'UInterchangeVolumePayloadInterface',0
+.rdata:000000014BFA6440		                dq offset aUinterchangete_24 ; "UInterchangeTexturePayloadInterface"
+.rdata:000000014BFA6460		                text "UTF-16LE", 'UInterchangeTexturePayloadInterface',0
+.rdata:000000014BFA6510		                dq offset aUinterchangeva_0 ; "UInterchangeVariantSetPayloadInterface"
+.rdata:000000014BFA6530		                text "UTF-16LE", 'UInterchangeVariantSetPayloadInterface',0
+.rdata:000000014BFA65A0		                text "UTF-16LE", 'InterchangeAnimationPayloadInterface',0
+.rdata:000000014BFA6D20		                text "UTF-16LE", 'InterchangeBlockedTexturePayloadInterface',0
+.rdata:000000014BFA8320		                text "UTF-16LE", 'InterchangeMeshPayloadInterface',0
+.rdata:000000014BFA8BE0		                text "UTF-16LE", 'InterchangeSlicedTexturePayloadInterface',0
+.rdata:000000014BFA8C40		                text "UTF-16LE", 'InterchangeTextureLightProfilePayloadInterface',0
+.rdata:000000014BFA8CE0		                text "UTF-16LE", 'IInterchangeTexturePayloadInterface::GetTexturePayl'
+.rdata:000000014BFA8D60		                db '\Public\Texture\InterchangeTexturePayloadInterface.h',0
+.rdata:000000014BFA8DE0		                text "UTF-16LE", 'InterchangeTexturePayloadInterface',0
+.rdata:000000014BFA8E30		                text "UTF-16LE", 'InterchangeVariantSetPayloadInterface',0
+.rdata:000000014BFA8E80		                text "UTF-16LE", 'InterchangeVolumePayloadInterface',0
+.rdata:000000014BFA9C00		aPayload_3:                             ; DATA XREF: sub_148203A10+C1↑o
+.rdata:000000014BFAA5A8		                                        ; "Expected mesh payload file does not exi"...
+.rdata:000000014BFAA5D0		                text "UTF-16LE", 'Expected mesh payload file does not exist for Paylo'
+.rdata:000000014BFAA6F0		aGetmeshpayload:                        ; DATA XREF: sub_1481FF310:loc_1481FF6B7↑o
+.rdata:000000014BFAA780		                text "UTF-16LE", ' "GetMorphTargetAnimationPayloadData" function.',0
+.rdata:000000014BFB2F00		                text "UTF-16LE", 'IInterchangeTextureLightProfilePayloadInterface::Ge'
+.rdata:000000014BFB2FA0		                db '\Public\Texture\InterchangeTextureLightProfilePayloadInterface.h',0
+.rdata:000000014BFB7B40		                text "UTF-16LE", 'ot implement IInterchangeMeshPayloadInterface.',0
+.rdata:000000014BFB7E68		                                        ; "Empty mesh reference payload when impor"...
+.rdata:000000014BFB7E90		                text "UTF-16LE", 'Empty mesh reference payload when importing Geometr'
+.rdata:000000014BFB7F68		                                        ; "Empty mesh reference payload when impor"...
+.rdata:000000014BFBA460		                text "UTF-16LE", 'implement IInterchangeMeshPayloadInterface.',0
+.rdata:000000014BFBA6D0		                                        ; "Empty LOD mesh reference payload when i"...
+.rdata:000000014BFBA6F0		                text "UTF-16LE", 'Empty LOD mesh reference payload when importing Sta'
+.rdata:000000014BFBAA10		                                        ; "LOD %d do not have any valid payload to"...
+.rdata:000000014BFBAA30		                text "UTF-16LE", 'LOD %d do not have any valid payload to create a me'
+.rdata:000000014BFBAAE8		                                        ; "Invalid static mesh payload key for Sta"...
+.rdata:000000014BFBAB10		                text "UTF-16LE", 'Invalid static mesh payload key for StaticMesh asse'
+.rdata:000000014BFBEB90		                text "UTF-16LE", 'IInterchangeSlicedTexturePayloadInterface::GetSlice'
+.rdata:000000014BFBEC20		                db '\Public\Texture\InterchangeSlicedTexturePayloadInterface.h',0
+.rdata:000000014BFC19A0		                text "UTF-16LE", 'Unable to retrieve the payload from the source file'
+.rdata:000000014BFC1A10		aInvalidpayload:                        ; DATA XREF: sub_14825A4A0+BA7↑o
+.rdata:000000014BFC1EC0		                text "UTF-16LE", 'TextureFactory_InvalidPayloadKey',0
+.rdata:000000014BFC2490		                text "UTF-16LE", 'TextureFactory_Async_InvalidPayloadKey',0
+.rdata:000000014BFC24E0		                text "UTF-16LE", 'dn',27h,'t retrieve a payload.',0
+.rdata:000000014BFC2580		                text "UTF-16LE", 'TextureFactory_Async_CannotRetrievePayload',0
+.rdata:000000014BFC3B80		                text "UTF-16LE", 'SparseVolumeTextureFactory_Async_TranslatorPayloadI'
+.rdata:000000014BFC3D80		                text "UTF-16LE", 'has a valid payload key.',0
+.rdata:000000014BFC3E20		                text "UTF-16LE", 'SparseVolumeTextureFactory_InvalidPayloadKey',0
+.rdata:000000014BFC3E80		                text "UTF-16LE", ' couldn',27h,'t retrieve any valid payload from the'
+.rdata:000000014BFEC950		aMfMtAacPayload:                        ; DATA XREF: sub_1482FF680+463↑o
+.rdata:000000014BFF44C8		off_14BFF44C8   dq offset aPayloadSizeWri ; DATA XREF: sub_1483203A0+18D↑o
+.rdata:000000014BFF44F0		aPayloadSizeWri:                        ; DATA XREF: .rdata:off_14BFF44C8↑o
+.rdata:000000014BFF45C0		off_14BFF45C0   dq offset aPayloadWriteFa ; DATA XREF: sub_1483203A0+363↑o
+.rdata:000000014BFF45E0		aPayloadWriteFa:                        ; DATA XREF: .rdata:off_14BFF45C0↑o
+.rdata:000000014BFF48E0		off_14BFF48E0   dq offset aPayloadWriteFa ; DATA XREF: sub_1483203A0+219↑o
+.rdata:000000014C162640		aHeaderPPayload db 'Header = %p, Payload = %p...%p, Page States: ',0
+.rdata:000000014C16323B		aPasSegregatedD_0 db 'pas_segregated_directory_data/sharing_payload',0
+.rdata:000000014C45FB48		aNghttp2Unexpec db 'nghttp2 unexpectedly failed on pack_settings_payload',0
+.rdata:000000014C467EF8		aWebsocketDecod_0 db 'websocket, decoded %s [%s%s payload=%lld/%lld]',0
+.rdata:000000014C467FF0		aWebsocketPasse db 'websocket, passed %zd bytes payload, %lld remain',0
+.rdata:000000014C468048		aWsEncSSSSPaylo db 'WS-ENC: %s [%s%s%s payload=%lld/%lld]',0
+.rdata:000000014C468070		aWsStartingNewF db 'WS: starting new frame with negative payload length %lld',0
+.rdata:000000014C468200		aZuBytesWebsock db '%zu bytes websocket payload',0
+.rdata:000000014C4684A0		aEagainFlushing db 'EAGAIN flushing sendbuf, payload_encoded: %zu/%zu',0
+.rdata:000000014C4782D0		                db 'axEncryptedPayloadSend',0
+.rdata:000000014C479C68		aAssertionFaile_273 db 'Assertion Failed: pAckEnd <= helper.m_pPayloadEnd',0
+.rdata:000000014C479DC8		aAssertionFaile_277 db 'Assertion Failed: pPayloadPtr <= helper.m_pPayloadEnd',0
+.rdata:000000014C479E00		aPayloadExceede db 'Payload exceeded max size of %d',0Ah,0
+.rdata:000000014C479E90		aAssertionFaile_287 db 'Assertion Failed: pPayloadPtr+pSeg->m_cbSegSize <= helper.m_pPayl'
+.rdata:000000014C47F868		aAssertionFaile_507 db 'Assertion Failed: m_cbMaxEncryptedPayload >= 0',0
+.rdata:000000014C490BF0		aAssertionFaile_589 db 'assertion failed: st->DecControl.payloadSize_ms == 0 || st->DecCo'
+.rdata:000000014C4F6540		aCmdPayloadCmdP db 'cmd->payload && cmd->payload_size',0
+.rdata:000000014C4F6568		aMongocCmdAppen db '_mongoc_cmd_append_payload_as_array',0
+.rdata:000000014C4F7040		aPayload_2      db 'payload',0          ; DATA XREF: sub_1492643E0+24A↑o
+.rdata:000000014C4FB338		aUnknownPayload db 'Unknown Payload Type: %d',0
+.rdata:000000014C4FC418		aServerReplyDid_0 db 'server reply did not contain binary payload',0
+.rdata:000000014C4FC480		aServerPayloadI db 'server payload is invalid BSON',0
+.rdata:000000014C4FC910		aServerPayloadD_0 db 'server payload did not contain string STS FQDN',0
+.rdata:000000014C4FC940		aServerPayloadD db 'server payload did not contain nonce',0
+.rdata:000000014C4FCB80		aFailedToAppend_0 db 'Failed to append payload',0 ; DATA XREF: sub_149281AC0+4F8↑o
+.rdata:000000014C4FE3C0		aMalformedBsonP db 'Malformed BSON payload from server',0
+.rdata:000000014C5F01D8		aSettingsAckAnd db 'SETTINGS: ACK and payload != 0',0
+.rdata:000000014C5F4210		; const wchar_t aPayloadlen4
+.rdata:000000014C606800		aGrpcCallErrorP db 'GRPC_CALL_ERROR_PAYLOAD_TYPE_MISMATCH',0
+.rdata:000000014C616840		aNumberOfStream_0 db 'Number of streams whose payload was written per TCP write',0
+.rdata:000000014C6170A0		aSendMessagePay_0 db 'send_message_payload_ != nullptr',0
+.rdata:000000014C6170E8		aSendMessagePay db 'send_message_payload_ == nullptr',0
+.rdata:000000014C626430		aOpPayloadSendI db '!op->payload->send_initial_metadata.send_initial_metadata ->get(g'
+.rdata:000000014C6264A0		aOpPayloadSendT db '!op->payload->send_trailing_metadata.send_trailing_metadata ->get'
+.rdata:000000014C628EC0		aBatchPayloadRe db 'batch->payload->recv_initial_metadata.recv_flags == nullptr',0
+.rdata:000000014C6390E8		; const char aGrpcMaxPayload[]
+.rdata:000000014C6399F8		aOpPayloadRecvI db 'op->payload->recv_initial_metadata.recv_flags != nullptr',0
+.data:000000014D20CF48		                dq offset aChaosvdaabbtre_4 ; "ChaosVDAABBTreePayloadBoundsElement"
+.data:000000014D213548		                dq offset aUniversalobjec_5 ; "UniversalObjectLocatorEmptyPayload"
+.data:000000014D237408		                dq offset aMoviescenedyna_4 ; "MovieSceneDynamicBindingPayloadVariable"
+.data:000000014D23E6B0		                dq offset aMoviesceneeven_15 ; "MovieSceneEventPayloadVariable"
+.data:000000014D23F720		                dq offset aEventpayload_0 ; "EventPayload"
+.data:000000014D2516C8		                dq offset aEmptypayload_0 ; "EmptyPayload"
+.data:000000014D251700		                dq offset aBracketpayload_0 ; "BracketPayload"
+.data:000000014D251738		                dq offset aAnimationtrack_8 ; "AnimationTrackPayload"
+.data:000000014D251770		                dq offset aAnimationtrack_9 ; "AnimationTrackAddedPayload"
+.data:000000014D2517A8		                dq offset aSequencelength_1 ; "SequenceLengthChangedPayload"
+.data:000000014D2517E0		                dq offset aFrameratechang_0 ; "FrameRateChangedPayload"
+.data:000000014D251818		                dq offset aCurvepayload_0 ; "CurvePayload"
+.data:000000014D251850		                dq offset aCurvescaledpay_0 ; "CurveScaledPayload"
+.data:000000014D251888		                dq offset aCurverenamedpa_0 ; "CurveRenamedPayload"
+.data:000000014D2518C0		                dq offset aCurveflagschan_0 ; "CurveFlagsChangedPayload"
+.data:000000014D2518F8		                dq offset aAttributepaylo_0 ; "AttributePayload"
+.data:000000014D251930		                dq offset aAnimdatamodeln_0 ; "AnimDataModelNotifPayload"
+.data:000000014D254140		                dq offset aExternalspatia_0 ; "ExternalSpatialAccelerationPayload"
+.data:000000014D268E40		                dq offset aBranchingpoint_4 ; "BranchingPointNotifyPayload"
+.data:000000014D2AB880		                dq offset aNiagaracollisi_5 ; "NiagaraCollisionEventPayload"
+.data:000000014D318CC8		                dq offset aSendstoragepay_0 ; "SendStoragePayload"
+.data:000000014D31E8D8		                dq offset aMouseoveruidat_1 ; "MouseoverUIDataPayload"
+.data:000000014D322108		                dq offset aNodelevelingme_0 ; "NodeLevelingMessagePayload"
+.data:000000014D34A8D8		                dq offset aAuthrecievesto_0 ; "AuthRecieveStoragePayload"
+.data:000000014D34C768		                dq offset aClientreceivea_3 ; "ClientReceiveActionbarSlotPayload"
+.data:000000014D34C978		                dq offset aClientreceivel_2 ; "ClientReceiveLootStoragePayload"
+.data:000000014D34CBE8		                dq offset aClientreceives_8 ; "ClientReceiveStoragePayload"
+.data:000000014D3519E8		                dq offset aInterserverrec_13 ; "InterServerReceiveLootStoragePayload"
+.data:000000014D351A48		                dq offset aInterserverrec_15 ; "InterServerReceiveStoragePayload"
+.data:000000014D351B38		                dq offset aInterserverret_0 ; "InterServerRetrieveStoragePayload"
+.data:000000014D35ABF8		                dq offset aServerretrieve_0 ; "ServerRetrieveStoragePayload"
+.data:000000014D375948		                dq offset aClientreceiveg_6 ; "ClientReceiveGuildStorageItemPayload"
+.data:000000014D375A68		                dq offset aClientreceives_8 ; "ClientReceiveStoragePayload"
+.data:000000014D4E6B00		                dq offset aEinterchangean_8 ; "EInterchangeAnimationPayLoadType"
+.data:000000014D4E6B08		                dq offset aEinterchangean_8 ; "EInterchangeAnimationPayLoadType"
+.data:000000014D4E6B10		                dq offset off_14BF38020 ; "EInterchangeAnimationPayLoadType::NONE"
+.data:000000014D4E6B38		                dq offset aInterchangeani_7 ; "InterchangeAnimationPayLoadKey"
+.data:000000014D4E6EF8		                dq offset aGetcustomanima_7 ; "GetCustomAnimationPayloadKey"
+.data:000000014D4E6FB8		                dq offset aSetcustomanima_1 ; "SetCustomAnimationPayloadKey"
+.data:000000014D4E71C8		                dq offset aGetmorphtarget_1 ; "GetMorphTargetNodeAnimationPayloadKeys"
+.data:000000014D4E71F8		                dq offset aGetscenenodean ; "GetSceneNodeAnimationPayloadKeys"
+.data:000000014D4E7258		                dq offset aSetanimationpa ; "SetAnimationPayloadKeyForMorphTargetNod"...
+.data:000000014D4E7288		                dq offset aSetanimationpa_0 ; "SetAnimationPayloadKeyForSceneNodeUid"
+.data:000000014D4E8188		                dq offset aSetpayloadkey ; "SetPayLoadKey"
+.data:000000014D4E82C8		                dq offset aGetcustomvaria ; "GetCustomVariantsPayloadKey"
+.data:000000014D4E8358		                dq offset aSetcustomvaria ; "SetCustomVariantsPayloadKey"
+.data:000000014D4E8B98		                dq offset aEinterchangeme_16 ; "EInterchangeMeshPayLoadType"
+.data:000000014D4E8BA0		                dq offset aEinterchangeme_16 ; "EInterchangeMeshPayLoadType"
+.data:000000014D4E8BA8		                dq offset off_14BF567A0 ; "EInterchangeMeshPayLoadType::NONE"
+.data:000000014D4E8BD0		                dq offset aInterchangemes_8 ; "InterchangeMeshPayLoadKey"
+.data:000000014D4E93B0		                dq offset aSetpayloadkey ; "SetPayLoadKey"
+.data:000000014D4ECF68		                dq offset aGetmorphtarget_1 ; "GetMorphTargetNodeAnimationPayloadKeys"
+.data:000000014D4ECF98		                dq offset aGetscenenodean ; "GetSceneNodeAnimationPayloadKeys"
+.data:000000014D4ED118		                dq offset aSetanimationpa_2 ; "SetAnimationPayloadKeysForMorphTargetNo"...
+.data:000000014D4ED148		                dq offset aSetanimationpa_1 ; "SetAnimationPayloadKeysForSceneNodeUids"
+.data:000000014D4EEB28		                dq offset aAddpayloadkeyb ; "AddPayloadKeyBooleanAttribute"
+.data:000000014D4EEB58		                dq offset aAddpayloadkeyd ; "AddPayloadKeyDoubleAttribute"
+.data:000000014D4EEB88		                dq offset aAddpayloadkeyf ; "AddPayloadKeyFloatAttribute"
+.data:000000014D4EEBB8		                dq offset aAddpayloadkeyi ; "AddPayloadKeyInt32Attribute"
+.data:000000014D4EEBE8		                dq offset aAddpayloadkeys ; "AddPayloadKeyStringAttribute"
+.data:000000014D4EEF18		                dq offset aGetpayloadkeyb ; "GetPayloadKeyBooleanAttribute"
+.data:000000014D4EEF48		                dq offset aGetpayloadkeyd ; "GetPayloadKeyDoubleAttribute"
+.data:000000014D4EEF78		                dq offset aGetpayloadkeyf ; "GetPayloadKeyFloatAttribute"
+.data:000000014D4EEFA8		                dq offset aGetpayloadkeyi ; "GetPayloadKeyInt32Attribute"
+.data:000000014D4EEFD8		                dq offset aGetpayloadkeys ; "GetPayloadKeyStringAttribute"
+.data:000000014D54D658		                dq offset aNumberOfStream_0 ; "Number of streams whose payload was wri"...

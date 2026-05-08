@@ -1,0 +1,12 @@
+Address	Function	Instruction
+.text:0000000140FA5066	sub_140FA5060	                lea     rdx, aServeracknowle_1 ; "ServerAcknowledgePossession"
+.text:0000000144433783	sub_144433720	                lea     rdx, off_14AA56A50 ; "ServerAcknowledgePossession_Implementat"...
+.text:0000000144448A1D	sub_1444489A0	                lea     rcx, aServeracknowle ; "ServerAcknowledgePossession_Validate"
+.rdata:000000014AA42318		                dq offset aServeracknowle_2 ; "ServerAcknowledgePossession"
+.rdata:000000014AA4B0A0		                text "UTF-16LE", 'ServerAcknowledgePossession',0
+.rdata:000000014AA4B178		aServeracknowle_2 db 'ServerAcknowledgePossession',0
+.rdata:000000014AA551C0		                text "UTF-16LE", 'ServerAcknowledgePossession_Validate',0
+.rdata:000000014AA55E80		                dq offset aServeracknowle_2 ; "ServerAcknowledgePossession"
+.rdata:000000014AA56A50		                                        ; "ServerAcknowledgePossession_Implementat"...
+.rdata:000000014AA56A70		                text "UTF-16LE", 'ServerAcknowledgePossession_Implementation %s',0
+.data:000000014D29B358		                dq offset aServeracknowle_2 ; "ServerAcknowledgePossession"

@@ -1,0 +1,333 @@
+__int64 __fastcall sub_14427E120(__int64 a1, __int64 a2, __int64 a3)
+{
+  __int64 result; // rax
+  __int64 v6; // rcx
+  int v7; // r12d
+  __int64 v8; // r8
+  __int64 v9; // r9
+  RTL_SRWLOCK *v10; // rbx
+  __int64 v11; // r8
+  __int64 v12; // rdx
+  int v13; // eax
+  __int64 v14; // rax
+  __int64 v15; // rbx
+  bool v16; // zf
+  __int64 v17; // r8
+  __int64 v18; // rcx
+  __int64 v19; // r9
+  RTL_SRWLOCK *v20; // r15
+  __int64 v21; // rbx
+  const wchar_t *v22; // rdx
+  __int64 v23; // rcx
+  unsigned int v24; // eax
+  int v25; // eax
+  __int64 v26; // rbx
+  __int64 v27; // rax
+  volatile signed __int32 *v28; // rbx
+  __int64 v29; // rax
+  __int64 v30; // rbx
+  __int64 v31; // rax
+  __int64 v32; // r8
+  _QWORD *v33; // rsi
+  _DWORD *v34; // r14
+  int v35; // r8d
+  unsigned int v36; // ebx
+  int v37; // eax
+  __int64 v38; // r8
+  volatile signed __int32 *v39; // rbx
+  int v40; // [rsp+30h] [rbp-79h] BYREF
+  __int64 v41; // [rsp+38h] [rbp-71h] BYREF
+  const wchar_t *v42; // [rsp+40h] [rbp-69h] BYREF
+  __int64 v43; // [rsp+48h] [rbp-61h]
+  _QWORD v44[2]; // [rsp+50h] [rbp-59h] BYREF
+  __int64 v45; // [rsp+60h] [rbp-49h]
+  __int64 v46; // [rsp+68h] [rbp-41h]
+  int v47; // [rsp+70h] [rbp-39h]
+  __int64 v48; // [rsp+78h] [rbp-31h] BYREF
+  volatile signed __int32 *v49; // [rsp+80h] [rbp-29h]
+  char v50[4]; // [rsp+88h] [rbp-21h] BYREF
+  char v51[4]; // [rsp+8Ch] [rbp-1Dh] BYREF
+  _QWORD v52[2]; // [rsp+90h] [rbp-19h] BYREF
+  _QWORD v53[3]; // [rsp+A0h] [rbp-9h] BYREF
+  int v54; // [rsp+B8h] [rbp+Fh]
+  int v55; // [rsp+120h] [rbp+77h] BYREF
+  int v56; // [rsp+128h] [rbp+7Fh] BYREF
+
+  if ( (*(_BYTE *)(*(_QWORD *)(a1 + 344) + 240LL) & 1) == 0 )
+  {
+    if ( (unsigned __int8)byte_14D5E1C40 >= 2u )
+    {
+      sub_141421C70(&byte_14D5E1C40, &off_14A9E8EA8, a3);
+      return sub_1414E84D0(a2);
+    }
+    return sub_1414E84D0(a2);
+  }
+  v56 = 0;
+  v6 = *(_QWORD *)(a2 + 8);
+  if ( (unsigned __int64)(*(_QWORD *)v6 + 4LL) > *(_QWORD *)(v6 + 8) )
+  {
+    if ( (*(_BYTE *)(a2 + 42) & 1) != 0 )
+      sub_1414E72C0(a2, &v56);
+    else
+      (*(void (__fastcall **)(__int64, int *, __int64))(*(_QWORD *)a2 + 384LL))(a2, &v56, 4);
+  }
+  else
+  {
+    v56 = **(_DWORD **)v6;
+    *(_QWORD *)v6 += 4LL;
+  }
+  result = (unsigned int)v56;
+  if ( v56 > (unsigned int)dword_14D294DA4 )
+  {
+    if ( (unsigned __int8)byte_14D5E1C40 >= 2u )
+      sub_141421C70(&byte_14D5E1C40, &off_14A9E8F60, (unsigned int)v56);
+    return sub_1414E84D0(a2);
+  }
+  v7 = 0;
+  if ( v56 <= 0 )
+    return result;
+  while ( 1 )
+  {
+    result = (*(__int64 (__fastcall **)(__int64, int *))(*(_QWORD *)a2 + 408LL))(a2, &v40);
+    if ( (*(_BYTE *)(a2 + 41) & 2) != 0 )
+      break;
+    v55 = 0;
+    v41 = 0;
+    v9 = *(_QWORD *)(a2 + 168);
+    if ( v9 >= *(_QWORD *)(a2 + 160) )
+    {
+      sub_1414F6310(a2, 1);
+LABEL_17:
+      v10 = *(RTL_SRWLOCK **)(a1 + 824);
+      AcquireSRWLockShared(v10 + 1);
+      v11 = *(_QWORD *)(a1 + 824);
+      if ( *(_DWORD *)(v11 + 624) == *(_DWORD *)(v11 + 668) )
+        goto LABEL_23;
+      v12 = v11 + 672;
+      if ( *(_QWORD *)(v11 + 680) )
+        v12 = *(_QWORD *)(v11 + 680);
+      v13 = *(_DWORD *)(v12 + 4LL * (v40 & (unsigned int)(*(_DWORD *)(v11 + 688) - 1)));
+      if ( v13 == -1 )
+      {
+LABEL_23:
+        v14 = 0;
+      }
+      else
+      {
+        while ( 1 )
+        {
+          v14 = *(_QWORD *)(v11 + 616) + 24LL * v13;
+          if ( *(_DWORD *)v14 == v40 )
+            break;
+          v13 = *(_DWORD *)(v14 + 16);
+          if ( v13 == -1 )
+            goto LABEL_23;
+        }
+      }
+      v41 = *(_QWORD *)(v14 + 8);
+      ReleaseSRWLockShared(v10 + 1);
+      goto LABEL_25;
+    }
+    v16 = (*(_BYTE *)((int)(v9 >> 3) + *(_QWORD *)(a2 + 144)) & (unsigned __int8)(1 << (*(_BYTE *)(a2 + 168) & 7))) == 0;
+    *(_QWORD *)(a2 + 168) = v9 + 1;
+    if ( v16 )
+      goto LABEL_17;
+    v42 = nullptr;
+    v43 = 0;
+    result = sub_141340770(a2, &v42);
+    if ( (*(_BYTE *)(a2 + 41) & 2) != 0 )
+    {
+      if ( (unsigned __int8)byte_14D5E1C40 >= 2u )
+        result = sub_141421C70(&byte_14D5E1C40, &off_14A9E9140, v17);
+      goto LABEL_79;
+    }
+    v18 = *(_QWORD *)(a2 + 8);
+    if ( (unsigned __int64)(*(_QWORD *)v18 + 4LL) > *(_QWORD *)(v18 + 8) )
+    {
+      if ( (*(_BYTE *)(a2 + 42) & 1) != 0 )
+        sub_1414E72C0(a2, &v55);
+      else
+        (*(void (__fastcall **)(__int64, int *, __int64))(*(_QWORD *)a2 + 384LL))(a2, &v55, 4);
+    }
+    else
+    {
+      v55 = **(_DWORD **)v18;
+      *(_QWORD *)v18 += 4LL;
+    }
+    v19 = (unsigned int)dword_14D294DA8;
+    if ( v55 > dword_14D294DA8 )
+    {
+      if ( (unsigned __int8)byte_14D5E1C40 >= 2u )
+        sub_141421C70(&byte_14D5E1C40, &off_14A9E9208, (unsigned int)v55);
+      result = sub_1414E84D0(a2);
+LABEL_79:
+      if ( v42 )
+        return sub_1413B0B20(v42);
+      return result;
+    }
+    LOBYTE(v19) = 1;
+    (*(void (__fastcall **)(ULONG_PTR, _QWORD, const wchar_t **, __int64))(*(_QWORD *)qword_14D86F4C8 + 1304LL))(
+      qword_14D86F4C8,
+      *(_QWORD *)(a1 + 344),
+      &v42,
+      v19);
+    v20 = (RTL_SRWLOCK *)(*(_QWORD *)(a1 + 824) + 8LL);
+    v53[2] = v20;
+    v54 = 1;
+    AcquireSRWLockExclusive(v20);
+    v21 = *(_QWORD *)(a1 + 824);
+    if ( (_DWORD)v43 )
+    {
+      v22 = v42;
+      v23 = (unsigned int)(v43 - 1);
+    }
+    else
+    {
+      v22 = &chText;
+      v23 = 0;
+    }
+    v24 = sub_14133DF60(v23, v22);
+    v25 = sub_141398FD0(v21 + 456, v24, &v42);
+    if ( v25 == -1 || (v26 = *(_QWORD *)(v21 + 456) + 40LL * v25) == 0 )
+    {
+      v27 = 0;
+      v28 = nullptr;
+    }
+    else
+    {
+      v27 = *(_QWORD *)(v26 + 16);
+      v28 = *(volatile signed __int32 **)(v26 + 24);
+      if ( v28 )
+        _InterlockedIncrement(v28 + 2);
+    }
+    v41 = v27;
+    if ( v28 )
+    {
+      if ( _InterlockedExchangeAdd(v28 + 2, 0xFFFFFFFF) == 1 )
+      {
+        (**(void (__fastcall ***)(volatile signed __int32 *))v28)(v28);
+        if ( _InterlockedExchangeAdd(v28 + 3, 0xFFFFFFFF) == 1 )
+          (*(void (__fastcall **)(volatile signed __int32 *, __int64))(*(_QWORD *)v28 + 8LL))(v28, 1);
+      }
+    }
+    if ( !v41 )
+    {
+      v29 = sub_146DFA830(56);
+      v30 = v29;
+      if ( v29 )
+      {
+        *(_QWORD *)v29 = 0;
+        *(_QWORD *)(v29 + 8) = 0;
+        *(_DWORD *)(v29 + 16) = 0;
+        *(_QWORD *)(v29 + 24) = 0;
+        *(_QWORD *)(v29 + 32) = 0;
+        *(_BYTE *)(v29 + 40) = 1;
+        InitializeSRWLock((PSRWLOCK)(v29 + 48));
+      }
+      else
+      {
+        v30 = 0;
+      }
+      v48 = v30;
+      v31 = sub_146DFA830(24);
+      if ( v31 )
+      {
+        *(_DWORD *)(v31 + 8) = 1;
+        *(_DWORD *)(v31 + 12) = 1;
+        *(_QWORD *)v31 = off_14A5BC578;
+        *(_QWORD *)(v31 + 16) = v30;
+      }
+      else
+      {
+        v31 = 0;
+      }
+      v49 = (volatile signed __int32 *)v31;
+      v41 = v48;
+      v32 = (unsigned int)(v43 - 1);
+      if ( !(_DWORD)v43 )
+        v32 = 0;
+      sub_141344310(v48, v42, v32);
+      *(_DWORD *)(v41 + 16) = v40;
+      v33 = (_QWORD *)(v41 + 24);
+      v34 = (_DWORD *)(v41 + 32);
+      v35 = *(_DWORD *)(v41 + 32);
+      if ( v55 <= v35 )
+      {
+        if ( v55 < 0 )
+        {
+          sub_141355830((unsigned int)v55);
+          JUMPOUT(0x14427E80CLL);
+        }
+        if ( v55 < v35 )
+        {
+          v38 = (unsigned int)(v35 - v55);
+          if ( (_DWORD)v38 )
+          {
+            sub_1439F7C00(v41 + 24, (unsigned int)v55, v38);
+            sub_14131F250(40, 8, (_DWORD)v33, *v34, (__int64)v33 + 12);
+          }
+        }
+      }
+      else
+      {
+        v36 = v55 - v35;
+        v37 = sub_14131EF30(40, 8, v55 - v35, (int)v41 + 24, v41 + 32, v41 + 36);
+        sub_1439EB9B0(*v33 + 40LL * v37, v36);
+      }
+      v52[0] = &v42;
+      v52[1] = &v48;
+      sub_141D588D0(*(_QWORD *)(a1 + 824) + 456LL, v50, v52, 0);
+      v39 = v49;
+      if ( v49 )
+      {
+        if ( _InterlockedExchangeAdd(v49 + 2, 0xFFFFFFFF) == 1 )
+        {
+          (**(void (__fastcall ***)(volatile signed __int32 *))v39)(v39);
+          if ( _InterlockedExchangeAdd(v39 + 3, 0xFFFFFFFF) == 1 )
+            (*(void (__fastcall **)(volatile signed __int32 *, __int64))(*(_QWORD *)v39 + 8LL))(v39, 1);
+        }
+      }
+    }
+    v53[0] = &v42;
+    v53[1] = &v40;
+    sub_141C16640(*(_QWORD *)(a1 + 824) + 536LL, v51, v53, 0);
+    sub_141619E60(*(_QWORD *)(a1 + 824) + 616LL, &v40, &v41);
+    ReleaseSRWLockExclusive(v20);
+    if ( v42 )
+      sub_1413B0B20(v42);
+LABEL_25:
+    v44[0] = 0;
+    v44[1] = 0;
+    v45 = 0;
+    v46 = 0;
+    v47 = 256;
+    result = sub_1442611E0(a2, v44);
+    if ( (*(_BYTE *)(a2 + 41) & 2) != 0 )
+      goto LABEL_85;
+    if ( (int)v45 < 0 || (int)v45 >= *(_DWORD *)(v41 + 32) )
+    {
+      if ( (unsigned __int8)byte_14D5E1C40 >= 2u )
+        sub_141421C70(&byte_14D5E1C40, &off_14A9E9320, (int)v45);
+      result = sub_1414E84D0(a2);
+LABEL_85:
+      if ( v44[0] )
+        return sub_1413B0B20(v44[0]);
+      return result;
+    }
+    v15 = *(_QWORD *)(v41 + 24) + 40LL * (int)v45;
+    sub_1414C7EF0(v15, v44);
+    *(_QWORD *)(v15 + 16) = v45;
+    *(_QWORD *)(v15 + 24) = v46;
+    *(_WORD *)(v15 + 32) = v47;
+    *(_BYTE *)(v15 + 34) = BYTE2(v47);
+    result = HIBYTE(v47);
+    *(_BYTE *)(v15 + 35) = HIBYTE(v47);
+    if ( v44[0] )
+      result = sub_1413B0B20(v44[0]);
+    if ( ++v7 >= v56 )
+      return result;
+  }
+  if ( (unsigned __int8)byte_14D5E1C40 >= 2u )
+    return sub_141421C70(&byte_14D5E1C40, &off_14A9E9068, v8);
+  return result;
+}

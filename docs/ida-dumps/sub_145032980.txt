@@ -1,0 +1,21 @@
+__int64 __fastcall sub_145032980(__int64 a1)
+{
+  unsigned int v1; // eax
+  int v2; // r8d
+  unsigned int v3; // edx
+  unsigned int v4; // r9d
+  int v5; // r8d
+  unsigned int v6; // edx
+  unsigned int v7; // r9d
+  int v8; // r8d
+
+  v1 = sub_1413A6340(a1 + 40, 16);
+  v2 = -v1 ^ (v1 >> 13);
+  v3 = (v2 << 8) ^ (-1640531527 - v2 - v1);
+  v4 = (v3 >> 13) ^ (v1 - v3 - v2);
+  v5 = (v4 >> 12) ^ (v2 - v4 - v3);
+  v6 = (v5 << 16) ^ (v3 - v5 - v4);
+  v7 = (v6 >> 5) ^ (v4 - v6 - v5);
+  v8 = (v7 >> 3) ^ (v5 - v7 - v6);
+  return (((v8 << 10) ^ (v6 - v8 - v7)) >> 15) ^ (v7 - ((v8 << 10) ^ (v6 - v8 - v7)) - v8);
+}

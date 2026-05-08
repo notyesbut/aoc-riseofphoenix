@@ -1,0 +1,44 @@
+void __fastcall sub_7FF6BC519D80(__int64 *a1, int a2, int a3)
+{
+  __int64 v3; // rdi
+  int v4; // ebx
+  int v5; // r10d
+  int v7; // r11d
+  _DWORD *v8; // r8
+  int v9; // ecx
+  __int64 *v10; // rdx
+  int v11; // kr00_4
+  int v12; // ecx
+
+  if ( a3 )
+  {
+    v3 = *a1;
+    v4 = a3;
+    v5 = a2;
+    v7 = __ROL4__(1, a2);
+    v8 = (_DWORD *)(*a1 + 224LL * a2);
+    do
+    {
+      if ( *((_DWORD *)a1 + 13) )
+        *(_DWORD *)(224LL * *((int *)a1 + 12) + v3) = v5;
+      *v8 = -1;
+      if ( *((int *)a1 + 13) <= 0 )
+        v9 = -1;
+      else
+        v9 = *((_DWORD *)a1 + 12);
+      v8[1] = v9;
+      v10 = a1 + 2;
+      ++*((_DWORD *)a1 + 13);
+      *((_DWORD *)a1 + 12) = v5;
+      if ( a1[4] )
+        v10 = (__int64 *)a1[4];
+      v11 = v5++;
+      v8 += 56;
+      v12 = ~v7;
+      v7 = __ROL4__(v7, 1);
+      *((_DWORD *)v10 + v11 / 32) &= v12;
+      --v4;
+    }
+    while ( v4 );
+  }
+}

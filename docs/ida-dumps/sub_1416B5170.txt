@@ -1,0 +1,70 @@
+__int64 __fastcall sub_1416B5170(int *a1, unsigned int a2)
+{
+  bool v2; // zf
+  __int64 v4; // rcx
+  __int64 v5; // rsi
+  __int64 v6; // r9
+  __int64 v7; // r14
+  __int64 v8; // r8
+  int v9; // edx
+  int v10; // eax
+  __int64 v11; // rax
+  char *v12; // rbx
+  __int64 v13; // rcx
+  __int64 v14; // r8
+  int *v15; // rcx
+
+  v2 = (a1[6] & 1) == 0;
+  v4 = *((_QWORD *)a1 + 1);
+  v5 = a2;
+  v6 = (unsigned int)a1[5];
+  v7 = *(int *)(v4 + 8);
+  v8 = (unsigned int)a1[4];
+  v9 = *(_DWORD *)(v4 + 12);
+  v10 = v7 + v5;
+  *(_DWORD *)(v4 + 8) = v7 + v5;
+  if ( v2 )
+  {
+    if ( v10 > v9 )
+      sub_14160A170(v4, (unsigned int)v7, v8, v6);
+  }
+  else if ( v10 > v9 )
+  {
+    sub_1416BE7E0(v4, (unsigned int)v7, v8, v6);
+  }
+  if ( (int)v5 > 0 )
+  {
+    v11 = *((_QWORD *)a1 + 1);
+    if ( *(_DWORD *)(v11 + 8) )
+    {
+      v13 = *(_QWORD *)v11;
+      if ( (a1[6] & 1) != 0 && (v13 & 1) != 0 )
+        v13 = v11 + (v13 >> 24);
+      v12 = (char *)(v13 + v7 * a1[4]);
+    }
+    else
+    {
+      v12 = nullptr;
+    }
+    v14 = *(unsigned int *)(*(_QWORD *)a1 + 56LL);
+    if ( (v14 & 0x200) != 0 )
+    {
+      memset(v12, 0, (int)v5 * (__int64)a1[4]);
+    }
+    else
+    {
+      do
+      {
+        v15 = *(int **)a1;
+        if ( (*(_DWORD *)(*(_QWORD *)a1 + 56LL) & 0x200LL) != 0 )
+          memset(v12, 0, v15[12] * (__int64)v15[13]);
+        else
+          (*(void (__fastcall **)(int *, char *, __int64, __int64))(*(_QWORD *)v15 + 336LL))(v15, v12, v14, v6);
+        v12 += a1[4];
+        --v5;
+      }
+      while ( v5 );
+    }
+  }
+  return (unsigned int)v7;
+}

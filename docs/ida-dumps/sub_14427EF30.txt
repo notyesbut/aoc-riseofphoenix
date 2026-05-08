@@ -1,0 +1,340 @@
+char __fastcall sub_14427EF30(__int64 a1, _QWORD *a2, const wchar_t **a3, _QWORD *a4, int a5, char a6, char a7)
+{
+  const wchar_t *v11; // rbx
+  const wchar_t *v12; // rdi
+  const wchar_t *v13; // r8
+  __int64 v14; // rax
+  int v15; // eax
+  __int64 v16; // r15
+  bool v17; // zf
+  __int64 v18; // r15
+  __int64 v19; // rdi
+  __int64 v20; // rax
+  int v21; // ecx
+  int v22; // edx
+  bool v23; // r12
+  const wchar_t *v24; // rdi
+  const wchar_t *v25; // r8
+  const wchar_t *v26; // rdi
+  __int64 v27; // rax
+  const wchar_t *v28; // r9
+  const wchar_t *v29; // r8
+  const wchar_t *v30; // r12
+  const wchar_t *v31; // rax
+  const wchar_t *v32; // r8
+  const wchar_t *v33; // r12
+  const wchar_t *v34; // rax
+  const wchar_t *v35; // r9
+  const wchar_t *v36; // r8
+  __int64 v37; // r12
+  int v38; // eax
+  __int64 v39; // rax
+  __int32 v40; // r15d
+  unsigned int v41; // r12d
+  __int32 v42; // ecx
+  int v43; // eax
+  __int64 v44; // rax
+  const wchar_t *v45; // r13
+  const wchar_t *v46; // r8
+  const wchar_t *v47; // r15
+  const wchar_t *v48; // r9
+  char result; // al
+  __int64 v50; // [rsp+20h] [rbp-A1h]
+  __int64 v51; // [rsp+20h] [rbp-A1h]
+  __int64 v52; // [rsp+20h] [rbp-A1h]
+  __int64 v53; // [rsp+20h] [rbp-A1h]
+  __int64 v54; // [rsp+20h] [rbp-A1h]
+  __int64 v55; // [rsp+20h] [rbp-A1h]
+  __int64 v56; // [rsp+20h] [rbp-A1h]
+  __int64 v57; // [rsp+20h] [rbp-A1h]
+  const wchar_t *v58; // [rsp+28h] [rbp-99h]
+  char v59; // [rsp+30h] [rbp-91h]
+  __m128i v60; // [rsp+38h] [rbp-89h] BYREF
+  __m128i v61; // [rsp+48h] [rbp-79h] BYREF
+  const wchar_t *v62; // [rsp+58h] [rbp-69h] BYREF
+  int v63; // [rsp+60h] [rbp-61h]
+  const wchar_t *v64; // [rsp+68h] [rbp-59h] BYREF
+  int v65; // [rsp+70h] [rbp-51h]
+  __int128 v66; // [rsp+78h] [rbp-49h] BYREF
+  const wchar_t *v67; // [rsp+88h] [rbp-39h] BYREF
+  int v68; // [rsp+90h] [rbp-31h]
+  __int64 v69; // [rsp+98h] [rbp-29h] BYREF
+  __int128 v70; // [rsp+A0h] [rbp-21h]
+  __int64 v71; // [rsp+B0h] [rbp-11h]
+  int v72; // [rsp+B8h] [rbp-9h]
+  __int64 v73; // [rsp+C0h] [rbp-1h]
+  char v74; // [rsp+C8h] [rbp+7h]
+  __int64 v75; // [rsp+110h] [rbp+4Fh] BYREF
+  char v76; // [rsp+118h] [rbp+57h]
+
+  v75 = a1;
+  v11 = &chText;
+  if ( (unsigned __int8)byte_14D5E1C40 >= 5u )
+  {
+    sub_141357530(
+      &v61,
+      L"ObjectId: %llu | ServerId: %u | Randomizer: %u",
+      *a4,
+      *((unsigned int *)a4 + 2),
+      *((_DWORD *)a4 + 3));
+    v12 = &chText;
+    if ( v61.m128i_i32[2] )
+      HIDWORD(v12) = v61.m128i_i32[1];
+    LODWORD(v51) = *((_DWORD *)a2 + 3);
+    sub_141357530(&v60, L"ObjectId: %llu | ServerId: %u | Randomizer: %u", *a2, *((unsigned int *)a2 + 2), v51);
+    v13 = &chText;
+    if ( v60.m128i_i32[2] )
+      v13 = (const wchar_t *)v60.m128i_i64[0];
+    HIDWORD(v50) = HIDWORD(v12);
+    sub_141421C70(&byte_14D5E1C40, &off_14A9EA770, v13);
+    if ( v60.m128i_i64[0] )
+      sub_1413B0B20(v60.m128i_i64[0]);
+    if ( v61.m128i_i64[0] )
+      sub_1413B0B20(v61.m128i_i64[0]);
+  }
+  v14 = sub_1413A6340(a2, 16);
+  v15 = sub_143F4DBF0(a1 + 16, v14, a2);
+  if ( v15 == -1 )
+    goto LABEL_116;
+  v16 = 80LL * v15;
+  v17 = *(_QWORD *)(a1 + 16) + v16 == 0;
+  v18 = *(_QWORD *)(a1 + 16) + v16 + 16;
+  if ( v17 )
+    v18 = 0;
+  if ( !v18 )
+  {
+LABEL_116:
+    v69 = 0;
+    v70 = 0u;
+    v73 = 0;
+    v74 = v74 & 0xE0 | 0x10;
+    if ( *((_DWORD *)a3 + 2) )
+      v11 = *a3;
+    v71 = *(_QWORD *)sub_1414FE830(&v75, v11, 1);
+    v70 = *(_OWORD *)a4;
+    v72 = a5;
+    v74 = a6 | (2 * a7) | v74 & 0xFC;
+    return sub_1442804D0(a1, a2, &v69);
+  }
+  else
+  {
+    v19 = 0;
+    v61 = 0u;
+    v76 = 0;
+    v59 = 0;
+    v20 = sub_14150CFA0(v18 + 24, &v62);
+    v21 = *(_DWORD *)(v20 + 8);
+    v22 = *((_DWORD *)a3 + 2);
+    if ( v21 == v22 )
+      v23 = v21 > 1 && (unsigned int)sub_141389390(*(_QWORD *)v20, *a3) != 0;
+    else
+      v23 = v22 + v21 != 1;
+    if ( v62 )
+      sub_1413B0B20(v62);
+    if ( v23 )
+    {
+      if ( (unsigned __int8)byte_14D5E1C40 >= 3u )
+      {
+        LODWORD(v50) = *((_DWORD *)a2 + 3);
+        sub_141357530(&v60, L"ObjectId: %llu | ServerId: %u | Randomizer: %u", *a2, *((unsigned int *)a2 + 2), v50);
+        v24 = &chText;
+        if ( v60.m128i_i32[2] )
+          HIDWORD(v24) = v60.m128i_i32[1];
+        sub_14150CFA0(v18 + 24, &v62);
+        if ( *((_DWORD *)a3 + 2) )
+          v25 = *a3;
+        else
+          v25 = &chText;
+        HIDWORD(v50) = HIDWORD(v24);
+        sub_141421C70(&byte_14D5E1C40, &off_14A9EA828, v25);
+        if ( v62 )
+          sub_1413B0B20(v62);
+        if ( v60.m128i_i64[0] )
+          sub_1413B0B20(v60.m128i_i64[0]);
+      }
+      LODWORD(v50) = *((_DWORD *)a2 + 3);
+      sub_141357530(&v60, L"ObjectId: %llu | ServerId: %u | Randomizer: %u", *a2, *((unsigned int *)a2 + 2), v50);
+      v26 = &chText;
+      if ( v60.m128i_i32[2] )
+        v26 = (const wchar_t *)v60.m128i_i64[0];
+      v27 = sub_14150CFA0(v18 + 24, &v62);
+      if ( *(_DWORD *)(v27 + 8) )
+        v28 = *(const wchar_t **)v27;
+      else
+        v28 = &chText;
+      if ( *((_DWORD *)a3 + 2) )
+        v29 = *a3;
+      else
+        v29 = &chText;
+      sub_141357530(&v66, L"Path mismatch. Path: %s, Expected: %s, NetGUID: %s", v29, v28, v26);
+      v19 = v66;
+      v61 = (__m128i)v66;
+      v66 = 0u;
+      if ( v62 )
+        sub_1413B0B20(v62);
+      if ( v60.m128i_i64[0] )
+        sub_1413B0B20(v60.m128i_i64[0]);
+      v76 = 1;
+    }
+    if ( *((_DWORD *)a4 + 3) ^ *(_DWORD *)(v18 + 20)
+       | *(_DWORD *)(v18 + 8) ^ *(_DWORD *)a4
+       | *((_DWORD *)a4 + 2) ^ *(_DWORD *)(v18 + 16)
+       | *((_DWORD *)a4 + 1) ^ *(_DWORD *)(v18 + 12) )
+    {
+      if ( (unsigned __int8)byte_14D5E1C40 >= 3u )
+      {
+        LODWORD(v50) = *((_DWORD *)a2 + 3);
+        sub_141357530(&v64, L"ObjectId: %llu | ServerId: %u | Randomizer: %u", *a2, *((unsigned int *)a2 + 2), v50);
+        v30 = &chText;
+        if ( v65 )
+          v30 = v64;
+        LODWORD(v52) = *(_DWORD *)(v18 + 20);
+        sub_141357530(
+          &v67,
+          L"ObjectId: %llu | ServerId: %u | Randomizer: %u",
+          *(_QWORD *)(v18 + 8),
+          *(unsigned int *)(v18 + 16),
+          v52);
+        v31 = &chText;
+        if ( v68 )
+          v31 = v67;
+        *(_QWORD *)&v66 = v31;
+        LODWORD(v53) = *((_DWORD *)a4 + 3);
+        sub_141357530(&v60, L"ObjectId: %llu | ServerId: %u | Randomizer: %u", *a4, *((unsigned int *)a4 + 2), v53);
+        if ( *((_DWORD *)a3 + 2) )
+          v32 = *a3;
+        else
+          v32 = &chText;
+        v58 = v30;
+        HIDWORD(v50) = DWORD1(v66);
+        sub_141421C70(&byte_14D5E1C40, &off_14A9EA918, v32);
+        if ( v60.m128i_i64[0] )
+          sub_1413B0B20(v60.m128i_i64[0]);
+        if ( v67 )
+          sub_1413B0B20(v67);
+        if ( v64 )
+          sub_1413B0B20(v64);
+      }
+      LODWORD(v50) = *((_DWORD *)a2 + 3);
+      sub_141357530(&v62, L"ObjectId: %llu | ServerId: %u | Randomizer: %u", *a2, *((unsigned int *)a2 + 2), v50, v58);
+      v33 = &chText;
+      if ( v63 )
+        v33 = v62;
+      LODWORD(v54) = *(_DWORD *)(v18 + 20);
+      sub_141357530(
+        &v67,
+        L"ObjectId: %llu | ServerId: %u | Randomizer: %u",
+        *(_QWORD *)(v18 + 8),
+        *(unsigned int *)(v18 + 16),
+        v54);
+      v34 = &chText;
+      if ( v68 )
+        v34 = v67;
+      *(_QWORD *)&v66 = v34;
+      LODWORD(v55) = *((_DWORD *)a4 + 3);
+      sub_141357530(&v64, L"ObjectId: %llu | ServerId: %u | Randomizer: %u", *a4, *((unsigned int *)a4 + 2), v55);
+      v35 = &chText;
+      if ( v65 )
+        v35 = v64;
+      if ( *((_DWORD *)a3 + 2) )
+        v36 = *a3;
+      else
+        v36 = &chText;
+      sub_141357530(&v60, L"Outer mismatch. Path: %s, Outer: %s, Expected: %s, NetGUID: %s", v36, v35, (_QWORD)v66, v33);
+      if ( v19 )
+        sub_1413B0B20(v19);
+      v19 = v60.m128i_i64[0];
+      v61 = v60;
+      v60 = 0u;
+      if ( v64 )
+        sub_1413B0B20(v64);
+      if ( v67 )
+        sub_1413B0B20(v67);
+      if ( v62 )
+        sub_1413B0B20(v62);
+      v59 = 1;
+    }
+    if ( (unsigned __int8)sub_141F38810(v18, 0) )
+      goto LABEL_108;
+    v37 = v75;
+    *(_QWORD *)&v66 = *(_QWORD *)v18;
+    v38 = sub_14304D3D0(v75 + 96, (unsigned int)v66 ^ DWORD1(v66), &v66);
+    if ( v38 == -1 || (v39 = *(_QWORD *)(v37 + 96) + 32LL * v38) == 0 )
+    {
+      v43 = 0;
+      v60.m128i_i64[0] = 0;
+      v42 = 0;
+      v41 = 0;
+      v40 = 0;
+    }
+    else
+    {
+      v60 = *(__m128i *)(v39 + 8);
+      v40 = v60.m128i_i32[3];
+      v41 = *(_DWORD *)(v39 + 16);
+      v42 = v60.m128i_i32[1];
+      v43 = _mm_cvtsi128_si32(v60);
+    }
+    if ( !(*((_DWORD *)a2 + 3) ^ v40 | *((_DWORD *)a2 + 2) ^ v41 | *(_DWORD *)a2 ^ v43 | *((_DWORD *)a2 + 1) ^ v42) )
+    {
+LABEL_108:
+      result = 0;
+    }
+    else
+    {
+      v44 = v60.m128i_i64[0];
+      if ( (unsigned __int8)byte_14D5E1C40 >= 3u )
+      {
+        LODWORD(v50) = v40;
+        sub_141357530(&v64, L"ObjectId: %llu | ServerId: %u | Randomizer: %u", v60.m128i_i64[0], v41, v50);
+        v45 = &chText;
+        if ( v65 )
+          HIDWORD(v45) = HIDWORD(v64);
+        LODWORD(v56) = *((_DWORD *)a2 + 3);
+        sub_141357530(&v62, L"ObjectId: %llu | ServerId: %u | Randomizer: %u", *a2, *((unsigned int *)a2 + 2), v56);
+        if ( *((_DWORD *)a3 + 2) )
+          v46 = *a3;
+        else
+          v46 = &chText;
+        HIDWORD(v50) = HIDWORD(v45);
+        sub_141421C70(&byte_14D5E1C40, &off_14A9EAA20, v46);
+        if ( v62 )
+          sub_1413B0B20(v62);
+        if ( v64 )
+          sub_1413B0B20(v64);
+        v44 = v60.m128i_i64[0];
+      }
+      LODWORD(v50) = v40;
+      sub_141357530(&v64, L"ObjectId: %llu | ServerId: %u | Randomizer: %u", v44, v41, v50);
+      v47 = &chText;
+      if ( v65 )
+        v47 = v64;
+      LODWORD(v57) = *((_DWORD *)a2 + 3);
+      sub_141357530(&v62, L"ObjectId: %llu | ServerId: %u | Randomizer: %u", *a2, *((unsigned int *)a2 + 2), v57);
+      v48 = &chText;
+      if ( v63 )
+        v48 = v62;
+      if ( *((_DWORD *)a3 + 2) )
+        v11 = *a3;
+      sub_141357530(&v60, L"Netguid mismatch. Path: %s, NetGUID: %s, Expected: %s", v11, v48, v47);
+      if ( v19 )
+        sub_1413B0B20(v19);
+      v19 = v60.m128i_i64[0];
+      v61 = v60;
+      v60 = 0u;
+      if ( v62 )
+        sub_1413B0B20(v62);
+      if ( v64 )
+        sub_1413B0B20(v64);
+      result = 1;
+    }
+    if ( v76 || v59 || result )
+    {
+      result = sub_1442651A0(*(_QWORD *)(v75 + 344), 9, &v61);
+      v19 = v61.m128i_i64[0];
+    }
+    if ( v19 )
+      return sub_1413B0B20(v19);
+  }
+  return result;
+}

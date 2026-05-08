@@ -1,0 +1,28 @@
+__int64 __fastcall sub_7FF6BD222DF0(__int64 a1, __int64 a2)
+{
+  __int64 result; // rax
+  _QWORD *v4; // rbx
+  _QWORD *i; // rsi
+  __int64 v6; // rdi
+  __int64 v7; // rax
+
+  if ( (*(_BYTE *)(a2 + 40) & 1) != 0 )
+    *(_BYTE *)(a1 + 240) |= 1u;
+  result = sub_7FF6BD26DAD0();
+  if ( (*(_BYTE *)(a1 + 240) & 1) != 0 )
+  {
+    v4 = *(_QWORD **)(a1 + 208);
+    for ( i = &v4[*(int *)(a1 + 216)]; v4 != i; ++v4 )
+    {
+      v6 = *v4;
+      if ( *v4 && (*(_DWORD *)(v6 + 8) & 0x400) != 0 )
+      {
+        v7 = sub_7FF6BAAB00B0(*v4);
+        if ( v7 )
+          sub_7FF6BA9D8DF0(v7 + 616, v6);
+      }
+    }
+    return sub_7FF6BD21B1F0(a1, 1);
+  }
+  return result;
+}

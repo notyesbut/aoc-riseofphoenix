@@ -1,0 +1,609 @@
+char __fastcall sub_143F32E00(__int64 a1, __int64 a2, _BYTE *a3)
+{
+  int v6; // r12d
+  char *v7; // r9
+  _DWORD *v8; // r8
+  __int64 v9; // r13
+  char v10; // al
+  const wchar_t *v11; // r15
+  __int64 *v12; // r14
+  __int64 v13; // rcx
+  char v14; // dl
+  __int64 v15; // rax
+  __int64 v16; // rax
+  __int64 v17; // rdi
+  char v18; // cl
+  char v19; // al
+  char v20; // cl
+  char v21; // al
+  char v22; // cl
+  char v23; // al
+  char v24; // cl
+  char v25; // cl
+  char v26; // dl
+  __int64 v27; // rcx
+  __int64 v28; // r8
+  __int64 v29; // rdi
+  int v30; // r9d
+  bool v31; // r10
+  bool v32; // al
+  unsigned __int8 v33; // al
+  __int64 *v34; // rdi
+  _QWORD *v35; // r14
+  const wchar_t *v36; // r8
+  char v37; // al
+  __int64 v38; // rdx
+  __int64 v39; // rdx
+  __int64 v40; // rdi
+  __int64 v41; // rax
+  void (__fastcall ***v42)(_QWORD, _QWORD); // rdi
+  __int64 v43; // rax
+  __int64 *v44; // rdi
+  void (__fastcall ***v45)(_QWORD, __int64); // rcx
+  __int64 v46; // rdx
+  __int64 *v47; // rdi
+  __int64 v48; // rdx
+  __int64 v49; // r8
+  wchar_t **v50; // rdx
+  __int64 v52; // rdi
+  __int64 v53; // r14
+  __int64 v54; // rdx
+  int v55; // eax
+  __int64 v56; // rdx
+  __int64 v57; // rcx
+  __int64 v58; // rdx
+  __int64 v59; // r14
+  __int64 v60; // rdi
+  __int64 v61; // rdx
+  int v62; // eax
+  __int64 v63; // rax
+  char v64; // di
+  _DWORD *v65; // rax
+  __int64 v66; // rax
+  int v67; // ecx
+  __int64 v68; // rdx
+  __int64 v69; // r8
+  _DWORD *v70; // [rsp+40h] [rbp-29h]
+  const wchar_t *v71; // [rsp+48h] [rbp-21h] BYREF
+  int v72; // [rsp+50h] [rbp-19h]
+  _BYTE v73[24]; // [rsp+58h] [rbp-11h] BYREF
+  __int64 v74; // [rsp+70h] [rbp+7h]
+  __int64 v75; // [rsp+80h] [rbp+17h]
+  _BYTE *v76; // [rsp+D8h] [rbp+6Fh]
+  _DWORD *v78; // [rsp+E8h] [rbp+7Fh]
+
+  v6 = 0;
+  v7 = (char *)(a2 + 232);
+  v8 = (_DWORD *)(a2 + 228);
+  v70 = (_DWORD *)(a2 + 228);
+  v78 = (_DWORD *)(a2 + 216);
+  if ( (*(_BYTE *)(a2 + 232) & 8) != 0 )
+  {
+    *(_DWORD *)(*(_QWORD *)(*(_QWORD *)(a1 + 72) + 5232LL) + 4LL * *(int *)(a2 + 216)) = *v8;
+  }
+  else
+  {
+    v78 = (_DWORD *)(a2 + 216);
+    v70 = (_DWORD *)(a2 + 228);
+  }
+  v76 = (_BYTE *)(a2 + 232);
+  v9 = a2;
+  v10 = *v7;
+  v11 = &chText;
+  if ( (*v7 & 0x10) == 0 )
+    goto LABEL_142;
+  v9 = 0;
+  v12 = (__int64 *)(a1 + 128);
+  v13 = *(_QWORD *)(a1 + 128);
+  if ( (v10 & 0x20) == 0 )
+  {
+    if ( v13 )
+    {
+      v30 = *(_DWORD *)(v13 + 228);
+      v31 = *v8 == v30 + 1;
+      v32 = *v8 == v30 + 1 || *v8 == v30;
+      v8 = (_DWORD *)v32;
+      if ( (*(_BYTE *)(v13 + 232) & 8) != 0 )
+        v8 = (_DWORD *)v31;
+      v33 = *(_BYTE *)(v13 + 232);
+      v12 = (__int64 *)(a1 + 128);
+      if ( (v33 & 0x40) == 0 )
+      {
+        v12 = (__int64 *)(a1 + 128);
+        if ( (_BYTE)v8 )
+        {
+          v12 = (__int64 *)(a1 + 128);
+          if ( ((*(_BYTE *)(a2 + 232) ^ v33) & 8) == 0 )
+          {
+            v34 = (__int64 *)(a2 + 168);
+            v35 = (_QWORD *)(a2 + 160);
+            if ( (unsigned __int8)byte_14D8384A8 >= 6u )
+              sub_141421C70(&byte_14D8384A8, &off_14A8A2B08, *v35 - *v34);
+            if ( (unsigned __int8)byte_14D8384A8 >= 7u )
+            {
+              sub_141357530(
+                &v71,
+                L"Channel[%d]. Seq %d. PacketId: %d",
+                *(unsigned int *)(a2 + 216),
+                *(unsigned int *)(a2 + 228),
+                *(_DWORD *)(a2 + 192));
+              v36 = &chText;
+              if ( v72 )
+                v36 = v71;
+              sub_141421C70(&byte_14D8384A8, &off_14A8A2B78, v36);
+              if ( v71 )
+              {
+                sub_1413B0B20(v71);
+                v34 = (__int64 *)(a2 + 168);
+                v35 = (_QWORD *)(a2 + 160);
+              }
+            }
+            if ( *(char *)(a2 + 232) >= 0 && *v35 - *v34 > 0 )
+              sub_1414EDD00(
+                *(_QWORD *)(a1 + 128),
+                *(_QWORD *)(a2 + 144) + (int)(*v34 >> 3),
+                (unsigned int)*v35 - (unsigned int)*v34);
+            v37 = *(_BYTE *)(a2 + 232);
+            if ( v37 >= 0 && (*(_BYTE *)(a2 + 233) & 2) == 0 && (v37 & 0x40) == 0 )
+            {
+              v38 = ((*v35 - *v34) >> 63) & 7;
+              if ( (((_BYTE)v38 + *(_BYTE *)v35 - *(_BYTE *)v34) & 7) != v38 )
+              {
+                if ( (unsigned __int8)byte_14D8384A8 >= 3u )
+                {
+                  (*(__int64 (__fastcall **)(__int64, const wchar_t **))(*(_QWORD *)a1 + 856LL))(a1, &v71);
+                  sub_141421C70(&byte_14D8384A8, &off_14A8A2BA0, *(unsigned __int8 *)(a2 + 232) >> 7);
+                  if ( v71 )
+                    sub_1413B0B20(v71);
+                }
+                sub_1414E84D0(a2);
+                sub_143F174A0(v73, 59);
+                sub_143F1BB50(a2 + 184, v73);
+                if ( v75 )
+                  (*(void (__fastcall **)(__int64, __int64))(v75 - 16))(v75, v39);
+                goto LABEL_187;
+              }
+            }
+            *(_DWORD *)(*(_QWORD *)(a1 + 128) + 228LL) = *(_DWORD *)(a2 + 228);
+            v40 = *(_QWORD *)(a1 + 128);
+            if ( (*(_BYTE *)(a2 + 232) & 0x40) != 0 )
+            {
+              sub_14133EDD0((__int64)&v71, L"Completed Partial Bunch.");
+              sub_143F284F0(&v71, a2, v40);
+              if ( v71 )
+                sub_1413B0B20(v71);
+              if ( *(char *)(a2 + 232) < 0 )
+              {
+                if ( (unsigned __int8)byte_14D8384A8 >= 3u )
+                {
+                  v41 = (*(__int64 (__fastcall **)(__int64, const wchar_t **))(*(_QWORD *)a1 + 856LL))(a1, &v71);
+                  if ( *(_DWORD *)(v41 + 8) )
+                    v11 = *(const wchar_t **)v41;
+                  sub_141421C70(&byte_14D8384A8, &off_14A8A2CF0, v11);
+                  if ( v71 )
+                    sub_1413B0B20(v71);
+                }
+                sub_1414E84D0(a2);
+                sub_143F174A0(v73, 60);
+                sub_143F1BB50(a2 + 184, v73);
+                if ( v75 )
+                  (*(void (**)(void))(v75 - 16))();
+                goto LABEL_187;
+              }
+              v9 = *(_QWORD *)(a1 + 128);
+              *(_BYTE *)(v9 + 232) |= 0x40u;
+              *(_BYTE *)(*(_QWORD *)(a1 + 128) + 232LL) ^= (*(_BYTE *)(a2 + 232)
+                                                          ^ *(_BYTE *)(*(_QWORD *)(a1 + 128) + 232LL))
+                                                         & 2;
+              *(_BYTE *)(*(_QWORD *)(a1 + 128) + 234LL) = *(_BYTE *)(a2 + 234);
+              *(_BYTE *)(*(_QWORD *)(a1 + 128) + 232LL) ^= (*(_BYTE *)(a2 + 232)
+                                                          ^ *(_BYTE *)(*(_QWORD *)(a1 + 128) + 232LL))
+                                                         & 4;
+              *(_BYTE *)(*(_QWORD *)(a1 + 128) + 233LL) ^= (*(_BYTE *)(a2 + 233)
+                                                          ^ *(_BYTE *)(*(_QWORD *)(a1 + 128) + 233LL))
+                                                         & 1;
+              v12 = (__int64 *)(a1 + 128);
+            }
+            else
+            {
+              sub_14133EDD0((__int64)&v71, L"Received Partial Bunch.");
+              sub_143F284F0(&v71, a2, v40);
+              if ( v71 )
+                sub_1413B0B20(v71);
+              v12 = (__int64 *)(a1 + 128);
+            }
+            goto LABEL_116;
+          }
+        }
+      }
+    }
+    *a3 = 1;
+    v42 = (void (__fastcall ***)(_QWORD, _QWORD))*v12;
+    if ( *v12 )
+    {
+      if ( ((_BYTE)v42[29] & 8) != 0 )
+      {
+        if ( (*(_BYTE *)(a2 + 232) & 8) == 0 )
+        {
+          if ( (unsigned __int8)byte_14D8384A8 >= 5u )
+            sub_141421C70(&byte_14D8384A8, &off_14A8A2E38, v8);
+          return 0;
+        }
+        if ( (unsigned __int8)byte_14D8384A8 >= 3u )
+        {
+          v43 = (*(__int64 (__fastcall **)(__int64, const wchar_t **))(*(_QWORD *)a1 + 856LL))(a1, &v71);
+          if ( *(_DWORD *)(v43 + 8) )
+            v11 = *(const wchar_t **)v43;
+          sub_141421C70(&byte_14D8384A8, &off_14A8A2DA0, v11);
+          if ( v71 )
+            sub_1413B0B20(v71);
+        }
+        sub_1414E84D0(a2);
+        sub_143F174A0(v73, 57);
+        sub_143F1BB50(a2 + 184, v73);
+        if ( v75 )
+          (*(void (**)(void))(v75 - 16))();
+        goto LABEL_187;
+      }
+      v12 = (__int64 *)(a1 + 128);
+    }
+    if ( (unsigned __int8)byte_14D8384A8 >= 6u )
+    {
+      if ( v42 )
+      {
+        sub_14133EDD0((__int64)&v71, L"Received Partial Bunch Out of Sequence.");
+        sub_143F284F0(&v71, a2, v42);
+        v44 = v12;
+        if ( v71 )
+        {
+          sub_1413B0B20(v71);
+          v12 = (__int64 *)(a1 + 128);
+        }
+        goto LABEL_114;
+      }
+      sub_141421C70(&byte_14D8384A8, &off_14A8A2ED0, v8);
+    }
+    v44 = v12;
+LABEL_114:
+    v45 = *(void (__fastcall ****)(_QWORD, __int64))(a1 + 128);
+    if ( v45 )
+    {
+      (**v45)(v45, 1);
+      *v44 = 0;
+    }
+    goto LABEL_116;
+  }
+  if ( v13 )
+  {
+    v14 = *(_BYTE *)(v13 + 232);
+    if ( (v14 & 0x40) == 0 )
+    {
+      if ( (v14 & 8) != 0 )
+      {
+        if ( (v10 & 8) == 0 )
+        {
+          if ( (unsigned __int8)byte_14D8384A8 >= 5u )
+            sub_141421C70(&byte_14D8384A8, &off_14A8A28F8, v8);
+          *a3 = 1;
+          return 0;
+        }
+        if ( (unsigned __int8)byte_14D8384A8 >= 3u )
+        {
+          v15 = (*(__int64 (__fastcall **)(__int64, const wchar_t **))(*(_QWORD *)a1 + 856LL))(a1, &v71);
+          if ( *(_DWORD *)(v15 + 8) )
+            v11 = *(const wchar_t **)v15;
+          sub_141421C70(&byte_14D8384A8, &off_14A8A2858, v11);
+          if ( v71 )
+            sub_1413B0B20(v71);
+        }
+        sub_1414E84D0(a2);
+        sub_143F174A0(v73, 56);
+        sub_143F1BB50(a2 + 184, v73);
+        if ( v75 )
+          (*(void (**)(void))(v75 - 16))();
+        goto LABEL_187;
+      }
+      if ( (unsigned __int8)byte_14D8384A8 >= 6u )
+        sub_141421C70(&byte_14D8384A8, &off_14A8A2990, *(unsigned int *)(v13 + 216));
+    }
+    if ( *v12 )
+      (**(void (__fastcall ***)(__int64, __int64))*v12)(*v12, 1);
+    *v12 = 0;
+    v78 = (_DWORD *)(a2 + 216);
+    v70 = (_DWORD *)(a2 + 228);
+    v76 = (_BYTE *)(a2 + 232);
+    v12 = (__int64 *)(a1 + 128);
+  }
+  v16 = sub_146DFA830(240);
+  v17 = v16;
+  v71 = (const wchar_t *)v16;
+  if ( v16 )
+  {
+    sub_14161FEC0(v16, 0, 0, 0);
+    *(_QWORD *)v17 = off_14A8A13A8;
+    *(_QWORD *)(v17 + 220) = 0;
+    *(_DWORD *)(v17 + 192) = *(_DWORD *)(a2 + 192);
+    *(_QWORD *)(v17 + 200) = *(_QWORD *)(a2 + 200);
+    *(_QWORD *)(v17 + 208) = *(_QWORD *)(a2 + 208);
+    *(_DWORD *)(v17 + 216) = *v78;
+    *(_QWORD *)(v17 + 220) = *(_QWORD *)(a2 + 220);
+    *(_DWORD *)(v17 + 228) = *v70;
+    v8 = v76;
+    v18 = *(_BYTE *)(v17 + 232) ^ (*v76 ^ *(_BYTE *)(v17 + 232)) & 1;
+    *(_BYTE *)(v17 + 232) = v18;
+    v19 = v18 ^ (*v76 ^ v18) & 2;
+    *(_BYTE *)(v17 + 232) = v19;
+    v20 = v19 ^ (*v76 ^ v19) & 4;
+    *(_BYTE *)(v17 + 232) = v20;
+    v21 = v20 ^ (*v76 ^ v20) & 8;
+    *(_BYTE *)(v17 + 232) = v21;
+    v22 = v21 ^ (*v76 ^ v21) & 0x10;
+    *(_BYTE *)(v17 + 232) = v22;
+    v23 = v22 ^ (*v76 ^ v22) & 0x20;
+    *(_BYTE *)(v17 + 232) = v23;
+    v24 = v23 ^ (*v76 ^ v23) & 0x40;
+    *(_BYTE *)(v17 + 232) = v24;
+    *(_BYTE *)(v17 + 232) = *v76 ^ (*v76 ^ v24) & 0x7F;
+    v25 = *(_BYTE *)(v17 + 233) ^ (*(_BYTE *)(a2 + 233) ^ *(_BYTE *)(v17 + 233)) & 1;
+    *(_BYTE *)(v17 + 233) = v25;
+    v26 = v25 ^ (*(_BYTE *)(a2 + 233) ^ v25) & 2;
+    *(_BYTE *)(v17 + 233) = v26;
+    *(_BYTE *)(v17 + 233) = v26 ^ (*(_BYTE *)(a2 + 233) ^ v26) & 4;
+    *(_BYTE *)(v17 + 234) = *(_BYTE *)(a2 + 234);
+    *(_QWORD *)(v17 + 176) = *(_QWORD *)(a2 + 176);
+    *(_QWORD *)(v17 + 168) = 0;
+  }
+  else
+  {
+    v17 = 0;
+    v8 = v76;
+  }
+  *v12 = v17;
+  if ( v17 )
+  {
+    if ( *(char *)v8 < 0 || (v27 = *(_QWORD *)(a2 + 168), v28 = *(_QWORD *)(a2 + 160), v28 - v27 <= 0) )
+    {
+      sub_14133EDD0((__int64)&v71, L"Received New partial bunch. It only contained NetGUIDs.");
+      sub_143F284F0(&v71, a2, v17);
+      if ( v71 )
+        sub_1413B0B20(v71);
+      v12 = (__int64 *)(a1 + 128);
+    }
+    else
+    {
+      if ( (*(_BYTE *)(a2 + 233) & 2) == 0 )
+      {
+        if ( (((((*(_QWORD *)(a2 + 160) - v27) >> 63) & 7) + *(_BYTE *)(a2 + 160) - (unsigned __int8)v27) & 7) != (((*(_QWORD *)(a2 + 160) - v27) >> 63) & 7) )
+        {
+          if ( (unsigned __int8)byte_14D8384A8 >= 3u )
+          {
+            (*(__int64 (__fastcall **)(__int64, const wchar_t **))(*(_QWORD *)a1 + 856LL))(a1, &v71);
+            sub_141421C70(&byte_14D8384A8, &off_14A8A2A20, *(_QWORD *)(a2 + 160) - *(_QWORD *)(a2 + 168));
+            if ( v71 )
+              sub_1413B0B20(v71);
+          }
+          sub_1414E84D0(a2);
+          sub_143F174A0(v73, 58);
+          sub_143F1BB50(a2 + 184, v73);
+          if ( v75 )
+            (*(void (**)(void))(v75 - 16))();
+LABEL_187:
+          if ( v74 )
+            sub_1413B0B20(v74);
+          return 0;
+        }
+        v12 = (__int64 *)(a1 + 128);
+      }
+      sub_1414EDD00(v17, *(_QWORD *)(a2 + 144) + (int)(v27 >> 3), (unsigned int)(v28 - v27));
+      v29 = *v12;
+      sub_14133EDD0((__int64)&v71, L"Received new partial bunch.");
+      sub_143F284F0(&v71, a2, v29);
+      if ( v71 )
+        sub_1413B0B20(v71);
+    }
+  }
+LABEL_116:
+  v46 = *(_QWORD *)(a1 + 128);
+  if ( v46 && (*(_DWORD *)(*(_QWORD *)(a1 + 72) + 240LL) & 8) == 0 )
+  {
+    if ( (*(_QWORD *)(v46 + 160) + 7LL) >> 3 > dword_14D27920C )
+    {
+      if ( (unsigned __int8)byte_14D8384A8 >= 2u )
+      {
+        (*(__int64 (__fastcall **)(__int64, const wchar_t **))(*(_QWORD *)a1 + 856LL))(a1, &v71);
+        sub_141421C70(&byte_14D8384A8, &off_14A8A2F80, (*(_QWORD *)(*(_QWORD *)(a1 + 128) + 160LL) + 7LL) >> 3);
+        if ( v71 )
+          sub_1413B0B20(v71);
+      }
+      sub_1414E84D0(a2);
+      sub_143F174A0(v73, 61);
+      sub_143F1BB50(a2 + 184, v73);
+      if ( v75 )
+        (*(void (__fastcall **)(__int64))(v75 - 16))(v75);
+      goto LABEL_187;
+    }
+    v12 = (__int64 *)(a1 + 128);
+  }
+  if ( !*a3 && (*(_BYTE *)(a2 + 233) & 2) != 0 )
+  {
+    v47 = v12;
+    if ( (unsigned __int8)byte_14D8384A8 >= 6u )
+    {
+      sub_141421C70(&byte_14D8384A8, &off_14A8A3060, *(unsigned int *)(a2 + 228));
+      v47 = (__int64 *)(a1 + 128);
+    }
+    v48 = *(_QWORD *)(a1 + 128);
+    if ( v48 )
+    {
+      if ( (*(_BYTE *)(*(_QWORD *)(a1 + 72) + 240LL) & 1) == 0 )
+      {
+        *(_BYTE *)(v48 + 233) ^= (*(_BYTE *)(a2 + 233) ^ *(_BYTE *)(v48 + 233)) & 2;
+        AK::MemoryMgr::VerifyMemoryArenaIntegrity(*(_QWORD *)(*(_QWORD *)(a1 + 72) + 136LL));
+        if ( (*(_BYTE *)(*v12 + 41) & 2) != 0 )
+        {
+          sub_143F174A0(v73, 51);
+          sub_143F1BB50(*v12 + 184, v73);
+          if ( v75 )
+            (*(void (**)(void))(v75 - 16))();
+          if ( v74 )
+            sub_1413B0B20(v74);
+          if ( (unsigned __int8)byte_14D838458 < 2u )
+            return 0;
+          v49 = *(unsigned int *)(a1 + 84);
+          v50 = &off_14A8A3118;
+LABEL_139:
+          sub_141421C70(&byte_14D838458, v50, v49);
+          return 0;
+        }
+        sub_1414F3CC0(*v12, *v12, 0, *(_QWORD *)(*v12 + 160));
+        *(_BYTE *)(*v47 + 233) &= ~2u;
+      }
+    }
+  }
+LABEL_142:
+  if ( !v9 )
+    return 0;
+  v52 = *(_QWORD *)(*(_QWORD *)(a1 + 72) + 120LL);
+  if ( !v52 )
+    goto LABEL_163;
+  v53 = *(_QWORD *)(a1 + 96);
+  v8 = (_DWORD *)((unsigned int)sub_141507140((unsigned int)v53) + HIDWORD(v53));
+  if ( *(_DWORD *)(v52 + 616) == *(_DWORD *)(v52 + 660) )
+    goto LABEL_151;
+  v54 = *(_QWORD *)(v52 + 672);
+  if ( !v54 )
+    v54 = v52 + 664;
+  v55 = *(_DWORD *)(v54 + 4LL * ((unsigned int)v8 & (*(_DWORD *)(v52 + 680) - 1)));
+  if ( v55 == -1 )
+  {
+LABEL_151:
+    v58 = 0;
+  }
+  else
+  {
+    v56 = *(_QWORD *)(v52 + 608);
+    while ( 1 )
+    {
+      v57 = 48LL * v55;
+      if ( *(_QWORD *)(v56 + v57) == v53 )
+        break;
+      v55 = *(_DWORD *)(v56 + v57 + 40);
+      if ( v55 == -1 )
+        goto LABEL_151;
+    }
+    v58 = v57 + v56;
+  }
+  if ( (*(_BYTE *)(v58 + 36) & 2) == 0 )
+    goto LABEL_163;
+  v59 = *(_QWORD *)(*(_QWORD *)(a1 + 72) + 120LL);
+  v60 = *(_QWORD *)(a1 + 96);
+  v8 = (_DWORD *)((unsigned int)sub_141507140((unsigned int)v60) + HIDWORD(v60));
+  if ( *(_DWORD *)(v59 + 616) == *(_DWORD *)(v59 + 660) )
+    goto LABEL_159;
+  v61 = *(_QWORD *)(v59 + 672);
+  if ( !v61 )
+    v61 = v59 + 664;
+  v62 = *(_DWORD *)(v61 + 4LL * ((unsigned int)v8 & (*(_DWORD *)(v59 + 680) - 1)));
+  if ( v62 == -1 )
+  {
+LABEL_159:
+    v63 = 0;
+  }
+  else
+  {
+    while ( 1 )
+    {
+      v63 = *(_QWORD *)(v59 + 608) + 48LL * v62;
+      if ( *(_QWORD *)v63 == v60 )
+        break;
+      v62 = *(_DWORD *)(v63 + 40);
+      if ( v62 == -1 )
+        goto LABEL_159;
+    }
+  }
+  if ( (*(_BYTE *)(v63 + 36) & 4) != 0 )
+    v64 = 1;
+  else
+LABEL_163:
+    v64 = 0;
+  if ( (*(_BYTE *)(v9 + 232) & 1) != 0 )
+  {
+    if ( v64 )
+    {
+      v65 = (_DWORD *)(a1 + 92);
+    }
+    else if ( *(_DWORD *)(a1 + 88) != -1 || (v65 = (_DWORD *)(a1 + 92), *(_DWORD *)(a1 + 92) != -1) )
+    {
+      if ( (unsigned __int8)byte_14D838458 >= 2u )
+      {
+        v66 = (*(__int64 (__fastcall **)(__int64, const wchar_t **))(*(_QWORD *)a1 + 856LL))(a1, &v71);
+        if ( *(_DWORD *)(v66 + 8) )
+          v11 = *(const wchar_t **)v66;
+        sub_141421C70(&byte_14D838458, &off_14A8A31F8, v11);
+        if ( v71 )
+          sub_1413B0B20(v71);
+      }
+      sub_1414E84D0(a2);
+      sub_143F174A0(v73, 62);
+      sub_143F1BB50(a2 + 184, v73);
+      if ( v75 )
+        (*(void (**)(void))(v75 - 16))();
+      goto LABEL_187;
+    }
+    *(_DWORD *)(a1 + 88) = *(_DWORD *)(v9 + 192);
+    *v65 = *(_DWORD *)(a2 + 192);
+    *(_DWORD *)(a1 + 80) |= 1u;
+    if ( (unsigned __int8)byte_14D838458 >= 6u )
+      sub_141421C70(&byte_14D838458, &off_14A8A32C0, *(unsigned int *)(a1 + 84));
+  }
+  if ( !v64 )
+  {
+    v67 = *(_DWORD *)(a1 + 80);
+    if ( (v67 & 0x2001) == 0 )
+    {
+      if ( (*(_BYTE *)(v9 + 232) & 8) != 0 )
+      {
+        if ( (unsigned __int8)byte_14D838458 >= 2u )
+        {
+          (*(__int64 (__fastcall **)(__int64, const wchar_t **))(*(_QWORD *)a1 + 856LL))(a1, &v71);
+          sub_141421C70(&byte_14D838458, &off_14A8A33B0, *(unsigned int *)(a2 + 228));
+          if ( v71 )
+            sub_1413B0B20(v71);
+        }
+        sub_1414E84D0(a2);
+        sub_143F174A0(v73, 63);
+        sub_143F1BB50(a2 + 184, v73);
+        if ( v75 )
+          (*(void (__fastcall **)(__int64, __int64, __int64))(v75 - 16))(v75, v68, v69);
+        goto LABEL_187;
+      }
+      if ( (*(_BYTE *)(*(_QWORD *)(a1 + 72) + 240LL) & 1) != 0 )
+      {
+        *(_DWORD *)(a1 + 80) = v67 | 0x40;
+        return 0;
+      }
+      *a3 = 1;
+      if ( (unsigned __int8)byte_14D838458 < 6u )
+        return 0;
+      v49 = *(unsigned int *)(a1 + 84);
+      v50 = &off_14A8A34F8;
+      goto LABEL_139;
+    }
+  }
+  if ( (*(_BYTE *)(a1 + 80) & 6) == 0 )
+    (*(void (__fastcall **)(__int64, __int64))(*(_QWORD *)a1 + 864LL))(a1, v9);
+  if ( (*(_BYTE *)(v9 + 232) & 2) == 0 )
+    return 0;
+  if ( *(_BYTE *)(v9 + 234) == 1 )
+    v6 = 8;
+  *(_DWORD *)(a1 + 80) = *(_DWORD *)(a1 + 80) & 0xFFFFFFF7 | v6;
+  if ( !*(_DWORD *)(a1 + 84) && (unsigned __int8)byte_14D838418 >= 5u )
+    sub_141421C70(&byte_14D838418, &off_14A8A1FC8, v8);
+  if ( (unsigned __int8)byte_14D838458 >= 5u )
+  {
+    sub_14163DB50(*(unsigned __int8 *)(v9 + 234));
+    sub_141421C70(&byte_14D838458, &off_14A8A20B8, *(unsigned int *)(a1 + 84));
+  }
+  sub_143F1EEC0(a1, 0, *(unsigned __int8 *)(v9 + 234));
+  return 1;
+}

@@ -1,0 +1,28 @@
+__int64 sub_145DF19C0()
+{
+  __int64 result; // rax
+  __int64 (__fastcall *v1)(); // [rsp+80h] [rbp+8h] BYREF
+
+  result = qword_14D921EF0;
+  if ( !qword_14D921EF0 )
+  {
+    v1 = sub_143DC00C0;
+    sub_1415FFF50(
+      (unsigned int)L"/Script/GameSystemsPlugin",
+      (unsigned int)L"PlayerInfo",
+      (unsigned int)&qword_14D921EF0,
+      (unsigned int)sub_145E01960,
+      1432,
+      8,
+      268435460,
+      0,
+      (__int64)L"Engine",
+      (__int64)sub_145DF8890,
+      (__int64)AK::SoundEngine::UnregisterResourceMonitorCallback,
+      (__int64)&v1,
+      (__int64)sub_145D74F60,
+      (__int64)sub_141587130);
+    return qword_14D921EF0;
+  }
+  return result;
+}

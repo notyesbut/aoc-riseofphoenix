@@ -1,0 +1,15 @@
+bool __fastcall sub_144BCB840(__int64 a1)
+{
+  char v1; // al
+  __int64 v2; // rax
+  __int64 v3; // rbx
+
+  v1 = *(_BYTE *)(a1 + 124);
+  if ( v1 )
+    return v1 == 1;
+  v2 = sub_1448F4E00();
+  v3 = v2;
+  if ( !*(_QWORD *)(v2 + 336) )
+    sub_141605900(v2);
+  return *(_BYTE *)(*(_QWORD *)(v3 + 336) + 258LL) == 0;
+}

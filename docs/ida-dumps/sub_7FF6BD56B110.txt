@@ -1,0 +1,6 @@
+__int64 sub_7FF6BD56B110()
+{
+  return sub_7FF6BA787000(
+           (unsigned int)"C:\\P4\\rel\\AOCUE5\\Engine\\Source\\Runtime\\Engine\\Classes\\Engine\\NetConnection.h",
+           1255);
+}

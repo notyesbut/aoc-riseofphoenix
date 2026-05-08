@@ -1,0 +1,240 @@
+char __fastcall sub_143F34BA0(__int64 a1, __int64 a2, _BYTE *a3)
+{
+  __int64 v4; // rsi
+  __int64 v6; // r15
+  __int64 v7; // rbx
+  __int64 v8; // rax
+  __int64 v9; // rcx
+  __int64 v10; // rax
+  __int64 v11; // rax
+  const wchar_t *v12; // r8
+  unsigned int *v13; // r14
+  const wchar_t *v14; // r13
+  const wchar_t *v15; // r8
+  __int64 *v16; // rbx
+  signed int v17; // edx
+  __int64 v18; // rax
+  __int64 v19; // rax
+  __int64 v20; // rbx
+  __int64 v21; // r8
+  const wchar_t *v22; // r9
+  __int64 v23; // rbx
+  char v24; // r14
+  const wchar_t *v26; // [rsp+30h] [rbp-40h] BYREF
+  int v27; // [rsp+38h] [rbp-38h]
+  _QWORD v28[3]; // [rsp+40h] [rbp-30h] BYREF
+  __int64 v29; // [rsp+58h] [rbp-18h]
+  __int64 v30; // [rsp+68h] [rbp-8h]
+  __int64 v31; // [rsp+A8h] [rbp+38h] BYREF
+
+  v4 = a2;
+  v6 = 0;
+  if ( *(char *)(a2 + 232) >= 0
+    || (v7 = *(_QWORD *)(a1 + 72), (*(_BYTE *)(v7 + 240) & 1) != 0)
+    || (!*(_QWORD *)(v7 + 136) || (v8 = sub_1442562F0(), !(unsigned __int8)sub_1416B9A40(v7 + 136, v8))
+      ? (v9 = 0)
+      : (v9 = *(_QWORD *)(v7 + 136)),
+        sub_14427E810(v9, v4),
+        (*(_BYTE *)(v4 + 41) & 2) == 0) )
+  {
+    v11 = *(_QWORD *)(a1 + 72);
+    if ( (*(_BYTE *)(v11 + 240) & 1) != 0 && (*(_BYTE *)(a1 + 80) & 0x40) != 0 )
+    {
+      LOBYTE(v10) = *(_BYTE *)(v4 + 232);
+      if ( (v10 & 2) != 0 )
+      {
+        LOBYTE(v10) = v10 & 0x50;
+        if ( (_BYTE)v10 != 16 )
+        {
+          if ( (unsigned __int8)byte_14D838458 >= 5u )
+          {
+            sub_141357530(
+              &v26,
+              L"Channel[%d]. Seq %d. PacketId: %d",
+              *(unsigned int *)(v4 + 216),
+              *(unsigned int *)(v4 + 228),
+              *(_DWORD *)(v4 + 192));
+            v12 = &chText;
+            if ( v27 )
+              v12 = v26;
+            sub_141421C70((__int64)&byte_14D838458, (__int64)&off_14A8A2288, v12);
+            if ( v26 )
+              sub_1413B0B20(v26);
+          }
+          if ( *(_BYTE *)(v4 + 234) == 1 )
+            LODWORD(v6) = 8;
+          *(_DWORD *)(a1 + 80) = *(_DWORD *)(a1 + 80) & 0xFFFFFFF7 | v6;
+          LOBYTE(a2) = 1;
+          LOBYTE(v10) = sub_143F1EEC0(a1, a2, *(unsigned __int8 *)(v4 + 234));
+        }
+      }
+    }
+    else if ( (*(_BYTE *)(v4 + 232) & 8) == 0
+           || (v13 = (unsigned int *)(v4 + 228),
+               *(_DWORD *)(v4 + 228) == *(_DWORD *)(*(_QWORD *)(v11 + 5232) + 4LL * *(int *)(a1 + 84)) + 1) )
+    {
+      LOBYTE(v10) = sub_143F32E00(a1, v4, a3);
+      if ( (*(_BYTE *)(v4 + 41) & 2) != 0 )
+      {
+        if ( (unsigned __int8)byte_14D838458 >= 2u )
+          sub_141421C70((__int64)&byte_14D838458, (__int64)&off_14A8A24D8);
+        sub_143F174A0(v28, 0x36u);
+        LOBYTE(v10) = sub_143F1BB50(v4 + 184, v28);
+        if ( v30 )
+          LOBYTE(v10) = (*(__int64 (**)(void))(v30 - 16))();
+LABEL_85:
+        if ( v29 )
+          LOBYTE(v10) = sub_1413B0B20(v29);
+      }
+      else if ( !(_BYTE)v10 )
+      {
+        v21 = *(_QWORD *)(a1 + 112);
+        if ( v21 )
+        {
+          while ( 1 )
+          {
+            LODWORD(v10) = *(_DWORD *)(*(_QWORD *)(*(_QWORD *)(a1 + 72) + 5232LL) + 4LL * *(int *)(a1 + 84)) + 1;
+            if ( *(_DWORD *)(v21 + 228) != (_DWORD)v10 )
+              break;
+            if ( (unsigned __int8)byte_14D838458 >= 5u )
+            {
+              sub_141357530(&v26, L"Channel[%d]. Seq %d. PacketId: %d", *(unsigned int *)(v21 + 216));
+              v22 = &chText;
+              if ( v27 )
+                v22 = v26;
+              sub_141421C70((__int64)&byte_14D838458, (__int64)&off_14A8A2590, *(unsigned int *)(a1 + 84), v22);
+              if ( v26 )
+                sub_1413B0B20(v26);
+            }
+            v23 = *(_QWORD *)(a1 + 112);
+            *(_QWORD *)(a1 + 112) = *(_QWORD *)(v23 + 200);
+            --*(_DWORD *)(a1 + 104);
+            *(_QWORD *)(v23 + 200) = 0;
+            LOBYTE(v31) = 0;
+            LOBYTE(v10) = sub_143F32E00(a1, v23, &v31);
+            v24 = v10;
+            if ( (_BYTE)v31 && (unsigned __int8)byte_14D838458 >= 3u )
+              LOBYTE(v10) = sub_141421C70((__int64)&byte_14D838458, (__int64)&off_14A8A2610);
+            if ( (*(_BYTE *)(v4 + 41) & 2) != 0 )
+            {
+              if ( (unsigned __int8)byte_14D838458 >= 2u )
+                sub_141421C70((__int64)&byte_14D838458, (__int64)&off_14A8A26C8);
+              sub_143F174A0(v28, 0x37u);
+              LOBYTE(v10) = sub_143F1BB50(v4 + 184, v28);
+              if ( v30 )
+                LOBYTE(v10) = (*(__int64 (**)(void))(v30 - 16))();
+              goto LABEL_85;
+            }
+            if ( v23 )
+              LOBYTE(v10) = (**(__int64 (__fastcall ***)(__int64, __int64))v23)(v23, 1);
+            if ( !v24 )
+            {
+              v21 = *(_QWORD *)(a1 + 112);
+              if ( v21 )
+                continue;
+            }
+            return v10;
+          }
+        }
+      }
+    }
+    else
+    {
+      v14 = &chText;
+      if ( (*(_BYTE *)(v4 + 233) & 2) != 0 )
+      {
+        if ( (unsigned __int8)byte_14D8384A8 >= 3u )
+        {
+          sub_141357530(&v26, L"Channel[%d]. Seq %d. PacketId: %d", *(unsigned int *)(v4 + 216));
+          v15 = &chText;
+          if ( v27 )
+            v15 = v26;
+          sub_141421C70((__int64)&byte_14D8384A8, (__int64)&off_14A8A2320, v15);
+          if ( v26 )
+            sub_1413B0B20(v26);
+          v13 = (unsigned int *)(v4 + 228);
+        }
+        *a3 = 1;
+      }
+      if ( (unsigned __int8)byte_14D838458 >= 5u )
+      {
+        sub_141357530(
+          &v26,
+          L"Channel[%d]. Seq %d. PacketId: %d",
+          *(unsigned int *)(v4 + 216),
+          *v13,
+          *(_DWORD *)(v4 + 192));
+        if ( v27 )
+          v14 = v26;
+        sub_141421C70(
+          (__int64)&byte_14D838458,
+          (__int64)&off_14A8A2388,
+          *v13,
+          (unsigned int)(*(_DWORD *)(*(_QWORD *)(*(_QWORD *)(a1 + 72) + 5232LL) + 4LL * *(int *)(a1 + 84)) + 1),
+          v14);
+        if ( v26 )
+        {
+          sub_1413B0B20(v26);
+          v13 = (unsigned int *)(v4 + 228);
+        }
+      }
+      v16 = (__int64 *)(a1 + 112);
+      v10 = *(_QWORD *)(a1 + 112);
+      if ( v10 )
+      {
+        v17 = *v13;
+        while ( v17 != *(_DWORD *)(v10 + 228) )
+        {
+          if ( v17 >= *(_DWORD *)(v10 + 228) )
+          {
+            v16 = (__int64 *)(v10 + 200);
+            v10 = *(_QWORD *)(v10 + 200);
+            if ( v10 )
+              continue;
+          }
+          goto LABEL_46;
+        }
+      }
+      else
+      {
+LABEL_46:
+        v18 = sub_146DFA830(240);
+        v31 = v18;
+        if ( v18 )
+          v6 = sub_143F17580(v18, v4);
+        *(_QWORD *)(v6 + 200) = *v16;
+        *v16 = v6;
+        ++*(_DWORD *)(a1 + 104);
+        v19 = *(_QWORD *)(a1 + 72);
+        v20 = *(_QWORD *)(*(_QWORD *)(v19 + 120) + 720LL);
+        if ( byte_14D6B7288 && v20 )
+          sub_14163E750(*(_QWORD *)(*(_QWORD *)(v19 + 120) + 720LL));
+        LOBYTE(v10) = sub_144288A10(v20, qword_14D850238, *(int *)(a1 + 104));
+        if ( *(int *)(a1 + 104) >= 512 )
+        {
+          sub_1414E84D0(v4);
+          sub_143F174A0(v28, 0x35u);
+          LOBYTE(v10) = sub_143F1BB50(v4 + 184, v28);
+          if ( v30 )
+            LOBYTE(v10) = (*(__int64 (**)(void))(v30 - 16))();
+          if ( v29 )
+            LOBYTE(v10) = sub_1413B0B20(v29);
+          if ( (unsigned __int8)byte_14D838458 >= 2u )
+            LOBYTE(v10) = sub_141421C70((__int64)&byte_14D838458, (__int64)&off_14A8A2430);
+        }
+      }
+    }
+  }
+  else
+  {
+    sub_143F174A0(v28, 0x33u);
+    LOBYTE(v10) = sub_143F1BB50(v4 + 184, v28);
+    if ( v30 )
+      LOBYTE(v10) = (*(__int64 (**)(void))(v30 - 16))();
+    if ( v29 )
+      LOBYTE(v10) = sub_1413B0B20(v29);
+    if ( (unsigned __int8)byte_14D838458 >= 2u )
+      LOBYTE(v10) = sub_141421C70((__int64)&byte_14D838458, (__int64)&off_14A8A21B8, *(unsigned int *)(a1 + 84));
+  }
+  return v10;
+}

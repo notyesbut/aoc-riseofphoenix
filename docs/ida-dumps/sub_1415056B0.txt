@@ -1,0 +1,88 @@
+__int64 __fastcall sub_1415056B0(__int128 *a1, int a2)
+{
+  RTL_SRWLOCK *v5; // rbx
+  __int128 v6; // xmm0
+  __int128 *v7; // rax
+  RTL_SRWLOCK *v8; // rdi
+  unsigned int Ptr_high; // ebp
+  __int64 v10; // rbx
+  int *v11; // rsi
+  int i; // ecx
+  unsigned int v13; // ecx
+  _WORD *v14; // rcx
+  __int64 v15; // rbx
+  __int128 v16; // [rsp+20h] [rbp-48h] BYREF
+  __int128 v17; // [rsp+30h] [rbp-38h] BYREF
+  __int128 v18; // [rsp+40h] [rbp-28h]
+  __int128 v19; // [rsp+50h] [rbp-18h]
+  unsigned int v20; // [rsp+70h] [rbp+8h] BYREF
+  int v21; // [rsp+74h] [rbp+Ch]
+
+  if ( *((_DWORD *)a1 + 2) < 0x400u )
+  {
+    if ( byte_14D5EDC59 )
+    {
+      v5 = &stru_14D5EDEC0;
+    }
+    else
+    {
+      v5 = (RTL_SRWLOCK *)sub_1414FE8F0(&stru_14D5EDEC0);
+      byte_14D5EDC59 = 1;
+    }
+    v6 = *a1;
+    if ( a2 == 1 )
+    {
+      v16 = *a1;
+      sub_14150CBC0(v5, &v20, &v16);
+      return v20 | ((unsigned __int64)v20 << 32);
+    }
+    else
+    {
+      v18 = *a1;
+      if ( (unsigned __int8)BYTE4(*((_QWORD *)a1 + 1)) )
+        v7 = (__int128 *)sub_1414FCA80(&v16, v6);
+      else
+        v7 = (__int128 *)sub_1414FC8E0(&v17, v6);
+      v19 = *v7;
+      v8 = &v5[8 * (unsigned int)v19 + 8200];
+      *(_QWORD *)&v16 = v8;
+      DWORD2(v16) = 0;
+      AcquireSRWLockShared(v8);
+      Ptr_high = HIDWORD(v8[1].Ptr);
+      v10 = Ptr_high & DWORD1(v19);
+      v11 = (int *)((char *)v8[2].Ptr + 4 * v10);
+      for ( i = *v11; *v11; i = *v11 )
+      {
+        if ( (i & 0xE0000000) == DWORD2(v19) )
+        {
+          v13 = i & 0x1FFFFFFF;
+          v20 = HIWORD(v13);
+          v21 = (unsigned __int16)v13;
+          v14 = (_WORD *)(*((_QWORD *)v8[3].Ptr + HIWORD(v13) + 2) + 2 * (unsigned int)(unsigned __int16)v13);
+          if ( *v14 == WORD6(v19) )
+          {
+            v17 = v18;
+            if ( (unsigned __int8)sub_1414FBCF0(v14, &v17) )
+              break;
+          }
+        }
+        v10 = Ptr_high & ((_DWORD)v10 + 1);
+        v11 = (int *)((char *)v8[2].Ptr + 4 * v10);
+      }
+      v15 = *v11 & 0x1FFFFFFF;
+      ReleaseSRWLockShared(v8);
+      return v15 | ((unsigned __int64)(unsigned int)v15 << 32);
+    }
+  }
+  else if ( a2 )
+  {
+    *(_QWORD *)&v16 = "ERROR_NAME_SIZE_EXCEEDED";
+    DWORD2(v16) = 24;
+    BYTE12(v16) = 0;
+    return sub_1415056B0(&v16, 1);
+  }
+  else
+  {
+    return 0;
+  }
+}

@@ -1,0 +1,22 @@
+__int64 __fastcall sub_7FF6BA823CC0(__int64 a1, __int64 a2, __int64 a3, __int64 a4)
+{
+  __int64 v8; // r8
+  int v9; // eax
+
+  *(_QWORD *)(a1 + 160) = a3;
+  *(_QWORD *)(a1 + 168) = 0;
+  sub_7FF6BA815890();
+  sub_7FF6BA8260D0(a1, a2);
+  v8 = (a4 + 7) >> 3;
+  if ( (int)v8 < 0 )
+  {
+    sub_7FF6BA685830((unsigned int)v8);
+    JUMPOUT(0x7FF6BA823DB2LL);
+  }
+  v9 = *(_DWORD *)(a1 + 156);
+  *(_DWORD *)(a1 + 152) = 0;
+  if ( (int)v8 > v9 )
+    sub_7FF6BA64BD90(1, 1, v8, a1 + 144, 0, a1 + 156);
+  sub_7FF6BA64EF30(1, 1, (a3 + 7) >> 3, a1 + 144, a1 + 152, a1 + 156);
+  return (*(__int64 (__fastcall **)(__int64, _QWORD, __int64))(*(_QWORD *)a2 + 392LL))(a2, *(_QWORD *)(a1 + 144), a3);
+}

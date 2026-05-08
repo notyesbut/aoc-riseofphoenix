@@ -1,0 +1,1767 @@
+              dq offset sub_7FF6BF0BB390
+off_7FF6C4956020 dq offset off_7FF6C4955FE0 ; DATA XREF: .data:00007FF6C666B238↓o
+                                        ; "CharacterCustomizationSaveData"
+aCharactercusto_62 db 'CharacterCustomizationSaveData',0
+                                        ; DATA XREF: .rdata:off_7FF6C4955FE0↑o
+                                        ; .data:00007FF6C6697780↓o
+                align 8
+aTargetcustomiz db 'TargetCustomizationChanged',0
+                                        ; DATA XREF: .rdata:00007FF6C4956158↓o
+                                        ; .rdata:00007FF6C4958AA0↓o ...
+                align 10h
+off_7FF6C4956070 dq offset aPaperappearanc ; DATA XREF: .rdata:off_7FF6C49560F0↓o
+                                        ; "PaperAppearanceComponent"
+                align 20h
+                db  0Dh
+                db    0
+                db    8
+                db    0
+                db    0
+                db    8
+                db  24h ; $
+                db    1
+                db  52h ; R
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  68h ; h
+                db    3
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BECAF000
+off_7FF6C49560B0 dq offset aMskmesh     ; DATA XREF: .rdata:00007FF6C49560F8↓o
+                                        ; "MSKMesh"
+                align 20h
+                db  0Dh
+                db    0
+                db    8
+                db    0
+                db    0
+                db    8
+                db  24h ; $
+                db    1
+                db  52h ; R
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  70h ; p
+                db    3
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BEE769C0
+off_7FF6C49560F0 dq offset off_7FF6C4956070 ; DATA XREF: .rdata:00007FF6C4956198↓o
+                                        ; "PaperAppearanceComponent"
+                dq offset off_7FF6C49560B0 ; "MSKMesh"
+off_7FF6C4956100 dq offset sub_7FF6BCE93C70 ; DATA XREF: .rdata:00007FF6C4956188↓o
+                dq offset sub_7FF6BED75450
+off_7FF6C4956110 dq offset sub_7FF6BEFBE090 ; DATA XREF: .rdata:00007FF6C4956190↓o
+                dq offset aInitializeappe ; "InitializeAppearance"
+                dq offset sub_7FF6BEFBE0C0
+                dq offset aMyappearancech ; "MyAppearanceChanged"
+                dq offset sub_7FF6BEFBE0F0
+                dq offset aMyskeletonchan ; "MySkeletonChanged"
+                dq offset sub_7FF6BEFBE120
+                dq offset aTargetappearan ; "TargetAppearanceChanged"
+                dq offset sub_7FF6BEFBE150
+                dq offset aTargetcustomiz ; "TargetCustomizationChanged"
+unk_7FF6C4956160 db    0                ; DATA XREF: .rdata:00007FF6C4956180↓o
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4956170 dq offset sub_7FF6BEEC7A00 ; DATA XREF: sub_7FF6BEFBE060+10↑o
+                dq offset aEngine_4     ; "Engine"
+                dq offset unk_7FF6C4956160
+                dq offset off_7FF6C4956100
+                dq offset off_7FF6C4956110
+                dq offset off_7FF6C49560F0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  52h ; R
+                db    0
+                db    1
+                db    0
+                db 0A4h
+                db    1
+                db  90h
+                db    0
+aPaperappearanc db 'PaperAppearanceComponent',0
+                                        ; DATA XREF: .rdata:off_7FF6C4956070↑o
+                align 10h
+off_7FF6C49561D0 dq offset sub_7FF6BEFBE060 ; DATA XREF: sub_7FF6BA49B220+6↑o
+                dq offset sub_7FF6BEEC7A00
+                dq offset aAuirenderactor_3 ; "AUIRenderActor"
+                dq offset qword_7FF6C6C3B0F0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+aAuirenderactor_3:                      ; DATA XREF: .rdata:00007FF6C49561E0↑o
+                text "UTF-16LE", 'AUIRenderActor',0
+                align 8
+aDisplayundodeb:                        ; DATA XREF: sub_7FF6BA49A3B0+6↑o
+                text "UTF-16LE", 'DisplayUndoDebugTextBP',0
+                align 10h
+off_7FF6C4956250 dq offset aCachedstates ; DATA XREF: .rdata:off_7FF6C49562C8↓o
+                                        ; "CachedStates"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BEFB9610
+off_7FF6C4956290 dq offset aCachedstates ; DATA XREF: .rdata:00007FF6C49562D0↓o
+                                        ; "CachedStates"
+                align 20h
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  16h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C49562C8 dq offset off_7FF6C4956250 ; DATA XREF: .data:00007FF6C666B3B8↓o
+                                        ; "CachedStates"
+                dq offset off_7FF6C4956290 ; "CachedStates"
+aCachedstates   db 'CachedStates',0     ; DATA XREF: .rdata:off_7FF6C4956250↑o
+                                        ; .rdata:off_7FF6C4956290↑o
+                align 8
+aDisplayundodeb_0 db 'DisplayUndoDebugTextBP',0
+                                        ; DATA XREF: .rdata:00007FF6C4957758↓o
+                                        ; .data:00007FF6C666B3B0↓o
+                align 20h
+off_7FF6C4956300 dq offset aValue       ; DATA XREF: .rdata:off_7FF6C4956338↓o
+                                        ; "Value"
+                align 10h
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  0Ah
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4956338 dq offset off_7FF6C4956300 ; DATA XREF: .data:00007FF6C666B3E8↓o
+                                        ; "Value"
+aHandleactionba_0 db 'HandleActionBarColumnsRowsSliderValueChanged',0
+                                        ; DATA XREF: .rdata:00007FF6C4957768↓o
+                                        ; .rdata:off_7FF6C4959090↓o ...
+                align 10h
+off_7FF6C4956370 dq offset aInoption    ; DATA XREF: .rdata:off_7FF6C49563A8↓o
+                                        ; "InOption"
+                align 20h
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  1Dh
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C49563A8 dq offset off_7FF6C4956370 ; DATA XREF: .data:00007FF6C666B418↓o
+                                        ; "InOption"
+aHandleactionba_2 db 'HandleActionBarOrientationDropDownSelectionChanged',0
+                                        ; DATA XREF: .rdata:00007FF6C4957778↓o
+                                        ; .rdata:00007FF6C49590A0↓o ...
+                align 8
+off_7FF6C49563E8 dq offset aValue       ; DATA XREF: .rdata:off_7FF6C4956420↓o
+                                        ; "Value"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  0Ah
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4956420 dq offset off_7FF6C49563E8 ; DATA XREF: .data:00007FF6C666B448↓o
+                                        ; "Value"
+aHandleactionba_3 db 'HandleActionBarPaddingSliderValueChanged',0
+                                        ; DATA XREF: .rdata:00007FF6C4957788↓o
+                                        ; .rdata:00007FF6C49590B0↓o ...
+                align 8
+aHandleactionba_4 db 'HandleActionBarSliderMouseCaptureBegin',0
+                                        ; DATA XREF: .rdata:00007FF6C4957798↓o
+                                        ; .rdata:00007FF6C49590C0↓o ...
+                align 20h
+off_7FF6C4956480 dq offset aValue       ; DATA XREF: .rdata:off_7FF6C49564B8↓o
+                                        ; "Value"
+                align 10h
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  0Ah
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C49564B8 dq offset off_7FF6C4956480 ; DATA XREF: .data:00007FF6C666B4A8↓o
+                                        ; "Value"
+aCitizendatatup:                        ; DATA XREF: sub_7FF6BEFBE180+18↑o
+                                        ; .rdata:00007FF6C4956D40↓o
+                text "UTF-16LE", 'CitizenDataTuple',0
+                align 8
+off_7FF6C49564E8 dq offset aPlayername_1 ; DATA XREF: .rdata:off_7FF6C4956560↓o
+                                        ; "PlayerName"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  15h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4956520 dq offset aPlayerguid_2 ; DATA XREF: .rdata:00007FF6C4956568↓o
+                                        ; "PlayerGuid"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  10h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BA9E0560
+off_7FF6C4956560 dq offset off_7FF6C49564E8 ; DATA XREF: .data:00007FF6C666B270↓o
+                                        ; "PlayerName"
+                dq offset off_7FF6C4956520 ; "PlayerGuid"
+aHandleactionba_5 db 'HandleActionBarSpacingSliderValueChanged',0
+                                        ; DATA XREF: .rdata:00007FF6C49577A8↓o
+                                        ; .rdata:00007FF6C49590D0↓o ...
+                align 20h
+off_7FF6C49565A0 dq offset aRow_0       ; DATA XREF: .rdata:off_7FF6C49565E0↓o
+                                        ; "Row"
+                align 10h
+                db  80h
+                db    0
+                db    8
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  12h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BECF6940
+off_7FF6C49565E0 dq offset off_7FF6C49565A0 ; DATA XREF: .data:00007FF6C666B4D8↓o
+                                        ; "Row"
+aHandleautotrac db 'HandleAutoTrackQuestsChecked',0
+                                        ; DATA XREF: .rdata:00007FF6C49577B8↓o
+                                        ; .rdata:00007FF6C49590E0↓o ...
+                align 10h
+off_7FF6C4956610 dq offset aIngeometry  ; DATA XREF: .rdata:off_7FF6C4956710↓o
+                                        ; "InGeometry"
+                align 20h
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BABEC890
+off_7FF6C4956650 dq offset aInmouseevent ; DATA XREF: .rdata:00007FF6C4956718↓o
+                                        ; "InMouseEvent"
+                align 20h
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  38h ; 8
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BABA97A0
+off_7FF6C4956690 dq offset aUnderlyingtype ; DATA XREF: .rdata:00007FF6C4956720↓o
+                                        ; "UnderlyingType"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C49566D0 dq offset aResizeaction ; DATA XREF: .rdata:00007FF6C4956728↓o
+                                        ; "ResizeAction"
+                align 20h
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  1Eh
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db 0B8h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BEFBC3B0
+off_7FF6C4956710 dq offset off_7FF6C4956610 ; DATA XREF: .data:00007FF6C666B508↓o
+                                        ; "InGeometry"
+                dq offset off_7FF6C4956650 ; "InMouseEvent"
+                dq offset off_7FF6C4956690 ; "UnderlyingType"
+                dq offset off_7FF6C49566D0 ; "ResizeAction"
+aHandlehudeleme_1 db 'HandleHudElementMouseDown',0
+                                        ; DATA XREF: .rdata:00007FF6C49577C8↓o
+                                        ; .rdata:00007FF6C49590F0↓o ...
+                align 10h
+off_7FF6C4956750 dq offset aIngeometry  ; DATA XREF: .rdata:off_7FF6C49567D0↓o
+                                        ; "InGeometry"
+                align 20h
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BABEC890
+off_7FF6C4956790 dq offset aInmouseevent ; DATA XREF: .rdata:00007FF6C49567D8↓o
+                                        ; "InMouseEvent"
+                align 20h
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  38h ; 8
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BABA97A0
+off_7FF6C49567D0 dq offset off_7FF6C4956750 ; DATA XREF: .data:00007FF6C666B538↓o
+                                        ; "InGeometry"
+                dq offset off_7FF6C4956790 ; "InMouseEvent"
+aCitizendatatup_0 db 'CitizenDataTuple',0 ; DATA XREF: .data:00007FF6C666B268↓o
+                align 8
+aMayornoderpcda:                        ; DATA XREF: sub_7FF6BEFBE1C0+18↑o
+                                        ; .rdata:00007FF6C4956D68↓o
+                text "UTF-16LE", 'MayorNodeRPCData',0
+                align 20h
+off_7FF6C4956820 dq offset aTaxrate_0   ; DATA XREF: .rdata:off_7FF6C4956AA0↓o
+                                        ; "TaxRate"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  0Ah
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4956858 dq offset aGold_0      ; DATA XREF: .rdata:00007FF6C4956AA8↓o
+                                        ; "Gold"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    4
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4956890 dq offset aUnderlyingtype ; DATA XREF: .rdata:00007FF6C4956AB0↓o
+                                        ; "UnderlyingType"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C49568D0 dq offset aCulture_1   ; DATA XREF: .rdata:00007FF6C4956AB8↓o
+                                        ; "Culture"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  1Eh
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BF0BB2A0
+off_7FF6C4956910 dq offset aUnderlyingtype ; DATA XREF: .rdata:00007FF6C4956AC0↓o
+                                        ; "UnderlyingType"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4956950 dq offset aLevel_0     ; DATA XREF: .rdata:00007FF6C4956AC8↓o
+                                        ; "Level"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  1Eh
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    9
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BEE99BD0
+aHandlehudeleme_2 db 'HandleHudElementMouseUp',0
+                                        ; DATA XREF: .rdata:00007FF6C49577D8↓o
+                                        ; .rdata:00007FF6C4959100↓o ...
+                align 10h
+off_7FF6C49569B0 dq offset aCitizens    ; DATA XREF: .rdata:00007FF6C4956AD0↓o
+                                        ; "Citizens"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BEFBE3A0
+off_7FF6C49569F0 dq offset aCitizens    ; DATA XREF: .rdata:00007FF6C4956AD8↓o
+                                        ; "Citizens"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  16h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  10h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4956A28 dq offset aVassals     ; DATA XREF: .rdata:00007FF6C4956AE0↓o
+                                        ; "Vassals"
+                align 20h
+                db    4
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4956A60 dq offset aVassals     ; DATA XREF: .rdata:00007FF6C4956AE8↓o
+                                        ; "Vassals"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  16h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  20h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4956AA0 dq offset off_7FF6C4956820 ; DATA XREF: .data:00007FF6C666B2A8↓o
+                                        ; "TaxRate"
+                dq offset off_7FF6C4956858 ; "Gold"
+                dq offset off_7FF6C4956890 ; "UnderlyingType"
+                dq offset off_7FF6C49568D0 ; "Culture"
+                dq offset off_7FF6C4956910 ; "UnderlyingType"
+                dq offset off_7FF6C4956950 ; "Level"
+                dq offset off_7FF6C49569B0 ; "Citizens"
+                dq offset off_7FF6C49569F0 ; "Citizens"
+                dq offset off_7FF6C4956A28 ; "Vassals"
+                dq offset off_7FF6C4956A60 ; "Vassals"
+off_7FF6C4956AF0 dq offset aIngeometry  ; DATA XREF: .rdata:off_7FF6C4956B70↓o
+                                        ; "InGeometry"
+                align 20h
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BABEC890
+off_7FF6C4956B30 dq offset aInmouseevent ; DATA XREF: .rdata:00007FF6C4956B78↓o
+                                        ; "InMouseEvent"
+                align 20h
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  38h ; 8
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BABA97A0
+off_7FF6C4956B70 dq offset off_7FF6C4956AF0 ; DATA XREF: .data:00007FF6C666B568↓o
+                                        ; "InGeometry"
+                dq offset off_7FF6C4956B30 ; "InMouseEvent"
+off_7FF6C4956B80 dq offset aValue       ; DATA XREF: .rdata:off_7FF6C4956BB8↓o
+                                        ; "Value"
+                align 10h
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  0Ah
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4956BB8 dq offset off_7FF6C4956B80 ; DATA XREF: .data:00007FF6C666B5C8↓o
+                                        ; "Value"
+aHandlescalesli db 'HandleScaleSliderValueChanged',0
+                                        ; DATA XREF: .rdata:00007FF6C4957808↓o
+                                        ; .rdata:00007FF6C4959130↓o ...
+                align 20h
+off_7FF6C4956BE0 dq offset sub_7FF6BA8ACBA0 ; DATA XREF: sub_7FF6BEFBE540+18↑o
+                dq offset sub_7FF6BA8ACE20
+                dq offset sub_7FF6BEFBE580
+                dq offset sub_7FF6BEFBE5B0
+                dq offset sub_7FF6BEFBE5D0
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD2E0
+                dq offset sub_7FF6BA8AD2C0
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset sub_7FF6BEFBE610
+                dq offset sub_7FF6BA8ACB00
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8ACB10
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6BA8AD020
+                dq offset sub_7FF6BA8AE480
+                dq offset sub_7FF6BA8AE490
+                dq offset sub_7FF6BEFBE7C0
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_7FF6B9FBAB00
+                dq offset ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z ; AK::SoundEngine::UnregisterResourceMonitorCallback(void (*)(AkResourceMonitorDataSummary const *))
+aTaxrate_0      db 'TaxRate',0          ; DATA XREF: .rdata:off_7FF6C4956820↑o
+off_7FF6C4956CD0 dq offset aValue       ; DATA XREF: .rdata:off_7FF6C4956D08↓o
+                                        ; "Value"
+                align 20h
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  0Ah
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4956D08 dq offset off_7FF6C4956CD0 ; DATA XREF: .data:00007FF6C666B628↓o
+                                        ; "Value"
+aVassals        db 'Vassals',0          ; DATA XREF: .rdata:off_7FF6C4956A28↑o
+                                        ; .rdata:off_7FF6C4956A60↑o
+aMayornoderpcda_0 db 'MayorNodeRPCData',0 ; DATA XREF: .data:00007FF6C666B2A0↓o
+                align 10h
+off_7FF6C4956D30 dq offset sub_7FF6BEFBE180 ; DATA XREF: sub_7FF6BA49B120+6↑o
+                dq offset sub_7FF6BCDFFBD0
+                dq offset aCitizendatatup ; "CitizenDataTuple"
+                dq offset qword_7FF6C6C3B108
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_7FF6BEFBE1C0
+                dq offset sub_7FF6BEFBE540
+                dq offset aMayornoderpcda ; "MayorNodeRPCData"
+                dq offset qword_7FF6C6C3B120
+                align 20h
+aHandleundobutt db 'HandleUndoButtonClicked',0
+                                        ; DATA XREF: .rdata:00007FF6C4957838↓o
+                                        ; .rdata:00007FF6C4959160↓o ...
+off_7FF6C4956D98 dq offset aInoption    ; DATA XREF: .rdata:off_7FF6C4956DD0↓o
+                                        ; "InOption"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  82h
+                db    1
+                db    0
+                db    8
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  1Dh
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_7FF6C4956DD0 dq offset off_7FF6C4956D98 ; DATA XREF: .data:00007FF6C666B688↓o
+                                        ; "InOption"
+aHandlewidgetan db 'HandleWidgetAnchorDropDownSelectionChanged',0
+                                        ; DATA XREF: .rdata:00007FF6C4957848↓o
+                                        ; .rdata:00007FF6C4959170↓o ...
+                align 8
+aTrackedrecipe:                         ; DATA XREF: sub_7FF6BEFBE200+18↑o
+                                        ; .rdata:00007FF6C4954490↑o
+                text "UTF-16LE", 'TrackedRecipe',0
+                align 8
+off_7FF6C4956E28 dq offset aId_14       ; DATA XREF: .rdata:off_7FF6C4956F10↓o
+                                        ; "Id"
+                db    0

@@ -1,0 +1,5 @@
+_QWORD *__fastcall sub_7FF6BA726520(__int64 a1, _QWORD *a2)
+{
+  *a2 = *(_QWORD *)(a1 + 24);
+  return a2;
+}

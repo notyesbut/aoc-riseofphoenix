@@ -1,0 +1,1565 @@
+               dq offset unk_14D702083
+off_149F5AA18   dq offset aReadNumchanged ; DATA XREF: sub_141D432C0+1DA↑o
+                                        ; "Read NumChanged: %d NumDeletes: %d."
+                dq offset aCP4RelAocue5En_910 ; "C:\\P4\\rel\\AOCUE5\\Engine\\Source\\Ru"...
+                db  0Dh
+                db    4
+                db    0
+                db    0
+                db    5
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D702084
+                align 20h
+off_149F5AA40   dq offset aEnetcloseresul_113
+                                        ; DATA XREF: .data:000000014D20B248↓o
+                                        ; "ENetCloseResult::NetDriverAlreadyExists"
+                align 10h
+                dq offset aEnetcloseresul_114 ; "ENetCloseResult::NetDriverCreateFailure"
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_115 ; "ENetCloseResult::NetDriverListenFailure"
+                db    2
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_116 ; "ENetCloseResult::ConnectionLost"
+                db    3
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_117 ; "ENetCloseResult::ConnectionTimeout"
+                db    4
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_118 ; "ENetCloseResult::FailureReceived"
+                db    5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_119 ; "ENetCloseResult::OutdatedClient"
+                db    6
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_120 ; "ENetCloseResult::OutdatedServer"
+                db    7
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_121 ; "ENetCloseResult::PendingConnectionFailu"...
+                db    8
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_122 ; "ENetCloseResult::NetGuidMismatch"
+                db    9
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_123 ; "ENetCloseResult::NetChecksumMismatch"
+                db  0Ah
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_124 ; "ENetCloseResult::SecurityMalformedPacke"...
+                db  0Bh
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_125 ; "ENetCloseResult::SecurityInvalidData"
+                db  0Ch
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_126 ; "ENetCloseResult::SecurityClosed"
+                db  0Dh
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_127 ; "ENetCloseResult::Unknown"
+                db  0Eh
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_128 ; "ENetCloseResult::Success"
+                db  0Fh
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_129 ; "ENetCloseResult::Extended"
+                db  10h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_130 ; "ENetCloseResult::HostClosedConnection"
+                db  11h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_131 ; "ENetCloseResult::Disconnect"
+                db  12h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_132 ; "ENetCloseResult::Upgrade"
+                db  13h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_133 ; "ENetCloseResult::PreLoginFailure"
+                db  14h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_134 ; "ENetCloseResult::JoinFailure"
+                db  15h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_135 ; "ENetCloseResult::JoinSplitFailure"
+                db  16h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_136 ; "ENetCloseResult::AddressResolutionFaile"...
+                db  17h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_137 ; "ENetCloseResult::RPCDoS"
+                db  18h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_138 ; "ENetCloseResult::Cleanup"
+                db  19h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_139 ; "ENetCloseResult::MissingLevelPackage"
+                db  1Ah
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_140 ; "ENetCloseResult::PacketHandlerIncomingE"...
+                db  1Bh
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_141 ; "ENetCloseResult::ZeroLastByte"
+                db  1Ch
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_142 ; "ENetCloseResult::ZeroSize"
+                db  1Dh
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_143 ; "ENetCloseResult::ReadHeaderFail"
+                db  1Eh
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_144 ; "ENetCloseResult::ReadHeaderExtraFail"
+                db  1Fh
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_145 ; "ENetCloseResult::AckSequenceMismatch"
+                db  20h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_146 ; "ENetCloseResult::BunchBadChannelIndex"
+                db  21h ; !
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_147 ; "ENetCloseResult::BunchChannelNameFail"
+                db  22h ; "
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_148 ; "ENetCloseResult::BunchWrongChannelType"
+                db  23h ; #
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_149 ; "ENetCloseResult::BunchHeaderOverflow"
+                db  24h ; $
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_150 ; "ENetCloseResult::BunchDataOverflow"
+                db  25h ; %
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_151 ; "ENetCloseResult::BunchServerPackageMapE"...
+                db  26h ; &
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_152 ; "ENetCloseResult::BunchPrematureControlC"...
+                db  27h ; '
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_153 ; "ENetCloseResult::BunchPrematureChannel"
+                db  28h ; (
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_154 ; "ENetCloseResult::BunchPrematureControlC"...
+                db  29h ; )
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_155 ; "ENetCloseResult::UnknownChannelType"
+                db  2Ah ; *
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_156 ; "ENetCloseResult::PrematureSend"
+                db  2Bh ; +
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_157 ; "ENetCloseResult::CorruptData"
+                db  2Ch ; ,
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_158 ; "ENetCloseResult::SocketSendFailure"
+                db  2Dh ; -
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_159 ; "ENetCloseResult::BadChildConnectionInde"...
+                db  2Eh ; .
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_160 ; "ENetCloseResult::LogLimitInstant"
+                db  2Fh ; /
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_161 ; "ENetCloseResult::LogLimitSustained"
+                db  30h ; 0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_162 ; "ENetCloseResult::EncryptionFailure"
+                db  31h ; 1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_163 ; "ENetCloseResult::EncryptionTokenMissing"
+                db  32h ; 2
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_164 ; "ENetCloseResult::ReceivedNetGUIDBunchFa"...
+                db  33h ; 3
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_165 ; "ENetCloseResult::ReceivedNetExtBunchFai"...
+                db  34h ; 4
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_166 ; "ENetCloseResult::MaxReliableExceeded"
+                db  35h ; 5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_167 ; "ENetCloseResult::ReceivedNextBunchFail"
+                db  36h ; 6
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_168 ; "ENetCloseResult::ReceivedNextBunchQueue"...
+                db  37h ; 7
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_169 ; "ENetCloseResult::PartialInitialReliable"...
+                db  38h ; 8
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_170 ; "ENetCloseResult::PartialMergeReliableDe"...
+                db  39h ; 9
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_171 ; "ENetCloseResult::PartialInitialNonByteA"...
+                db  3Ah ; :
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_172 ; "ENetCloseResult::PartialNonByteAligned"
+                db  3Bh ; ;
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_173 ; "ENetCloseResult::PartialFinalPackageMap"...
+                db  3Ch ; <
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_174 ; "ENetCloseResult::PartialTooLarge"
+                db  3Dh ; =
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_175 ; "ENetCloseResult::AlreadyOpen"
+                db  3Eh ; >
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_176 ; "ENetCloseResult::ReliableBeforeOpen"
+                db  3Fh ; ?
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_177 ; "ENetCloseResult::ReliableBufferOverflow"
+                db  40h ; @
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_178 ; "ENetCloseResult::RPCReliableBufferOverf"...
+                db  41h ; A
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_179 ; "ENetCloseResult::ControlChannelClose"
+                db  42h ; B
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_180 ; "ENetCloseResult::ControlChannelEndianCh"...
+                db  43h ; C
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_181 ; "ENetCloseResult::ControlChannelPlayerCh"...
+                db  44h ; D
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_182 ; "ENetCloseResult::ControlChannelMessageU"...
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_183 ; "ENetCloseResult::ControlChannelMessageF"...
+                db  46h ; F
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_184 ; "ENetCloseResult::ControlChannelMessageP"...
+                db  47h ; G
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_185 ; "ENetCloseResult::ControlChannelBunchOve"...
+                db  48h ; H
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_186 ; "ENetCloseResult::ControlChannelQueueBun"...
+                db  49h ; I
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_187 ; "ENetCloseResult::ClientHasMustBeMappedG"...
+                db  4Ah ; J
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_188 ; "ENetCloseResult::ClientSentDestructionI"...
+                db  4Bh ; K
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_189 ; "ENetCloseResult::UnregisteredMustBeMapp"...
+                db  4Ch ; L
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_190 ; "ENetCloseResult::ObjectReplicatorReceiv"...
+                db  4Dh ; M
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_191 ; "ENetCloseResult::ContentBlockFail"
+                db  4Eh ; N
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_192 ; "ENetCloseResult::ContentBlockHeaderRepL"...
+                db  4Fh ; O
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_193 ; "ENetCloseResult::ContentBlockHeaderIsAc"...
+                db  50h ; P
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_194 ; "ENetCloseResult::ContentBlockHeaderObjF"...
+                db  51h ; Q
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_195 ; "ENetCloseResult::ContentBlockHeaderPrem"...
+                db  52h ; R
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_196 ; "ENetCloseResult::ContentBlockHeaderSubO"...
+                db  53h ; S
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_197 ; "ENetCloseResult::ContentBlockHeaderBadP"...
+                db  54h ; T
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_198 ; "ENetCloseResult::ContentBlockHeaderInva"...
+                db  55h ; U
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_199 ; "ENetCloseResult::ContentBlockHeaderStab"...
+                db  56h ; V
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_200 ; "ENetCloseResult::ContentBlockHeaderNoSu"...
+                db  57h ; W
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_201 ; "ENetCloseResult::ContentBlockHeaderUObj"...
+                db  58h ; X
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_202 ; "ENetCloseResult::ContentBlockHeaderAAct"...
+                db  59h ; Y
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_203 ; "ENetCloseResult::ContentBlockHeaderFail"
+                db  5Ah ; Z
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_204 ; "ENetCloseResult::ContentBlockPayloadBit"...
+                db  5Bh ; [
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_205 ; "ENetCloseResult::FieldHeaderRepIndex"
+                db  5Ch ; \
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_206 ; "ENetCloseResult::FieldHeaderBadRepIndex"
+                db  5Dh ; ]
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_207 ; "ENetCloseResult::FieldHeaderPayloadBits"...
+                db  5Eh ; ^
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_208 ; "ENetCloseResult::FieldPayloadFail"
+                db  5Fh ; _
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_209 ; "ENetCloseResult::ReplicationChannelCoun"...
+                db  60h ; `
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_210 ; "ENetCloseResult::BeaconControlFlowError"
+                db  61h ; a
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_211 ; "ENetCloseResult::BeaconUnableToParsePac"...
+                db  62h ; b
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_212 ; "ENetCloseResult::BeaconAuthenticationFa"...
+                db  63h ; c
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_213 ; "ENetCloseResult::BeaconLoginInvalidIdEr"...
+                db  64h ; d
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_214 ; "ENetCloseResult::BeaconLoginInvalidAuth"...
+                db  65h ; e
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_215 ; "ENetCloseResult::BeaconAuthError"
+                db  66h ; f
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_216 ; "ENetCloseResult::BeaconSpawnClientWorld"...
+                db  67h ; g
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_217 ; "ENetCloseResult::BeaconSpawnExistingAct"...
+                db  68h ; h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_218 ; "ENetCloseResult::BeaconSpawnFailureErro"...
+                db  69h ; i
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_219 ; "ENetCloseResult::BeaconSpawnNetGUIDAckN"...
+                db  6Ah ; j
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_220 ; "ENetCloseResult::BeaconSpawnNetGUIDAckN"...
+                db  6Bh ; k
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_221 ; "ENetCloseResult::BeaconSpawnUnexpectedE"...
+                db  6Ch ; l
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_222 ; "ENetCloseResult::IrisProtocolMismatch"
+                db  6Dh ; m
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_223 ; "ENetCloseResult::IrisNetRefHandleError"
+                db  6Eh ; n
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_224 ; "ENetCloseResult::FaultDisconnect"
+                db  6Fh ; o
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset aEnetcloseresul_225 ; "ENetCloseResult::NotRecoverable"
+                db  70h ; p
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_149F5B150   dq offset aAddingElementi ; DATA XREF: sub_141D432C0+345↑o
+                                        ; "   Adding ElementID: %d for deletion"
+                dq offset aCP4RelAocue5En_910 ; "C:\\P4\\rel\\AOCUE5\\Engine\\Source\\Ru"...
+                db  1Eh
+                db    4
+                db    0
+                db    0
+                db    5
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D702085
+off_149F5B170   dq offset aCouldnTFindEle ; DATA XREF: sub_141D432C0+2B5↑o
+                                        ; "   Couldn't find ElementID: %d for dele"...
+                dq offset aCP4RelAocue5En_910 ; "C:\\P4\\rel\\AOCUE5\\Engine\\Source\\Ru"...
+                db  22h ; "
+                db    4
+                db    0
+                db    0
+                db    5
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D702086
+off_149F5B190   dq offset aFastarraydelta_5 ; DATA XREF: sub_141D17BA0+1D5↑o
+                                        ; "FastArrayDeltaSerialize for %s. %s. Gat"...
+                dq offset aCP4RelAocue5En_910 ; "C:\\P4\\rel\\AOCUE5\\Engine\\Source\\Ru"...
+                db 0E9h
+                db    4
+                db    0
+                db    0
+                db    5
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D702087
+aFastarraydelta_5:                      ; DATA XREF: .rdata:off_149F52E40↑o
+                                        ; .rdata:off_149F54D60↑o ...
+                text "UTF-16LE", 'FastArrayDeltaSerialize for %s. %s. GatherGuidRefer'
+                text "UTF-16LE", 'ences',0
+                align 8
+off_149F5B228   dq offset aFastarraydelta_0 ; DATA XREF: sub_141D3E4A0+7F↑o
+                                        ; "FastArrayDeltaSerialize: Recreating Ite"...
+                dq offset aCP4RelAocue5En_910 ; "C:\\P4\\rel\\AOCUE5\\Engine\\Source\\Ru"...
+                db 0E7h
+                db    2
+                db    0
+                db    0
+                db    5
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D702088
+off_149F5B248   dq offset sub_14157CBA0 ; DATA XREF: sub_141D10240+18↑o
+                dq offset sub_1415E56D0
+                dq offset sub_141D102C0
+                dq offset sub_141D102E0
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_14157D2E0
+                dq offset sub_14157D2C0
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset ?VerifyMemoryArenaIntegrity@MemoryMgr@AK@@YAXW4AkMemoryMgrArena@@@Z ; AK::MemoryMgr::VerifyMemoryArenaIntegrity(AkMemoryMgrArena)
+                dq offset sub_141D10300
+                dq offset sub_14157CB00
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_14157CB10
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_14157D020
+                dq offset sub_14157D300
+                dq offset sub_14157D310
+                dq offset sub_1415E5830
+                dq offset ?Reserve@WriteBytesCount@AK@@UEAA_NH@Z ; AK::WriteBytesCount::Reserve(int)
+                dq offset sub_140C8AB00
+                dq offset ?UnregisterResourceMonitorCallback@SoundEngine@AK@@YA?AW4AKRESULT@@P6AXPEBUAkResourceMonitorDataSummary@@@Z@Z ; AK::SoundEngine::UnregisterResourceMonitorCallback(void (*)(AkResourceMonitorDataSummary const *))
+off_149F5B330   dq offset aFastarraydelta_1 ; DATA XREF: sub_141D3E4A0+1A7↑o
+                                        ; "FastArrayDeltaSerialize: Item with unin"...
+                dq offset aCP4RelAocue5En_910 ; "C:\\P4\\rel\\AOCUE5\\Engine\\Source\\Ru"...
+                db 0EFh
+                db    2
+                db    0
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D702089
+aInt64uint8mape_0 db 'int64uint8MapElement',0
+                                        ; DATA XREF: .data:000000014D20AFB0↓o
+                align 8
+aFmapint64uint8:                        ; DATA XREF: sub_141D0DCA0+18↑o
+                                        ; .rdata:0000000149F53A40↑o
+                text "UTF-16LE", 'FMapint64uint8',0
+                align 10h
+off_149F5B390   dq offset aItems_1      ; DATA XREF: .rdata:off_149F5B6F0↓o
+                                        ; "Items"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  19h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dq offset sub_141D0F0D0
+off_149F5B3D0   dq offset aItems_1      ; DATA XREF: .rdata:0000000149F5B6F8↓o
+                                        ; "Items"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  16h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  10h
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+off_149F5B408   dq offset aOldmapSizeDDoe ; DATA XREF: sub_141D3AA00+11C↑o
+                                        ; "OldMap size (%d) does not match item co"...
+                dq offset aCP4RelAocue5En_910 ; "C:\\P4\\rel\\AOCUE5\\Engine\\Source\\Ru"...
+                db  38h ; 8
+                db    3
+                db    0
+                db    0
+                db    3
+                db    0
+                db    0
+                db    0
+                dq offset unk_14D7020A8
+                align 10h
+off_149F5B430   dq offset aLookup_2     ; DATA XREF: .rdata:0000000149F5B700↓o
+                                        ; "Lookup"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+off_149F5B470   dq offset aLookupKey    ; DATA XREF: .rdata:0000000149F5B708↓o
+                                        ; "Lookup_Key"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    4
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+aEnetcloseresul_113 db 'ENetCloseResult::NetDriverAlreadyExists',0
+                                        ; DATA XREF: .rdata:off_149F5AA40↑o
+off_149F5B4D0   dq offset aLookup_2     ; DATA XREF: .rdata:0000000149F5B710↓o
+                                        ; "Lookup"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  20h
+                db    0
+                db  80h
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  17h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  20h
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+aEnetcloseresul_114 db 'ENetCloseResult::NetDriverCreateFailure',0
+                                        ; DATA XREF: .rdata:0000000149F5AA50↑o
+aEnetcloseresul_115 db 'ENetCloseResult::NetDriverListenFailure',0
+                                        ; DATA XREF: .rdata:0000000149F5AA60↑o
+                align 20h
+off_149F5B560   dq offset aOldlookup    ; DATA XREF: .rdata:0000000149F5B718↓o
+                                        ; "OldLookup"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+aEnetcloseresul_116 db 'ENetCloseResult::ConnectionLost',0
+                                        ; DATA XREF: .rdata:0000000149F5AA70↑o
+aEnetcloseresul_117 db 'ENetCloseResult::ConnectionTimeout',0
+                                        ; DATA XREF: .rdata:0000000149F5AA80↑o
+                align 8
+off_149F5B5E8   dq offset aOldlookupKey ; DATA XREF: .rdata:0000000149F5B720↓o
+                                        ; "OldLookup_Key"
+                align 20h
+                db    4
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+aEnetcloseresul_118 db 'ENetCloseResult::FailureReceived',0
+                                        ; DATA XREF: .rdata:0000000149F5AA90↑o
+                align 8
+aEnetcloseresul_119 db 'ENetCloseResult::OutdatedClient',0
+                                        ; DATA XREF: .rdata:0000000149F5AAA0↑o
+off_149F5B668   dq offset aOldlookup    ; DATA XREF: .rdata:0000000149F5B728↓o
+                                        ; "OldLookup"
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  20h
+                db    0
+                db  80h
+                db    0
+                db    0
+                db  10h
+                db    0
+                db  17h
+                db    0
+                db    0
+                db    0
+                db  45h ; E
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    1
+                db    0
+                db  70h ; p
+                db    1
+                db    0
+                db    0
+                db    0
+                db    0
+aEnetcloseresul_120 db 'ENetCloseResult::OutdatedServer',0
+                                        ; DATA XREF: .rdata:0000000149F5AAB0↑o
+aEnetcloseresul_121 db 'ENetCloseResult::PendingConnectionFailure',0
+                                        ; DATA XREF: .rdata:0000000149F5AAC0↑o
+                align 10h
+off_149F5B6F0   dq offset off_149F5B390 ; DATA XREF: .data:000000014D20AFF0↓o

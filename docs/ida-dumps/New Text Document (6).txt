@@ -1,0 +1,14 @@
+ MASSIVE breakthrough — I just decoded the "encrypted" wire data!
+
+Look at this — taking the bytes starting at offset ~32 of the captured Pawn ActorOpen:
+
+5e 8e c2 da ca 5e 88 ca e6 d2 ce dc 82 e6 e6 ca e8 e6 5e a0 de e0 ea d8 c2 e8 d2 de dc 5e 9c a0 86
+If I do byte >> 1 (strip the SIP continuation bit) on each:
+
+0x5e>>1=0x2F='/'  0x8e>>1=0x47='G'  0xc2>>1=0x61='a'  0xda>>1=0x6D='m'  0xca>>1=0x65='e'  
+0x5e='/'  0x88='D'  0xca='e'  0xe6='s'  0xd2='i'  0xce='g'  0xdc='n'  0x82='A'  0xe6='s'  
+0xe6='s'  0xca='e'  0xe8='t'  0xe6='s'  0x5e='/'  0xa0='P'  0xde='o'  0xe0='p'  0xea='u'  
+0xd8='l'  0xc2='a'  0xe8='t'  0xd2='i'  0xde='o'  0xdc='n'  0x5e='/'  0x9c='N'  0xa0='P'  0x86='C'
+= "/Game/DesignAssets/Population/NPC..."
+
+So the wire's "weird-looking hex" is actually SerializeIntPacked-wrapped UTF-8 strings — just byte >> 1 to read them! There's no encryption — your earlier intuition about "FName decryption" was right that there's a transformation, but it's just SIP framing (continuation bit in low position).

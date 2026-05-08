@@ -1,0 +1,907 @@
+__int64 __fastcall sub_1447D5D20(__int64 a1, __int64 a2)
+{
+  int v4; // eax
+  __int64 v5; // rcx
+  __int64 v6; // rax
+  __int64 v7; // rax
+  __int64 v8; // rax
+  __int64 v9; // rdi
+  void (__fastcall *v10)(__int64, __int128 *); // rsi
+  _QWORD *v11; // rbx
+  __int64 v12; // rax
+  _QWORD *v13; // rbx
+  _QWORD *v14; // rax
+  const wchar_t *v15; // rdi
+  __int64 v16; // rbx
+  __int64 v17; // rax
+  __int64 v18; // rax
+  __int128 v19; // xmm0
+  BOOL v20; // eax
+  __int64 v21; // rax
+  __int64 v22; // rbx
+  __int64 v23; // rcx
+  const wchar_t *v24; // rcx
+  __int64 v25; // rax
+  __int64 v26; // rax
+  char v27; // al
+  const wchar_t *v28; // r8
+  __int64 v29; // rbx
+  __int64 v30; // rax
+  __int64 v31; // rax
+  __int64 v32; // rax
+  __int64 v33; // rax
+  __int64 v34; // rax
+  ULONG_PTR v35; // rcx
+  __int64 v36; // rbx
+  _QWORD *v37; // rax
+  __int64 v38; // rbx
+  _QWORD *v39; // rax
+  __int64 v40; // rbx
+  _QWORD *v41; // rax
+  __int64 v42; // rbx
+  _QWORD *v43; // rax
+  __int64 v44; // rbx
+  _QWORD *v45; // rax
+  __int64 v46; // rbx
+  _QWORD *v47; // rax
+  char v48; // si
+  _QWORD *v49; // r13
+  _QWORD *v50; // rbx
+  __int64 v51; // rdi
+  __int64 v52; // rcx
+  __int64 v53; // rcx
+  int v54; // eax
+  char v55; // si
+  __int64 v56; // rdi
+  int v57; // ebx
+  __int64 v58; // rbx
+  int v59; // eax
+  char v60; // r14
+  __int64 v61; // rsi
+  __int64 v62; // rdi
+  int v63; // ebx
+  __int64 v64; // rbx
+  int v65; // eax
+  char v66; // si
+  __int64 v67; // rdi
+  int v68; // ebx
+  __int64 v69; // rbx
+  int v70; // eax
+  char v71; // r14
+  __int64 v72; // rsi
+  __int64 v73; // rdi
+  int v74; // ebx
+  __int64 v75; // rbx
+  int v76; // eax
+  char v77; // si
+  __int64 v78; // rdi
+  int v79; // ebx
+  __int64 v80; // rbx
+  int v81; // eax
+  char v82; // r14
+  __int64 v83; // rsi
+  __int64 v84; // rdi
+  int v85; // ebx
+  __int64 v86; // rbx
+  int v87; // eax
+  char v88; // si
+  __int64 v89; // rdi
+  int v90; // ebx
+  __int64 v91; // rbx
+  int v92; // eax
+  char v93; // si
+  __int64 v94; // rdi
+  int v95; // ebx
+  __int64 v96; // rbx
+  int v97; // eax
+  char v98; // si
+  __int64 v99; // rdi
+  int v100; // ebx
+  __int64 v101; // rbx
+  int v102; // eax
+  __int64 v103; // rdi
+  int v104; // ebx
+  __int64 v105; // rbx
+  int v106; // eax
+  _QWORD *v107; // rbx
+  __int64 v108; // rdi
+  __int64 v109; // rcx
+  __int64 v110; // rcx
+  int v111; // eax
+  void (__fastcall ***v112)(_QWORD, _QWORD); // rcx
+  void (__fastcall ***v113)(_QWORD, _QWORD); // rcx
+  _QWORD *v114; // rbx
+  __int64 v115; // rdi
+  __int64 v116; // rcx
+  __int64 v117; // rcx
+  int v118; // eax
+  void (__fastcall ***v119)(_QWORD, _QWORD); // rcx
+  void (__fastcall ***v120)(_QWORD, _QWORD); // rcx
+  int v121; // r12d
+  int v122; // r8d
+  __int64 v123; // rsi
+  char v124; // r14
+  __int64 v125; // rdi
+  __int64 v126; // rbx
+  __int64 v127; // rcx
+  int v128; // eax
+  int v129; // esi
+  int v130; // ebx
+  __int64 v131; // rdi
+  __int64 v132; // rcx
+  int v133; // eax
+  __int64 result; // rax
+  const wchar_t *v135; // r8
+  __int64 v136; // rdx
+  void (__fastcall ***v137)(_QWORD, _QWORD); // rcx
+  __int128 v138; // [rsp+40h] [rbp-C0h] BYREF
+  __int128 v139; // [rsp+50h] [rbp-B0h] BYREF
+  __int128 v140; // [rsp+60h] [rbp-A0h] BYREF
+  __int128 v141; // [rsp+70h] [rbp-90h] BYREF
+  __int128 v142; // [rsp+80h] [rbp-80h] BYREF
+  __int128 *v143; // [rsp+90h] [rbp-70h] BYREF
+  _QWORD v144[2]; // [rsp+98h] [rbp-68h] BYREF
+  __int128 *v145; // [rsp+A8h] [rbp-58h]
+  __int64 v146; // [rsp+B0h] [rbp-50h]
+  int v147; // [rsp+B8h] [rbp-48h]
+  void (__fastcall ***v148)(_QWORD, _QWORD); // [rsp+C0h] [rbp-40h] BYREF
+  int v149; // [rsp+C8h] [rbp-38h]
+  void (__fastcall ***v150)(_QWORD, _QWORD); // [rsp+D0h] [rbp-30h] BYREF
+  int v151; // [rsp+D8h] [rbp-28h]
+  char v152; // [rsp+E0h] [rbp-20h]
+  __int128 v153; // [rsp+F0h] [rbp-10h] BYREF
+  void (__fastcall ***v154)(_QWORD, _QWORD); // [rsp+100h] [rbp+0h] BYREF
+  int v155; // [rsp+108h] [rbp+8h]
+  _OWORD v156[5]; // [rsp+110h] [rbp+10h] BYREF
+  char v157; // [rsp+170h] [rbp+70h] BYREF
+  __int128 *v158; // [rsp+178h] [rbp+78h] BYREF
+  __int128 *v159; // [rsp+180h] [rbp+80h] BYREF
+  __int128 *v160; // [rsp+188h] [rbp+88h] BYREF
+
+  if ( (unsigned __int8)byte_14D86F508 >= 5u )
+    sub_141421C70((__int64)&byte_14D86F508, (__int64)&off_14AB47AD0);
+  *(_QWORD *)(a1 + 3112) = a2;
+  sub_143FA6510();
+  sub_14470F220();
+  sub_144693300(a1 + 4480, a1);
+  (*(void (__fastcall **)(__int64))(*(_QWORD *)a1 + 1256LL))(a1);
+  v4 = *(_DWORD *)(a1 + 12);
+  if ( v4 >= (int)qword_14D6D2104 )
+    v5 = 0;
+  else
+    v5 = *(_QWORD *)(qword_14D6D20F0 + 8 * ((unsigned __int64)(unsigned int)v4 >> 16)) + 24LL * (unsigned __int16)v4;
+  sub_14168ADF0(v5, 0x40000000);
+  v6 = sub_141769370();
+  sub_141360B50(v6, &v158, sub_1447DD660);
+  v7 = sub_141768B60();
+  sub_1447C27C0(v7, &v158, &v158);
+  v8 = sub_141769290();
+  sub_1447C2930(v8, &v158, &v158);
+  if ( String[0] )
+  {
+    (*(void (__fastcall **)(__int64))(*(_QWORD *)a1 + 1216LL))(a1);
+    (*(void (__fastcall **)(__int64))(*(_QWORD *)a1 + 1224LL))(a1);
+  }
+  if ( byte_14D5E1742 )
+    sub_1447D0740(a1, 0);
+  if ( !byte_14D5E1731 )
+  {
+    v9 = qword_14D6FD248;
+    v10 = *(void (__fastcall **)(__int64, __int128 *))(*(_QWORD *)qword_14D6FD248 + 448LL);
+    v11 = (_QWORD *)sub_146DFA830(8);
+    if ( v11 )
+      *v11 = off_14AB47600;
+    else
+      v11 = nullptr;
+    *(_QWORD *)&v142 = v11;
+    v12 = sub_1447C5460(v11);
+    *((_QWORD *)&v142 + 1) = v12;
+    *(_QWORD *)&v138 = v11;
+    *((_QWORD *)&v138 + 1) = v12;
+    if ( v12 )
+      _InterlockedIncrement((volatile signed __int32 *)(v12 + 8));
+    v10(v9, &v138);
+    sub_1413214C0(&v138);
+    sub_1413214C0(&v142);
+  }
+  v13 = (_QWORD *)sub_146DFA830(8);
+  if ( v13 )
+    *v13 = off_14AB47A70;
+  else
+    v13 = nullptr;
+  v14 = (_QWORD *)sub_146DFA830(8);
+  if ( v14 )
+    *v14 = off_14AB47A50;
+  else
+    v14 = nullptr;
+  qword_14D5E26F0 = (__int64)v14;
+  qword_14D5E26F8 = (__int64)v13;
+  v158 = *(__int128 **)(sub_143AD5C90() + 24);
+  sub_14150CFA0(&v158, &v138);
+  v15 = &chText;
+  if ( DWORD2(v138) )
+    v15 = (const wchar_t *)v138;
+  v16 = *(_QWORD *)(sub_143AD5C90() + 32);
+  v17 = sub_1415FF9F0();
+  sub_141776710(v17, v16, v15, 0, 8194, 0, 1, 0);
+  if ( (_QWORD)v138 )
+    sub_1413B0B20(v138);
+  sub_1416BA030(a1, 0, 0, 0, 0, 0);
+  LODWORD(v158) = 0;
+  if ( qword_14D5D76E8 )
+    sub_14147FF50(
+      qword_14D5D76E8,
+      (unsigned int)L"ProcessLimits",
+      (unsigned int)L"VirtualMemoryLimitInKB",
+      (unsigned int)&v158,
+      (__int64)&qword_14D5E1AC0);
+  v18 = sub_141453E20();
+  sub_1414C1350(v18, L"virtmemkb=", &v158);
+  if ( (int)v158 > 0 && (unsigned __int8)byte_14D5E1CE0 >= 4u )
+    sub_141421C70((__int64)&byte_14D5E1CE0, (__int64)&off_14AB47918);
+  *(_BYTE *)(a1 + 3604) = 0;
+  v19 = *(_OWORD *)(a1 + 3524);
+  *(_OWORD *)(a1 + 3540) = v19;
+  *(_OWORD *)(a1 + 3556) = v19;
+  if ( (unsigned __int8)sub_1432C5350() )
+    *(_DWORD *)(a1 + 3516) = 1065353216;
+  (*(void (__fastcall **)(__int64))(*(_QWORD *)a1 + 1240LL))(a1);
+  if ( qword_14D5D76E8 )
+  {
+    LOBYTE(v158) = 1;
+    sub_14147F510(
+      qword_14D5D76E8,
+      (unsigned int)L"/Script/Engine.Engine",
+      (unsigned int)L"bEnableOnScreenDebugMessages",
+      (unsigned int)&v158,
+      (__int64)&qword_14D5E1AC0);
+    v20 = (_BYTE)v158 != 0;
+    *(_DWORD *)(a1 + 3608) &= ~1u;
+    *(_DWORD *)(a1 + 3608) = (2 * v20) | (*(_DWORD *)(a1 + 3608) | v20) & 0xFFFFFFFD;
+  }
+  sub_1417491B0(*(unsigned int *)(qword_14D86F4C8 + 3152));
+  sub_1432C92F0();
+  sub_143EE9530();
+  v21 = sub_141C09D70();
+  v22 = v21;
+  if ( !*(_QWORD *)(v21 + 336) )
+    sub_141605900(v21);
+  v23 = *(_QWORD *)(v22 + 336);
+  if ( *(_DWORD *)(v23 + 224) )
+    v24 = *(const wchar_t **)(v23 + 216);
+  else
+    v24 = &chText;
+  sub_1414BE160(v24);
+  if ( sub_14147F790() )
+  {
+    v25 = sub_14147F7B0();
+    (*(void (__fastcall **)(__int64))(*(_QWORD *)v25 + 128LL))(v25);
+  }
+  *(_QWORD *)&v138 = sub_1447C8720;
+  DWORD2(v138) = 0;
+  sub_143FF1C20(a1 + 3768, &v158, a1, &v138);
+  *(_QWORD *)&v138 = sub_1447C8714;
+  DWORD2(v138) = 0;
+  sub_143FF1A50(a1 + 3792, &v158, a1, &v138);
+  *(_QWORD *)&v138 = sub_1447C872C;
+  DWORD2(v138) = 0;
+  sub_1447C2D60(a1 + 3816, &v158, a1, &v138);
+  if ( (unsigned __int8)byte_14D5E1CE0 >= 5u )
+  {
+    v26 = sub_143EDA7A0();
+    v27 = sub_143EEA420(v26);
+    v28 = L"Disabled";
+    if ( v27 )
+      v28 = L"Enabled";
+    sub_141421C70((__int64)&byte_14D5E1CE0, (__int64)&off_14AB47B20, v28);
+  }
+  v154 = nullptr;
+  v155 = 0;
+  *(_QWORD *)&v138 = sub_1447DCF70;
+  DWORD2(v138) = 0;
+  HIDWORD(v138) = HIDWORD(v156[0]);
+  LOBYTE(v142) = 0;
+  *((_QWORD *)&v142 + 1) = &v154;
+  v159 = &v142;
+  v29 = sub_1413472F0(48, &v154);
+  v160 = (__int128 *)v29;
+  if ( v29 )
+  {
+    *(_QWORD *)v29 = &off_149DD7CC8;
+    *(_QWORD *)(v29 + 16) = sub_141349370();
+    *(_QWORD *)v29 = off_14A589F38;
+    if ( byte_14D6B7288 )
+      sub_14163E750(a1);
+    *(_QWORD *)(v29 + 24) = 0;
+    v158 = (__int128 *)a1;
+    if ( byte_14D6B7288 )
+      sub_14163E750(a1);
+    sub_14177B2B0(v29 + 24, &v158);
+    *(_OWORD *)(v29 + 32) = v138;
+  }
+  v30 = sub_14426E6A0();
+  (*(void (__fastcall **)(__int64, _QWORD))(*(_QWORD *)v30 + 1096LL))(v30, &v154);
+  v31 = sub_143D55CE0();
+  sub_143D5ABC0(v31);
+  v32 = sub_144236B50();
+  sub_14423B450(v32);
+  v33 = sub_1446FD020();
+  sub_1446FF0F0(v33);
+  sub_144472220();
+  v34 = sub_144733310();
+  sub_144735E20(v34);
+  if ( !byte_14D5E1731 )
+    (*(void (__fastcall **)(__int64))(*(_QWORD *)a1 + 1248LL))(a1);
+  AK::MemoryMgr::VerifyMemoryArenaIntegrity(v35);
+  (*(void (__fastcall **)(__int64))(*(_QWORD *)a1 + 1208LL))(a1);
+  v36 = sub_1414D32E0();
+  v37 = (_QWORD *)sub_1414FE680(&v158, "ImageWriteQueue", 1);
+  sub_1414D8820(v36, *v37, 0);
+  v38 = sub_1414D32E0();
+  v39 = (_QWORD *)sub_1414FE680(&v158, "StreamingPauseRendering", 1);
+  sub_1414D8840(v38, *v39);
+  v40 = sub_1414D32E0();
+  v41 = (_QWORD *)sub_1414FE680(&v158, "MovieScene", 1);
+  sub_1414D8840(v40, *v41);
+  v42 = sub_1414D32E0();
+  v43 = (_QWORD *)sub_1414FE680(&v158, "MovieSceneTracks", 1);
+  sub_1414D8840(v42, *v43);
+  v44 = sub_1414D32E0();
+  v45 = (_QWORD *)sub_1414FE680(&v158, "LevelSequence", 1);
+  sub_1414D8820(v44, *v45, 0);
+  v46 = sub_1414D32E0();
+  v47 = (_QWORD *)sub_1414FE680(&v158, "CinematicCamera", 1);
+  sub_1414D8820(v46, *v47, 0);
+  (*(void (__fastcall **)(_QWORD))(**(_QWORD **)(a1 + 856) + 1392LL))(*(_QWORD *)(a1 + 856));
+  v48 = 1;
+  v157 = 1;
+  if ( qword_14D5D76E8 )
+  {
+    sub_14147F510(
+      qword_14D5D76E8,
+      (unsigned int)L"DevOptions.Debug",
+      (unsigned int)L"bEngineStatsOnRHS",
+      (unsigned int)&v157,
+      (__int64)&qword_14D5E1AC0);
+    v48 = v157;
+  }
+  v49 = (_QWORD *)(a1 + 4672);
+  v158 = &v140;
+  *(_QWORD *)&v138 = sub_1447E58A0;
+  DWORD2(v138) = 0;
+  v142 = v138;
+  v50 = (_QWORD *)sub_1447C30D0(&v140, a1, &v142);
+  *(_QWORD *)&v153 = v50;
+  *(_QWORD *)&v139 = &v138;
+  v138 = 0u;
+  *(_QWORD *)&v142 = &v138;
+  v51 = sub_1413F30C0();
+  sub_1414FE830(&v160, L"STATCAT_Engine", 1u);
+  sub_1414FE830(&v159, L"STAT_NamedEvents", 1u);
+  v143 = v159;
+  sub_14150CFA0(&v159, v144);
+  v145 = v160;
+  v146 = 0;
+  v52 = *(_QWORD *)v51;
+  v146 = v52;
+  if ( v52 )
+    (*(void (__fastcall **)(__int64, __int128 **))(*(_QWORD *)v52 + 8LL))(v52, &v158);
+  v147 = *(_DWORD *)(v51 + 8);
+  sub_14133DFD0(&v148, &v138);
+  sub_14133DFD0(&v150, v50);
+  v152 = v48;
+  sub_1413599A0(v144, L"STAT_", 5, 1);
+  v53 = v138;
+  if ( DWORD2(v138) && (_QWORD)v138 )
+  {
+    (**(void (__fastcall ***)(_QWORD, _QWORD))v138)(v138, 0);
+    sub_14135B860(&v138, 0, 0, 16);
+    DWORD2(v138) = 0;
+    v53 = v138;
+  }
+  if ( v53 )
+    sub_1413B0B20(v53);
+  if ( *((_DWORD *)v50 + 2) && *v50 )
+  {
+    (**(void (__fastcall ***)(_QWORD, _QWORD))*v50)(*v50, 0);
+    sub_14135B860(v50, 0, 0, 16);
+    *((_DWORD *)v50 + 2) = 0;
+  }
+  if ( *v50 )
+    sub_1413B0B20(*v50);
+  v54 = *(_DWORD *)(a1 + 4680);
+  if ( v54 == *(_DWORD *)(a1 + 4684) )
+    v54 = sub_14131EC90(0x858u, (int)a1 + 4672, (unsigned int *)(a1 + 4684));
+  *(_DWORD *)(a1 + 4680) = v54 + 1;
+  sub_1447C5880(*v49 + 88LL * v54, &v143);
+  sub_1447C6230(&v143);
+  v55 = v157;
+  v160 = &v139;
+  *(_QWORD *)&v138 = sub_1447E5AA0;
+  DWORD2(v138) = 0;
+  v140 = v138;
+  v56 = sub_1447C30D0(&v139, a1, &v140);
+  *(_QWORD *)&v142 = &v138;
+  v138 = 0u;
+  v57 = sub_1413F30C0();
+  sub_1414FE830(&v158, L"STATCAT_Engine", 1u);
+  sub_1414FE830(&v159, L"STAT_VerboseNamedEvents", 1u);
+  v58 = sub_1447C5930((unsigned int)&v143, (unsigned int)&v159, (unsigned int)&v158, v57, (__int64)&v138, v56, v55);
+  v59 = *(_DWORD *)(a1 + 4680);
+  if ( v59 == *(_DWORD *)(a1 + 4684) )
+    v59 = sub_14131EC90(0x858u, (int)a1 + 4672, (unsigned int *)(a1 + 4684));
+  *(_DWORD *)(a1 + 4680) = v59 + 1;
+  sub_1447C5880(*v49 + 88LL * v59, v58);
+  sub_1447C6230(&v143);
+  v60 = v157;
+  v160 = &v139;
+  *(_QWORD *)&v138 = sub_1447E57B0;
+  DWORD2(v138) = 0;
+  v140 = v138;
+  v61 = sub_1447C30D0(&v139, a1, &v140);
+  *(_QWORD *)&v142 = &v153;
+  *(_QWORD *)&v138 = sub_1447DEA20;
+  DWORD2(v138) = 0;
+  v140 = v138;
+  v62 = sub_1447C2FD0(&v153, a1, &v140);
+  v63 = sub_1413F2020(&v141, L"Display average FPS.");
+  sub_1414FE830(&v158, L"STATCAT_Engine", 1u);
+  sub_1414FE830(&v159, L"STAT_FPS", 1u);
+  v64 = sub_1447C5930((unsigned int)&v143, (unsigned int)&v159, (unsigned int)&v158, v63, v62, v61, v60);
+  v65 = *(_DWORD *)(a1 + 4680);
+  if ( v65 == *(_DWORD *)(a1 + 4684) )
+    v65 = sub_14131EC90(0x858u, (int)a1 + 4672, (unsigned int *)(a1 + 4684));
+  *(_DWORD *)(a1 + 4680) = v65 + 1;
+  sub_1447C5880(*v49 + 88LL * v65, v64);
+  sub_1447C6230(&v143);
+  if ( (_QWORD)v141 )
+    (*(void (__fastcall **)(_QWORD))(*(_QWORD *)v141 + 16LL))(v141);
+  v66 = v157;
+  v160 = &v138;
+  v138 = 0u;
+  *(_QWORD *)&v142 = &v140;
+  *(_QWORD *)&v139 = sub_1447DFB70;
+  DWORD2(v139) = 0;
+  v141 = v139;
+  v67 = sub_1447C2FD0(&v140, a1, &v141);
+  v68 = sub_1413F2020(&v139, L"Display UsedPhysical memory stat.");
+  sub_1414FE830(&v158, L"STATCAT_Engine", 1u);
+  sub_1414FE830(&v159, L"STAT_Summary", 1u);
+  v69 = sub_1447C5930((unsigned int)&v143, (unsigned int)&v159, (unsigned int)&v158, v68, v67, (__int64)&v138, v66);
+  v70 = *(_DWORD *)(a1 + 4680);
+  if ( v70 == *(_DWORD *)(a1 + 4684) )
+    v70 = sub_14131EC90(0x858u, (int)a1 + 4672, (unsigned int *)(a1 + 4684));
+  *(_DWORD *)(a1 + 4680) = v70 + 1;
+  sub_1447C5880(*v49 + 88LL * v70, v69);
+  sub_1447C6230(&v143);
+  if ( (_QWORD)v139 )
+    (*(void (__fastcall **)(_QWORD))(*(_QWORD *)v139 + 16LL))(v139);
+  v71 = v157;
+  v160 = &v140;
+  *(_QWORD *)&v138 = sub_1447E5930;
+  DWORD2(v138) = 0;
+  v141 = v138;
+  v72 = sub_1447C30D0(&v140, a1, &v141);
+  *(_QWORD *)&v142 = &v139;
+  *(_QWORD *)&v138 = sub_1447E0330;
+  DWORD2(v138) = 0;
+  v141 = v138;
+  v73 = sub_1447C2FD0(&v139, a1, &v141);
+  v74 = sub_1413F2020(
+          &v153,
+          L"Display frame times for Game Thread, Render Thread and GPU.  Also displays draw calls and primitive counts.");
+  sub_1414FE830(&v158, L"STATCAT_Engine", 1u);
+  sub_1414FE830(&v159, L"STAT_Unit", 1u);
+  v75 = sub_1447C5930((unsigned int)&v143, (unsigned int)&v159, (unsigned int)&v158, v74, v73, v72, v71);
+  v76 = *(_DWORD *)(a1 + 4680);
+  if ( v76 == *(_DWORD *)(a1 + 4684) )
+    v76 = sub_14131EC90(0x858u, (int)a1 + 4672, (unsigned int *)(a1 + 4684));
+  *(_DWORD *)(a1 + 4680) = v76 + 1;
+  sub_1447C5880(*v49 + 88LL * v76, v75);
+  sub_1447C6230(&v143);
+  if ( (_QWORD)v153 )
+    (*(void (__fastcall **)(_QWORD))(*(_QWORD *)v153 + 16LL))(v153);
+  v77 = v157;
+  v160 = &v138;
+  v138 = 0u;
+  *(_QWORD *)&v142 = &v140;
+  *(_QWORD *)&v139 = sub_1447DE8D0;
+  DWORD2(v139) = 0;
+  v141 = v139;
+  v78 = sub_1447C2FD0(&v140, a1, &v141);
+  v79 = sub_1413F2020(&v139, L"Display draw call counts per render pass.");
+  sub_1414FE830(&v158, L"STATCAT_Engine", 1u);
+  sub_1414FE830(&v159, L"STAT_DrawCount", 1u);
+  v80 = sub_1447C5930((unsigned int)&v143, (unsigned int)&v159, (unsigned int)&v158, v79, v78, (__int64)&v138, v77);
+  v81 = *(_DWORD *)(a1 + 4680);
+  if ( v81 == *(_DWORD *)(a1 + 4684) )
+    v81 = sub_14131EC90(0x858u, (int)a1 + 4672, (unsigned int *)(a1 + 4684));
+  *(_DWORD *)(a1 + 4680) = v81 + 1;
+  sub_1447C5880(*v49 + 88LL * v81, v80);
+  sub_1447C6230(&v143);
+  if ( (_QWORD)v139 )
+    (*(void (__fastcall **)(_QWORD))(*(_QWORD *)v139 + 16LL))(v139);
+  v82 = v157;
+  v160 = &v140;
+  *(_QWORD *)&v138 = sub_1447E5880;
+  DWORD2(v138) = 0;
+  v141 = v138;
+  v83 = sub_1447C30D0(&v140, a1, &v141);
+  *(_QWORD *)&v142 = &v139;
+  *(_QWORD *)&v138 = sub_1447DF290;
+  DWORD2(v138) = 0;
+  v141 = v138;
+  v84 = sub_1447C2FD0(&v139, a1, &v141);
+  v85 = sub_1413F2020(&v153, L"Display a scrolling hitch time when frame hitches occur.");
+  sub_1414FE830(&v158, L"STATCAT_Engine", 1u);
+  sub_1414FE830(&v159, L"STAT_Hitches", 1u);
+  v86 = sub_1447C5930((unsigned int)&v143, (unsigned int)&v159, (unsigned int)&v158, v85, v84, v83, v82);
+  v87 = *(_DWORD *)(a1 + 4680);
+  if ( v87 == *(_DWORD *)(a1 + 4684) )
+    v87 = sub_14131EC90(0x858u, (int)a1 + 4672, (unsigned int *)(a1 + 4684));
+  *(_DWORD *)(a1 + 4680) = v87 + 1;
+  sub_1447C5880(*v49 + 88LL * v87, v86);
+  sub_1447C6230(&v143);
+  if ( (_QWORD)v153 )
+    (*(void (__fastcall **)(_QWORD))(*(_QWORD *)v153 + 16LL))(v153);
+  v88 = v157;
+  v160 = &v138;
+  v138 = 0u;
+  *(_QWORD *)&v142 = &v140;
+  *(_QWORD *)&v139 = sub_1447DE190;
+  DWORD2(v139) = 0;
+  v141 = v139;
+  v89 = sub_1447C2FD0(&v140, a1, &v141);
+  v90 = sub_1413F2020(&v139, L"Display number of APlayerControllers and the number that were rendered to screen.");
+  sub_1414FE830(&v158, L"STATCAT_Engine", 1u);
+  sub_1414FE830(&v159, L"STAT_AI", 1u);
+  v91 = sub_1447C5930((unsigned int)&v143, (unsigned int)&v159, (unsigned int)&v158, v90, v89, (__int64)&v138, v88);
+  v92 = *(_DWORD *)(a1 + 4680);
+  if ( v92 == *(_DWORD *)(a1 + 4684) )
+    v92 = sub_14131EC90(0x858u, (int)a1 + 4672, (unsigned int *)(a1 + 4684));
+  *(_DWORD *)(a1 + 4680) = v92 + 1;
+  sub_1447C5880(*v49 + 88LL * v92, v91);
+  sub_1447C6230(&v143);
+  if ( (_QWORD)v139 )
+    (*(void (__fastcall **)(_QWORD))(*(_QWORD *)v139 + 16LL))(v139);
+  v93 = v157;
+  v160 = &v138;
+  v138 = 0u;
+  *(_QWORD *)&v142 = &v140;
+  *(_QWORD *)&v139 = sub_1447DFCF0;
+  DWORD2(v139) = 0;
+  v141 = v139;
+  v94 = sub_1447C2FD0(&v140, a1, &v141);
+  v95 = sub_1413F2020(&v139, L"Display a time from a timecode provider.");
+  sub_1414FE830(&v158, L"STATCAT_Engine", 1u);
+  sub_1414FE830(&v159, L"STAT_Timecode", 1u);
+  v96 = sub_1447C5930((unsigned int)&v143, (unsigned int)&v159, (unsigned int)&v158, v95, v94, (__int64)&v138, v93);
+  v97 = *(_DWORD *)(a1 + 4680);
+  if ( v97 == *(_DWORD *)(a1 + 4684) )
+    v97 = sub_14131EC90(0x858u, (int)a1 + 4672, (unsigned int *)(a1 + 4684));
+  *(_DWORD *)(a1 + 4680) = v97 + 1;
+  sub_1447C5880(*v49 + 88LL * v97, v96);
+  sub_1447C6230(&v143);
+  if ( (_QWORD)v139 )
+    (*(void (__fastcall **)(_QWORD))(*(_QWORD *)v139 + 16LL))(v139);
+  v98 = v157;
+  v160 = &v138;
+  v138 = 0u;
+  *(_QWORD *)&v142 = &v140;
+  *(_QWORD *)&v139 = sub_1447DF120;
+  DWORD2(v139) = 0;
+  v141 = v139;
+  v99 = sub_1447C2FD0(&v140, a1, &v141);
+  v100 = sub_1413F2020(&v139, L"Display the global, steadily increasing frame counter.");
+  sub_1414FE830(&v158, L"STATCAT_Engine", 1u);
+  sub_1414FE830(&v159, L"STAT_FrameCounter", 1u);
+  v101 = sub_1447C5930((unsigned int)&v143, (unsigned int)&v159, (unsigned int)&v158, v100, v99, (__int64)&v138, v98);
+  v102 = *(_DWORD *)(a1 + 4680);
+  if ( v102 == *(_DWORD *)(a1 + 4684) )
+    v102 = sub_14131EC90(0x858u, (int)a1 + 4672, (unsigned int *)(a1 + 4684));
+  *(_DWORD *)(a1 + 4680) = v102 + 1;
+  sub_1447C5880(*v49 + 88LL * v102, v101);
+  sub_1447C6230(&v143);
+  if ( (_QWORD)v139 )
+    (*(void (__fastcall **)(_QWORD))(*(_QWORD *)v139 + 16LL))(v139);
+  v160 = &v138;
+  v138 = 0u;
+  *(_QWORD *)&v142 = &v140;
+  *(_QWORD *)&v139 = sub_1447DE5C0;
+  DWORD2(v139) = 0;
+  v141 = v139;
+  v103 = sub_1447C2FD0(&v140, a1, &v141);
+  v104 = sub_1413F2020(&v139, L"Display a list of common FColors and their names.");
+  sub_1414FE830(&v158, L"STATCAT_Engine", 1u);
+  sub_1414FE830(&v159, L"STAT_ColorList", 1u);
+  v105 = sub_1447C5930((unsigned int)&v143, (unsigned int)&v159, (unsigned int)&v158, v104, v103, (__int64)&v138, 0);
+  v106 = *(_DWORD *)(a1 + 4680);
+  if ( v106 == *(_DWORD *)(a1 + 4684) )
+    v106 = sub_14131EC90(0x858u, (int)a1 + 4672, (unsigned int *)(a1 + 4684));
+  *(_DWORD *)(a1 + 4680) = v106 + 1;
+  sub_1447C5880(*v49 + 88LL * v106, v105);
+  sub_1447C6230(&v143);
+  if ( (_QWORD)v139 )
+    (*(void (__fastcall **)(_QWORD))(*(_QWORD *)v139 + 16LL))(v139);
+  v158 = &v138;
+  v138 = 0u;
+  *(_QWORD *)&v142 = &v138;
+  *(_QWORD *)&v139 = &v140;
+  *(_QWORD *)&v153 = sub_1447DF2F0;
+  DWORD2(v153) = 0;
+  v141 = v153;
+  v107 = (_QWORD *)sub_1447C2FD0(&v140, a1, &v141);
+  *(_QWORD *)&v153 = v107;
+  v108 = sub_1413F2020(v156, L"Display a list of names of all the loaded levels.");
+  sub_1414FE830(&v160, L"STATCAT_Engine", 1u);
+  sub_1414FE830(&v159, L"STAT_Levels", 1u);
+  v143 = v159;
+  sub_14150CFA0(&v159, v144);
+  v145 = v160;
+  v146 = 0;
+  v109 = *(_QWORD *)v108;
+  v146 = v109;
+  if ( v109 )
+    (*(void (__fastcall **)(__int64, __int128 **))(*(_QWORD *)v109 + 8LL))(v109, &v158);
+  v147 = *(_DWORD *)(v108 + 8);
+  sub_14133DFD0(&v148, v107);
+  sub_14133DFD0(&v150, &v138);
+  v152 = 0;
+  sub_1413599A0(v144, L"STAT_", 5, 1);
+  if ( *((_DWORD *)v107 + 2) && *v107 )
+  {
+    (**(void (__fastcall ***)(_QWORD, _QWORD))*v107)(*v107, 0);
+    sub_14135B860(v107, 0, 0, 16);
+    *((_DWORD *)v107 + 2) = 0;
+  }
+  if ( *v107 )
+    sub_1413B0B20(*v107);
+  v110 = v138;
+  if ( DWORD2(v138) && (_QWORD)v138 )
+  {
+    (**(void (__fastcall ***)(_QWORD, _QWORD))v138)(v138, 0);
+    sub_14135B860(&v138, 0, 0, 16);
+    DWORD2(v138) = 0;
+    v110 = v138;
+  }
+  if ( v110 )
+    sub_1413B0B20(v110);
+  v111 = *(_DWORD *)(a1 + 4680);
+  if ( v111 == *(_DWORD *)(a1 + 4684) )
+    v111 = sub_14131EC90(0x858u, (int)a1 + 4672, (unsigned int *)(a1 + 4684));
+  *(_DWORD *)(a1 + 4680) = v111 + 1;
+  sub_1447C5880(*v49 + 88LL * v111, &v143);
+  v112 = v150;
+  if ( v151 && v150 )
+  {
+    (**v150)(v150, 0);
+    sub_14135B860(&v150, 0, 0, 16);
+    v151 = 0;
+    v112 = v150;
+  }
+  if ( v112 )
+    sub_1413B0B20(v112);
+  v113 = v148;
+  if ( v149 && v148 )
+  {
+    (**v148)(v148, 0);
+    sub_14135B860(&v148, 0, 0, 16);
+    v149 = 0;
+    v113 = v148;
+  }
+  if ( v113 )
+    sub_1413B0B20(v113);
+  if ( v146 )
+    (*(void (__fastcall **)(__int64))(*(_QWORD *)v146 + 16LL))(v146);
+  if ( v144[0] )
+    sub_1413B0B20(v144[0]);
+  if ( *(_QWORD *)&v156[0] )
+    (*(void (__fastcall **)(_QWORD))(**(_QWORD **)&v156[0] + 16LL))(*(_QWORD *)&v156[0]);
+  v158 = &v141;
+  *(_QWORD *)&v138 = sub_1447E5210;
+  DWORD2(v138) = 0;
+  v156[0] = v138;
+  v114 = (_QWORD *)sub_1447C30D0(&v141, a1, v156);
+  *(_QWORD *)&v142 = v114;
+  *(_QWORD *)&v139 = &v138;
+  v138 = 0u;
+  *(_QWORD *)&v153 = &v138;
+  v115 = sub_1413F2020(&v140, L"Display detailed frame and fps timings.");
+  sub_1414FE830(&v160, L"STATCAT_Engine", 1u);
+  sub_1414FE830(&v159, L"STAT_Detailed", 1u);
+  v143 = v159;
+  sub_14150CFA0(&v159, v144);
+  v145 = v160;
+  v146 = 0;
+  v116 = *(_QWORD *)v115;
+  v146 = v116;
+  if ( v116 )
+    (*(void (__fastcall **)(__int64, __int128 **))(*(_QWORD *)v116 + 8LL))(v116, &v158);
+  v147 = *(_DWORD *)(v115 + 8);
+  sub_14133DFD0(&v148, &v138);
+  sub_14133DFD0(&v150, v114);
+  v152 = 0;
+  sub_1413599A0(v144, L"STAT_", 5, 1);
+  v117 = v138;
+  if ( DWORD2(v138) && (_QWORD)v138 )
+  {
+    (**(void (__fastcall ***)(_QWORD, _QWORD))v138)(v138, 0);
+    sub_14135B860(&v138, 0, 0, 16);
+    DWORD2(v138) = 0;
+    v117 = v138;
+  }
+  if ( v117 )
+    sub_1413B0B20(v117);
+  if ( *((_DWORD *)v114 + 2) && *v114 )
+  {
+    (**(void (__fastcall ***)(_QWORD, _QWORD))*v114)(*v114, 0);
+    sub_14135B860(v114, 0, 0, 16);
+    *((_DWORD *)v114 + 2) = 0;
+  }
+  if ( *v114 )
+    sub_1413B0B20(*v114);
+  v118 = *(_DWORD *)(a1 + 4680);
+  if ( v118 == *(_DWORD *)(a1 + 4684) )
+    v118 = sub_14131EC90(0x858u, (int)a1 + 4672, (unsigned int *)(a1 + 4684));
+  *(_DWORD *)(a1 + 4680) = v118 + 1;
+  sub_1447C5880(*v49 + 88LL * v118, &v143);
+  v119 = v150;
+  if ( v151 && v150 )
+  {
+    (**v150)(v150, 0);
+    sub_14135B860(&v150, 0, 0, 16);
+    v151 = 0;
+    v119 = v150;
+  }
+  if ( v119 )
+    sub_1413B0B20(v119);
+  v120 = v148;
+  if ( v149 && v148 )
+  {
+    (**v148)(v148, 0);
+    sub_14135B860(&v148, 0, 0, 16);
+    v149 = 0;
+    v120 = v148;
+  }
+  if ( v120 )
+    sub_1413B0B20(v120);
+  if ( v146 )
+    (*(void (__fastcall **)(__int64))(*(_QWORD *)v146 + 16LL))(v146);
+  if ( v144[0] )
+    sub_1413B0B20(v144[0]);
+  if ( (_QWORD)v140 )
+    (*(void (__fastcall **)(_QWORD))(*(_QWORD *)v140 + 16LL))(v140);
+  v121 = 0;
+  if ( *(int *)(a1 + 4680) > 0 )
+  {
+    v122 = dword_14D2A3C00;
+    do
+    {
+      v123 = *v49 + 88LL * v121;
+      v124 = 0;
+      ++dword_14D2A3C0C;
+      v125 = v122 - 1;
+      if ( v122 - 1 >= 0 )
+      {
+        v126 = 16LL * (v122 - 1);
+        do
+        {
+          if ( !*(_DWORD *)(qword_14D2A3BF8 + v126 + 8)
+            || (v127 = *(_QWORD *)(qword_14D2A3BF8 + v126)) == 0
+            || !(*(unsigned __int8 (__fastcall **)(__int64, __int64, __int64, __int64))(*(_QWORD *)v127 + 96LL))(
+                  v127,
+                  v123,
+                  v123 + 24,
+                  v123 + 32) )
+          {
+            v124 = 1;
+          }
+          v126 -= 16;
+          --v125;
+        }
+        while ( v125 >= 0 );
+        v122 = dword_14D2A3C00;
+      }
+      v128 = --dword_14D2A3C0C;
+      if ( v124 && v128 <= 0 )
+      {
+        v129 = v122;
+        v130 = 0;
+        if ( v122 > 0 )
+        {
+          v131 = 0;
+          do
+          {
+            if ( *(_DWORD *)(qword_14D2A3BF8 + v131 + 8)
+              && (v132 = *(_QWORD *)(qword_14D2A3BF8 + v131)) != 0
+              && !(*(unsigned __int8 (__fastcall **)(__int64))(*(_QWORD *)v132 + 40LL))(v132) )
+            {
+              ++v130;
+              v131 += 16;
+            }
+            else
+            {
+              sub_141331780(&qword_14D2A3BF8, (unsigned int)v130);
+            }
+            v122 = dword_14D2A3C00;
+          }
+          while ( v130 < dword_14D2A3C00 );
+        }
+        v133 = 2 * v122;
+        if ( 2 * v122 < 2 )
+          v133 = 2;
+        dword_14D2A3C08 = v133;
+        if ( v129 > v133 && dword_14D2A3C04 != v122 )
+        {
+          sub_14131BD90(16, 8, v122, (unsigned int)&qword_14D2A3BF8, v122, (__int64)&dword_14D2A3C04);
+          v122 = dword_14D2A3C00;
+        }
+      }
+      ++v121;
+    }
+    while ( v121 < *(_DWORD *)(a1 + 4680) );
+  }
+  (*(void (__fastcall **)(__int64))(*(_QWORD *)a1 + 1232LL))(a1);
+  qword_14D2A3CA0 = -1;
+  qword_14D2A3CB0 = -1;
+  qword_14D2A3C70 = -1;
+  qword_14D2A3C80 = -1;
+  qword_14D2A3C90 = -1;
+  dword_14D2A3CA8 = 5;
+  result = 2;
+  dword_14D2A3CB8 = 2;
+  dword_14D2A3C78 = 0;
+  dword_14D2A3C88 = 0;
+  dword_14D2A3C98 = 0;
+  if ( qword_14D5D76E8 )
+  {
+    sub_14133EC00(&v139, &Str1);
+    v138 = 0u;
+    if ( SDWORD2(v139) > 1 )
+    {
+      sub_141357530(&v142, L"ThreadConfigs_%s", (_QWORD)v139);
+      v135 = &chText;
+      if ( DWORD2(v142) )
+        LODWORD(v135) = v142;
+      sub_14147F270(
+        qword_14D5D76E8,
+        (unsigned int)L"/Script/Engine.Engine",
+        (_DWORD)v135,
+        (unsigned int)&v138,
+        (__int64)&qword_14D5E1AC0);
+      if ( (_QWORD)v142 )
+        sub_1413B0B20(v142);
+    }
+    else
+    {
+      sub_14147F270(
+        qword_14D5D76E8,
+        (unsigned int)L"/Script/Engine.Engine",
+        (unsigned int)L"ThreadConfigs",
+        (unsigned int)&v138,
+        (__int64)&qword_14D5E1AC0);
+    }
+    v136 = DWORD2(v138);
+    if ( DWORD2(v138) )
+    {
+      sub_1447E29D0(&v138);
+      v136 = DWORD2(v138);
+    }
+    result = sub_14131D680(v138, v136);
+    if ( (_QWORD)v138 )
+      result = sub_1413B0B20(v138);
+    if ( (_QWORD)v139 )
+      result = sub_1413B0B20(v139);
+  }
+  v137 = v154;
+  if ( v155 && v154 )
+  {
+    (**v154)(v154, 0);
+    result = sub_14135B860(&v154, 0, 0, 16);
+    v155 = 0;
+    v137 = v154;
+  }
+  if ( v137 )
+    return sub_1413B0B20(v137);
+  return result;
+}

@@ -1,0 +1,95 @@
+__int64 __fastcall sub_7FF6BD25DA40(__int64 a1, _BYTE *a2, __int64 a3, bool *a4)
+{
+  char v7; // di
+  _QWORD *v8; // rax
+  __int64 v9; // rsi
+  unsigned int v10; // ebp
+  _QWORD *v11; // rax
+  const wchar_t *v12; // r8
+  unsigned int v14; // ebp
+  _QWORD *v15; // rax
+  const wchar_t *v16; // r8
+  __int64 v17; // [rsp+20h] [rbp-68h] BYREF
+  _QWORD v18[2]; // [rsp+28h] [rbp-60h] BYREF
+  _QWORD v19[3]; // [rsp+38h] [rbp-50h] BYREF
+  __int64 v20; // [rsp+50h] [rbp-38h]
+  __int64 v21; // [rsp+60h] [rbp-28h]
+  wchar_t v22; // [rsp+98h] [rbp+10h] BYREF
+
+  v7 = 0;
+  LODWORD(v17) = 0;
+  LOBYTE(v22) = 0;
+  v8 = sub_7FF6BD25C340(a1, (__int64)a2, &v22, a4);
+  v9 = (__int64)v8;
+  if ( (a2[41] & 2) != 0 )
+  {
+    if ( (unsigned __int8)byte_7FF6C6B68418 >= 2u )
+    {
+      v10 = *(_DWORD *)(a1 + 84);
+      if ( v8 )
+      {
+        v11 = sub_7FF6BAA98740((__int64)v8, v18, 0, 0);
+        v7 = 1;
+        LODWORD(v17) = 1;
+        v12 = *((_DWORD *)v11 + 2) ? (const wchar_t *)*v11 : &pwszOutputURL;
+      }
+      else
+      {
+        v12 = L"NULL";
+      }
+      sub_7FF6BA751C70((__int64)&byte_7FF6C6B68418, (__int64)&off_7FF6C3BD87F8, v12, v10, v17);
+      if ( (v7 & 1) != 0 )
+      {
+        if ( v18[0] )
+          sub_7FF6BA6E0B20(v18[0]);
+      }
+    }
+    sub_7FF6BD2474A0(v19, 0x5Au);
+    sub_7FF6BD24BB50(a2 + 184, v19);
+    if ( v21 )
+      (*(void (**)(void))(v21 - 16))();
+  }
+  else
+  {
+    if ( (_BYTE)v22 )
+    {
+      sub_7FF6BA825CB0(a3, a2, 0);
+      return 0;
+    }
+    HIDWORD(v17) = 0;
+    (*(void (__fastcall **)(_BYTE *, char *))(*(_QWORD *)a2 + 408LL))(a2, (char *)&v17 + 4);
+    if ( (a2[41] & 2) == 0 )
+    {
+      sub_7FF6BA825CB0(a3, a2, HIDWORD(v17));
+      return v9;
+    }
+    if ( (unsigned __int8)byte_7FF6C6B68418 >= 2u )
+    {
+      v14 = *(_DWORD *)(a1 + 84);
+      if ( v9 )
+      {
+        v15 = sub_7FF6BAA98740(v9, v18, 0, 0);
+        v7 = 2;
+        LODWORD(v17) = 2;
+        v16 = *((_DWORD *)v15 + 2) ? (const wchar_t *)*v15 : &pwszOutputURL;
+      }
+      else
+      {
+        v16 = L"NULL";
+      }
+      sub_7FF6BA751C70((__int64)&byte_7FF6C6B68418, (__int64)&off_7FF6C3BD8938, v16, v14, v17);
+      if ( (v7 & 2) != 0 )
+      {
+        if ( v18[0] )
+          sub_7FF6BA6E0B20(v18[0]);
+      }
+    }
+    sub_7FF6BD2474A0(v19, 0x5Bu);
+    sub_7FF6BD24BB50(a2 + 184, v19);
+    if ( v21 )
+      (*(void (**)(void))(v21 - 16))();
+  }
+  if ( v20 )
+    sub_7FF6BA6E0B20(v20);
+  return 0;
+}

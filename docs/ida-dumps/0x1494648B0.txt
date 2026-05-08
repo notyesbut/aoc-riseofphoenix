@@ -1,0 +1,100 @@
+__int64 __fastcall sub_1494648B0(__int64 a1, __int64 a2, __int64 a3, double a4)
+{
+  _QWORD v6[7]; // [rsp+20h] [rbp-40h] BYREF
+  _QWORD *v7; // [rsp+58h] [rbp-8h]
+
+  v6[0] = off_14C51FDF8;
+  v7 = v6;
+  sub_1493419C0(
+    a1,
+    "DISPLAY - CIE-XYZ-D65_to_REC.1886-REC.709",
+    "Convert CIE XYZ (D65 white) to Rec.1886/Rec.709 (HD video)",
+    v6);
+  v6[0] = off_14C51FE30;
+  v7 = v6;
+  sub_1493419C0(
+    a1,
+    "DISPLAY - CIE-XYZ-D65_to_REC.1886-REC.2020",
+    "Convert CIE XYZ (D65 white) to Rec.1886/Rec.2020 (UHD video)",
+    v6);
+  v6[0] = off_14C51FE68;
+  v7 = v6;
+  sub_1493419C0(a1, "DISPLAY - CIE-XYZ-D65_to_G2.2-REC.709", "Convert CIE XYZ (D65 white) to Gamma2.2, Rec.709", v6);
+  v6[0] = off_14C51FEA0;
+  v7 = v6;
+  sub_1493419C0(a1, "DISPLAY - CIE-XYZ-D65_to_sRGB", "Convert CIE XYZ (D65 white) to sRGB (piecewise EOTF)", v6);
+  v6[0] = off_14C51FED8;
+  v7 = v6;
+  sub_1493419C0(
+    a1,
+    "DISPLAY - CIE-XYZ-D65_to_G2.6-P3-DCI-BFD",
+    "Convert CIE XYZ (D65 white) to Gamma 2.6, P3-DCI (DCI white with Bradford adaptation)",
+    v6);
+  v6[0] = off_14C51FF10;
+  v7 = v6;
+  sub_1493419C0(a1, "DISPLAY - CIE-XYZ-D65_to_G2.6-P3-D65", "Convert CIE XYZ (D65 white) to Gamma 2.6, P3-D65", v6);
+  v6[0] = off_14C51FF48;
+  v7 = v6;
+  sub_1493419C0(
+    a1,
+    "DISPLAY - CIE-XYZ-D65_to_G2.6-P3-D60-BFD",
+    "Convert CIE XYZ (D65 white) to Gamma 2.6, P3-D60 (Bradford adaptation)",
+    v6);
+  v6[0] = off_14C51FF80;
+  v7 = v6;
+  sub_1493419C0(
+    a1,
+    "DISPLAY - CIE-XYZ-D65_to_DCDM-D65",
+    "Convert CIE XYZ (D65 white) to Gamma 2.6 (D65 white in XYZ-E encoding)",
+    v6);
+  v6[0] = off_14C51FFB8;
+  v7 = v6;
+  sub_1493419C0(a1, "DISPLAY - CIE-XYZ-D65_to_DisplayP3", "Convert CIE XYZ (D65 white) to Apple Display P3", v6);
+  v6[0] = off_14C51FFB8;
+  v7 = v6;
+  sub_1493419C0(
+    a1,
+    "DISPLAY - CIE-XYZ-D65_to_DisplayP3-HDR",
+    "Convert CIE XYZ (D65 white) to Apple Display P3 (HDR)",
+    v6);
+  v6[0] = off_14C51FFF0;
+  v7 = v6;
+  sub_1493419C0(a1, "CURVE - ST-2084_to_LINEAR", "Convert SMPTE ST-2084 (PQ) full-range to linear nits/100", v6);
+  v6[0] = off_14C520028;
+  v7 = v6;
+  sub_1493419C0(a1, "CURVE - LINEAR_to_ST-2084", "Convert linear nits/100 to SMPTE ST-2084 (PQ) full-range", v6);
+  v6[0] = off_14C520060;
+  v7 = v6;
+  sub_1493419C0(a1, "DISPLAY - CIE-XYZ-D65_to_REC.2100-PQ", "Convert CIE XYZ (D65 white) to Rec.2100-PQ", v6);
+  v6[0] = off_14C520098;
+  v7 = v6;
+  sub_1493419C0(
+    a1,
+    "DISPLAY - CIE-XYZ-D65_to_ST2084-P3-D65",
+    "Convert CIE XYZ (D65 white) to ST-2084 (PQ), P3-D65 primaries",
+    v6);
+  v6[0] = off_14C5200D0;
+  v7 = v6;
+  sub_1493419C0(
+    a1,
+    "DISPLAY - CIE-XYZ-D65_to_ST2084-DCDM-D65",
+    "Convert CIE XYZ (D65 white) to ST-2084 (PQ) (D65 white in XYZ-E encoding)",
+    v6);
+  v6[0] = off_14C520108;
+  v7 = v6;
+  sub_1493419C0(
+    a1,
+    "CURVE - HLG-OETF-INVERSE",
+    "Apply ITU-R BT.2100 (HLG) OETF inverse, scaled with HLG 0.42 at 18% grey",
+    a4);
+  v6[0] = off_14C520140;
+  v7 = v6;
+  sub_1493419C0(a1, "CURVE - HLG-OETF", "Apply ITU-R BT.2100 (HLG) OETF, scaled with 18% grey at HLG 0.42", a4);
+  v6[0] = off_14C520178;
+  v7 = v6;
+  return sub_1493419C0(
+           a1,
+           "DISPLAY - CIE-XYZ-D65_to_REC.2100-HLG-1000nit",
+           "Convert CIE XYZ (D65 white) to Rec.2100-HLG, 1000 nit",
+           v6);
+}

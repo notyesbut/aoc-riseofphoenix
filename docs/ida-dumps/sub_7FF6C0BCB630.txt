@@ -1,0 +1,4 @@
+void __fastcall sub_7FF6C0BCB630(__int64 a1)
+{
+  *(_BYTE *)(a1 + 240) |= 0x10u;
+}

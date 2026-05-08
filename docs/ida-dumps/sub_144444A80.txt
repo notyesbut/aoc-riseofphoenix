@@ -1,0 +1,30 @@
+__int64 __fastcall sub_144444A80(__int64 a1, _QWORD *a2)
+{
+  __int64 v4; // rdi
+  __int64 v5; // r8
+  __int64 v6; // rax
+  __int64 result; // rax
+  _QWORD v8[3]; // [rsp+20h] [rbp-18h] BYREF
+
+  v4 = 0;
+  v8[0] = 0;
+  v8[1] = 0;
+  sub_1416E4ED0();
+  if ( a2[4] )
+  {
+    sub_14174A340(a2, a2[3], v8);
+  }
+  else
+  {
+    v5 = a2[17];
+    a2[17] = *(_QWORD *)(v5 + 24);
+    sub_14174A370(a2, (__int64)v8, (_DWORD *)v5);
+  }
+  v6 = a2[4];
+  LOBYTE(v4) = v6 != 0;
+  a2[4] = v6 + v4;
+  result = (*(__int64 (__fastcall **)(__int64, _QWORD *))(*(_QWORD *)a1 + 2736LL))(a1, v8);
+  if ( v8[0] )
+    return sub_1413B0B20(v8[0]);
+  return result;
+}

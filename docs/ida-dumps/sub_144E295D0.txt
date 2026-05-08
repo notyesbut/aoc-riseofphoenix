@@ -1,0 +1,21 @@
+__int64 __fastcall sub_144E295D0(__int64 a1, __int64 a2, unsigned int a3)
+{
+  __int64 v6; // rax
+  const wchar_t *v7; // r8
+  __int64 v8; // rax
+  _QWORD v10[3]; // [rsp+20h] [rbp-18h] BYREF
+
+  if ( (unsigned __int8)byte_14D838418 >= 5u && *(double *)(a1 + 8112) > 0.0 )
+  {
+    v6 = (*(__int64 (__fastcall **)(__int64, _QWORD *))(*(_QWORD *)a1 + 872LL))(a1, v10);
+    v7 = *(_DWORD *)(v6 + 8) ? *(const wchar_t **)v6 : &chText;
+    sub_141421C70((__int64)&byte_14D838418, (__int64)&off_14AD62010, v7);
+    if ( v10[0] )
+      sub_1413B0B20(v10[0]);
+  }
+  *(_QWORD *)(a1 + 8112) = 0;
+  v8 = *(_QWORD *)(a1 + 8120);
+  if ( *(_BYTE *)(v8 + 68) == 3 )
+    *(_BYTE *)(v8 + 68) = 5;
+  return sub_1442453D0(a1, a2, a3);
+}

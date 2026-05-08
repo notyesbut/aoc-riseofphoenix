@@ -1,0 +1,46 @@
+char __fastcall sub_7FF6BD5BCE60(__int64 a1, __int64 a2, __int64 a3, _DWORD *a4, _DWORD *a5)
+{
+  const wchar_t *v8; // rsi
+  const wchar_t *v9; // r9
+  const wchar_t *v10; // r8
+  const wchar_t **v11; // rax
+  int v13; // [rsp+20h] [rbp-48h]
+  __int128 v14; // [rsp+30h] [rbp-38h] BYREF
+  __int128 v15; // [rsp+40h] [rbp-28h] BYREF
+
+  sub_7FF6BA74E960(a2, a4);
+  v8 = &pwszOutputURL;
+  if ( (unsigned __int8)byte_7FF6C6911C40 >= 5u )
+  {
+    v13 = a4[3];
+    sub_7FF6BA687530(&v14, L"ObjectId: %llu | ServerId: %u | Randomizer: %u", *(_QWORD *)a4, (unsigned int)a4[2], v13);
+    v9 = &pwszOutputURL;
+    if ( DWORD2(v14) )
+      v9 = (const wchar_t *)v14;
+    if ( a5[2] )
+      v10 = *(const wchar_t **)a5;
+    else
+      v10 = &pwszOutputURL;
+    sub_7FF6BA751C70((__int64)&byte_7FF6C6911C40, (__int64)&off_7FF6C3D16800, v10, v9);
+    if ( (_QWORD)v14 )
+      sub_7FF6BA6E0B20(v14);
+  }
+  if ( (*(_BYTE *)a4 & 1) != 0 && *(_QWORD *)a4 != 1 )
+  {
+    v14 = *(_OWORD *)a4;
+    if ( !(unsigned __int8)sub_7FF6BD5A9DA0(a1, &v14) )
+    {
+      sub_7FF6BA66E920(&v14, a5);
+      v15 = *(_OWORD *)a4;
+      if ( !sub_7FF6BD59ADD0(a1, &v15, 0, v11, a3) && (unsigned __int8)byte_7FF6C6911C40 >= 3u )
+      {
+        if ( a5[2] )
+          v8 = *(const wchar_t **)a5;
+        sub_7FF6BA751C70((__int64)&byte_7FF6C6911C40, (__int64)&off_7FF6C3D16858, v8);
+      }
+    }
+  }
+  if ( *(_QWORD *)a5 )
+    sub_7FF6BA6E0B20(*(_QWORD *)a5);
+  return 1;
+}

@@ -1,0 +1,12 @@
+__int64 sub_1443F6390()
+{
+  __int64 result; // rax
+
+  result = qword_14D857EE0;
+  if ( !qword_14D857EE0 )
+  {
+    sub_1417640D0((__int64)&qword_14D857EE0, (__int64)&off_14D29B738);
+    return qword_14D857EE0;
+  }
+  return result;
+}

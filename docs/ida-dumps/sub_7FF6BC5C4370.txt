@@ -1,0 +1,12 @@
+__int64 sub_7FF6BC5C4370()
+{
+  __int64 result; // rax
+
+  result = qword_7FF6C6B1A748;
+  if ( !qword_7FF6C6B1A748 )
+  {
+    sub_7FF6BAA940C0(&qword_7FF6C6B1A748, &off_7FF6C655E270);
+    return qword_7FF6C6B1A748;
+  }
+  return result;
+}

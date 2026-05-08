@@ -1,0 +1,34 @@
+ULONG_PTR __fastcall sub_7FF6BE344FB0(ULONG_PTR Parameter, char a2)
+{
+  __int64 v4; // rcx
+  __int64 v5; // rcx
+  __int64 v6; // rcx
+  __int64 v7; // rdx
+
+  *(_QWORD *)Parameter = &UIntrepidNetConnection_VFT;
+  *(_QWORD *)(Parameter + 72) = off_7FF6C4152DB8;
+  *(_DWORD *)(Parameter + 8288) = 0;
+  v4 = *(_QWORD *)(Parameter + 8280);
+  if ( v4 )
+    sub_7FF6BA6E0B20(v4);
+  sub_7FF6BA6971D0(Parameter + 8216);
+  sub_7FF6BB912070(*(_QWORD *)(Parameter + 0x2000), *(unsigned int *)(Parameter + 8200));
+  v5 = *(_QWORD *)(Parameter + 0x2000);
+  if ( v5 )
+    sub_7FF6BA6E0B20(v5);
+  v6 = *(_QWORD *)(Parameter + 8176);
+  if ( v6 )
+    sub_7FF6BA6E0B20(v6);
+  sub_7FF6BB094930(Parameter + 8136);
+  sub_7FF6BE138A00(Parameter);
+  if ( (a2 & 1) != 0 )
+  {
+    if ( (a2 & 4) == 0 )
+    {
+      sub_7FF6BA652CC0(Parameter, v7);
+      return Parameter;
+    }
+    AK::MemoryMgr::VerifyMemoryArenaIntegrity(Parameter);
+  }
+  return Parameter;
+}

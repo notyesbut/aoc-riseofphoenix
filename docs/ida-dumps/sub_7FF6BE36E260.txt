@@ -1,0 +1,146 @@
+__int64 __fastcall sub_7FF6BE36E260(__int64 a1, _QWORD *a2, char a3)
+{
+  unsigned int v4; // ebx
+  unsigned __int8 v5; // r12
+  int *v6; // rdi
+  _DWORD *v7; // r15
+  __int64 v8; // rsi
+  __int64 v9; // rax
+  void *v10; // r13
+  int v11; // eax
+  void *v12; // r9
+  __int64 v13; // r13
+  int v14; // r14d
+  const wchar_t *v15; // rdi
+  const wchar_t *v16; // r8
+  int v17; // ecx
+  __int64 *v18; // r8
+  void *v20; // [rsp+30h] [rbp-39h] BYREF
+  const wchar_t *v21; // [rsp+38h] [rbp-31h] BYREF
+  int v22; // [rsp+40h] [rbp-29h]
+  __int64 v23; // [rsp+48h] [rbp-21h] BYREF
+  int v24; // [rsp+50h] [rbp-19h]
+  void **v25; // [rsp+58h] [rbp-11h]
+  int **v26; // [rsp+60h] [rbp-9h]
+  __int64 v27; // [rsp+68h] [rbp-1h]
+  _BYTE v28[80]; // [rsp+70h] [rbp+7h] BYREF
+  __int64 v29; // [rsp+D0h] [rbp+67h] BYREF
+  int v30; // [rsp+D8h] [rbp+6Fh]
+  char v31; // [rsp+E0h] [rbp+77h]
+  int *v32; // [rsp+E8h] [rbp+7Fh] BYREF
+
+  v31 = a3;
+  v29 = a1;
+  v4 = 0;
+  v30 = 0;
+  v5 = 1;
+  v23 = a2[1];
+  v6 = (int *)a2[5];
+  v32 = (int *)a2[4];
+  v7 = (_DWORD *)a2[2];
+  v21 = (const wchar_t *)(a1 + 368);
+  v27 = a1 + 368;
+  sub_7FF6BB0963E0(a1 + 368, v28);
+  v20 = nullptr;
+  v25 = &v20;
+  v26 = &v32;
+  if ( (*((_QWORD *)v32 + 7) & 0x100000000LL) != 0 )
+  {
+    v9 = sub_7FF6BAA71E70(v7, *((_QWORD *)v32 + 13));
+    v8 = v9;
+    if ( v9 && *(_BYTE *)(v9 + 212) )
+    {
+      v10 = (void *)(a2[2] + v32[17]);
+      v11 = (*(__int64 (__fastcall **)(int *))(*(_QWORD *)v32 + 360LL))(v32);
+      v12 = (void *)sub_7FF6BB095D70(v21, v32[12] * v32[13], v11);
+      v20 = v12;
+      if ( (v32[14] & 0x200LL) != 0 )
+        memset(v12, 0, v32[12] * (__int64)v32[13]);
+      else
+        (*(void (__fastcall **)(int *, void *))(*(_QWORD *)v32 + 336LL))(v32, v12);
+      if ( v20 != v10 )
+      {
+        if ( (v32[14] & 0x40000000) != 0 )
+          memcpy(v20, v10, v32[12] * (__int64)v32[13]);
+        else
+          (*(void (__fastcall **)(int *, void *, void *, _QWORD))(*(_QWORD *)v32 + 240LL))(
+            v32,
+            v20,
+            v10,
+            (unsigned int)v32[12]);
+      }
+    }
+  }
+  else
+  {
+    v8 = 0;
+  }
+  v13 = a2[7];
+  if ( v6[12] <= 0 )
+    goto LABEL_32;
+  while ( 1 )
+  {
+    if ( !v31 )
+      a2[7] = v13 + v6[13] * (__int64)(int)v4 + v6[17];
+    v5 &= sub_7FF6BE3657C0(v29, (__int64)a2);
+    if ( !v5 || (*(_BYTE *)(v23 + 41) & 2) != 0 )
+      break;
+    if ( (int)++v4 >= v6[12] )
+      goto LABEL_32;
+  }
+  if ( (unsigned __int8)byte_7FF6C6BC7340 >= 3u )
+  {
+    v14 = v6[12] * v6[13];
+    if ( (unsigned __int8)sub_7FF6BA7B4B10(v6, "FField::GetName") )
+      sub_7FF6BA83CFA0(v6 + 8, &v23);
+    else
+      sub_7FF6BA66EDD0((__int64)&v23, L"None");
+    v30 = 2;
+    v15 = &pwszOutputURL;
+    v16 = &pwszOutputURL;
+    if ( v24 )
+      v16 = (const wchar_t *)v23;
+    sub_7FF6BA687530(&v21, L"Property: %s | Index: %u | Size: %i", v16, v4, v14);
+    v30 = 7;
+    if ( v23 )
+      sub_7FF6BA6E0B20(v23);
+    if ( v22 )
+      v15 = v21;
+    sub_7FF6BA751C70((__int64)&byte_7FF6C6BC7340, (__int64)&off_7FF6C415E990, v15);
+    if ( v21 )
+      sub_7FF6BA6E0B20(v21);
+  }
+  if ( v5 )
+  {
+LABEL_32:
+    if ( v8 && v7 && (v7[2] & 0x40000000) == 0 && (*(_DWORD *)(v8 + 8) & 0x40000000) == 0 && v32 )
+    {
+      if ( !*(_BYTE *)(v8 + 212) )
+      {
+        v18 = nullptr;
+LABEL_44:
+        (*(void (__fastcall **)(_DWORD *, __int64, __int64 *))(*(_QWORD *)v7 + 744LL))(v7, v8, v18);
+        goto LABEL_45;
+      }
+      if ( *(_BYTE *)(v8 + 212) == 1 )
+      {
+        if ( (*(_DWORD *)(*((_QWORD *)v32 + 1) + 16LL) & 0x20000) == 0
+          || (v17 = *((unsigned __int8 *)v32 + 115), v17 == 255) )
+        {
+          v18 = (__int64 *)v20;
+        }
+        else
+        {
+          LOBYTE(v29) = ((unsigned __int8)v17 & *((_BYTE *)v20 + *((unsigned __int8 *)v32 + 113))) != 0;
+          v18 = &v29;
+        }
+        goto LABEL_44;
+      }
+    }
+  }
+LABEL_45:
+  if ( v20 && (*((_QWORD *)v32 + 7) & 0x1000000000LL) == 0 )
+    (*(void (__fastcall **)(int *, void *))(*(_QWORD *)v32 + 312LL))(v32, v20);
+  sub_7FF6BB098500(v27, v28);
+  return v5;
+}

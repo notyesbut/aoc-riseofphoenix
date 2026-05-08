@@ -1,0 +1,119 @@
+__int64 __fastcall sub_7FF6BB0911E0(
+        int a1,
+        int a2,
+        __int64 a3,
+        int a4,
+        __int64 a5,
+        unsigned int a6,
+        __int64 a7,
+        char a8)
+{
+  __int64 v12; // rax
+  volatile signed __int32 *v13; // rbx
+  volatile signed __int32 *v14; // rsi
+  __int64 v15; // r8
+  volatile signed __int32 *v16; // r14
+  char v17; // bp
+  volatile signed __int32 *v18; // rsi
+  volatile signed __int32 *v19; // rsi
+  __int64 v20; // r8
+  volatile signed __int32 *v21; // r14
+  volatile signed __int32 *v22; // rsi
+  unsigned __int8 v23; // si
+  volatile signed __int32 *v25; // [rsp+40h] [rbp-38h] BYREF
+  volatile signed __int32 *v26; // [rsp+48h] [rbp-30h]
+  _QWORD v27[2]; // [rsp+50h] [rbp-28h] BYREF
+  volatile signed __int32 *v28; // [rsp+60h] [rbp-18h] BYREF
+  volatile signed __int32 *v29; // [rsp+68h] [rbp-10h]
+
+  v12 = sub_7FF6BA865D90();
+  v13 = (volatile signed __int32 *)v12;
+  v27[0] = v12 + 16;
+  v27[1] = v12;
+  v25 = (volatile signed __int32 *)(v12 + 16);
+  v26 = (volatile signed __int32 *)v12;
+  if ( v12 )
+    _InterlockedIncrement((volatile signed __int32 *)(v12 + 8));
+  if ( !(unsigned __int8)sub_7FF6BB091030(a1, a2, (unsigned int)&v25, a4, a5, a7, 2) )
+    goto LABEL_26;
+  if ( a8 )
+  {
+    sub_7FF6BA86FBB0(&v28, a3, a6);
+    v14 = (volatile signed __int32 *)sub_7FF6BA865A50(v27);
+    v25 = v14 + 4;
+    v26 = v14;
+    LOBYTE(v15) = 1;
+    v16 = v28;
+    v17 = sub_7FF6BA866F70(&v25, v28, v15);
+    if ( v14 )
+    {
+      if ( _InterlockedExchangeAdd(v14 + 2, 0xFFFFFFFF) == 1 )
+      {
+        (**(void (__fastcall ***)(volatile signed __int32 *))v14)(v14);
+        if ( _InterlockedExchangeAdd(v14 + 3, 0xFFFFFFFF) == 1 )
+          (*(void (__fastcall **)(volatile signed __int32 *, __int64))(*(_QWORD *)v14 + 8LL))(v14, 1);
+      }
+    }
+    (*(void (__fastcall **)(volatile signed __int32 *))(*(_QWORD *)v16 + 8LL))(v16);
+    v18 = v29;
+    if ( v29 )
+    {
+      if ( _InterlockedExchangeAdd(v29 + 2, 0xFFFFFFFF) == 1 )
+      {
+        (**(void (__fastcall ***)(volatile signed __int32 *))v18)(v18);
+        if ( _InterlockedExchangeAdd(v18 + 3, 0xFFFFFFFF) == 1 )
+          (*(void (__fastcall **)(volatile signed __int32 *, __int64))(*(_QWORD *)v18 + 8LL))(v18, 1);
+      }
+    }
+  }
+  else
+  {
+    sub_7FF6BA86FBB0(&v25, a3, a6);
+    v19 = (volatile signed __int32 *)sub_7FF6BA865A50(v27);
+    v28 = v19 + 4;
+    v29 = v19;
+    LOBYTE(v20) = 1;
+    v21 = v25;
+    v17 = sub_7FF6BA8660F0(&v28, v25, v20);
+    if ( v19 )
+    {
+      if ( _InterlockedExchangeAdd(v19 + 2, 0xFFFFFFFF) == 1 )
+      {
+        (**(void (__fastcall ***)(volatile signed __int32 *))v19)(v19);
+        if ( _InterlockedExchangeAdd(v19 + 3, 0xFFFFFFFF) == 1 )
+          (*(void (__fastcall **)(volatile signed __int32 *, __int64))(*(_QWORD *)v19 + 8LL))(v19, 1);
+      }
+    }
+    (*(void (__fastcall **)(volatile signed __int32 *))(*(_QWORD *)v21 + 8LL))(v21);
+    v22 = v26;
+    if ( v26 )
+    {
+      if ( _InterlockedExchangeAdd(v26 + 2, 0xFFFFFFFF) == 1 )
+      {
+        (**(void (__fastcall ***)(volatile signed __int32 *))v22)(v22);
+        if ( _InterlockedExchangeAdd(v22 + 3, 0xFFFFFFFF) == 1 )
+          (*(void (__fastcall **)(volatile signed __int32 *, __int64))(*(_QWORD *)v22 + 8LL))(v22, 1);
+      }
+    }
+  }
+  if ( !v17 )
+  {
+    if ( (unsigned __int8)byte_7FF6C69C58D8 >= 3u )
+      sub_7FF6BA751C70((__int64)&byte_7FF6C69C58D8, (__int64)&off_7FF6C3296460);
+LABEL_26:
+    v23 = 0;
+    goto LABEL_27;
+  }
+  v23 = 1;
+LABEL_27:
+  if ( v13 )
+  {
+    if ( _InterlockedExchangeAdd(v13 + 2, 0xFFFFFFFF) == 1 )
+    {
+      (**(void (__fastcall ***)(volatile signed __int32 *))v13)(v13);
+      if ( _InterlockedExchangeAdd(v13 + 3, 0xFFFFFFFF) == 1 )
+        (*(void (__fastcall **)(volatile signed __int32 *, __int64))(*(_QWORD *)v13 + 8LL))(v13, 1);
+    }
+  }
+  return v23;
+}

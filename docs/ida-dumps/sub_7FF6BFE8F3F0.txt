@@ -1,0 +1,12 @@
+__int64 __fastcall sub_7FF6BFE8F3F0(_DWORD *a1, _DWORD *a2)
+{
+  __int64 result; // rax
+
+  result = (unsigned int)(a1[70] ^ *a2);
+  if ( (unsigned int)result | a2[1] ^ a1[71] | a2[2] ^ a1[72] | a2[3] ^ a1[73] )
+  {
+    *(_OWORD *)(a1 + 70) = *(_OWORD *)a2;
+    return sub_7FF6BE366D60(a1);
+  }
+  return result;
+}

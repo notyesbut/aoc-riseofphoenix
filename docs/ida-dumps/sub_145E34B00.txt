@@ -1,0 +1,264 @@
+__int64 __fastcall sub_145E34B00(__int64 a1)
+{
+  int v2; // edi
+  __int64 result; // rax
+  __int64 v4; // r13
+  __int64 v5; // rax
+  __int64 v6; // rdx
+  __int64 v7; // rsi
+  __int64 v8; // rbx
+  __int64 v9; // rax
+  __int64 v10; // r15
+  __int64 v11; // rax
+  const wchar_t *v12; // rbx
+  const wchar_t *v13; // rsi
+  _WORD *v14; // rcx
+  const char *v15; // rax
+  int v16; // ecx
+  _WORD *v17; // rcx
+  const char *v18; // rax
+  int v19; // ecx
+  const wchar_t *v20; // rax
+  const wchar_t *v21; // rax
+  const char *v22; // rax
+  int v23; // ecx
+  const wchar_t *v24; // rax
+  __int64 v25; // rbx
+  char v26; // r15
+  int v27; // eax
+  __int64 v28; // rsi
+  __int64 v29; // r14
+  __int64 v30; // rcx
+  int v31; // r14d
+  __int64 v32; // r8
+  __int64 v33; // rsi
+  __int64 v34; // rcx
+  const char *v35; // [rsp+30h] [rbp-79h] BYREF
+  int v36; // [rsp+38h] [rbp-71h]
+  _QWORD v37[2]; // [rsp+40h] [rbp-69h] BYREF
+  void *v38; // [rsp+50h] [rbp-59h] BYREF
+  _WORD *v39; // [rsp+58h] [rbp-51h]
+  char *v40; // [rsp+60h] [rbp-49h]
+  char v41; // [rsp+68h] [rbp-41h]
+  _QWORD v42[3]; // [rsp+70h] [rbp-39h] BYREF
+  char v43; // [rsp+88h] [rbp-21h]
+  __int16 v44; // [rsp+90h] [rbp-19h]
+  char v45; // [rsp+92h] [rbp-17h]
+  __int128 v46; // [rsp+A0h] [rbp-9h] BYREF
+  __int64 v47; // [rsp+B0h] [rbp+7h] BYREF
+  _QWORD v48[4]; // [rsp+C0h] [rbp+17h] BYREF
+
+  v2 = 0;
+  result = *(_QWORD *)(a1 + 10384);
+  if ( result )
+  {
+    result = *(unsigned int *)(result + 8);
+    if ( (result & 0x40000000) == 0 )
+    {
+      v4 = a1 + 14248;
+      v5 = sub_146202CC0(a1 + 14472);
+      v7 = v5;
+      if ( v5 && (*(_DWORD *)(v5 + 8) & 0x40000000) == 0 )
+      {
+        v8 = *(_QWORD *)sub_146205480(a1 + 14472, v37);
+        v9 = sub_146202D50(v4, v48);
+        sub_146168940(v7, v9, v8);
+      }
+      if ( (unsigned __int8)byte_14D940010 >= 5u )
+      {
+        v10 = sub_146AC2710(a1, v48);
+        v11 = sub_14133EC00(&v47, "OnRep_CurrentDialogueInstance");
+        v12 = &chText;
+        if ( *(_DWORD *)(v11 + 8) )
+          v13 = *(const wchar_t **)v11;
+        else
+          v13 = &chText;
+        if ( (unsigned __int8)byte_14D940010 < 5u )
+        {
+          v46 = 0u;
+          v21 = nullptr;
+        }
+        else
+        {
+          v37[0] = 0;
+          v37[1] = 0;
+          v38 = &unk_14D5AF3C0;
+          v39 = &unk_14D5AF3C0;
+          v40 = (char *)&unk_14D5AF3C2;
+          v41 = 0;
+          v42[0] = &unk_14D5AF3C0;
+          v42[1] = &unk_14D5AF3C0;
+          v42[2] = &unk_14D5AF3C2;
+          v43 = 0;
+          v44 = 0;
+          v45 = 0;
+          if ( byte_14D1FCFD6 )
+          {
+            sub_144E7DAA0(v37, L"Broadcasting new DialogueInstance to UI for display");
+            sub_144E7DAA0(v37, L"MethodName=");
+            sub_144E7DAA0(v37, v13);
+            sub_144E7DAA0(v37, L"PlayerName");
+            sub_144E7D930(v37, v10, 0);
+            sub_144E7DAA0(v37, L"Function+");
+            if ( (_BYTE)v44 )
+            {
+              if ( v45 )
+              {
+                v14 = v39;
+                if ( v39 + 1 >= (_WORD *)v40 )
+                {
+                  sub_1414D0E10(&v38, 1);
+                  v14 = v39;
+                }
+                *v14 = 34;
+                ++v39;
+                v15 = "AAoCPlayerController::OnRep_CurrentDialogueInstance";
+                v35 = "AAoCPlayerController::OnRep_CurrentDialogueInstance";
+                v16 = 0;
+                do
+                {
+                  ++v15;
+                  ++v16;
+                }
+                while ( *v15 );
+                v36 = v16;
+                sub_1416CDE50(&v38, &v35);
+                v17 = v39;
+                if ( v39 + 1 >= (_WORD *)v40 )
+                {
+                  sub_1414D0E10(&v38, 1);
+                  v17 = v39;
+                }
+                *v17 = 34;
+                ++v39;
+              }
+              else
+              {
+                v18 = "AAoCPlayerController::OnRep_CurrentDialogueInstance";
+                v35 = "AAoCPlayerController::OnRep_CurrentDialogueInstance";
+                v19 = 0;
+                do
+                {
+                  ++v18;
+                  ++v19;
+                }
+                while ( *v18 );
+                v36 = v19;
+                sub_1416CDE50(&v38, &v35);
+              }
+              v44 = 0;
+              v45 = 0;
+            }
+            v20 = (const wchar_t *)sub_144E7E0A0(v37);
+            sub_14133EDD0((__int64)&v46, v20);
+            sub_1414C7300(v42);
+            sub_1414C7300(&v38);
+            if ( v37[0] )
+              sub_1413B0B20(v37[0]);
+            v21 = (const wchar_t *)v46;
+          }
+          else
+          {
+            sub_144E7DF80(v37, L"Broadcasting new DialogueInstance to UI for display");
+            sub_144E7DF80(v37, L"MethodName=");
+            sub_144E7DF80(v37, v13);
+            sub_144E7DF80(v37, L"PlayerName");
+            sub_144E7DE70(v37, v10, 0);
+            sub_144E7DF80(v37, L"Function+");
+            if ( (_BYTE)v44 )
+            {
+              v22 = "AAoCPlayerController::OnRep_CurrentDialogueInstance";
+              v35 = "AAoCPlayerController::OnRep_CurrentDialogueInstance";
+              v23 = 0;
+              do
+              {
+                ++v22;
+                ++v23;
+              }
+              while ( *v22 );
+              v36 = v23;
+              sub_1416CDE50(&v38, &v35);
+              v44 = 0;
+              v45 = 0;
+            }
+            v24 = (const wchar_t *)sub_144E7E1A0(v37);
+            sub_14133EDD0((__int64)&v46, v24);
+            sub_1414C7300(v42);
+            sub_1414C7300(&v38);
+            if ( v37[0] )
+              sub_1413B0B20(v37[0]);
+            v21 = (const wchar_t *)v46;
+          }
+        }
+        if ( DWORD2(v46) )
+          v12 = v21;
+        sub_141421C70((__int64)&byte_14D940010, (__int64)&off_14B7C3F58, v12);
+        if ( (_QWORD)v46 )
+          sub_1413B0B20(v46);
+        if ( v47 )
+          sub_1413B0B20(v47);
+        if ( v48[0] )
+          sub_1413B0B20(v48[0]);
+      }
+      v25 = *(_QWORD *)(a1 + 10384) + 3896LL;
+      v26 = 0;
+      ++*(_DWORD *)(v25 + 20);
+      v27 = *(_DWORD *)(v25 + 8) - 1;
+      v28 = v27;
+      if ( v27 >= 0 )
+      {
+        v29 = 16LL * v27;
+        do
+        {
+          if ( !*(_DWORD *)(*(_QWORD *)v25 + v29 + 8)
+            || (v30 = *(_QWORD *)(*(_QWORD *)v25 + v29)) == 0
+            || !(*(unsigned __int8 (__fastcall **)(__int64, __int64))(*(_QWORD *)v30 + 96LL))(v30, v4) )
+          {
+            v26 = 1;
+          }
+          v29 -= 16;
+          --v28;
+        }
+        while ( v28 >= 0 );
+      }
+      result = (unsigned int)(*(_DWORD *)(v25 + 20) - 1);
+      *(_DWORD *)(v25 + 20) = result;
+      if ( v26 && (int)result <= 0 )
+      {
+        v31 = *(_DWORD *)(v25 + 8);
+        v32 = (unsigned int)v31;
+        if ( v31 > 0 )
+        {
+          v33 = 0;
+          do
+          {
+            if ( *(_DWORD *)(v33 + *(_QWORD *)v25 + 8)
+              && (v34 = *(_QWORD *)(v33 + *(_QWORD *)v25)) != 0
+              && !(*(unsigned __int8 (__fastcall **)(__int64, __int64, __int64))(*(_QWORD *)v34 + 40LL))(v34, v6, v32) )
+            {
+              ++v2;
+              v33 += 16;
+            }
+            else
+            {
+              sub_141331780(v25, (unsigned int)v2);
+            }
+            v32 = *(unsigned int *)(v25 + 8);
+          }
+          while ( v2 < (int)v32 );
+        }
+        result = (unsigned int)(2 * v32);
+        if ( (int)result < 2 )
+          result = 2;
+        *(_DWORD *)(v25 + 16) = result;
+        if ( v31 > (int)result )
+        {
+          result = v25 + 12;
+          if ( *(_DWORD *)(v25 + 12) != (_DWORD)v32 )
+            return sub_14131BD90(16, 8, v32, v25, v32, v25 + 12);
+        }
+      }
+    }
+  }
+  return result;
+}

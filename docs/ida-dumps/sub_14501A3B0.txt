@@ -1,0 +1,10 @@
+__int64 __fastcall sub_14501A3B0(__int64 a1, unsigned __int8 a2)
+{
+  __int64 result; // rax
+
+  result = sub_145019140();
+  if ( !*(_BYTE *)(a1 + 8208) )
+    result = sub_14424B420(a1, a2);
+  *(_BYTE *)(a1 + 8208) = 1;
+  return result;
+}

@@ -1,0 +1,112 @@
+_DWORD *__fastcall sub_14150A5D0(_DWORD *a1, __int64 a2, unsigned int a3, int a4)
+{
+  int v4; // edi
+  int v9; // edx
+  unsigned __int64 v10; // r9
+  int v11; // r8d
+  _QWORD *v12; // r10
+  __m128 si128; // xmm2
+  __int64 v14; // rax
+  __m128 v15; // xmm0
+  __m128 v16; // xmm1
+  __m128i v17; // xmm0
+  __m128i v18; // xmm1
+  __m128 v19; // xmm0
+  __m128i v20; // xmm0
+  __m128 v21; // xmm1
+  __m128i v22; // xmm1
+  __int64 v23; // rcx
+  __m128i v24; // xmm0
+  __int64 v25; // rax
+  __int64 v26; // r8
+  _QWORD *v27; // rdx
+  _QWORD *v28; // rax
+  _QWORD *v30; // [rsp+20h] [rbp-438h] BYREF
+  int v31; // [rsp+28h] [rbp-430h]
+  char v32; // [rsp+2Ch] [rbp-42Ch]
+  _QWORD v33[128]; // [rsp+30h] [rbp-428h] BYREF
+
+  v4 = *(_DWORD *)(a2 + 8);
+  if ( v4 )
+  {
+    if ( *(_BYTE *)(a2 + 12) )
+    {
+      v28 = *(_QWORD **)a2;
+      v32 = 1;
+    }
+    else
+    {
+      v9 = 1024;
+      if ( v4 < 1024 )
+        v9 = v4;
+      v10 = 0;
+      v11 = 0;
+      if ( v9 >= 4 )
+      {
+        v12 = *(_QWORD **)a2;
+        if ( (unsigned __int64)v33 > *(_QWORD *)a2 + 2LL * (v9 - 1) || (_QWORD *)((char *)v33 + v9 - 1) < v12 )
+        {
+          si128 = (__m128)_mm_load_si128((const __m128i *)&xmmword_149E296B0);
+          if ( (unsigned int)v9 < 0x20 )
+            goto LABEL_13;
+          v14 = 4;
+          do
+          {
+            v15 = (__m128)_mm_loadu_si128((const __m128i *)&v12[v14 - 4]);
+            v11 += 32;
+            v16 = (__m128)_mm_loadu_si128((const __m128i *)&v12[v14 - 2]);
+            v14 += 8;
+            v17 = (__m128i)_mm_and_ps(v15, si128);
+            v18 = (__m128i)_mm_and_ps(v16, si128);
+            v33[v10 / 8] = _mm_packus_epi16(v17, v17).m128i_u64[0];
+            v19 = (__m128)_mm_loadu_si128((const __m128i *)&v12[v14 - 8]);
+            v33[v10 / 8 + 1] = _mm_packus_epi16(v18, v18).m128i_u64[0];
+            v20 = (__m128i)_mm_and_ps(v19, si128);
+            v21 = (__m128)_mm_loadu_si128((const __m128i *)&v12[v14 - 6]);
+            v33[v10 / 8 + 2] = _mm_packus_epi16(v20, v20).m128i_u64[0];
+            v22 = (__m128i)_mm_and_ps(v21, si128);
+            v33[v10 / 8 + 3] = _mm_packus_epi16(v22, v22).m128i_u64[0];
+            v10 += 32LL;
+          }
+          while ( (__int64)v10 < v9 - (v9 & 0x1F) );
+          if ( (v9 & 0x1Fu) >= 4 )
+          {
+LABEL_13:
+            v23 = v11;
+            do
+            {
+              v11 += 4;
+              v24 = (__m128i)_mm_and_ps((__m128)_mm_loadl_epi64((const __m128i *)((char *)v12 + 2 * v23)), si128);
+              *(_DWORD *)((char *)v33 + v23) = _mm_cvtsi128_si32(_mm_packus_epi16(v24, v24));
+              v23 += 4;
+            }
+            while ( v23 < (int)(v9 - (v9 & 0x80000003)) );
+          }
+        }
+      }
+      v25 = v11;
+      v26 = v9;
+      if ( v25 < v9 )
+      {
+        v27 = *(_QWORD **)a2;
+        do
+        {
+          *((_BYTE *)v33 + v25) = *((_BYTE *)v27 + 2 * v25);
+          ++v25;
+        }
+        while ( v25 < v26 );
+      }
+      v28 = v33;
+      v32 = 0;
+    }
+    v30 = v28;
+    v31 = v4;
+    *a1 = sub_1415056B0(&v30, a3);
+    a1[1] = a4;
+  }
+  else
+  {
+    *(_QWORD *)a1 = 0;
+  }
+  return a1;
+}

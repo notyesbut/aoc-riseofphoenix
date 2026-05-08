@@ -1,0 +1,26 @@
+__int64 __fastcall sub_14133EDD0(__int64 a1, const wchar_t *a2)
+{
+  __int64 v4; // r15
+  __int64 v5; // r14
+  int v6; // edi
+
+  *(_QWORD *)a1 = 0;
+  v4 = a1 + 8;
+  *(_DWORD *)(a1 + 8) = 0;
+  v5 = a1 + 12;
+  *(_DWORD *)(a1 + 12) = 0;
+  if ( a2 && *a2 )
+  {
+    v6 = wcslen(a2) + 1;
+    if ( v6 < 0 )
+    {
+      sub_141355830((unsigned int)v6);
+      JUMPOUT(0x14133EE8DLL);
+    }
+    if ( v6 > 0 )
+      sub_14131BD90(2, 2, v6, a1, 0, v5);
+    sub_14131EF30(2, 2, v6, a1, v4, v5);
+    j_memcpy(*(void **)a1, a2, 2LL * v6);
+  }
+  return a1;
+}

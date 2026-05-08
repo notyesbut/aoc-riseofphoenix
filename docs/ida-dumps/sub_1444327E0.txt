@@ -1,0 +1,45 @@
+__int64 __fastcall sub_1444327E0(__int64 a1)
+{
+  __int64 result; // rax
+  __int64 v3; // rbx
+  __int64 v4; // rsi
+  __int64 v5; // rbx
+  __int64 v6; // rax
+  __int64 v7; // [rsp+30h] [rbp+8h] BYREF
+
+  result = (unsigned __int8)byte_14D6B7288;
+  v3 = *(_QWORD *)(a1 + 936);
+  if ( byte_14D6B7288 )
+  {
+    if ( v3 )
+    {
+      sub_14163E750(*(_QWORD *)(a1 + 936));
+      result = (unsigned __int8)byte_14D6B7288;
+    }
+    if ( (_BYTE)result && v3 )
+      result = sub_14163E750(v3);
+  }
+  if ( *(_QWORD *)(a1 + 1064) != v3 )
+  {
+    result = sub_1413BD700();
+    if ( !(_BYTE)result )
+    {
+      result = sub_143B82890(a1);
+      v4 = result;
+      if ( *(double *)(result + 1976) - *(float *)(a1 + 1984) > 0.5 )
+      {
+        v5 = *(_QWORD *)(a1 + 936);
+        if ( byte_14D6B7288 )
+        {
+          if ( v5 )
+            sub_14163E750(*(_QWORD *)(a1 + 936));
+        }
+        v7 = v5;
+        v6 = sub_141741E80(a1, qword_14D856348);
+        result = (*(__int64 (__fastcall **)(__int64, __int64, __int64 *))(*(_QWORD *)a1 + 744LL))(a1, v6, &v7);
+        *(float *)(a1 + 1984) = *(double *)(v4 + 1976);
+      }
+    }
+  }
+  return result;
+}

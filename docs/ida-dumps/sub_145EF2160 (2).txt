@@ -1,0 +1,133 @@
+__int64 __fastcall sub_145EF2160(__int64 a1, __int64 a2, __int64 a3, int a4, __int64 a5)
+{
+  const wchar_t *v8; // rdi
+  const wchar_t *v9; // r8
+  __int64 result; // rax
+  __int64 v11; // rax
+  __int64 v12; // rbx
+  __int64 v13; // rax
+  const wchar_t *v14; // r8
+  const wchar_t *v15; // rcx
+  __int64 v16; // rax
+  __int64 v17; // rdx
+  __int64 v18; // rbx
+  __int64 v19; // rax
+  __int64 v20; // rdx
+  __int64 v21; // r8
+  __int64 v22; // rax
+  __int64 v23; // rax
+  __int64 v24; // rdi
+  __int64 v25; // rbx
+  __int64 v26; // rax
+  __int64 v27; // r8
+  _QWORD v28[2]; // [rsp+20h] [rbp-71h] BYREF
+  const wchar_t *v29; // [rsp+30h] [rbp-61h] BYREF
+  int v30; // [rsp+38h] [rbp-59h]
+  _QWORD v31[2]; // [rsp+40h] [rbp-51h] BYREF
+  _BYTE v32[16]; // [rsp+50h] [rbp-41h] BYREF
+  _QWORD v33[2]; // [rsp+60h] [rbp-31h] BYREF
+  __int64 v34; // [rsp+70h] [rbp-21h]
+  const wchar_t *v35; // [rsp+88h] [rbp-9h]
+  int v36; // [rsp+90h] [rbp-1h]
+  __int64 v37; // [rsp+98h] [rbp+7h]
+  __int64 v38; // [rsp+A8h] [rbp+17h]
+  unsigned int v39; // [rsp+B0h] [rbp+1Fh]
+  __int64 v40; // [rsp+B8h] [rbp+27h]
+  _BYTE *v41; // [rsp+F8h] [rbp+67h] BYREF
+
+  v8 = &chText;
+  if ( (unsigned __int8)byte_14D9401F0 >= 2u )
+  {
+    if ( *(_DWORD *)(a5 + 8) )
+      v9 = *(const wchar_t **)a5;
+    else
+      v9 = &chText;
+    sub_141421C70((__int64)&byte_14D9401F0, (__int64)&off_14B7D35F8, v9);
+  }
+  if ( a2 && (*(_DWORD *)(a2 + 8) & 0x40000000) == 0 || (result = sub_143FD8860(a1), (a2 = result) != 0) )
+  {
+    result = *(_DWORD *)(a2 + 8) >> 30;
+    if ( (*(_DWORD *)(a2 + 8) & 0x40000000) == 0 )
+    {
+      result = qword_14D86F4C8;
+      if ( qword_14D86F4C8 )
+      {
+        result = *(_DWORD *)(qword_14D86F4C8 + 8) >> 30;
+        if ( (*(_DWORD *)(qword_14D86F4C8 + 8) & 0x40000000) == 0 )
+        {
+          result = sub_144737700(a2);
+          if ( (_DWORD)result == 3 )
+          {
+            v11 = sub_143FD8860(a1);
+            v12 = sub_1447D39D0(qword_14D86F4C8, v11);
+            sub_1413DC910(&v41, L"ConnectionFailedMessage");
+            sub_1413DC910(v28, L"UI");
+            sub_1413E62D0(v31, v28, &v41, L"Connection to the Realm timed out.");
+            v13 = sub_1413F30A0(v31);
+            sub_141345B00(&v29, L"NET_ERROR=", v13);
+            if ( *(_DWORD *)(v12 + 176) )
+              v14 = *(const wchar_t **)(v12 + 168);
+            else
+              v14 = &chText;
+            sub_1446D7C40(v33, 0, v14, *(unsigned __int8 *)(v12 + 184));
+            v15 = &chText;
+            if ( v36 )
+              v15 = v35;
+            if ( (unsigned int)sub_141389410(v15, "/Game/Levels/Character_Login/Character_Lobby") )
+            {
+              v41 = v32;
+              sub_14133E920(v32, &v29);
+              v24 = v23;
+              v25 = *(_QWORD *)sub_1414FE680(v28, "Character_Lobby", 1);
+              v26 = sub_143FD8860(a1);
+              LOBYTE(v27) = 1;
+              sub_144022DF0(v26, v25, v27, v24);
+            }
+            else
+            {
+              if ( v30 )
+                v8 = v29;
+              sub_1446E18D0(v33, v8);
+              v16 = sub_14470FEB0(v33, v28, 0);
+              sub_1413402A0(v12 + 168, v16);
+              if ( v28[0] )
+                sub_1413B0B20(v28[0]);
+              LOBYTE(v17) = 1;
+              v18 = sub_143FD4860(a1, v17);
+              if ( v18 )
+              {
+                v19 = sub_1458D5110();
+                v20 = *(_QWORD *)(v18 + 16);
+                v21 = v19 + 80;
+                v22 = *(int *)(v19 + 88);
+                if ( (int)v22 <= *(_DWORD *)(v20 + 88) && *(_QWORD *)(*(_QWORD *)(v20 + 80) + 8 * v22) == v21 && a4 == 6 )
+                {
+                  LOBYTE(v41) = 3;
+                  sub_145FDA8D0(v18, a1 + 8984, &v41);
+                }
+              }
+            }
+            if ( v40 )
+              sub_1413B0B20(v40);
+            result = sub_14131D680(v38, v39);
+            if ( v38 )
+              result = sub_1413B0B20(v38);
+            if ( v37 )
+              result = sub_1413B0B20(v37);
+            if ( v35 )
+              result = sub_1413B0B20(v35);
+            if ( v34 )
+              result = sub_1413B0B20(v34);
+            if ( v33[0] )
+              result = sub_1413B0B20(v33[0]);
+            if ( v29 )
+              result = sub_1413B0B20(v29);
+            if ( v31[0] )
+              return (*(__int64 (__fastcall **)(_QWORD))(*(_QWORD *)v31[0] + 16LL))(v31[0]);
+          }
+        }
+      }
+    }
+  }
+  return result;
+}

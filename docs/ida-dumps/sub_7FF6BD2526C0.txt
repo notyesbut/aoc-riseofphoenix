@@ -1,0 +1,45 @@
+__int64 __fastcall sub_7FF6BD2526C0(__int64 a1, unsigned __int64 a2)
+{
+  _QWORD *v2; // r14
+  int v4; // r8d
+  __int64 v5; // rdx
+  int v6; // eax
+  __int64 v7; // rcx
+  __int64 v9; // rbx
+  __int64 v10; // [rsp+30h] [rbp+8h] BYREF
+
+  v2 = (_QWORD *)(a1 + 208);
+  v4 = (-1028477387
+      * ((-2048144789 * ((a2 >> 4) ^ ((unsigned int)(a2 >> 4) >> 16)))
+       ^ ((-2048144789 * ((unsigned int)(a2 >> 4) ^ ((unsigned int)(a2 >> 4) >> 16))) >> 13)))
+     ^ ((-1028477387
+       * ((-2048144789 * ((unsigned int)(a2 >> 4) ^ ((unsigned int)(a2 >> 4) >> 16)))
+        ^ ((-2048144789 * ((unsigned int)(a2 >> 4) ^ ((unsigned int)(a2 >> 4) >> 16))) >> 13))) >> 16);
+  if ( *(_DWORD *)(a1 + 216) == *(_DWORD *)(a1 + 260) )
+    return 0;
+  v5 = *(_QWORD *)(a1 + 272);
+  if ( !v5 )
+    v5 = a1 + 264;
+  v6 = *(_DWORD *)(v5 + 4LL * (v4 & (unsigned int)(*(_DWORD *)(a1 + 280) - 1)));
+  if ( v6 == -1 )
+    return 0;
+  while ( 1 )
+  {
+    v7 = *v2 + 32LL * v6;
+    if ( *(_QWORD *)v7 == a2 )
+      break;
+    v6 = *(_DWORD *)(v7 + 24);
+    if ( v6 == -1 )
+      return 0;
+  }
+  v9 = v7 + 8;
+  if ( !v7 )
+    v9 = 0;
+  if ( !v9 )
+    return v9;
+  v10 = *(_QWORD *)(*(_QWORD *)v9 + 224LL);
+  if ( (unsigned __int8)sub_7FF6BAAB2600(&v10) )
+    return v9;
+  sub_7FF6BABA4BE0(v2, a2);
+  return 0;
+}

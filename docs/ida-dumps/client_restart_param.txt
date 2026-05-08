@@ -1,0 +1,168 @@
+============================================================
+ find_client_restart.idc — ClientRestart UFunction analysis
+============================================================
+
+.rdata: 0x7ff6c30756c0 - 0x7ff6c6527000
+
+============================================================
+PART 1: Locate 'ClientRestart' FName string
+============================================================
+  Match at 0x7ff6c3d7bf70 (prev=0x00)
+  Match at 0x7ff6c3d7c083 (prev=0x79)
+
+Using cr_addr = 0x7ff6c3d7bf70
+
+============================================================
+PART 2: Data xrefs to ClientRestart (UFunction entries)
+============================================================
+
+--- xref #0 at 0x7ff6c3d71e58 (.rdata) ---
+     0x7ff6c3d71e38  0x00007ff6c3d7be38  aClientrepobjre_0  "ClientRepObjRef"
+     0x7ff6c3d71e40  0x00007ff6bd729f50  sub_7FF6BD729F50  "H"
+     0x7ff6c3d71e48  0x00007ff6c3d7bea0  aClientreset_0  "ClientReset"
+     0x7ff6c3d71e50  0x00007ff6bd729f80  sub_7FF6BD729F80  "H"
+ >>> 0x7ff6c3d71e58  0x00007ff6c3d7bf70  aClientrestart_0  "ClientRestart"
+     0x7ff6c3d71e60  0x00007ff6bd729fe0  sub_7FF6BD729FE0  "H"
+     0x7ff6c3d71e68  0x00007ff6c3d7c078  aClientretrycli_1  "ClientRetryClientRestart"
+     0x7ff6c3d71e70  0x00007ff6bd72a040  sub_7FF6BD72A040  "H"
+     0x7ff6c3d71e78  0x00007ff6c3d7c230  aClientreturnto_0  "ClientReturnToMainMenuWithTextReason"
+     0x7ff6c3d71e80  0x00007ff6bd72a0a0  sub_7FF6BD72A0A0  "H"
+     0x7ff6c3d71e88  0x00007ff6c3d7c338  aClientsetblock_0  "ClientSetBlockOnAsyncLoading"
+     0x7ff6c3d71e90  0x00007ff6bd72a1e0  sub_7FF6BD72A1E0  "H"
+     0x7ff6c3d71e98  0x00007ff6c3d7c590  aClientsetcamer_1  "ClientSetCameraFade"
+     0x7ff6c3d71ea0  0x00007ff6bd72a240  sub_7FF6BD72A240  "H"
+     0x7ff6c3d71ea8  0x00007ff6c3d7c6a8  aClientsetcamer_2  "ClientSetCameraMode"
+     0x7ff6c3d71eb0  0x00007ff6bd72a2a0  sub_7FF6BD72A2A0  "H"
+     0x7ff6c3d71eb8  0x00007ff6c3d7c948  aClientsetcinem_0  "ClientSetCinematicMode"
+
+--- xref #1 at 0x7ff6c3d859c0 (.rdata) ---
+     0x7ff6c3d859a0  0x00007ff6c3d7be38  aClientrepobjre_0  "ClientRepObjRef"
+     0x7ff6c3d859a8  0x00007ff6bd772f20  sub_7FF6BD772F20  "H"
+     0x7ff6c3d859b0  0x00007ff6c3d7bea0  aClientreset_0  "ClientReset"
+     0x7ff6c3d859b8  0x00007ff6bd772fb0  sub_7FF6BD772FB0  "H"
+ >>> 0x7ff6c3d859c0  0x00007ff6c3d7bf70  aClientrestart_0  "ClientRestart"
+     0x7ff6c3d859c8  0x00007ff6bd772fd0  sub_7FF6BD772FD0  "H"
+     0x7ff6c3d859d0  0x00007ff6c3d7c078  aClientretrycli_1  "ClientRetryClientRestart"
+     0x7ff6c3d859d8  0x00007ff6bd773060  sub_7FF6BD773060  "H"
+     0x7ff6c3d859e0  0x00007ff6c3d7c230  aClientreturnto_0  "ClientReturnToMainMenuWithTextReason"
+     0x7ff6c3d859e8  0x00007ff6bd7730f0  sub_7FF6BD7730F0  "H"
+     0x7ff6c3d859f0  0x00007ff6c3d7c338  aClientsetblock_0  "ClientSetBlockOnAsyncLoading"
+     0x7ff6c3d859f8  0x00007ff6bd645c40  sub_7FF6BD645C40  "H"
+     0x7ff6c3d85a00  0x00007ff6c3d7c590  aClientsetcamer_1  "ClientSetCameraFade"
+     0x7ff6c3d85a08  0x00007ff6bd7731a0  sub_7FF6BD7731A0  "H"
+     0x7ff6c3d85a10  0x00007ff6c3d7c6a8  aClientsetcamer_2  "ClientSetCameraMode"
+     0x7ff6c3d85a18  0x00007ff6bd773390  sub_7FF6BD773390  "H"
+     0x7ff6c3d85a20  0x00007ff6c3d7c948  aClientsetcinem_0  "ClientSetCinematicMode"
+
+--- xref #2 at 0x7ff6c65ca518 (.data) ---
+     0x7ff6c65ca4f8  0x0000004500000000
+     0x7ff6c65ca500  0x0000000001020cc2
+     0x7ff6c65ca508  0x00007ff6bd7280c0  sub_7FF6BD7280C0  "H"
+     0x7ff6c65ca510  0x0000000000000000
+ >>> 0x7ff6c65ca518  0x00007ff6c3d7bf70  aClientrestart_0  "ClientRestart"
+     0x7ff6c65ca520  0x00007ff6c3d7bf10  off_7FF6C3D7BF10
+     0x7ff6c65ca528  0x0000004500080001
+     0x7ff6c65ca530  0x0000000001020cc2
+     0x7ff6c65ca538  0x00007ff6bd7280c0  sub_7FF6BD7280C0  "H"
+     0x7ff6c65ca540  0x0000000000000000
+     0x7ff6c65ca548  0x00007ff6c3d7c078  aClientretrycli_1  "ClientRetryClientRestart"
+     0x7ff6c65ca550  0x00007ff6c3d7c070  off_7FF6C3D7C070
+     0x7ff6c65ca558  0x0000004500080001
+     0x7ff6c65ca560  0x0000000001020cc2
+     0x7ff6c65ca568  0x00007ff6bd7280c0  sub_7FF6BD7280C0  "H"
+     0x7ff6c65ca570  0x0000000000000000
+     0x7ff6c65ca578  0x00007ff6c3d7c230  aClientreturnto_0  "ClientReturnToMainMenuWithTextReason"
+
+[Total data xrefs scanned: 3]
+
+============================================================
+PART 3: Code xrefs to ClientRestart string (registrars)
+============================================================
+
+[Total code xrefs scanned: 0]
+
+============================================================
+PART 4: Locate 'NewPawn' FName (ClientRestart param name)
+============================================================
+  'NewPawn' match at 0x7ff6c3bb9a60 (prev=0x00)
+  'NewPawn' match at 0x7ff6c413b1bd (prev=0x6e)
+
+Using newpawn_addr = 0x7ff6c3bb9a60
+
+--- Data xrefs to 'NewPawn' (FObjectPropertyParams entries) ---
+
+  --- NewPawn xref #0 at 0x7ff6c3bb99b0 (.rdata) ---
+     0x7ff6c3bb99a8  0x00007ff6bd6482b0  sub_7FF6BD6482B0  "L"
+ >>> 0x7ff6c3bb99b0  0x00007ff6c3bb9a60  aNewpawn  "NewPawn"
+     0x7ff6c3bb99b8  0x0000000000000000
+     0x7ff6c3bb99c0  0x0010000000000080
+     0x7ff6c3bb99c8  0x0000004500000012
+     0x7ff6c3bb99d0  0x0000000000000000
+     0x7ff6c3bb99d8  0x0000000000000000
+     0x7ff6c3bb99e0  0x0000000000080001
+     0x7ff6c3bb99e8  0x00007ff6bd6482b0  sub_7FF6BD6482B0  "L"
+     0x7ff6c3bb99f0  0x00007ff6c3bbb3d8  aBupdatespline  "bUpdateSpline"
+
+  --- NewPawn xref #1 at 0x7ff6c3d76fc0 (.rdata) ---
+     0x7ff6c3d76fb8  0x00007ff6bd726860  sub_7FF6BD726860  "L"
+ >>> 0x7ff6c3d76fc0  0x00007ff6c3bb9a60  aNewpawn  "NewPawn"
+     0x7ff6c3d76fc8  0x0000000000000000
+     0x7ff6c3d76fd0  0x0010000000000080
+     0x7ff6c3d76fd8  0x0000004500000012
+     0x7ff6c3d76fe0  0x0000000000000000
+     0x7ff6c3d76fe8  0x0000000000000000
+     0x7ff6c3d76ff0  0x0000000000080001
+     0x7ff6c3d76ff8  0x00007ff6bd6482b0  sub_7FF6BD6482B0  "L"
+     0x7ff6c3d77000  0x61746c65446e694d
+
+  --- NewPawn xref #2 at 0x7ff6c3d7bed0 (.rdata) ---
+     0x7ff6c3d7bec8  0x0000000000000074
+ >>> 0x7ff6c3d7bed0  0x00007ff6c3bb9a60  aNewpawn  "NewPawn"
+     0x7ff6c3d7bed8  0x0000000000000000
+     0x7ff6c3d7bee0  0x0010000000000080
+     0x7ff6c3d7bee8  0x0000004500000012
+     0x7ff6c3d7bef0  0x0000000000000000
+     0x7ff6c3d7bef8  0x0000000000000000
+     0x7ff6c3d7bf00  0x0000000000000001
+     0x7ff6c3d7bf08  0x00007ff6bd6482b0  sub_7FF6BD6482B0  "L"
+     0x7ff6c3d7bf10  0x00007ff6c3d7bed0  off_7FF6C3D7BED0
+
+  --- NewPawn xref #3 at 0x7ff6c3d7c030 (.rdata) ---
+     0x7ff6c3d7c028  0x0000000000000000
+ >>> 0x7ff6c3d7c030  0x00007ff6c3bb9a60  aNewpawn  "NewPawn"
+     0x7ff6c3d7c038  0x0000000000000000
+     0x7ff6c3d7c040  0x0010000000000080
+     0x7ff6c3d7c048  0x0000004500000012
+     0x7ff6c3d7c050  0x0000000000000000
+     0x7ff6c3d7c058  0x0000000000000000
+     0x7ff6c3d7c060  0x0000000000000001
+     0x7ff6c3d7c068  0x00007ff6bd6482b0  sub_7FF6BD6482B0  "L"
+     0x7ff6c3d7c070  0x00007ff6c3d7c030  off_7FF6C3D7C030
+
+  --- NewPawn xref #4 at 0x7ff6c413b170 (.rdata) ---
+     0x7ff6c413b168  0x0000000000000000
+ >>> 0x7ff6c413b170  0x00007ff6c3bb9a60  aNewpawn  "NewPawn"
+     0x7ff6c413b178  0x0000000000000000
+     0x7ff6c413b180  0x0010000000000080
+     0x7ff6c413b188  0x0000004500000012
+     0x7ff6c413b190  0x0000000000000000
+     0x7ff6c413b198  0x0000000000000000
+     0x7ff6c413b1a0  0x0000000000000001
+     0x7ff6c413b1a8  0x00007ff6bd6482b0  sub_7FF6BD6482B0  "L"
+     0x7ff6c413b1b0  0x00007ff6c413b170  off_7FF6C413B170
+
+  --- NewPawn xref #5 at 0x7ff6c4463cb0 (.rdata) ---
+     0x7ff6c4463ca8  0x00007ff6bd6482b0  sub_7FF6BD6482B0  "L"
+ >>> 0x7ff6c4463cb0  0x00007ff6c3bb9a60  aNewpawn  "NewPawn"
+     0x7ff6c4463cb8  0x0000000000000000
+     0x7ff6c4463cc0  0x0010000000000080
+     0x7ff6c4463cc8  0x0000004500000012
+     0x7ff6c4463cd0  0x0000000000000000
+     0x7ff6c4463cd8  0x0000000000000000
+     0x7ff6c4463ce0  0x0000000000080001
+     0x7ff6c4463ce8  0x00007ff6bd6482b0  sub_7FF6BD6482B0  "L"
+     0x7ff6c4463cf0  0x00007ff6c4463c70  off_7FF6C4463C70
+
+============================================================
+  DONE
+============================================================

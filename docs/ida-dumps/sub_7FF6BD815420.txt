@@ -1,0 +1,53 @@
+__int64 __fastcall sub_7FF6BD815420(
+        __int64 a1,
+        __int64 a2,
+        __int64 *a3,
+        __int64 a4,
+        __int64 a5,
+        _BYTE *a6,
+        char a7,
+        __int64 a8,
+        __int64 a9)
+{
+  __int64 v13; // rax
+  __int64 *v14; // r8
+  __int64 v15; // rdx
+  unsigned __int8 v16; // si
+  volatile signed __int32 *v17; // rbx
+  __int64 v19; // [rsp+70h] [rbp-38h] BYREF
+  volatile signed __int32 *v20; // [rsp+78h] [rbp-30h]
+  _QWORD v21[2]; // [rsp+80h] [rbp-28h] BYREF
+
+  if ( (*(_BYTE *)(a5 + 41) & 2) == 0 )
+  {
+    v13 = *(_QWORD *)(a5 + 168);
+    if ( v13 < *(_QWORD *)(a5 + 160) )
+      *(_QWORD *)(a5 + 168) = v13 + 1;
+    else
+      sub_7FF6BA826310(a5, 1);
+  }
+  *a6 = 0;
+  sub_7FF6BAA99070(*(_QWORD *)(a1 + 96), v21, 0);
+  sub_7FF6BD59EF80(*(_QWORD *)(a2 + 136), &v19, (__int64)v21);
+  v14 = a3 + 4;
+  if ( !a3 )
+    v14 = nullptr;
+  if ( a7 && a3 )
+    v15 = *a3;
+  else
+    v15 = 0;
+  v16 = sub_7FF6BD8155B0(a1, (__int64)a3, v19, a5, 0, *(_DWORD *)(a1 + 64) - 1, v15, a4, a4, (__int64)v14, a6, a8, a9);
+  v17 = v20;
+  if ( v20 )
+  {
+    if ( _InterlockedExchangeAdd(v20 + 2, 0xFFFFFFFF) == 1 )
+    {
+      (**(void (__fastcall ***)(volatile signed __int32 *))v17)(v17);
+      if ( _InterlockedExchangeAdd(v17 + 3, 0xFFFFFFFF) == 1 )
+        (*(void (__fastcall **)(volatile signed __int32 *, __int64))(*(_QWORD *)v17 + 8LL))(v17, 1);
+    }
+  }
+  if ( v21[0] )
+    sub_7FF6BA6E0B20(v21[0]);
+  return v16;
+}

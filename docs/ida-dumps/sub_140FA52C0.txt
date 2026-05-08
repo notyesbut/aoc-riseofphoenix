@@ -1,0 +1,4 @@
+_QWORD *sub_140FA52C0()
+{
+  return sub_1414FE830(&qword_14D8564B8, L"ServerUpdateLevelVisibility", 1u);
+}
