@@ -1,0 +1,182 @@
+{
+  "total_ch3_bunches": 459,
+  "property_update_candidates": 345,
+  "bit_counts": {
+    "173": 1,
+    "42": 1,
+    "32": 1,
+    "513": 1,
+    "121": 1,
+    "29": 1,
+    "253": 294,
+    "445": 2,
+    "506": 5,
+    "128": 1,
+    "415": 1,
+    "279": 1,
+    "174": 7,
+    "56": 5,
+    "62": 12,
+    "473": 3,
+    "130": 1,
+    "359": 1,
+    "295": 1,
+    "367": 1,
+    "383": 1,
+    "399": 1,
+    "37": 1,
+    "256": 1
+  },
+  "first_30_examples": [
+    [
+      22,
+      "[bunch3] ch=3 kind=PartialCont bits=173 rel=1 part=1-- chSeq=957 name='#102'",
+      173
+    ],
+    [
+      31,
+      "[bunch6] ch=3 kind=ActorReliable bits=42 rel=1 part=0-- chSeq=948 name='#22965170'",
+      42
+    ],
+    [
+      127,
+      "[bunch1] ch=3 kind=ActorReliable bits=32 rel=1 part=0-- chSeq=998 name='#102'",
+      32
+    ],
+    [
+      597,
+      "[bunch0] ch=3 kind=GUIDExport bits=513 rel=1 part=1I- chSeq=999 name='#102'",
+      513
+    ],
+    [
+      958,
+      "[bunch0] ch=3 kind=GUIDExport bits=121 rel=1 part=0-- chSeq=576 name='#52'",
+      121
+    ],
+    [
+      1443,
+      "[bunch0] ch=3 kind=ActorReliable bits=29 rel=1 part=0-- chSeq=60 name='#102'",
+      29
+    ],
+    [
+      1849,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      1922,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      1934,
+      "[bunch0] ch=3 kind=ActorUpdate bits=445 rel=0 part=0-- chSeq=0 name='#0'",
+      445
+    ],
+    [
+      1941,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      1952,
+      "[bunch1] ch=3 kind=ActorUpdate bits=445 rel=0 part=0-- chSeq=0 name='#0'",
+      445
+    ],
+    [
+      1961,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2045,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2113,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2268,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2329,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2329,
+      "[bunch1] ch=3 kind=ActorUpdate bits=506 rel=0 part=0-- chSeq=0 name='#0'",
+      506
+    ],
+    [
+      2386,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2386,
+      "[bunch1] ch=3 kind=ActorUpdate bits=506 rel=0 part=0-- chSeq=0 name='#0'",
+      506
+    ],
+    [
+      2451,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2514,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2568,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2630,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2693,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2724,
+      "[bunch2] ch=3 kind=ActorUpdate bits=128 rel=0 part=0-- chSeq=0 name='#0'",
+      128
+    ],
+    [
+      2751,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2812,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2874,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2936,
+      "[bunch0] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ],
+    [
+      2936,
+      "[bunch1] ch=3 kind=ActorUpdate bits=253 rel=0 part=0-- chSeq=0 name='#0'",
+      253
+    ]
+  ]
+}

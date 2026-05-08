@@ -1,0 +1,15 @@
+# Captured PC ActorOpen bunches from pkt#22
+# Channel: 3 (PC channel actor)
+# Captured PC NetGUID context — references captured-server-specific NetGUIDs
+#
+# bunch[0]: PARTIAL_INIT (open=1) 3545 bits = 444 bytes
+# bunch[1]: PARTIAL_FINAL  1314 bits = 165 bytes
+# Combined = 4859 bits = 609 bytes
+#
+# Inside bunch[1] our walker found 3 content blocks:
+#   subobject sub_id=0     handle=126 vbits=93
+#   subobject sub_id=14476 handle=766 vbits=109
+#   subobject sub_id=14476 handle=110 vbits=6026 (TRUNCATED — actual value smaller)
+#
+# NOTE: sub_id 14476 is captured CharacterAppearanceComponent NetGUID.
+# When splicing into our connection, replace 14476 with our 16777226.

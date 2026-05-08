@@ -1289,6 +1289,15 @@ public:
                                          : std::string{};
     }
 
+    bool emit_client_initialize_character(
+            const std::string& client_key,
+            const sockaddr_in& addr) override {
+        // The internal helper signature still takes a character_name string
+        // (legacy from PM28) but the body ignores it.  Pass empty string.
+        return send_client_initialize_character_native(client_key, addr,
+                                                        std::string{});
+    }
+
     bool enable_relay(const std::string& target) {
         if (relay_active_.load()) {
             spdlog::info("[GameServer] Relay already active, updating target: {}", target);
@@ -2288,168 +2297,125 @@ private:
     }
 
     // ───────────────────────────────────────────────────────────────────
-    //  send_client_initialize_character_native — PM28 (2026-04-29)
+    //  send_client_initialize_character_native — REWRITTEN 2026-05-05
     //
-    //  AOC's actual possession path is via ClientInitializeCharacter, NOT
-    //  ClientRestart.  Per PM28 RE of UFunction reflection data at
-    //  0x14B6F5408, the signature is:
-    //    void ClientInitializeCharacter(FName CharacterName);
+    //  WAS (PM28, 2026-04-29): wrong signature `ClientInitializeCharacter(FName)`,
+    //  wrong handle encoding (SIP instead of SerializeInt), small-range fuzz.
     //
-    //  This function builds and sends the bunch on PC's ch=3 reliable,
-    //  matching the canonical PM21 envelope (10-bit ChSeq + ChName + 13-bit BDB).
+    //  NOW: SDK-verified signature `void ClientInitializeCharacter()` —
+    //  zero parameters (per `GameSystemsPlugin_classes.hpp:15007`).
     //
-    //  wire_handle: alphabetical position in PC's Client* table + 5 reserved.
-    //  We don't know the exact position; fuzzed via the static counter.
+    //  Wire handle from `docs/RE-CLIENTINITIALIZECHARACTER-HANDLE.md`:
+    //    wire_handle = 142  (DERIVED-FROM-RE, ±10)
+    //    Probable range: 138..150
+    //    Primary fuzz order: 142 → 141/143 → 138/144/146 → 128/129
     //
-    //  Called when we recognize incoming ServerRequestInitializeCharacter.
+    //  Wire format per PM95 (proven via ClientRestart's bare_mode=4):
+    //    SerializeInt(handle, MAX=1024)  10 bits  (PM97 verified)
+    //    1-bit advance                    1 bit
+    //    SIP(0) terminator                8 bits  (= byte 0x00, no fields)
+    //  Total inner = 19 bits.
+    //
+    //  Probe knobs (no rebuild required to iterate):
+    //    probe_cic_handle.txt    — wire handle (default 142)
+    //    probe_cic_max.txt       — SerializeInt MAX (default 1024 = 10 bits)
+    //
+    //  Called when we recognize incoming ServerRequestInitializeCharacter
+    //  (PM28's recognizer at line 4471 still works — character_name is now
+    //  ignored, kept for API stability).
     // ───────────────────────────────────────────────────────────────────
     bool send_client_initialize_character_native(
             const std::string& client_key,
             const sockaddr_in& addr,
             const std::string& character_name) {
-        std::lock_guard<std::mutex> lk(client_mu_);
-        auto it = clients_.find(client_key);
-        if (it == clients_.end()) return false;
-        if (it->second.phase < ClientState::CONNECTED) return false;
-        ClientState& cs = it->second;
+        (void)character_name;  // SDK confirms ClientInitializeCharacter() takes NO params
 
-        // Use exact tracker+1 (no floor — see PM26 reasoning)
-        uint16_t last_ch3_seen = 0;
-        auto trk = cs.last_outgoing_reliable_chseq.find(3);
-        if (trk != cs.last_outgoing_reliable_chseq.end()) {
-            last_ch3_seen = trk->second;
-        }
-        uint16_t this_chseq = static_cast<uint16_t>((last_ch3_seen + 1u) & 0x3FFu);
-        if (this_chseq == 0) this_chseq = 1;
-        cs.last_outgoing_reliable_chseq[3] = this_chseq;
-
-        // PM28 — fuzz wire_handle for ClientInitializeCharacter.
-        // Best guesses based on alphabetical position in PC's Client* table:
-        // ClientInitializeCharacter is between ClientHeadersUpToDate and
-        // ClientReceiveStoragePayload alphabetically.
-        // PM7 noted Client* table has 72 entries with +5 reserved offset.
-        static constexpr uint16_t kCICFuzzList[] = {
-            // Mid-alphabet candidates — most likely range
-            18, 19, 20, 21, 22, 23, 24, 25,
-            // Wider range for safety
-            13, 14, 15, 16, 17, 26, 27, 28, 29, 30
+        // 2026-05-06 — REWRITTEN to use PropertyUpdateBunchBuilder, which is
+        // the SAME path that ClientRestart RPC uses successfully (proven by
+        // PM97 — possession works).  The PRIOR manual bunch construction
+        // produced a "Bunch data overflowed" error on the client (per
+        // AOC.log).
+        //
+        // Probe knobs (no rebuild required):
+        //   probe_cic_handle.txt   — wire handle (default 142, per Track-1 RE ±10)
+        //   probe_cic_max.txt      — SerializeInt MAX (default 1024)
+        //   probe_cic_chseq.txt    — ch=3 reliable chSeq (default 957)
+        //   probe_cic_autofuzz.txt — if "1", auto-increment handle each restart
+        //                            using probe_cic_handle.txt as state
+        auto read_probe_uint = [](const char* path, uint32_t default_val) -> uint32_t {
+            std::FILE* fp = std::fopen(path, "r");
+            if (!fp) return default_val;
+            uint32_t n = default_val;
+            std::fscanf(fp, "%u", &n);
+            std::fclose(fp);
+            return n;
         };
-        static thread_local size_t cic_fuzz_idx = 0;
-        const uint16_t kFieldHandle = kCICFuzzList[
-            cic_fuzz_idx % (sizeof(kCICFuzzList)/sizeof(kCICFuzzList[0]))];
-        ++cic_fuzz_idx;
-        const uint32_t wire_handle = static_cast<uint32_t>(kFieldHandle);
-
-        spdlog::warn("[CIC-FUZZ] ClientInitializeCharacter attempt with "
-                     "wire_handle={} CharacterName='{}'",
-                     wire_handle, character_name);
-
-        auto sip_bit_count = [](uint32_t v) -> size_t {
-            if (v == 0) return 8;
-            size_t bits = 0;
-            while (v > 0) { bits += 8; v >>= 7; }
-            return bits;
+        auto write_probe_uint = [](const char* path, uint32_t value) {
+            std::FILE* fp = std::fopen(path, "w");
+            if (!fp) return;
+            std::fprintf(fp, "%u\n", value);
+            std::fclose(fp);
         };
+        const uint32_t wire_handle = read_probe_uint("probe_cic_handle.txt", 142u);
+        const uint32_t handle_max  = read_probe_uint("probe_cic_max.txt",   1024u);
+        const uint32_t cic_chseq   = read_probe_uint("probe_cic_chseq.txt",  957u);
+        const uint32_t auto_fuzz   = read_probe_uint("probe_cic_autofuzz.txt", 0u);
 
-        // FName CharacterName encoding (soft form per CALV PM21):
-        //   [1]  bHardcoded = 0
-        //   [32] FString length (incl NUL)
-        //   [N*8] ASCII chars
-        //   [8] NUL
-        //   [32] FName Number suffix = 0
-        const uint32_t name_len_with_nul =
-            static_cast<uint32_t>(character_name.size()) + 1;
-        const size_t fname_bits = 1 + 32 + 8 * character_name.size() + 8 + 32;
-
-        const size_t handle_sip_bits = sip_bit_count(wire_handle);
-        const size_t param_size_bits_value = fname_bits;
-        const size_t size_sip_bits = sip_bit_count(
-            static_cast<uint32_t>(param_size_bits_value));
-        const size_t terminator_sip_bits = 8;
-
-        const size_t outer_payload_bits = 1u                    // header bit
-                                        + handle_sip_bits
-                                        + size_sip_bits
-                                        + param_size_bits_value
-                                        + terminator_sip_bits;
-        const size_t outer_size_varint_bits = sip_bit_count(
-            static_cast<uint32_t>(outer_payload_bits));
-        const size_t total_bdb = 2 + outer_size_varint_bits + outer_payload_bits;
-
-        // ── Bunch envelope (canonical PM21 pattern) ──
-        uint8_t bunch_buf[512] = {};
-        size_t bb = 0;
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bControl=0
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bIsRepPaused=0
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // bReliable=1
-        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 3);    // ChIdx=3 (PC)
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasPME=0
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasMBG=0
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bPartial=0
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
-                        this_chseq & 0x3FF, 10);                 // ChSeq 10-bit
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // ChName.bHardcoded=1
-        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 102);  // EName=NAME_Actor
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
-                        static_cast<uint32_t>(total_bdb), 13);   // BunchDataBits
-
-        // ── Content block envelope ──
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasRepLayout=0
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // bIsActor=1
-        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb,
-                        static_cast<uint32_t>(outer_payload_bits));
-
-        // ── Outer payload ──
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // header
-        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, wire_handle);
-        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb,
-                        static_cast<uint32_t>(param_size_bits_value));
-
-        // ── Param payload: FName CharacterName (soft form) ──
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1);  // bHardcoded = 0
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
-                        name_len_with_nul, 32);
-        for (char c : character_name)
-            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
-                            static_cast<uint8_t>(c), 8);
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 8);   // NUL
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 32);  // FName Number
-
-        // ── End-of-fields terminator ──
-        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 0);
-
-        const size_t bunch_bits = bb;
-
-        // ── Wrap in UDP packet ──
-        uint8_t buf[1024] = {};
-        size_t off = 0;
-        write_sc_packet_prefix(buf, sizeof(buf), off, cs, /*handshake=*/false);
-        ue5::write_bits(buf, sizeof(buf), off, 1,    1);   // hasPktInfo
-        ue5::write_bits(buf, sizeof(buf), off, 1023, 10);  // jitter
-        ue5::write_bits(buf, sizeof(buf), off, 0,    1);   // hasFrameTime
-
-        for (size_t i = 0; i < bunch_bits; ++i) {
-            int bit = (bunch_buf[i >> 3] >> (i & 7)) & 1;
-            ue5::write_bits(buf, sizeof(buf), off, bit, 1);
+        // Auto-fuzz: write the NEXT handle to try after this run.
+        // 2026-05-06 update: empirical findings via dispatch:
+        //   handle 142 → ClientDebugNpc (SDK pos 12)
+        //   handle 160 → ClientGMReceiveServiceBuildingPlotData (not in SDK,
+        //                added in current build between SDK pos 25 and 26)
+        // Target ClientInitializeCharacter alphabetizes between
+        // ClientHitConfirmationsReliable (SDK pos 29) and ClientInterruptCraft
+        // (pos 31).  Walking upward from 160 to find it.
+        if (auto_fuzz != 0) {
+            static const uint32_t fuzz_order[] = {
+                160, 161, 162, 163, 164, 165, 166, 167, 168, 169,
+                170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180
+            };
+            const size_t fuzz_count = sizeof(fuzz_order) / sizeof(fuzz_order[0]);
+            uint32_t next = fuzz_order[0];
+            for (size_t i = 0; i < fuzz_count; ++i) {
+                if (fuzz_order[i] == wire_handle) {
+                    next = fuzz_order[(i + 1) % fuzz_count];
+                    break;
+                }
+            }
+            write_probe_uint("probe_cic_handle.txt", next);
+            spdlog::warn("[CIC-FUZZ] this run handle={} → next launch will try handle={}",
+                         wire_handle, next);
         }
 
-        // AoC PacketHandler sentinel + termination
-        ue5::write_bits(buf, sizeof(buf), off, 1, 1);
-        size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
+        spdlog::warn("[CIC] ClientInitializeCharacter() — wire_handle={} "
+                     "(MAX={})  [SDK: zero params, builder-routed]",
+                     wire_handle, handle_max);
 
-        const uint16_t sent_seq = cs.out_seq;
-        cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
+        // ── Build via PropertyUpdateBunchBuilder (mirrors emit_pawn_link) ──
+        aoc::protocol::emit::PropertyUpdateBunchBuilder b;
+        b.set_channel(3);
+        b.set_ch_sequence(static_cast<uint16_t>(cic_chseq & 0x3FFu));
+        b.set_reliable(true);
+        b.set_ch_name_hardcoded(102);   // NAME_Actor (matches PC channel open)
+        b.set_use_modern_inner_format(true);  // proven via ClientRestart
 
-        int sent = send_to_client_impl(buf, pkt_len, addr);
-        if (sent > 0) {
-            spdlog::warn("[GameServer] >> ★ NATIVE ClientInitializeCharacter "
-                          "(name='{}' wire_handle={} chSeq={} bunch_bits={} "
-                          "pkt={}B seq={})",
-                          character_name, wire_handle, this_chseq,
-                          bunch_bits, pkt_len, sent_seq);
-            return true;
+        b.v3_begin_content_block_channel_actor(handle_max);
+        b.v3_add_rpc_no_params(wire_handle);
+        b.v3_end_content_block();
+        b.v3_finish_bunch();
+
+        aoc::protocol::emit::BunchWriter bw;
+        const size_t bunch_bits = b.build(bw);
+        if (bunch_bits == 0) {
+            spdlog::error("[CIC] builder returned 0 bits");
+            return false;
         }
-        return false;
+
+        const bool ok = send_bunch_packet(client_key, addr, bw.data(), bunch_bits);
+        spdlog::warn("[GameServer] >> ★ NATIVE ClientInitializeCharacter() "
+                      "(NO PARAMS) wire_handle={} chSeq={} bunch_bits={} ok={}",
+                      wire_handle, cic_chseq, bunch_bits, ok);
+        return ok;
     }
 
     // ───────────────────────────────────────────────────────────────────
@@ -4592,7 +4558,37 @@ private:
                             // Bumped queue cap to 50 to allow more in-flight
                             // ACKs (was 10) — the WP streaming needs an ACK per
                             // tile, and the client sends ~10-20 tiles per session.
-                            constexpr bool kSendSulvAckStub = true;
+                            // ── 2026-05-05 (post-iter4-success) — DISABLED ──
+                            //
+                            // Iter4 (PC.PlayerState link) finally landed cleanly
+                            // and possession completed (★ ServerAcknowledgePossession
+                            // fired in the log).  But the CALV stub fires AFTER
+                            // bootstrap-complete with chSeq=cs.reliable_seq=1981
+                            // (because the per-channel tracker
+                            // last_outgoing_reliable_chseq[3] was never updated by
+                            // our PC ActorOpen / iter4 sends — they bypass
+                            // scan_outgoing_packet_chseq).  Sending chSeq=1981 on
+                            // ch=3 when the client's InReliable[3] is at ~957
+                            // immediately triggers NMT_Close "ContentBlockFail".
+                            //
+                            // The proper fix is to either:
+                            //   a) update last_outgoing_reliable_chseq[3] in PC
+                            //      ActorOpen + iter4 emit paths, OR
+                            //   b) RE the AOC server-side CALV format (unproven
+                            //      — current "stub" guesses at the dispatch byte
+                            //      but the client clearly rejects whatever shape
+                            //      we're emitting), OR
+                            //   c) accept the warning and move on — the client
+                            //      retransmits SULV which we silently ignore;
+                            //      the connection stays alive on movement +
+                            //      keepalives.
+                            //
+                            // Option (c) chosen for now because it isolates
+                            // the iter4-success milestone and lets us measure
+                            // how long the connection survives WITHOUT this
+                            // stub interfering.  Re-enable when the proper
+                            // wire format is known.
+                            constexpr bool kSendSulvAckStub = false;
                             constexpr int  kSulvAckMaxQueue = 50;
                             if (kSendSulvAckStub && n <= kSulvAckMaxQueue
                                 && client_key && client_addr_for_reactive) {

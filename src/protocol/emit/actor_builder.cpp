@@ -365,17 +365,25 @@ void emit_handle_stream_entry(uint32_t handle,
 /// PM111 path: bStablyNamed=0 + SIP class_guid.  AOC's parser does NOT
 /// like this format (PM111 test failed silently → no possession ack →
 /// loading screen loop).  Kept here as opt-in for diagnostic comparison.
+/// PM141 — V3 dynamic-creation form, derived from LIVE production pcap.
+/// Source: aoc_ranger_respawn pkt#122 ch=11288 Block 9, captured pre-shutdown.
+/// Adds bIsDestroyMessage and bActorIsOuter bits that the parallel emu's
+/// parser defaulted off but the actual wire DOES include.
 void write_v3_subobject_creation_dynamic(BunchWriter& out,
                                            uint64_t sub_guid,
-                                           uint64_t class_guid,
+                                           uint64_t class_obj_id,
+                                           uint32_t /*class_server_id*/,
+                                           uint32_t /*class_randomizer*/,
                                            const uint8_t* payload_bits,
                                            uint32_t num_payload_bits) {
-    out.write_bit(0);                         // bOutermostEnd
-    out.write_bit(0);                         // bIsChannelActor (=0 → subobject)
-    out.write_sip(sub_guid);                  // subobject NetGUID
+    out.write_bit(0);                         // PM141: bHasRepLayout = 0
+    out.write_bit(0);                         // bIsActor = 0 (subobject)
+    out.write_sip(sub_guid);                  // SIP SubobjectNetGUID
     out.write_bit(0);                         // bStablyNamed = 0 (dynamic)
-    out.write_sip(class_guid);                // class CDO NetGUID
-    out.write_sip(num_payload_bits);
+    out.write_bit(0);                         // PM141: bIsDestroyMessage = 0
+    out.write_sip(class_obj_id);              // SIP class NetGUID
+    out.write_bit(1);                         // PM141: bActorIsOuter = 1
+    out.write_sip(num_payload_bits);          // SIP NumPayloadBits
     if (num_payload_bits > 0 && payload_bits != nullptr) {
         out.write_bit_range(payload_bits, 0, num_payload_bits);
     }
@@ -400,30 +408,62 @@ void write_v3_subobject_creation_dynamic(BunchWriter& out,
 /// - PM115: 128-bit FIntrepidNetGUID for sub_guid → ContentBlockHeaderObjFail
 ///   (my prior RE agent was wrong; real captured format uses SIP64)
 ///
-/// CORRECT WIRE FORMAT (PM118):
-///   [1 bit  bHasRepLayout = 1]    ← was 0 in PM114 (wrong)
-///   [1 bit  bIsActor      = 0]
-///   [SIP64  sub_guid]              ← variable-length packed int, NOT 128b
-///   [1 bit  bStablyNamed  = 1]
+/// CORRECT WIRE FORMAT (PM131-rev2 — 2026-05-07):
+///   [1 bit  bOutermostEnd  = 0]    ← MUST be 0; 1 means "no more content blocks"
+///   [1 bit  bIsChannelActor = 0]   ← subobject (1 = the channel's actor)
+///   [SIP64  sub_guid]              ← variable-length packed int
+///   [1 bit  bStablyNamed   = 1]    ← REQUIRED; 1 = lookup by name (no class_guid)
+///                                  ← if 0, class_guid SIP follows for dynamic instantiation
+///                                    (see write_v3_subobject_creation_dynamic)
 ///   [SIP    NumPayloadBits]
 ///   [<NumPayloadBits> bits payload]
 ///
-/// For our session-minted sub_guid 16777219 (NetGUID > 2^21): SIP64 encodes
-/// in 5 bytes (40 bits).  Total per block: 2 + 40 + 1 + 8 = ~51 bits + payload.
-/// 8 components × 51 = ~408 bits → bunch ~3419 bits (under 8192 cap).
+/// PM131-rev1 BUG (2026-05-07): I removed the bStablyNamed bit entirely thinking
+/// the appearance_emitter.cpp PM120 format was authoritative — but the receiver
+/// always reads bStablyNamed after sub_guid.  Without our explicit "1" the next
+/// bit (LSB of SIP NumPayloadBits=0 = literal 0) was read as bStablyNamed=0,
+/// making AOC expect a class_guid SIP next → read garbage as class_guid → fail
+/// with "ReadContentBlockPayload FAILED" → close reason ContentBlockFail.
+/// Empirically confirmed in test 2026-05-07 13:17:31.064 client error log.
 ///
-/// `sub_guid` is a plain uint64 here (NOT FIntrepidNetGUID).  Stably-named
-/// resolution on the receiving client looks up the subobject by name on
-/// the actor's BP CDO (auto-instantiated when SerializeNewActor opened the
-/// channel) — no PackageMap pre-registration required.
+/// PM131-rev2 fix: keep all 5 fields; only the original bug was the FIRST bit.
+/// Old broken: bit 1 (read as bOutermostEnd=1, wrong → exit loop)
+/// New fixed:  bit 0 (read as bOutermostEnd=0, correct → continue parse)
+///
+/// Stably-named resolution: when sub_guid was registered via path (PM117
+/// stably-named export), the client looks up the subobject by that name
+/// on the channel's actor (the BP CDO has it as a subobject).  No PackageMap
+/// pre-reg of an instantiated UObject required; the channel actor's
+/// instantiation auto-creates the subobjects.
 void write_v3_subobject_stably_named(BunchWriter& out,
                                        uint64_t sub_guid,
                                        const uint8_t* payload_bits,
                                        uint32_t num_payload_bits) {
-    out.write_bit(1);                         // bHasRepLayout = 1 (PM118 fix)
-    out.write_bit(0);                         // bIsActor = 0 (subobject)
-    out.write_sip(sub_guid);                  // SIP64 sub_guid (variable)
-    out.write_bit(1);                         // bStablyNamed = 1
+    // PM145 (2026-05-07) — restore PM118's original RE'd format.
+    //
+    // PM131-rev2 broke this by changing the first bit from 1 to 0, thinking
+    // it was a "bOutermostEnd" sentinel.  PM118's bit-level decoded capture
+    // (see comment block in this file at line 397+) showed:
+    //
+    //   bit 127: bHasRepLayout = 1   (explicit-size form; NumPayloadBits follows)
+    //   bit 128: bIsActor      = 0
+    //   ...
+    //
+    // Empirical confirmation 2026-05-07 22:41 test:
+    //   With first bit = 0: client logs `ReadContentBlockHeader FAILED.
+    //   Bunch.IsError() == TRUE. Closing connection.` (line 3866 of test).
+    //   Channel 19 then closes the entire connection → Realm timeout.
+    //
+    // The first bit IS bHasRepLayout (per PM118 RE) and MUST be 1 for
+    // the explicit-size form (where NumPayloadBits SIP follows after the
+    // header bits).  bHasRepLayout=0 would mean "no NumPayloadBits, payload
+    // extends to end of bunch" — which is fine when this is the LAST block
+    // but fatal when followed by another content block (our PM144 trailing
+    // terminator) because the payload would gobble the terminator's bits.
+    out.write_bit(1);                         // PM145: bHasRepLayout = 1 (explicit size)
+    out.write_bit(0);                         // bIsChannelActor = 0 (subobject)
+    out.write_sip(sub_guid);                  // SIP SubobjectNetGUID
+    out.write_bit(1);                         // bStablyNamed = 1 (skip class_guid)
     out.write_sip(num_payload_bits);          // SIP NumPayloadBits
     if (num_payload_bits > 0 && payload_bits != nullptr) {
         out.write_bit_range(payload_bits, 0, num_payload_bits);
@@ -746,8 +786,12 @@ size_t ActorBuilder::build_spawn(const schema::ActorSchema& schema,
                 write_v3_subobject_stably_named(payload, subobj_obj_id,
                                                   prop_payload.data(), payload_bits);
             } else if (v3_mode == 1 && comp.class_netguid != 0) {
+                // PM135 — class GUID is full FIntrepidNetGUID; ServerId/Randomizer
+                // are 0 since our class export uses the path-only form.
                 write_v3_subobject_creation_dynamic(payload, subobj_obj_id,
                                                       comp.class_netguid,
+                                                      /*server_id=*/0u,
+                                                      /*randomizer=*/0u,
                                                       prop_payload.data(), payload_bits);
             } else {
                 // Mode 0 (and unsupported modes 2): append legacy property
@@ -779,9 +823,28 @@ size_t ActorBuilder::build_spawn(const schema::ActorSchema& schema,
         // BlockHeader call, hits end-of-bunch on the bHasRepLayout bit
         // read → close reason 79 → propagated.  So the trailing block IS
         // required, just bigger than I thought.
-        // PD2.1 (2026-05-05) — also emit trailing block when ANY subobject
+        // PD2.1 (2026-05-05) — emit trailing block when ANY subobject
         // got V3-wrapped via the appearance override path.  Otherwise the
         // parser hits bunch overflow on the next ReadContentBlockHeader call.
+        //
+        // PM146 (2026-05-07) — REVERTED PM144's unconditional terminator.
+        //
+        // PM144 made the [bHasRepLayout=0][bIsActor=1][SIP NumPayloadBits=0]
+        // trailing block unconditional, expecting it would suppress the
+        // Bunch.IsError warning we observed after every from-scratch bunch.
+        // It did NOT fix that warning.  Worse, between PM98/PM99 (when the
+        // user CONFIRMED visible Verra terrain — "rivers, vegetation, node
+        // structures") and the current black-screen regression, PM144 is
+        // the ONLY structural change to every actor's wire shape.
+        //
+        // Every World Partition cell is GC'd right after loading screen
+        // drops (line 6482+ NotifyStreamingLevelUnload spam).  Possible
+        // mechanism: the unconditional terminator's bIsActor=1 + 0-bit
+        // payload may be interpreted by AOC as "actor-root content block
+        // with zero-bit RepLayout payload" — which under FObjectReplicator
+        // semantics is "all properties at default" and could clobber
+        // a property like StreamingSourceEnabled or AutoManageActiveCameraTarget
+        // that a real bunch would never reset.  Reverting to PM118 logic.
         const bool need_trailing =
             (v3_mode == 3) ||
             ((ctx.appearance_payload_bit_count > 0 &&

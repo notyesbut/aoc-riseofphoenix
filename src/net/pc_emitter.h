@@ -68,6 +68,22 @@ public:
     /// Probe-gated via probe_player_state_emit.txt (same as PlayerStateEmitter).
     bool emit_player_state_link(const sockaddr_in& client_addr);
 
+    /// PM147 (2026-05-08) — World Partition cell keepalive RPC.
+    ///
+    /// AOC's `RestartPlayerAtTransform` (sub_7FF6BF22A040 in the client) calls
+    /// a post-spawn hook `sub_7FF6BEC1C190` that sends
+    /// `ClientUpdateLevelStreamingStatus` for World Partition cells around
+    /// the spawn point.  Without these, the client's local GC sweep unloads
+    /// every cell after the loading screen drops → black screen.
+    ///
+    /// This emit sends one keepalive RPC per call.  Handle is empirically
+    /// iterated via `probe_streaming_keepalive_handle.txt` (default 70 based
+    /// on alphabetical position in the dispatch table relative to ClientRestart=45).
+    ///
+    /// Probe-gated via `probe_streaming_keepalive.txt`.  Cell name from
+    /// `probe_streaming_keepalive_package.txt` (default = persistent level).
+    bool emit_client_update_level_streaming_status(const sockaddr_in& client_addr);
+
 private:
     IGameServerHost& host_;
     std::string client_key_;

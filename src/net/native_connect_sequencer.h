@@ -189,6 +189,18 @@ public:
     /// Returns empty string when no character is selected.
     virtual std::string current_character_name() const = 0;
 
+    /// 2026-05-05 — emit `ClientInitializeCharacter()` RPC (no-param) on
+    /// the PC channel.  Wire handle 142 per
+    /// `docs/RE-CLIENTINITIALIZECHARACTER-HANDLE.md`; probe-overridable
+    /// via `dist/Release/probe_cic_handle.txt`.  Used by
+    /// `WorldBootstrapEmitter::emit_all` (post-iter4) to trigger the
+    /// client's local `SetRace()`/`SetGender()` flow that populates
+    /// `RaceGenderAppearanceId` and unblocks
+    /// `OnRep_CharacterCustomization` mesh assembly.
+    virtual bool emit_client_initialize_character(
+            const std::string& client_key,
+            const sockaddr_in& addr) = 0;
+
     /// Road A — Phase B.0 (2026-04-26) — splice a captured packet from
     /// loaded ReplayData and send it to the client with our session's
     /// outer header (seq/ack/PacketInfo).  Used by WorldBootstrapEmitter

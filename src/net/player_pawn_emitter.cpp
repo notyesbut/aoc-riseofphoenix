@@ -146,9 +146,27 @@ static uint64_t hash_class_path(const std::string& path) {
     h ^= (h >> 33);
     h *= 0xFF51AFD7ED558CCDULL;
     h ^= (h >> 33);
-    // Force into the upper half of u64 so it doesn't collide with our
-    // dynamic NetGUID block (base = 0x1000000 = 2^24).
-    return h | 0x8000000000000000ULL;
+    // PM142 (2026-05-07) — produce a SMALL odd ObjectId.
+    //
+    // Live AOC pcap analysis (ranger respawn pkt#122 Block 9) shows class
+    // GUIDs with tiny ObjectIds like 17 (= `0x11`).  Our PM140 hash output
+    // (~64 random bits) encoded to ~10 SIP bytes which the live wire never
+    // produces — and seems to make AOC's PackageMap silently reject the
+    // class load even when the path is registered.
+    //
+    // We build a small ObjectId by taking the hash mod (2^14) then shifting
+    // up 1 + 1 to set bit 0 (Static) and avoid low system GUIDs (0..15).
+    // Result: ObjectId in [17, 32785], odd, small SIP encoding (≤2 bytes).
+    // Stable per class_path (FNV deterministic).
+    //
+    // GUID space: dynamic runtime block uses ObjectId 16777218+ (= 2^24+).
+    // Our small Static IDs are in the low range, distinct from runtime
+    // dynamic IDs (different parity: dynamic is even, static is odd).
+    h &= 0x3FFFULL;                      // 14 bits of entropy
+    h <<= 1;                             // shift up so bit 0 free
+    h |= 1ULL;                           // bit 0 = Static
+    h |= 0x10ULL;                        // ensure > 16 (avoid system GUIDs)
+    return h;
 }
 
 // ── Helper: build N-level export entry (mirrors PcEmitter helpers) ──────
@@ -265,8 +283,19 @@ bool PlayerPawnEmitter::emit_open(const sockaddr_in& client_addr) {
     //
     // Always populate comp.class_netguid (deterministic hash of path) — that's
     // free.  Only the bytes-on-wire export is gated.
+    // PM134 (2026-05-07) — use the SAME GameSystemsPlugin NetGUID that
+    // pc_emitter.cpp uses for GlobalGMCommands export (and that matches
+    // what the captured replay registers when the PC channel opens).
+    // Empirically verified in client log line 4188:
+    //   "RegisterNetGUIDFromPath_Client: NetGUID: ObjectId: 158953490572197689,
+    //    PathName: /Script/GameSystemsPlugin"
+    // PRIOR (broken): 0xA0C5C8E12345CDEF (11584886485765443055) — fabricated
+    // value that didn't match the package's already-registered GUID, so
+    // InternalLoadObject couldn't resolve the CharacterAppearanceComponent
+    // class CDO under our outer chain → load returns NULL → V3 content block
+    // payload parse fails → Bunch.IsError on the appearance bunch.
     static constexpr uint64_t kGameSystemsPluginPackageGuid =
-        0xA0C5C8E12345CDEFULL;
+        158953490572197689ULL;  // 0x234D1A6F08D8B639
     bool emit_class_exports = false;
     {
         std::FILE* fp = std::fopen("probe_class_exports.txt", "r");
@@ -277,12 +306,38 @@ bool PlayerPawnEmitter::emit_open(const sockaddr_in& client_addr) {
             emit_class_exports = (v != 0);
         }
     }
+    // PM133 (2026-05-07) — surgical export: ONLY the appearance class,
+    // gated separately so we can enable it without busting the 8192-bit
+    // bunch cap.  Adding all 6 unique component classes (~5400 bits) to
+    // the Pawn ActorOpen overflows the cap; one class (~840 bits) fits.
+    bool emit_appearance_class_only = false;
+    {
+        std::FILE* fp = std::fopen("probe_appearance_class_export.txt", "r");
+        if (fp) {
+            int v = 0;
+            std::fscanf(fp, "%d", &v);
+            std::fclose(fp);
+            emit_appearance_class_only = (v != 0);
+        }
+    }
     {
         std::vector<std::string> already_exported;
         for (auto& comp : pawn_schema.components) {
             if (comp.class_path.empty()) continue;
             comp.class_netguid = hash_class_path(comp.class_path);
-            if (!emit_class_exports) continue;
+
+            // Three modes:
+            //   probe_class_exports.txt=1                     → export ALL 6 unique classes (overflows cap)
+            //   probe_appearance_class_export.txt=1           → export ONLY CharacterAppearanceComponent (PM133)
+            //   neither                                        → no class exports (PM107 baseline)
+            bool should_export = false;
+            if (emit_class_exports) {
+                should_export = true;
+            } else if (emit_appearance_class_only &&
+                       comp.class_name == "CharacterAppearanceComponent") {
+                should_export = true;
+            }
+            if (!should_export) continue;
 
             bool seen = false;
             for (const auto& s : already_exported) {
@@ -291,24 +346,49 @@ bool PlayerPawnEmitter::emit_open(const sockaddr_in& client_addr) {
             if (seen) continue;
             already_exported.push_back(comp.class_path);
 
+            // PM143 (2026-05-07) — set non-zero leaf_checksum so the export
+            // wire carries `bHasNetworkChecksum=1`.
+            //
+            // PM143-A test (build 21:38) PROVED Hypothesis A:
+            //   With checksum=0 the client's StaticFindObject returned NULL
+            //   (line 4277: "has network checksum 0", no "loaded Class").
+            //   With checksum=0xCC1A4D5E placeholder, the client DID load the
+            //   class (line 3818: "has network checksum 3424275806") — but
+            //   then rejected our value via NetChecksumMismatch (line 3820)
+            //   with the local value LEAKED to us as 2253250103 = 0x864DDE37.
+            //
+            // PM143-B (build 21:??) — use the REAL NetCompatibleChecksum that
+            // the client logged.  Per-class lookup table; expand as needed
+            // when other components also use dynamic-creation.
+            auto checksum_for = [](const std::string& class_name) -> uint32_t {
+                // Real NetCompatibleChecksums (RE'd from client error log).
+                if (class_name == "CharacterAppearanceComponent") return 0x864DDE37u; // 2253250103
+                // Fallback placeholder for classes we haven't seen yet — will
+                // trigger the same NetChecksumMismatch leak so we can capture
+                // the real value, then add it above.
+                return 0xCC1A4D5Eu;
+            };
+            const uint32_t leaf_checksum = checksum_for(comp.class_name);
+
             auto e = build_two_level(
                 /*leaf_obj=*/       comp.class_netguid,
                 /*leaf_path=*/      comp.class_name,
-                /*leaf_checksum=*/  0x00000000,
+                /*leaf_checksum=*/  leaf_checksum,
                 /*outer_obj=*/      kGameSystemsPluginPackageGuid,
                 /*outer_path=*/     "/Script/GameSystemsPlugin",
                 /*outer_checksum=*/ 0x00000000,
                 /*no_load=*/        false);
             exports.push_back(std::move(e));
 
-            spdlog::info("[PlayerPawnEmitter] PM111 exporting component class "
-                         "'{}' netguid={} (path={})",
-                         comp.class_name, comp.class_netguid, comp.class_path);
+            spdlog::info("[PlayerPawnEmitter] PM111/PM133/PM143 exporting component "
+                         "class '{}' netguid={} (path={}) checksum=0x{:08x}",
+                         comp.class_name, comp.class_netguid, comp.class_path,
+                         leaf_checksum);
         }
-        if (!emit_class_exports) {
-            spdlog::info("[PlayerPawnEmitter] PM113 class exports DISABLED "
-                         "(probe_class_exports.txt absent or \"0\") — "
-                         "Pawn ActorOpen stays under 8192-bit cap");
+        if (!emit_class_exports && !emit_appearance_class_only) {
+            spdlog::info("[PlayerPawnEmitter] PM113/PM133 class exports DISABLED "
+                         "(probe_class_exports.txt and probe_appearance_class_export.txt "
+                         "both absent or \"0\") — Pawn ActorOpen stays minimal");
         }
     }
 
@@ -427,10 +507,24 @@ bool PlayerPawnEmitter::emit_open(const sockaddr_in& client_addr) {
             leaf.has_checksum    = false;
             leaf.path            = slot_name;
 
+            // PM132 (2026-05-07) — outer_ref MUST use the FULL FIntrepidNetGUID
+            // (ObjectId+ServerId+Randomizer) that matches what SerializeNewActor
+            // registers for the Pawn.  Setting ServerId=0,Randomizer=0 made the
+            // client treat this as a separate "phantom" outer: it registered the
+            // path-based subobject under [pawn_obj|0|0] but the real Pawn was
+            // registered later as [pawn_obj|60|rnd_for(pawn_obj)] — two
+            // different NetGUID cache entries.  When AppearanceEmitter targets
+            // a subobject of the Pawn, the lookup walks to outer [pawn_obj|0|0]
+            // → finds nothing real → "Missing outer ... marking pending" →
+            // OnRep_CharacterCustomization never fires → no visible mesh.
+            //
+            // Fix: ServerId=60 + Randomizer=rnd_for(pawn_obj) so outer_ref
+            // matches the Pawn's eventual full NetGUID.  After SerializeNewActor
+            // resolves the Pawn, the path-based subobjects link to it.
             emit::ExportEntry outer_ref;
             outer_ref.guid.ObjectId   = archetype_outer;
-            outer_ref.guid.ServerId   = 0;
-            outer_ref.guid.Randomizer = 0;
+            outer_ref.guid.ServerId   = 60;
+            outer_ref.guid.Randomizer = rnd_for(archetype_outer);
             outer_ref.has_path        = false;   // ← terminates recursion
             outer_ref.no_load         = false;
             outer_ref.has_checksum    = false;

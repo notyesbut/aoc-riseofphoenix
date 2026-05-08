@@ -6,6 +6,7 @@
 // ============================================================================
 #include "net/pc_emitter.h"
 #include "net/native_connect_sequencer.h"  // IGameServerHost
+#include "net/captured_pc_tail_substituted.h"  // PM128 surgical-substituted tail
 
 #include "protocol/emit/actor_builder.h"
 #include "protocol/emit/bunch_writer.h"
@@ -261,13 +262,54 @@ bool PcEmitter::emit_open(const sockaddr_in& client_addr) {
     // because LoadMap streams the world independently of any successful
     // actor open.  "Empty world with rocks" = streamed level + zero actors.
     //
-    // Next session: byte-diff our outgoing PC wire vs captured pkt 22 to
-    // find the ~45-bit drift.  Until then we keep the PM35 strip (no tail)
-    // — it's no worse than re-enabling and produces a known-failure mode.
-    ctx.spliced_tail_bits      = nullptr;
-    ctx.spliced_tail_bit_count = 0;
-    (void)kCapturedPcTailBits;
-    (void)kCapturedPcTailBitCount;
+    // PM127/PM128 (2026-05-06) — captured PC tail splice with optional
+    // surgical NetGUID substitution.
+    //
+    // Ground-truth verification by compare_pc_actoropen.py: our generated PC
+    // content is 99% byte-identical to captured pkt#22 (494/502 matching
+    // bytes), missing only the 848-bit trailing initial-property-state.
+    // Without it the client opens our PC actor with EMPTY properties.
+    //
+    // probe_pc_tail_splice.txt modes:
+    //   "0" or absent → DISABLED (PM99 stable)
+    //   "1"           → PM127 verbatim splice (captured NetGUIDs unresolved
+    //                   on our connection → Bunch.IsError, no mesh)
+    //   "2"           → PM128 surgical splice — captured NetGUIDs replaced
+    //                   with our minted ones at bit positions 131 and 581
+    //                   (substitute_pc_tail_guids.py output).  Bit 131
+    //                   captured ObjId 10341528 → our PC 16777216.
+    //                   Bit 581 captured ObjId 10341532 → our Pawn 16777218.
+    //                   Both retain Srv=60.  This should make the client's
+    //                   property updates resolve to OUR registered objects
+    //                   → OnRep callbacks fire → mesh assembly should work.
+    int tail_mode = 0;
+    if (std::FILE* fp = std::fopen("probe_pc_tail_splice.txt", "r")) {
+        std::fscanf(fp, "%d", &tail_mode);
+        std::fclose(fp);
+    }
+    if (tail_mode == 1) {
+        ctx.spliced_tail_bits      = kCapturedPcTailBits;
+        ctx.spliced_tail_bit_count = kCapturedPcTailBitCount;
+        spdlog::warn("[PcEmitter] PM127 verbatim PC tail ENABLED — splicing "
+                     "{} bits captured initial property state "
+                     "(NetGUIDs unresolved on our connection)",
+                     kCapturedPcTailBitCount);
+    } else if (tail_mode == 2) {
+        ctx.spliced_tail_bits      = kCapturedPcTailSubst;
+        ctx.spliced_tail_bit_count = kCapturedPcTailSubstBits;
+        spdlog::warn("[PcEmitter] PM128 SURGICAL PC tail ENABLED — splicing "
+                     "{} bits with NetGUID substitution: "
+                     "bit 131 captured 10341528 -> our PC 16777216, "
+                     "bit 581 captured 10341532 -> our Pawn 16777218",
+                     kCapturedPcTailSubstBits);
+    } else {
+        ctx.spliced_tail_bits      = nullptr;
+        ctx.spliced_tail_bit_count = 0;
+        (void)kCapturedPcTailBits;
+        (void)kCapturedPcTailBitCount;
+        (void)kCapturedPcTailSubst;
+        (void)kCapturedPcTailSubstBits;
+    }
 
     emit::ActorBuilder builder;
     size_t bits = builder.build_spawn(*pc_schema, rt, ctx, bw);
@@ -769,6 +811,75 @@ bool PcEmitter::emit_pawn_link(const sockaddr_in& client_addr) {
                                              leading_zero_bits);
     }
 
+    // ── PM99 (2026-05-06) — bundle CIC into ClientRestart's content block ──
+    //
+    // Empirical PM98 result: a standalone CIC bunch fails either with
+    // "Bunch.IsError" silent drop (bunch < 219 bits) or
+    // "Invalid replicated field 0" connection-close (any trailing zeros after
+    // SIP(0) get parsed as handle=0 which AOC rejects).
+    //
+    // Solution: append CIC's [handle + SIP(0)] right after ClientRestart's
+    // [handle + SIP(129) + perprop + GUID] in the SAME V3 content block.
+    // The combined sub-reader exhausts after both fields (158 + 18 = 176
+    // bits) → loop exits cleanly without ever seeing handle=0.
+    //
+    // Probes (all in dist/Release/):
+    //   probe_cic_bundle.txt  (default 1) — enable bundling
+    //   probe_cic_handle.txt  (default 173) — CIC's wire_handle
+    {
+        uint32_t bundle_enabled = 1;
+        if (std::FILE* fp = std::fopen("probe_cic_bundle.txt", "r")) {
+            std::fscanf(fp, "%u", &bundle_enabled);
+            std::fclose(fp);
+        }
+        if (bundle_enabled) {
+            const uint32_t cic_handle = read_uint("probe_cic_handle.txt", 173u);
+            probe_b.v3_add_rpc_no_params(cic_handle);
+            spdlog::warn("[PcEmitter] PM99 CIC bundled into ClientRestart bunch: handle={}",
+                         cic_handle);
+        }
+    }
+
+    // ── PM122 (2026-05-06) — bundle iter4 PC.PlayerState link into same bunch ──
+    //
+    // Standalone iter4 bunches (even with MODERN format) silent-drop with
+    // Bunch.IsError.  Same as PM99 hypothesis: AOC's outer bunch parser
+    // rejects small property-update-only bunches.  Apply PM99 bundling:
+    // append iter4's property update [handle=13 + 128-bit GUID] inside the
+    // ClientRestart content block.
+    //
+    // Probes:
+    //   probe_iter4_bundle.txt  (default 1)   — enable bundling
+    //   probe_pc_ps_handle.txt  (default 13)  — PlayerState property handle
+    //
+    // Both ClientRestart (RPC, handle=45) and iter4 (PROPERTY, handle=13)
+    // share the same content block on ch=3 channel actor (PC).
+    {
+        uint32_t iter4_bundle_enabled = 1;
+        if (std::FILE* fp = std::fopen("probe_iter4_bundle.txt", "r")) {
+            std::fscanf(fp, "%u", &iter4_bundle_enabled);
+            std::fclose(fp);
+        }
+        if (iter4_bundle_enabled) {
+            const uint32_t ps_handle = read_uint("probe_pc_ps_handle.txt", 13u);
+            // Reuse `block` and `rnd_for` from the surrounding scope (set up
+            // earlier in this function for the Pawn link).  The PlayerState
+            // NetGUID lives in the same player block at +4 stride.
+            const uint64_t ps_obj = block.player_state;       // 0x01000004
+            const uint32_t ps_srv = 60;
+            const uint32_t ps_rnd = rnd_for(ps_obj);
+            // PM123 (2026-05-06) — use LEGACY-with-SIP format that matches
+            // captured pkt#127 b0/b1 replay analysis.  The MODERN format
+            // (handle + value, no SIP) was based on a misinterpretation of
+            // sub_143F2DC60.  Captured AOC traffic ALWAYS has SIP(NumValueBits)
+            // between handle and value for property updates.
+            probe_b.v3_add_property_netguid_with_sip(ps_handle, ps_obj, ps_srv, ps_rnd);
+            spdlog::warn("[PcEmitter] PM123 iter4 bundled (LEGACY+SIP): "
+                         "handle={} PS_GUID={}|{}|{}",
+                         ps_handle, ps_obj, ps_srv, ps_rnd);
+        }
+    }
+
     probe_b.v3_end_content_block();
     probe_b.v3_finish_bunch();
 
@@ -926,31 +1037,123 @@ bool PcEmitter::emit_player_state_link(const sockaddr_in& client_addr) {
         return v;
     };
 
-    const uint32_t pc_ps_max    = read_uint("probe_pc_ps_max.txt", 32u);
-    const uint32_t pc_ps_handle = read_uint("probe_pc_ps_handle.txt", 9u);
+    // ── 2026-05-05 Track 1 RE result (VERIFIED-FROM-CODE) ─────────────────
+    //
+    // Per docs/RE-APLAYERCONTROLLER-REPLAYOUT.md, walked from
+    // AOCClient-Win64-Shipping.exe.asm:
+    //   AActor                  NumReplicated = 13   (handles 1..13)
+    //   AController             NumReplicated = 2    (handles 14..15)
+    //     · handle 14 = PlayerState  (TObjectPtr<APlayerState>, OnRep_PlayerState)
+    //     · handle 15 = Pawn         (TObjectPtr<APawn>,         OnRep_Pawn)
+    //   APlayerController       NumReplicated = 2    (handles 16..17)
+    //   AAoCPlayerController    NumReplicated = 19   (handles 18..36)
+    //   ─────────────────────────────────────────────
+    //   TOTAL NumReplicated = 36
+    //   cmd_handle(PlayerState) = 14   (1-indexed in RE doc)
+    //   cmd_handle(Pawn)        = 15
+    //
+    // Our wire writes 0-indexed values (mirrors PlayerStateEmitter's
+    // PlayerNamePrivate at handle=9 for cmd_handle 10).  So the wire
+    // value for PlayerState = 14 - 1 = 13, and MAX = 36.
+    //
+    // PRIOR DEFAULTS: handle=9, max=32 — both wrong (guesses), caused
+    // the 30-second timeout we saw in the first iter4 test.
+    const uint32_t pc_ps_max    = read_uint("probe_pc_ps_max.txt", 36u);
+    const uint32_t pc_ps_handle = read_uint("probe_pc_ps_handle.txt", 13u);
     const uint32_t pc_ps_chseq  = read_uint("probe_pc_ps_chseq.txt", 956u);
 
     spdlog::warn("[PcEmitter] emit_player_state_link: PC.PlayerState = NetGUID "
                   "{}|{}|{} (handle={} max={} chSeq={})",
                   ps_obj, ps_srv, ps_rnd, pc_ps_handle, pc_ps_max, pc_ps_chseq);
 
+    // ── 2026-05-05 POST-TIMEOUT FIX — mirror PlayerStateEmitter's pattern ──
+    //
+    // First iter4 attempt with handle=13/MAX=36 (Track 1 RE-verified) STILL
+    // timed out at 30s.  Diagnosis: the V3 inner payload format differs
+    // between iter4 (was: MODERN, no SIP NumBits) and PlayerStateEmitter
+    // (LEGACY-with-SIP, plus a TRAILING terminator content block).  The
+    // PlayerStateEmitter pattern is empirically proven to work on ch=21
+    // (PlayerNamePrivate update lands cleanly).  Mirror it here.
+    //
+    // Wire structure built MANUALLY (bypassing v3_add_property_*):
+    //   [V3 main content block]
+    //     bit 0:    bOutermostEnd   = 0
+    //     bit 1:    bIsChannelActor = 1
+    //     SIP outer-NumPayloadBits  (= inner_bits below)
+    //     [inner payload]:
+    //       6 bits:  ceil(log2(MAX=36)) handle bits → 0-indexed = 13
+    //       SIP(128): inner-NumPayloadBits = 128
+    //       128 bits: FIntrepidNetGUID (4 × uint32 LSB-first)
+    //   [V3 trailing terminator content block]
+    //     bit 0:    bOutermostEnd   = 0
+    //     bit 1:    bIsChannelActor = 1
+    //     SIP(0):   NumPayloadBits = 0   (signals end of property updates)
+    //
+    // The trailing terminator was the key difference vs the previous iter4.
+
+    auto serialize_int_to = [&](aoc::protocol::emit::BunchWriter& bw,
+                                  uint32_t value, uint32_t max) {
+        uint32_t n_bits = 0;
+        if (max > 1) {
+            uint32_t v = max - 1;
+            while (v) { v >>= 1; ++n_bits; }
+        }
+        if (n_bits == 0) return;
+        bw.write_bits(static_cast<uint64_t>(value), static_cast<int>(n_bits));
+    };
+
+    // PM121 (2026-05-06) — MODERN inner format per empirical capture analysis.
+    //
+    // Captured replay (memory: 2026-05-05 RE Session): pkt#127 b1 has a clean
+    // V3 actor block with `handle=1, MAX=10, value=u8=66` — NO SIP between
+    // handle and value.  Same pattern likely applies to iter4 (FObjectProperty
+    // PlayerState).
+    //
+    // Wire format (MODERN — what AOC actually expects):
+    //   [handle, ceil(log2(MAX)) bits]
+    //   [128-bit FIntrepidNetGUID — type-known size, NO NumBits SIP]
+    //
+    // Probe: probe_pc_ps_modern.txt (default 1) — set to 0 to revert to
+    // legacy `handle + SIP(128) + 128 bits` for A/B comparison.
+    const uint32_t use_modern = read_uint("probe_pc_ps_modern.txt", 1u);
+
+    aoc::protocol::emit::BunchWriter inner;
+    serialize_int_to(inner, pc_ps_handle, pc_ps_max);   // 6 bits (MAX=36)
+    if (!use_modern) {
+        inner.write_sip(128);                            // legacy NumBits SIP
+    }
+    inner.write_uint32(static_cast<uint32_t>(ps_obj));
+    inner.write_uint32(static_cast<uint32_t>(ps_obj >> 32));
+    inner.write_uint32(ps_srv);
+    inner.write_uint32(ps_rnd);
+    const uint32_t inner_bits = static_cast<uint32_t>(inner.bit_pos());
+
+    // V3 main content block ONLY — no trailing terminator (PM120-FIX/PM97).
+    // AOC's outer loop exits on bunch.AtEnd() after the content block ends.
+    // Adding a trailing block with bIsChannelActor=1 makes AOC try to read
+    // more property fields and overflow on the empty content.
+    aoc::protocol::emit::BunchWriter wrapped(256);
+    wrapped.write_bit(0);                    // bOutermostEnd = 0
+    wrapped.write_bit(1);                    // bIsChannelActor = 1
+    wrapped.write_sip(inner_bits);
+    wrapped.write_bit_range(inner.data(), 0, inner_bits);
+    const uint32_t wrapped_bits = static_cast<uint32_t>(wrapped.bit_pos());
+
+    spdlog::warn("[PcEmitter] emit_player_state_link [POST-TIMEOUT FIX]: "
+                  "inner_bits={} wrapped_bits={}", inner_bits, wrapped_bits);
+
     aoc::protocol::emit::PropertyUpdateBunchBuilder b;
     b.set_channel(3);
     b.set_ch_sequence(pc_ps_chseq);
     b.set_reliable(true);
-    b.set_ch_name_hardcoded(102);   // NAME_Actor (matches PC open)
-    b.set_use_modern_inner_format(true);
+    b.set_ch_name_hardcoded(102);            // NAME_Actor (matches PC open)
+    b.set_use_modern_inner_format(true);     // (unused — we add_raw_payload below)
+    b.set_is_rep_paused(false);
+    b.set_has_mbg(true);
 
-    // V3 main-actor content block targeting PC's own properties (no subobject).
-    b.v3_begin_content_block_channel_actor(pc_ps_max);
-    // Standard 128-bit FIntrepidNetGUID property write — proven format
-    // for ObjectProperty fields (PM53's original test target).
-    b.v3_add_property_netguid(pc_ps_handle, ps_obj, ps_srv, ps_rnd);
-    b.v3_end_content_block();
-    // No v3_finish_bunch end-marker (per PM97 — AOC reads 2 bits in
-    // ReadContentBlockHeader, a 1-bit terminator overflows).
+    b.add_raw_payload(wrapped.data(), wrapped_bits);
 
-    aoc::protocol::emit::BunchWriter bw;
+    aoc::protocol::emit::BunchWriter bw(256);
     const size_t bits = b.build(bw);
     if (bits == 0) {
         spdlog::error("[PcEmitter] emit_player_state_link: builder returned 0 bits");
@@ -960,6 +1163,164 @@ bool PcEmitter::emit_player_state_link(const sockaddr_in& client_addr) {
                                               bw.data(), bits);
     spdlog::warn("[PcEmitter] emit_player_state_link sent: bits={} ok={}",
                   bits, ok);
+    return ok;
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// PM147 (2026-05-08) — ClientUpdateLevelStreamingStatus keepalive
+//
+// Black-screen RE: after possession completes and the loading screen drops,
+// the client's GC sweep unloads every World Partition cell because nothing
+// holds them alive.  `LogLoadingScreen` shows the timeout, then dozens of
+// `LogNet: NotifyStreamingLevelUnload` lines fire in a single frame.
+//
+// Stock UE5 fix: server tracks each client's level visibility via
+// `ServerUpdateLevelVisibility` (the client→server RPC we see at 104.2 bytes
+// in our test) and replies with `ClientUpdateLevelStreamingStatus` to confirm
+// each cell should stay loaded.
+//
+// Wire format reverse-engineered from APlayerController.h declaration plus
+// AOC's intern table position 0x3F0 (offset 0xB0 from ClientRestart=0x340 =
+// 22 entries, candidate handle range 65-75 — default 70).
+//
+// UFunction signature (UE 5.x):
+//   ClientUpdateLevelStreamingStatus(
+//       FName    PackageName,                  // FName::NetSerialize
+//       bool     bNewShouldBeLoaded,           // 1 bit
+//       bool     bNewShouldBeVisible,          // 1 bit
+//       bool     bNewShouldBlockOnLoad,        // 1 bit
+//       int32    LODIndex                      // 32 bits LSB-first
+//       // [Optional]: FNetLevelVisibilityTransactionId TransactionId (UE 5.1+)
+//       // [Optional]: bool bNewShouldBlockOnUnload (UE 5.2+)
+//   )
+//
+// Per UE 5.0 wire (most likely AOC's version): no transaction ID, no unload-
+// block bool.  Total payload: ~9 bits FString length + N×8 bits chars + 32
+// bits Number + 3 bits + 32 bits = roughly (FString_bytes*8) + 76 bits.
+//
+// Strategy: send ONE keepalive RPC for the persistent level
+// `Verra_World_Master`.  If the cell-level granularity is required, we'll
+// expand this to iterate captured cell hashes from a probe file.
+// ───────────────────────────────────────────────────────────────────────────
+bool PcEmitter::emit_client_update_level_streaming_status(
+    const sockaddr_in& client_addr) {
+
+    // Gate on probe.  Default disabled.
+    {
+        std::FILE* fp = std::fopen("probe_streaming_keepalive.txt", "r");
+        if (!fp) return true;
+        int v = 0;
+        std::fscanf(fp, "%d", &v);
+        std::fclose(fp);
+        if (v == 0) return true;
+    }
+
+    auto read_uint = [](const char* path, uint32_t default_val) -> uint32_t {
+        std::FILE* fp = std::fopen(path, "r");
+        if (!fp) return default_val;
+        uint32_t v = default_val;
+        std::fscanf(fp, "%u", &v);
+        std::fclose(fp);
+        return v;
+    };
+    auto read_string = [](const char* path, const std::string& default_val) -> std::string {
+        std::FILE* fp = std::fopen(path, "r");
+        if (!fp) return default_val;
+        char buf[256] = {0};
+        if (std::fgets(buf, sizeof(buf), fp)) {
+            std::fclose(fp);
+            std::string s = buf;
+            // trim trailing whitespace / newline
+            while (!s.empty() && (s.back() == '\n' || s.back() == '\r' ||
+                                    s.back() == ' ' || s.back() == '\t')) {
+                s.pop_back();
+            }
+            return s;
+        }
+        std::fclose(fp);
+        return default_val;
+    };
+
+    const uint32_t handle     = read_uint("probe_streaming_keepalive_handle.txt", 70u);
+    const uint32_t handle_max = read_uint("probe_streaming_keepalive_max.txt", 1024u);
+    const uint32_t chseq      = read_uint("probe_streaming_keepalive_chseq.txt", 957u);
+    const std::string package = read_string(
+        "probe_streaming_keepalive_package.txt",
+        "/Game/Levels/Verra_World_Master/Verra_World_Master");
+
+    spdlog::warn("[PcEmitter] emit_client_update_level_streaming_status: "
+                  "handle={} max={} chSeq={} package=\"{}\"",
+                  handle, handle_max, chseq, package);
+
+    // ── Build the RPC inner payload ─────────────────────────────────────────
+    aoc::protocol::emit::BunchWriter inner(256);
+
+    // FName PackageName: AOC FName wire format = [bIsHardcoded(1)][...]
+    // For non-hardcoded names: write [0][FString][int32 Number=0]
+    inner.write_bit(0);                          // bIsHardcoded = 0
+    // FString: int32 SaveNum (= 1 + chars.size() including NUL) + chars + NUL
+    aoc::protocol::emit::PackageMapExporter::write_fstring(inner, package);
+    inner.write_uint32(0);                       // Number = 0
+
+    // Three bool bits (in declaration order):
+    inner.write_bit(1);                          // bNewShouldBeLoaded   = true
+    inner.write_bit(1);                          // bNewShouldBeVisible  = true
+    inner.write_bit(0);                          // bNewShouldBlockOnLoad = false
+
+    // int32 LODIndex
+    inner.write_uint32(0);                       // LODIndex = 0
+
+    const uint32_t inner_bits = static_cast<uint32_t>(inner.bit_pos());
+
+    // ── Wrap in RPC content block ──────────────────────────────────────────
+    auto serialize_int_to = [&](aoc::protocol::emit::BunchWriter& bw,
+                                  uint32_t value, uint32_t max) {
+        uint32_t n_bits = 0;
+        if (max > 1) {
+            uint32_t v = max - 1;
+            while (v) { v >>= 1; ++n_bits; }
+        }
+        if (n_bits == 0) return;
+        bw.write_bits(static_cast<uint64_t>(value), static_cast<int>(n_bits));
+    };
+
+    aoc::protocol::emit::BunchWriter rpc_payload(512);
+    serialize_int_to(rpc_payload, handle, handle_max);   // 10 bits if max=1024
+    rpc_payload.write_sip(inner_bits);                   // SIP NumPayloadBits
+    rpc_payload.write_bit_range(inner.data(), 0, inner_bits);
+    const uint32_t rpc_bits = static_cast<uint32_t>(rpc_payload.bit_pos());
+
+    aoc::protocol::emit::BunchWriter wrapped(512);
+    wrapped.write_bit(0);                        // bOutermostEnd  = 0
+    wrapped.write_bit(1);                        // bIsChannelActor = 1 (PC)
+    wrapped.write_sip(rpc_bits);                 // outer NumPayloadBits
+    wrapped.write_bit_range(rpc_payload.data(), 0, rpc_bits);
+    const uint32_t wrapped_bits = static_cast<uint32_t>(wrapped.bit_pos());
+
+    spdlog::info("[PcEmitter] keepalive: inner_bits={} rpc_bits={} wrapped_bits={}",
+                  inner_bits, rpc_bits, wrapped_bits);
+
+    // ── Build the bunch ────────────────────────────────────────────────────
+    aoc::protocol::emit::PropertyUpdateBunchBuilder b;
+    b.set_channel(3);
+    b.set_ch_sequence(chseq);
+    b.set_reliable(true);
+    b.set_ch_name_hardcoded(102);                // NAME_Actor (PC channel)
+    b.set_use_modern_inner_format(true);
+    b.set_is_rep_paused(false);
+    b.set_has_mbg(true);
+    b.add_raw_payload(wrapped.data(), wrapped_bits);
+
+    aoc::protocol::emit::BunchWriter bw(512);
+    const size_t bits = b.build(bw);
+    if (bits == 0) {
+        spdlog::error("[PcEmitter] keepalive: builder returned 0 bits");
+        return false;
+    }
+
+    const bool ok = host_.send_bunch_packet(client_key_, client_addr,
+                                              bw.data(), bits);
+    spdlog::warn("[PcEmitter] keepalive sent: bits={} ok={}", bits, ok);
     return ok;
 }
 

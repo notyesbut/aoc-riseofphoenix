@@ -216,12 +216,68 @@ void PropertyUpdateBunchBuilder::v3_add_property_netguid(uint32_t cmd_handle,
     v3_inner_payload_.write_uint32(randomizer);
 }
 
+void PropertyUpdateBunchBuilder::v3_add_property_netguid_with_sip(uint32_t cmd_handle,
+                                                                    uint64_t object_id,
+                                                                    uint32_t server_id,
+                                                                    uint32_t randomizer) {
+    if (!v3_block_open_) return;
+    // PM123 (2026-05-06) — empirically-correct LEGACY format from captured
+    // replay analysis (replay_data.bin pkt#127 b0/b1 decoded by
+    // tools/decode_pc_property_fixtures.py).
+    //
+    // The "MODERN expected" comment on v3_add_property_netguid was based on a
+    // misinterpretation of sub_143F2DC60.  Captured AOC server bunches CLEARLY
+    // use the LEGACY format for property updates:
+    //
+    //   pkt#127 b1: [SerializeInt(handle=1, MAX=10) 4b][SIP(NumValueBits=8) 8b]
+    //               [value=66 8b]   → 20 bits, total NumPayloadBits=22
+    //
+    // Wire = SerializeInt(handle, MAX) + SIP(NumValueBits=128) + 128-bit
+    //         FIntrepidNetGUID.  ALWAYS writes the SIP regardless of the
+    //         v3_use_modern_inner_format_ flag (which only affects RPCs).
+    v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+    v3_inner_payload_.write_sip(128);
+    v3_inner_payload_.write_uint32(static_cast<uint32_t>(object_id));
+    v3_inner_payload_.write_uint32(static_cast<uint32_t>(object_id >> 32));
+    v3_inner_payload_.write_uint32(server_id);
+    v3_inner_payload_.write_uint32(randomizer);
+}
+
 void PropertyUpdateBunchBuilder::v3_add_rpc_handle_only(uint32_t cmd_handle) {
     if (!v3_block_open_) return;
     // PM68 probe: just the handle, no params.  Used to test whether the
     // RPC function takes 0 parameters.  If Reader.IsError fires, function
     // expects >0 params and we need to figure out the param size.
     v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+}
+
+void PropertyUpdateBunchBuilder::v3_add_rpc_no_params(uint32_t cmd_handle) {
+    if (!v3_block_open_) return;
+    // 2026-05-06 (PM99) — 0-param RPC, clean wire.
+    //
+    // Wire format (stock UE5 RepLayout for 0-param RPC inside V3 content block):
+    //   [SerializeInt(cmd_handle, MAX)]  ceil(log2(MAX)) bits
+    //   [SIP(NumPayloadBits=0)]          8 bits (single byte 0x00)
+    //   (no payload)
+    //
+    // Total inner = ceil(log2(MAX)) + 8 bits.
+    //
+    // CRITICAL — DO NOT add a terminator or padding inside the content block.
+    // Empirical (PM98 test, 2026-05-06):
+    //   * pad=200 OR terminator(handle=0)+pad=145: bunch dispatches CIC, but
+    //     AOC's RepLayout treats handle=0 as INVALID (not as terminator) and
+    //     fails with "ReceivedBunch: Invalid replicated field 0" → connection
+    //     close (ObjectReplicatorReceivedBunchFail).
+    //   * pad=0 (clean 18-bit inner): bunch silent-drops at outer-parse layer
+    //     because the 74-bit total bunch is below AOC's threshold; connection
+    //     HOLDS but CIC never fires.
+    //
+    // SOLUTION (PM99): caller bundles the CIC into the SAME V3 content block
+    // as a larger payload (e.g. ClientRestart's NetGUID param).  The combined
+    // sub-reader exhausts after both fields are read → loop exits cleanly
+    // without ever reading handle=0.  See pc_emitter.cpp emit_pawn_link.
+    v3_inner_payload_.write_serialize_int(cmd_handle, v3_num_properties_);
+    v3_inner_payload_.write_sip(0);    // NumPayloadBits = 0 (no params)
 }
 
 void PropertyUpdateBunchBuilder::v3_add_property_netguid_sip(uint32_t cmd_handle,

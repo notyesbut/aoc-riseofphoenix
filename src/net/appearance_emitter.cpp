@@ -70,28 +70,121 @@ uint32_t read_uint_file(const char* path, uint32_t default_val) {
 }
 
 /// Inline mirror of actor_builder.cpp::write_v3_subobject_stably_named.
-/// We can't easily depend on the actor_builder symbol from here, so
-/// duplicate the writer (it's tiny — 5 ops).
+///
+/// PM131-REV2 (2026-05-07) — empirical wire format confirmed via test logs:
+///   bit 0: bOutermostEnd     (0 = more content blocks; 1 = exit loop)
+///   bit 1: bIsChannelActor   (0 = subobject; 1 = the channel's actor)
+///   bits: SIP(SubobjectNetGUID)  (only when bIsChannelActor=0)
+///   bit:  bStablyNamed       (1 = lookup by name; 0 = read class_guid SIP next)
+///   bits: SIP(NumPayloadBits)
+///   bits: NumPayloadBits worth of payload (property updates)
+///
+/// PM120 was a partial fix that nailed the bOutermostEnd issue but dropped
+/// the bStablyNamed bit entirely, causing the receiver to read the LSB of
+/// SIP NumPayloadBits as bStablyNamed=0 → expect class_guid → garbage →
+/// ContentBlockFail.  PM131-REV2 reinstates bStablyNamed=1 (since these
+/// are stably-named subobject paths registered via PM117).
 void write_v3_stably_named_block(aoc::protocol::emit::BunchWriter& out,
                                    uint64_t sub_guid,
                                    const uint8_t* payload_bits,
                                    uint32_t num_payload_bits) {
-    out.write_bit(1);                         // bHasRepLayout = 1
-    out.write_bit(0);                         // bIsActor = 0 (subobject)
-    out.write_sip(sub_guid);                  // SIP64 sub_guid (variable)
-    out.write_bit(1);                         // bStablyNamed = 1
+    out.write_bit(0);                         // bOutermostEnd = 0
+    out.write_bit(0);                         // bIsChannelActor = 0 (subobject)
+    out.write_sip(sub_guid);                  // SIP SubobjectNetGUID
+    out.write_bit(1);                         // bStablyNamed = 1 (PM131-rev2)
     out.write_sip(num_payload_bits);          // SIP NumPayloadBits
     if (num_payload_bits > 0 && payload_bits != nullptr) {
         out.write_bit_range(payload_bits, 0, num_payload_bits);
     }
 }
 
-/// Trailing actor-root content block per PM120 — required so the
-/// content-block-loop terminates cleanly without overrunning the bunch.
+/// PM136 (2026-05-07) — V3 DYNAMIC-CREATION content block, FINAL FORM.
+///
+/// Per F5 RE of sub_143F2C340 (ReadContentBlockHeader) lines 369-471:
+/// the post-`bStablyNamed=0` parsing branches on `EngineNetVer`:
+///   - if engine_ver < 0x1E (30, AOC-added history slot): NO extra bit,
+///     SerializeObject reads the class GUID DIRECTLY.
+///   - if engine_ver >= 0x1E: read `bSkipClass` bit, then optional 8-bit
+///     class index instead of full GUID.
+///
+/// `EngineNetVer` is per-connection, written by the NMT_Hello handshake.
+/// Stock UE 5.6 max history is 21; 30 is an AOC-specific addition.  Our
+/// server's NMT_Hello announces a stock value (< 30), so AOC takes the
+/// legacy branch — no extra bit.  The `bSkipClass` bit added in PM135 was
+/// a phantom that shifted the FIntrepidNetGUID by 1 bit on the wire.
+///
+/// PM135 BUG: wrote `bSkipClass=0` between bStablyNamed and class_guid.
+/// AOC didn't read that bit (engine_ver branch), so it consumed the first
+/// bit of our 128-bit class_guid as part of the (non-existent) gate field
+/// — misalignment cascaded through the FIntrepidNetGUID → ClassNetGUID
+/// resolved to garbage → SerializeObject returned class=nullptr → fallback
+/// path tried to read a stably-named outer chain → garbage → Bunch.IsError.
+/// Empirically confirmed in 2026-05-07 16:28:43 test: bunch arrives, no
+/// `Instantiating sub-object` log fires.
+///
+/// PM141 (2026-05-07) — V3 DYNAMIC-CREATION content block, FROM LIVE PCAP.
+///
+/// Source: live production AOC server pcap
+///   archive/misc/PCAPRepo-main/character/aoc_ranger_respawn_home_point_j_20260205_230233.pcap
+/// Specifically pkt#122 ch=11288 ActorOpen Block 9 (bit 1735, 8 bytes
+/// `3c 0f c8 20 d2 64 1c e3`).  Captured BEFORE the AOC server shutdown.
+///
+/// THREE CORRECTIONS vs PM138:
+///   1. `bHasRepLayout = 0` (was 1) — live wire bit 0 is 0 even when
+///      NumPayloadBits IS present.  AOC always emits NumPayloadBits in
+///      dynamic-creation blocks regardless of bHasRepLayout.  The parallel
+///      emu's doc §5.1.1 was overly aggressive about this gate.
+///   2. ADD `bIsDestroyMessage = 0` between bStablyNamed and class_guid.
+///      Live wire HAS this bit; the parallel emu's actor_replication_v3.py
+///      defaulted has_destroy_flag=False, but live AOC sends the bit.
+///   3. ADD `bActorIsOuter = 1` between class_guid and NumPayloadBits.
+///      Same source: live wire HAS this bit; parser default was False.
+///
+/// Without bits (2) and (3), the receiver consumed the LSBs of our SIP
+/// class_guid as those gates → SIP read at wrong offset → garbage class
+/// → bail before `Instantiating sub-object` log.  Confirmed from live
+/// capture decode that toggling has_destroy_flag/has_outer_chain to True
+/// makes the bit count reconcile exactly to bunch-end (without them, 21
+/// bits dangle).
+///
+/// CORRECTED FORMAT:
+///   [1 bit bHasRepLayout    = 0]
+///   [1 bit bIsActor         = 0]
+///   [SIP   sub_guid]
+///   [1 bit bStablyNamed     = 0]
+///   [1 bit bIsDestroyMessage = 0]   ← PM141 ADDED
+///   [SIP   class_guid]
+///   [1 bit bActorIsOuter    = 1]    ← PM141 ADDED (1 = outer is the channel actor)
+///   [SIP   NumPayloadBits]
+///   [<NumPayloadBits> bits payload]
+void write_v3_dynamic_creation_block(aoc::protocol::emit::BunchWriter& out,
+                                       uint64_t sub_guid,
+                                       uint64_t class_obj_id,
+                                       uint32_t /*class_server_id*/,
+                                       uint32_t /*class_randomizer*/,
+                                       const uint8_t* payload_bits,
+                                       uint32_t num_payload_bits) {
+    out.write_bit(0);                         // PM141: bHasRepLayout = 0
+    out.write_bit(0);                         // bIsActor = 0 (subobject)
+    out.write_sip(sub_guid);                  // SIP SubobjectNetGUID
+    out.write_bit(0);                         // bStablyNamed = 0 (dynamic)
+    out.write_bit(0);                         // PM141: bIsDestroyMessage = 0
+    out.write_sip(class_obj_id);              // SIP class NetGUID
+    out.write_bit(1);                         // PM141: bActorIsOuter = 1 (channel actor)
+    out.write_sip(num_payload_bits);          // SIP NumPayloadBits
+    if (num_payload_bits > 0 && payload_bits != nullptr) {
+        out.write_bit_range(payload_bits, 0, num_payload_bits);
+    }
+}
+
+/// PM120-FIX — DO NOT append a trailing block.  Per PM97 v3_finish_bunch
+/// comment, AOC reads 2 bits before deciding: any extra bits get parsed as
+/// another content block header.  bIsChannelActor=1 with SIP(0) makes AOC
+/// expect more property update fields and overflows on the empty content.
+/// Leaving this stub for callers that still reference it; it's now a no-op.
 void write_trailing_actor_root_block(aoc::protocol::emit::BunchWriter& out) {
-    out.write_bit(0);                         // bHasRepLayout = 0
-    out.write_bit(1);                         // bIsActor = 1 (the channel actor)
-    out.write_sip(0);                         // SIP NumPayloadBits = 0
+    (void)out;
+    // intentionally empty — see comment above
 }
 
 }  // namespace
@@ -129,12 +222,34 @@ bool AppearanceEmitter::emit_seed(const sockaddr_in& client_addr,
         return false;
     }
 
-    // Probe knobs — file-driven so we don't rebuild while iterating.
+    // ── 2026-05-05 SDK-verified RE result (UCharacterAppearanceComponent) ──
+    //
+    // Source: C:\Users\xmaxt\Desktop\SDKONLINEFIND\GameSystemsPlugin_classes.hpp
+    //   line 17811 (UCharacterAppearanceComponent), 17720 (UBaseModularAppearanceComponent)
+    //         + Engine_classes.hpp line 897 (UActorComponent base class).
+    //
+    // Full CPF_Net property chain (parent → leaf, 1-indexed cmd_handle):
+    //   1. bReplicates                (UActorComponent — bit 1)
+    //   2. bIsActive                  (UActorComponent — bit 1)
+    //   3. AppearanceIDs              (UBaseModularAppearanceComponent — TArray<FAppearanceId>)
+    //   4. SharedAppearanceInfoId     (UBaseModularAppearanceComponent — FAppearanceInfoId)
+    //   5. CharacterCustomization     (UCharacterAppearanceComponent — FCharacterCustomizationSaveData)
+    //   6. bForceHideHeldItems        (UCharacterAppearanceComponent — bit 1)
+    //
+    // NumReplicated = 6.  Wire MAX = 6.  Handle bits = ceil(log2(6)) = 3.
+    // 0-indexed wire handles (matches our PlayerStateEmitter convention):
+    //   CharacterCustomization → 4
+    //   bForceHideHeldItems    → 5
+    //
+    // PRIOR DEFAULTS (guesses): max=4, handle_custom=0, handle_force_hide=1/3.
+    // Both wrong — likely caused the appearance OnRep to dispatch to the
+    // wrong field, contributing to the asset-load failures observed in
+    // PD2.3.1 strip-assets fallback.
     const uint32_t pawn_channel  = read_uint_file("probe_app_channel.txt", 19u);
     const uint32_t pawn_chseq    = read_uint_file("probe_app_chseq.txt",   956u);
-    const uint32_t handle_max    = read_uint_file("probe_appearance_max.txt", 4u);
-    const uint32_t handle_custom = read_uint_file("probe_appearance_handle_custom.txt",     0u);
-    const uint32_t handle_force_hide = read_uint_file("probe_appearance_handle_force_hide.txt", 1u);
+    const uint32_t handle_max    = read_uint_file("probe_appearance_max.txt", 6u);
+    const uint32_t handle_custom = read_uint_file("probe_appearance_handle_custom.txt",     4u);
+    const uint32_t handle_force_hide = read_uint_file("probe_appearance_handle_force_hide.txt", 5u);
 
     // PM117 confirmed: subobject NetGUIDs are pawn_obj + ci + 1, where ci
     // is the slot index.  CharacterAppearance is slot 7 → +8 offset.
@@ -234,12 +349,80 @@ bool AppearanceEmitter::emit_seed(const sockaddr_in& client_addr,
                      "bits; sending empty V3 wrap (subobject touch only)");
     }
 
-    // ── Wrap the payload in V3 stably-named content block + trailer ─────
+    // ── PM133 (2026-05-07) — Dynamic-creation mode selector ─────────────
+    //
+    // probe_appearance_v3_mode.txt:
+    //   "0" or absent → STABLY-NAMED (PM131-rev2 form, default; subobject
+    //                   must already exist on the channel actor's BP CDO
+    //                   for OnRep to dispatch — empirically failing for
+    //                   PlayerPawn_C 'Character Appearance' lookup)
+    //   "1"           → DYNAMIC-CREATION (PM133 form, mirrors GlobalGMCommands
+    //                   on the PC channel; client INSTANTIATES a fresh
+    //                   UCharacterAppearanceComponent and routes properties
+    //                   to it).  Requires the class to be exported via
+    //                   PackageMap first — gated by probe_class_exports.txt
+    //                   on the PlayerPawnEmitter side.
+    int v3_mode = 0;
+    if (std::FILE* fp = std::fopen("probe_appearance_v3_mode.txt", "r")) {
+        std::fscanf(fp, "%d", &v3_mode);
+        std::fclose(fp);
+    }
+
+    // The CharacterAppearanceComponent class NetGUID is generated by
+    // hash_class_path() in player_pawn_emitter.cpp's component schema
+    // setup.  Hard-coded here to the same deterministic value so we
+    // don't need a live cross-emitter accessor.  hash_class_path mints
+    // ObjectId = (deterministic 64-bit hash with high bit set).
+    //
+    // Sanity: the value MUST match what player_pawn_emitter computes.
+    // Both use FNV-1a-style hashing of the class_path; we just call the
+    // same function here.  See hash_class_path in package_map_exporter.h
+    // (or the inline equivalent if it isn't exposed).
+    // EXACTLY mirror player_pawn_emitter.cpp::hash_class_path (PM142).
+    // Small Static ObjectId in [17, 32785], odd.  See player_pawn_emitter.cpp
+    // for full rationale (live AOC uses tiny ObjectIds for class GUIDs).
+    auto hash_class_path = [](const char* p) -> uint64_t {
+        uint64_t h = 0xCBF29CE484222325ULL;     // FNV-1a offset basis
+        for (const char* s = p; *s; ++s) {
+            h ^= static_cast<uint64_t>(static_cast<unsigned char>(*s));
+            h *= 0x100000001B3ULL;              // FNV-1a prime
+        }
+        h ^= (h >> 33);
+        h *= 0xFF51AFD7ED558CCDULL;
+        h ^= (h >> 33);
+        h &= 0x3FFFULL;                         // 14 bits
+        h <<= 1;                                // shift up
+        h |= 1ULL;                              // bit 0 = Static
+        h |= 0x10ULL;                           // > 16
+        return h;
+    };
+    const uint64_t appearance_class_guid =
+        hash_class_path("/Script/GameSystemsPlugin.CharacterAppearanceComponent");
+
     aoc::protocol::emit::BunchWriter wrapped(256);
-    write_v3_stably_named_block(wrapped, appearance_subobj_guid,
-                                  appearance_bits.empty() ? nullptr
-                                                          : appearance_bits.data(),
-                                  num_payload_bits);
+    if (v3_mode == 1) {
+        // PM135 — class_guid is a FULL FIntrepidNetGUID (128 bits), not SIP.
+        // ServerId=0/Randomizer=0 matches what player_pawn_emitter exports
+        // via build_two_level (leaf has those zeroed in the export entry).
+        write_v3_dynamic_creation_block(
+            wrapped,
+            appearance_subobj_guid,
+            appearance_class_guid,           // ObjectId (low 64 bits)
+            /*server_id=*/  0u,
+            /*randomizer=*/ 0u,
+            appearance_bits.empty() ? nullptr : appearance_bits.data(),
+            num_payload_bits);
+        spdlog::warn("[AppearanceEmitter] PM135 DYNAMIC-CREATION mode: "
+                      "sub_guid={} class_guid={{ObjectId={}, ServerId=0, Randomizer=0}} "
+                      "(UCharacterAppearanceComponent)",
+                      appearance_subobj_guid, appearance_class_guid);
+    } else {
+        write_v3_stably_named_block(
+            wrapped,
+            appearance_subobj_guid,
+            appearance_bits.empty() ? nullptr : appearance_bits.data(),
+            num_payload_bits);
+    }
     write_trailing_actor_root_block(wrapped);
 
     const uint32_t total_wrapped_bits = static_cast<uint32_t>(wrapped.bit_pos());

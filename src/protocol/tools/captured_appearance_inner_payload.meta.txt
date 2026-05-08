@@ -1,0 +1,13 @@
+# Captured CharacterAppearanceComponent inner payload
+# Source: replay_data.bin pkt#22 reassembled (bunches 0+1)
+# Captured sub_guid = 14476 (replace with our 16777226)
+# Format: AOC V3 stably-named subobject content block payload
+# Wrap header layout when shipping:
+#   [bit 1] bHasRepLayout = 1
+#   [bit 0] bIsActor = 0
+#   [SIP64] sub_guid = 16777226
+#   [bit 1] bStablyNamed = 1
+#   [SIP] NumPayloadBits = 49
+#   [49 bits] payload (this file)
+num_payload_bits = 49
+num_bytes = 7

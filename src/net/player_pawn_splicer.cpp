@@ -39,6 +39,7 @@
 #include "net/native_connect_sequencer.h"               // IGameServerHost
 #include "net/captured_pkt78_full_stream.h"             // verbatim
 #include "net/captured_pkt78_substituted_stream.h"      // surgical (PM109)
+#include "net/captured_pkt78_v3_channel_substituted_stream.h"  // PM130 (channel surgery)
 
 #ifdef _WIN32
 #  include <winsock2.h>
@@ -123,8 +124,31 @@ bool PlayerPawnSplicer::emit_captured_stream(const sockaddr_in& client_addr) {
         return true;
     }
 
+    if (mode == 3) {
+        spdlog::warn("[PlayerPawnSplicer] PM130 CHANNEL+GUID SURGICAL mode — "
+                     "shipping pkt#78 with Pawn NetGUID rewritten to 16777218 "
+                     "AND channel rewritten 114 -> {} "
+                     "({} bits / {} bytes)",
+                     kCapturedPkt78V3ChanSubstChIdx,
+                     kCapturedPkt78V3ChanSubstStreamBits,
+                     kCapturedPkt78V3ChanSubstStreamBytes);
+        spdlog::warn("[PlayerPawnSplicer]   bunch[2] header bit 1647 (SIP ChIdx): "
+                     "captured 114 -> our ch=19, so the captured Pawn ActorOpen "
+                     "binds to OUR PlayerPawnEmitter's already-open ch=19 channel.");
+
+        const bool ok = host_.send_bunch_packet(
+            client_key_, client_addr,
+            kCapturedPkt78V3ChanSubstStream, kCapturedPkt78V3ChanSubstStreamBits);
+        if (!ok) {
+            spdlog::error("[PlayerPawnSplicer] send_bunch_packet failed (PM130)");
+            return false;
+        }
+        spdlog::warn("[PlayerPawnSplicer] ★ pkt#78 PM130 channel-surgical splice sent");
+        return true;
+    }
+
     spdlog::warn("[PlayerPawnSplicer] unknown probe_pkt78_splice.txt value: {} "
-                 "(use 0=disabled, 1=verbatim, 2=surgical)", mode);
+                 "(use 0=disabled, 1=verbatim, 2=surgical, 3=channel-surgical)", mode);
     return true;
 }
 

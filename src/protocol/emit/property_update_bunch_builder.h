@@ -264,10 +264,33 @@ public:
                                   uint32_t server_id,
                                   uint32_t randomizer);
 
+    /// PM123 (2026-05-06) — captured-format-correct property NetGUID write.
+    /// Always writes the SIP(128) NumValueBits prefix regardless of the
+    /// v3_use_modern_inner_format_ flag (which is wrong for properties; the
+    /// captured AOC replay clearly uses LEGACY-with-SIP for property updates).
+    /// See decode_pc_property_fixtures.py output for empirical evidence.
+    void v3_add_property_netguid_with_sip(uint32_t cmd_handle,
+                                            uint64_t object_id,
+                                            uint32_t server_id,
+                                            uint32_t randomizer);
+
     /// PM68 (2026-04-30) — Phase C: RPC call with NO parameters (zero-arg).
     /// Writes just the handle bits.  Used for probing whether a function
     /// takes 0 params (clean exit) vs N>0 params (Reader.IsError).
     void v3_add_rpc_handle_only(uint32_t cmd_handle);
+
+    /// 2026-05-06 — full AOC custom-mode field-loop wire for a NO-PARAM RPC.
+    /// Mirrors `v3_add_rpc_pawn_param_aoc_intrepid` but skips the per-param
+    /// fields, going straight from the 1-bit advance to the SIP(0) terminator.
+    /// This is the format `ClientInitializeCharacter()` and other 0-param
+    /// AAoCPlayerController Client* RPCs use.
+    ///
+    /// Wire (inside V3 content block):
+    ///     SerializeInt(handle, MAX)   ceil(log2(MAX)) bits
+    ///     1-bit advance               1 bit  (consumed by sub_7FF6BD814D20)
+    ///     SIP(0) terminator           8 bits (immediately exits sub_7FF6BD8155B0 field loop)
+    /// Total: handle_bits + 9 bits.
+    void v3_add_rpc_no_params(uint32_t cmd_handle);
 
     /// PM75 (2026-04-30) — SIP-based inner format from captured replay RE.
     /// AOC's actual wire format inside the V3 content block is:

@@ -261,13 +261,44 @@ void serialize_customization_to_wire(const CharacterCustomizationData& d,
     write_float_le (out, d.facial_hair_contrast);
     write_float_le (out, d.facial_hair_gradient);
 
-    write_uint64_le(out, static_cast<uint64_t>(d.racial_horns));
-    write_float_le (out, d.racial_horns_length);
-    // SDK has 4-byte pad after racial_horns_length — skipped.
+    // ── 2026-05-05 SDK-VERIFIED REWRITE ─────────────────────────────────────
+    //
+    // PRIOR VERSION had 25 bytes of GARBAGE in the wire stream:
+    //   • `racial_horns` (u64) + `racial_horns_length` (f32) = 12 bytes —
+    //     these fields DO NOT EXIST in FCharacterCustomizationSaveData per
+    //     the SDK dump (`GameSystemsPlugin_structs.hpp:11967`).  Whoever
+    //     hand-typed this struct (PD2.1) hallucinated them.  Since they were
+    //     inserted in the MIDDLE (between facial_hair_gradient and nail_color),
+    //     EVERY subsequent field was shifted by 12 bytes, desyncing the
+    //     client's parser permanently.
+    //   • `bIsHelmetVisible` + `bIsCapeVisible` (1 byte each) — also FICTIONAL.
+    //   • `Gender`, `Race`, `Class` + 2 empty TMap lengths (11 bytes total) —
+    //     these DO exist in the SDK struct, but they are flagged `RepSkip`,
+    //     meaning UE5's default struct net serialization EXCLUDES them from
+    //     the wire stream.  Our prior IDA-RE comment (claiming they're on
+    //     the wire per off_7FF6C4A83850) was a misreading — that table is
+    //     the FULL property descriptor (including RepSkip ones), but the
+    //     RepSkip flag on the property gates them out of the net stream.
+    //
+    // Per SDK ground truth, FCharacterCustomizationSaveData has exactly 32
+    // wire-replicated fields (the 5 RepSkip fields go through other paths,
+    // notably `RaceGenderAppearanceId` set locally via `SetRace()`).
+    //
+    // Expected wire size (with empty DecalData + empty DecalBlendGroups):
+    //   8(PresetGuid) + 4(RandomSeed) + 4*4(SkinHue/Pig/Norm01/Norm02) +
+    //   4(SkinSet) + 4*8(eyes/eyebrows) + 3*8(headhair guids) + 3*4(headhair flts) +
+    //   3*8(facialhair guids) + 4*4(facialhair flts) + 2*8(facialhair colors) +
+    //   2*4(facialhair contrast/gradient) + 8(nailcolor) + 4(nailopacity) +
+    //   4(DecalData TArray len) + 4(DecalBlendGroups TArray len)
+    //   = 8+4+16+4+32+24+12+24+16+16+8+8+4+4+4 = 184 bytes  ★
+    //
+    // THIS is what the client's struct deserializer will consume — exactly
+    // the byte layout that matches its in-memory FCharacterCustomizationSaveData
+    // up to offset 0xE0 (Gender, RepSkip).
 
     write_uint64_le(out, static_cast<uint64_t>(d.nail_color));
     write_float_le (out, d.nail_opacity);
-    // SDK has 4-byte pad after nail_opacity — skipped.
+    // SDK has 4-byte pad after nail_opacity — NOT on wire (UE5 skips align padding).
 
     // TArray<FCharacterCustomizationDecalData> DecalData — empty
     // UE5 TArray net format: [int32 NumElements][N × element bytes]
@@ -276,35 +307,16 @@ void serialize_customization_to_wire(const CharacterCustomizationData& d,
     // TArray<FCharacterDecalBlendGroup> DecalBlendGroups — empty
     write_uint32_le(out, 0);   // 0 elements
 
-    // bIsHelmetVisible (bool, 1 byte in struct)
-    out.push_back(d.is_helmet_visible ? 1 : 0);
-    // bIsCapeVisible (bool, 1 byte)
-    out.push_back(d.is_cape_visible   ? 1 : 0);
-
-    // ── 2026-05-05 — IDA RE confirmed: Race/Gender/Class + TMaps ARE on the
-    //     wire.  Per the 51-property descriptor table at off_7FF6C4A83850:
-    //       Gender               : TEnumAsByte (1 byte)
-    //       Race                 : TEnumAsByte (1 byte)
-    //       Class                : TEnumAsByte (1 byte)
-    //       FaceMorphWeightMaps  : TMap<FName, float>     — empty (4 bytes)
-    //       SectionsValues       : TMap<EEnum, float>     — empty (4 bytes)
-    //     UE5 default per-property struct rep emits ALL members in declaration
-    //     order — no skipping.  RepSkip applies to ACTOR rep layout only.
-
-    out.push_back(d.gender_enum);  // TEnumAsByte<EGender>
-    out.push_back(d.race_enum);    // TEnumAsByte<ERace>
-    out.push_back(d.class_enum);   // TEnumAsByte<EClass>
-
-    // FaceMorphWeightMaps — empty TMap (UE5 wire: [int32 NumPairs])
-    write_uint32_le(out, 0);
-
-    // SectionsValues — empty TMap (UE5 wire: [int32 NumPairs])
-    write_uint32_le(out, 0);
+    // ── End of wire stream — RepSkip fields below are EXCLUDED ──
+    // Gender, Race, Class, FaceMorphWeightMaps, SectionsValues all carry
+    // the RepSkip flag in the SDK and are filled in locally on the client
+    // by other code paths (typically `UCharacterAppearanceComponent::SetRace`
+    // setting `RaceGenderAppearanceId` from the player's archetype).
 
     spdlog::info("[AppearanceData] serialized customization: {} bytes "
-                 "(41 fields: skin_hue={:.3f} eye={} hair={} gender={} race={} class={})",
-                 out.size(), d.skin_color_hue, d.eye_color, d.head_hair,
-                 d.gender_enum, d.race_enum, d.class_enum);
+                 "(32 wire fields, SDK-verified; race/gender/class via SetRace path) "
+                 "skin_hue={:.3f} eye={} hair={}",
+                 out.size(), d.skin_color_hue, d.eye_color, d.head_hair);
 }
 
 

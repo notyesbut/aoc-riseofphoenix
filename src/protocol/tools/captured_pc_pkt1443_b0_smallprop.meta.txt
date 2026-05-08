@@ -1,0 +1,13 @@
+# extracted from replay_data.bin pkt#1443 bunch0
+channel = 3
+ch_seq = 60
+ename_idx = 102
+is_open = 0
+is_close = 0
+is_reliable = 1
+is_partial = 0
+partial_initial = 0
+partial_final = 0
+bunch_data_bits = 29
+payload_byte_count = 4
+payload_first_32_bytes_hex = 34b14600

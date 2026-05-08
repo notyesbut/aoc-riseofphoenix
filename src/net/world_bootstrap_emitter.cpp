@@ -241,6 +241,49 @@ bool WorldBootstrapEmitter::dispatch_one(const sockaddr_in& addr,
             spdlog::warn("[WorldBootstrap] PC.PlayerState link failed "
                          "(non-fatal)");
         }
+
+        // ── PM147 (2026-05-08) — World Partition cell keepalive ──────────
+        //
+        // After possession + PS link, send ClientUpdateLevelStreamingStatus
+        // to keep World Partition cells alive past the GC sweep that fires
+        // when the loading screen drops.  Probe-gated via
+        // probe_streaming_keepalive.txt (default off).  See pc_emitter.cpp
+        // for the full RE rationale.
+        if (!pc.emit_client_update_level_streaming_status(addr)) {
+            spdlog::warn("[WorldBootstrap] streaming keepalive failed "
+                         "(non-fatal)");
+        }
+
+        // ── 2026-05-05 — ClientInitializeCharacter() RPC ──────────────
+        //
+        // After possession (PC.Pawn link via ClientRestart) and PS
+        // wiring, fire `ClientInitializeCharacter()` to tell the client
+        // to run its local character init (SetRace, SetGender, populate
+        // RaceGenderAppearanceId).  Without this, OnRep_CharacterCustomization
+        // arrives but the appearance subobject has no race-specific
+        // DataTable to look up, so the merge produces nothing.
+        //
+        // Wire handle 142 per docs/RE-CLIENTINITIALIZECHARACTER-HANDLE.md
+        // (DERIVED-FROM-RE ±10).  Probe-override via probe_cic_handle.txt.
+        //
+        // Probe knob: probe_cic_emit.txt — set to 0 to disable (default 1).
+        bool cic_enabled = true;
+        if (std::FILE* fp = std::fopen("probe_cic_emit.txt", "r")) {
+            int v = 1;
+            std::fscanf(fp, "%d", &v);
+            std::fclose(fp);
+            cic_enabled = (v != 0);
+        }
+        if (cic_enabled) {
+            if (!host_.emit_client_initialize_character(client_key_, addr)) {
+                spdlog::warn("[WorldBootstrap] ClientInitializeCharacter() "
+                             "emit failed (non-fatal)");
+            }
+        } else {
+            spdlog::info("[WorldBootstrap] ClientInitializeCharacter "
+                          "skipped (probe_cic_emit.txt=0)");
+        }
+
         return true;
     }
     }
