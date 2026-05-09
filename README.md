@@ -119,13 +119,30 @@ Output binaries land in `dist\Release\`.
 # folder; keeps a backup as EOSSDK_real.dll):
 .\scripts\build_eossdk_proxy.bat
 
-# Stage replay fixtures and start the full stack:
+# Stable replay-driven baseline:
 .\scripts\launch_all.bat
+
+# OR — active-development native synthesis branch:
+.\scripts\launch_all_native.bat
 ```
 
 On login, use `test222 / test` or register a new account through the launcher.
 
-> **Note on `launch_all.bat`:** the current emulator plays back **`fixtures/replay_data.bin`** — a captured S→C replay stream from a real pre-shutdown AoC session (~7.4 MB, plaintext YLPR format). The launcher boots the auth/tether/aoc_server stack, the client connects to loopback, and the server replays the captured packets while patching in our minted NetGUIDs and spawn coordinates. That's why you see the same captured character (`RandomChar`) in-world rather than your account's name — the live actor synthesis pipeline that would emit per-account state from scratch is what the PM148+ roadmap is building toward.
+#### `launch_all.bat` vs `launch_all_native.bat`
+
+There are two launchers because there are two paths through the emulator. They start the same auth/tether/launcher/game-client stack — the difference is which mode the `aoc_server` runs in:
+
+**`launch_all.bat` — replay-driven (stable baseline).**
+The server feeds the AoC client a captured pre-shutdown S→C packet stream from `fixtures/replay_data.bin` (~7.4 MB, plaintext YLPR format), patching our minted NetGUIDs in at known bit offsets. The client doesn't know it's a replay — to it, it looks like a normal AoC realm server. This is the "plays-like-a-movie" mode: the client loads Verra, the captured character spawns, you can see them. This mode shipped working in **PM35** and is the regression baseline for everything else. You see the same `RandomChar` from the original capture rather than your account's name because there's no per-account state synthesis — only verbatim playback.
+
+Behind the scenes: `aoc_server.exe --replay replay_data.bin` (replay thread enabled, fires captured packets in sequence with timing).
+
+**`launch_all_native.bat` — native synthesis (active development).**
+The server's `NativeConnectSequencer` + `WorldBootstrapEmitter` construct **every post-NMT bunch from scratch** using `ActorBuilder` / `PropertyUpdateBunchBuilder` and the per-class emitters in `src/net/`. The captured replay is still loaded so the bootstrap plan can splice individual rows we haven't fully RE'd yet, but the replay packet thread is disabled (`--no-replay-loop`) — the native sequencer is the sole driver. This is the path everything from PM107 onward targets: Riverlands spawn coords, real per-session NetGUIDs, possession via from-scratch `ClientRestart`, the planned PM148 periodic-actor-traffic fix, the planned `ClientUpdateLevelStreamingStatus` keepalive, and eventually the visible-mesh appearance flow. It's where contributors will spend most of their time.
+
+Behind the scenes: `aoc_server.exe --native --replay replay_data.bin --no-replay-loop`.
+
+In short — **`launch_all.bat` is the "does it still work" smoke test; `launch_all_native.bat` is where you'll actually develop.**
 
 ### Run tests only
 
