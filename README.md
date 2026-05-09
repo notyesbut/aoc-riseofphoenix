@@ -115,8 +115,13 @@ Output binaries land in `dist\Release\`.
 ### Run
 
 ```powershell
-# Deploy the EOSSDK proxy (one-time — replaces the real DLL in the game
-# folder; keeps a backup as EOSSDK_real.dll):
+# Deploy the EOSSDK proxy (one-time setup — replaces the real DLL in the
+# game folder; keeps a backup as EOSSDK_real.dll).  Two options:
+
+# Option A — install the prebuilt proxy (no compile required, ~30 sec):
+.\scripts\install_eossdk_proxy.bat
+
+# Option B — build the proxy from src/eossdk_proxy.cpp and deploy:
 .\scripts\build_eossdk_proxy.bat
 
 # Stable replay-driven baseline:
@@ -125,6 +130,8 @@ Output binaries land in `dist\Release\`.
 # OR — active-development native synthesis branch:
 .\scripts\launch_all_native.bat
 ```
+
+> **Why the EOSSDK proxy is required:** without it, Easy Anti-Cheat detects that the client is talking to a non-Intrepid endpoint and shuts the game down within a few seconds. The proxy stubs every `EOS_AntiCheat_*` / `EOS_Platform_Tick` call so the EAC state machine never runs. The proxy is **our code** (source at `src/eossdk_proxy.cpp`); the prebuilt at `prebuilt/eossdk-proxy/EOSSDK-Win64-Shipping.dll` is just a convenience build of that source. The original Epic SDK (`EOSSDK_real.dll`, ~18 MB) is never redistributed — the install scripts back yours up locally before installing the proxy.
 
 On login, use `test222 / test` or register a new account through the launcher.
 
@@ -187,6 +194,9 @@ AoC-RiseOfPhoenix/
 │   └── aoc-sdk/                         # Dumper-7 SDK output (~136 MB,
 │                                        #   2,000+ files; full client UClass
 │                                        #   hierarchy + property offsets)
+├── prebuilt/
+│   └── eossdk-proxy/                    # prebuilt EOSSDK proxy DLL (164 KB,
+│                                        #   built from src/eossdk_proxy.cpp)
 ├── CMakeLists.txt
 ├── vcpkg.json
 └── README.md

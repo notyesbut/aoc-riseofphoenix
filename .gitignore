@@ -41,6 +41,7 @@ cmake-build-*/
 *.a
 *.lib
 *.dll
+!prebuilt/**/*.dll
 *.exe
 *.pdb
 *.ilk
