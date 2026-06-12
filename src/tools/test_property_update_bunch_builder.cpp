@@ -69,7 +69,7 @@ void test_name_bunch_structure() {
 
     PropertyUpdateBunchBuilder b;
     b.set_channel(3);            // PC's actor channel
-    b.set_ch_sequence(1978);     // matches captured pkt#22's ChSeq
+    b.set_ch_sequence(954);      // matches captured pkt#22's 10-bit ChSeq
     b.add_name_update("MyHero");
 
     // Expected queued payload = 216 bits (16B prefix + 4B len + 7B "MyHero\0")
@@ -103,9 +103,12 @@ void test_name_bunch_structure() {
     uint64_t b_partial = read_bits(out.data(), cursor, 1); cursor += 1;
     CHECK(b_partial == 0, "bPartial = 0 (key requirement)");
 
-    uint32_t ch_seq = static_cast<uint32_t>(read_bits(out.data(), cursor, 12));
-    cursor += 12;
-    CHECK(ch_seq == 1978, "ChSequence = 1978");
+    // AoC's client reads ChSequence with SerializeInt(MAX=1024), i.e. 10 bits
+    // for every channel.  Reading 12 bits here misaligns the following ChName
+    // and BunchDataBits checks.
+    uint32_t ch_seq = static_cast<uint32_t>(read_bits(out.data(), cursor, 10));
+    cursor += 10;
+    CHECK(ch_seq == 954, "ChSequence = 954");
 
     // ChName — emitted by the builder for reliable, non-partial bunches.
     // Defaults: hardcoded=1 + SIP(103) — empirical most-common EName from

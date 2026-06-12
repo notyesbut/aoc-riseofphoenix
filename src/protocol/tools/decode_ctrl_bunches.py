@@ -16,7 +16,8 @@ sys.path.insert(0, str(HERE))
 sys.stdout.reconfigure(encoding='utf-8')
 from phase1_parser import parse_packet, read_bit, read_bits_le, serialize_int, serialize_int_packed
 
-REPLAY = Path(r'<REPO_ROOT>\dist\Release\replay_data.bin')
+REPO_ROOT = Path(__file__).resolve().parents[3]
+REPLAY = REPO_ROOT / 'dist' / 'Release' / 'replay_data.bin'
 with open(REPLAY, 'rb') as f:
     data = f.read()
 

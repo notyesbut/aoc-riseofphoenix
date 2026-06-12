@@ -22,7 +22,8 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 from phase1_parser import parse_packet, read_bit, read_bits_le
 
-REPLAY = Path(r'<REPO_ROOT>\dist\Release\replay_data.bin')
+REPO_ROOT = Path(__file__).resolve().parents[3]
+REPLAY = REPO_ROOT / 'dist' / 'Release' / 'replay_data.bin'
 DOCS = HERE.parent.parent.parent / 'docs'
 OUT_JSON = DOCS / 'native-bootstrap-sequence.json'
 SCAN_N = 30

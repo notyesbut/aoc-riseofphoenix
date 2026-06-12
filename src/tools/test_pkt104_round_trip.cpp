@@ -62,7 +62,7 @@ using aoc::protocol::emit::BunchWriter;
 using aoc::protocol::wire::PacketReader;
 
 constexpr const char* FIXTURE_PATH =
-    "<REPO_ROOT>\\"
+    AOC_REPO_ROOT "\\"
     "src\\protocol\\tools\\captured_pkt_104.bin";
 
 constexpr size_t RAW_BITS            = 7824;

@@ -79,8 +79,8 @@ int main() {
         ClientSession* cs = registry.get(keyA);
         CHECK(cs && cs->player_name == "Hatemost",      "player_name stored on session");
         CHECK(cs && cs->pc_netguid != 0,                "NetGUID block was allocated");
-        CHECK(cs && cs->pawn_netguid == cs->pc_netguid + 1,
-                                                        "pawn_netguid = pc+1");
+        CHECK(cs && cs->pawn_netguid == cs->pc_netguid + 2,
+                                                        "pawn_netguid = pc+2 (even GUID stride)");
     }
     {
         // 5. Server sends NMT_Welcome (modeled as advance) → LOADING_MAP

@@ -37,13 +37,22 @@ if not exist "%SRC_DLL%" (
     exit /b 1
 )
 
-if not defined GAMEDIR set GAMEDIR=C:\Ashes of Creation\Game\AOC\Binaries\Win64
+if not defined GAMEDIR (
+    if exist "%ProgramFiles(x86)%\Steam\steamapps\common\Ashes of Creation Playtest\Game\AOC\Binaries\Win64" (
+        set "GAMEDIR=%ProgramFiles(x86)%\Steam\steamapps\common\Ashes of Creation Playtest\Game\AOC\Binaries\Win64"
+    )
+)
+if not defined GAMEDIR (
+    if exist "%ProgramFiles%\Steam\steamapps\common\Ashes of Creation Playtest\Game\AOC\Binaries\Win64" (
+        set "GAMEDIR=%ProgramFiles%\Steam\steamapps\common\Ashes of Creation Playtest\Game\AOC\Binaries\Win64"
+    )
+)
 
 if not exist "%GAMEDIR%" (
     echo ERROR: AoC game directory not found at:
     echo   %GAMEDIR%
     echo Set GAMEDIR to your AoC Win64 path, e.g.:
-    echo   set GAMEDIR=D:\Games\Ashes of Creation\Game\AOC\Binaries\Win64
+    echo   set GAMEDIR=C:\Path\To\Ashes of Creation Playtest\Game\AOC\Binaries\Win64
     echo   scripts\install_eossdk_proxy.bat
     pause
     exit /b 1

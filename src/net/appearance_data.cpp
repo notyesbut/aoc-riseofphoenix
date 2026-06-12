@@ -261,40 +261,28 @@ void serialize_customization_to_wire(const CharacterCustomizationData& d,
     write_float_le (out, d.facial_hair_contrast);
     write_float_le (out, d.facial_hair_gradient);
 
-    // ── 2026-05-05 SDK-VERIFIED REWRITE ─────────────────────────────────────
+    // ── 2026-06-09 SDK-VERIFIED FIX — re-add the four real fields ───────────
     //
-    // PRIOR VERSION had 25 bytes of GARBAGE in the wire stream:
-    //   • `racial_horns` (u64) + `racial_horns_length` (f32) = 12 bytes —
-    //     these fields DO NOT EXIST in FCharacterCustomizationSaveData per
-    //     the SDK dump (`GameSystemsPlugin_structs.hpp:11967`).  Whoever
-    //     hand-typed this struct (PD2.1) hallucinated them.  Since they were
-    //     inserted in the MIDDLE (between facial_hair_gradient and nail_color),
-    //     EVERY subsequent field was shifted by 12 bytes, desyncing the
-    //     client's parser permanently.
-    //   • `bIsHelmetVisible` + `bIsCapeVisible` (1 byte each) — also FICTIONAL.
-    //   • `Gender`, `Race`, `Class` + 2 empty TMap lengths (11 bytes total) —
-    //     these DO exist in the SDK struct, but they are flagged `RepSkip`,
-    //     meaning UE5's default struct net serialization EXCLUDES them from
-    //     the wire stream.  Our prior IDA-RE comment (claiming they're on
-    //     the wire per off_7FF6C4A83850) was a misreading — that table is
-    //     the FULL property descriptor (including RepSkip ones), but the
-    //     RepSkip flag on the property gates them out of the net stream.
+    // These four fields ARE real, non-RepSkip members of
+    // FCharacterCustomizationSaveData and DO travel on the wire.  An earlier
+    // comment here called RacialHorns / RacialHornsLength "hallucinated" and
+    // bIsHelmetVisible / bIsCapeVisible "FICTIONAL" — that was WRONG.  The SDK
+    // dump shows all four, none carrying RepSkip:
+    //   GameSystemsPlugin_structs.hpp:15910  RacialHorns        int64 @ +0x0B0
+    //   GameSystemsPlugin_structs.hpp:15911  RacialHornsLength  float @ +0x0B8
+    //   GameSystemsPlugin_structs.hpp:15918  bIsHelmetVisible   bool  @ +0x0F0
+    //   GameSystemsPlugin_structs.hpp:15919  bIsCapeVisible     bool  @ +0x0F1
+    // Omitting them produced 184 bytes and shifted every following field early,
+    // desyncing the client's FCharacterCustomizationSaveData reader.  With the
+    // four restored (and empty DecalData + DecalBlendGroups) the struct
+    // serializes to exactly 200 bytes, matching the SDK layout.
     //
-    // Per SDK ground truth, FCharacterCustomizationSaveData has exactly 32
-    // wire-replicated fields (the 5 RepSkip fields go through other paths,
-    // notably `RaceGenderAppearanceId` set locally via `SetRace()`).
-    //
-    // Expected wire size (with empty DecalData + empty DecalBlendGroups):
-    //   8(PresetGuid) + 4(RandomSeed) + 4*4(SkinHue/Pig/Norm01/Norm02) +
-    //   4(SkinSet) + 4*8(eyes/eyebrows) + 3*8(headhair guids) + 3*4(headhair flts) +
-    //   3*8(facialhair guids) + 4*4(facialhair flts) + 2*8(facialhair colors) +
-    //   2*4(facialhair contrast/gradient) + 8(nailcolor) + 4(nailopacity) +
-    //   4(DecalData TArray len) + 4(DecalBlendGroups TArray len)
-    //   = 8+4+16+4+32+24+12+24+16+16+8+8+4+4+4 = 184 bytes  ★
-    //
-    // THIS is what the client's struct deserializer will consume — exactly
-    // the byte layout that matches its in-memory FCharacterCustomizationSaveData
-    // up to offset 0xE0 (Gender, RepSkip).
+    // RacialHorns (int64 @ +0x0B0) + RacialHornsLength (float @ +0x0B8) —
+    // emitted here in declaration order, between FacialHairGradient and
+    // NailColor.  The SDK 4-byte Pad_BC after RacialHornsLength is alignment
+    // padding and is NOT on the wire.
+    write_uint64_le(out, static_cast<uint64_t>(d.racial_horns));
+    write_float_le (out, d.racial_horns_length);
 
     write_uint64_le(out, static_cast<uint64_t>(d.nail_color));
     write_float_le (out, d.nail_opacity);
@@ -307,14 +295,32 @@ void serialize_customization_to_wire(const CharacterCustomizationData& d,
     // TArray<FCharacterDecalBlendGroup> DecalBlendGroups — empty
     write_uint32_le(out, 0);   // 0 elements
 
+    // bIsHelmetVisible (bool @ +0x0F0) + bIsCapeVisible (bool @ +0x0F1) —
+    // UE5 default struct streaming writes a non-bitfield bool property as a
+    // single 0x00/0x01 byte.  Emitted in declaration order after the two
+    // TArray counts.
+    out.push_back(d.is_helmet_visible ? 1 : 0);
+    out.push_back(d.is_cape_visible   ? 1 : 0);
+
     // ── End of wire stream — RepSkip fields below are EXCLUDED ──
     // Gender, Race, Class, FaceMorphWeightMaps, SectionsValues all carry
-    // the RepSkip flag in the SDK and are filled in locally on the client
-    // by other code paths (typically `UCharacterAppearanceComponent::SetRace`
-    // setting `RaceGenderAppearanceId` from the player's archetype).
+    // the RepSkip flag in the SDK (structs.hpp:15920-15925) and are filled in
+    // locally on the client by other code paths (typically
+    // `UCharacterAppearanceComponent::SetRace` setting `RaceGenderAppearanceId`
+    // from the player's archetype).
 
+    // Expected wire size (with empty DecalData + empty DecalBlendGroups):
+    //   8(PresetGuid) + 4(RandomSeed) + 4*4(SkinHue/Pig/Norm01/Norm02) +
+    //   4(SkinSet) + 4*8(eyes/eyebrows) + 3*8(headhair guids) + 3*4(headhair flts) +
+    //   3*8(facialhair guids) + 4*4(facialhair flts) + 2*8(facialhair colors) +
+    //   2*4(facialhair contrast/gradient) + 8(RacialHorns) + 4(RacialHornsLength) +
+    //   8(NailColor) + 4(NailOpacity) +
+    //   4(DecalData TArray len) + 4(DecalBlendGroups TArray len) +
+    //   1(bIsHelmetVisible) + 1(bIsCapeVisible)
+    //   = 8+4+16+4+32+24+12+24+16+16+8 +8+4 +8+4 +4+4 +1+1 = 200 bytes  ★
+    // 36 wire-replicated fields; the 5 RepSkip fields are excluded.
     spdlog::info("[AppearanceData] serialized customization: {} bytes "
-                 "(32 wire fields, SDK-verified; race/gender/class via SetRace path) "
+                 "(36 wire fields, SDK-verified; race/gender/class via SetRace path) "
                  "skin_hue={:.3f} eye={} hair={}",
                  out.size(), d.skin_color_hue, d.eye_color, d.head_hair);
 }
@@ -345,11 +351,10 @@ uint32_t build_appearance_payload_bits(const CharacterCustomizationData& d,
     //   0 = empty payload (just a content-block touch — relies on client
     //       falling back to local lobby data; ~0 bits payload)
     //   1 = bForceHideHeldItems only (1-bit value, ~12-15 bits total)
-    //   2 = full FCharacterCustomizationSaveData — 41 fields, ~200 bytes
-    //       (UE5 default per-property struct rep, RE'd 2026-05-05 from
-    //       FStructParams at off_7FF6C6697768 + property table at
-    //       off_7FF6C4A83850.  STRUCT_NetSerializeNative is OFF so this
-    //       struct uses default streaming, no custom NetSerialize)
+    //   2 = full FCharacterCustomizationSaveData — 36 wire fields, 200 bytes
+    //       (UE5 default per-property struct rep; STRUCT_NetSerializeNative is
+    //       OFF so this struct uses default streaming, no custom NetSerialize.
+    //       Layout SDK-verified against GameSystemsPlugin_structs.hpp:15878-15925)
     //   3 = captured pkt#78 ranger payload (16 bytes, references captured-
     //       only NetGUIDs — black screens since PM117)
     int payload_mode = 0;
@@ -385,7 +390,8 @@ uint32_t build_appearance_payload_bits(const CharacterCustomizationData& d,
         bw.write_sip(1);
         bw.write_bit(d.force_hide_held_items ? 1 : 0);
     } else if (payload_mode == 2) {
-        // Mode 2 — full struct (LIKELY BROKEN, kept for diagnostic).
+        // Mode 2 — full FCharacterCustomizationSaveData struct (200 bytes,
+        // SDK-verified layout; see serialize_customization_to_wire).
         std::vector<uint8_t> struct_bytes;
         serialize_customization_to_wire(d, struct_bytes);
         const uint32_t struct_bits = static_cast<uint32_t>(struct_bytes.size()) * 8;

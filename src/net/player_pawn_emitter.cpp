@@ -636,12 +636,29 @@ bool PlayerPawnEmitter::emit_open(const sockaddr_in& client_addr) {
                      spawn_x, spawn_x * 10);
     }
 
+    auto read_int_file = [](const char* path, int default_val) -> int {
+        std::FILE* fp = std::fopen(path, "r");
+        if (!fp) return default_val;
+        int v = default_val;
+        std::fscanf(fp, "%d", &v);
+        std::fclose(fp);
+        return v;
+    };
+
     rt.serialize_location   = true;
-    rt.quantize_location    = true;
+    rt.quantize_location    =
+        (read_int_file("probe_pawn_quantize_location.txt", 0) != 0);
+    rt.spawn_location.x     = static_cast<float>(spawn_x / 10.0);
+    rt.spawn_location.y     = static_cast<float>(spawn_y / 10.0);
+    rt.spawn_location.z     = static_cast<float>(spawn_z / 10.0);
     rt.location_scaled_x    = spawn_x;
     rt.location_scaled_y    = spawn_y;
     rt.location_scaled_z    = spawn_z;
     rt.location_max_bits    = 24;
+    if (!rt.quantize_location) {
+        spdlog::warn("[PlayerPawnEmitter] probe_pawn_quantize_location=0 -> "
+                     "forcing SerializeNewActor location to 3x double path");
+    }
     // PM101 (2026-05-04) — REVERTED PM100.  Setting serialize_rotation=true
     // and serialize_velocity=true broke the Pawn ActorOpen because our
     // actor_builder encoder writes ONLY the bSerializeRotation/Velocity
@@ -780,6 +797,23 @@ bool PlayerPawnEmitter::emit_open(const sockaddr_in& client_addr) {
                      "(probe_appearance_emit.txt absent or \"0\")");
     }
 
+    // ── BISECT (2026-06-11) — probe_pawn_minimal.txt strips ALL subobject
+    //    content blocks, emitting only the root Pawn SerializeNewActor.  The
+    //    client today throws `Bunch.IsError() after ReceivedNextBunch` on the
+    //    full Pawn ActorOpen (8 subobject content blocks) so the pawn NetGUID
+    //    16777218 is never registered (PAWN-NETGUID-REGISTRATION.md).  A bare
+    //    root SerializeNewActor that parses cleanly is enough to register the
+    //    GUID, which is the gating prerequisite for ClientRestart possession. ──
+    if (std::FILE* fp = std::fopen("probe_pawn_minimal.txt", "r")) {
+        int v = 0; std::fscanf(fp, "%d", &v); std::fclose(fp);
+        if (v != 0) {
+            spdlog::warn("[PlayerPawnEmitter] probe_pawn_minimal=1 -> stripping {} "
+                         "subobject content blocks (bare root SerializeNewActor)",
+                         pawn_schema.components.size());
+            pawn_schema.components.clear();
+        }
+    }
+
     // ── Build bunch ────────────────────────────────────────────────────
     emit::ActorBuilder builder;
     size_t bits = builder.build_spawn(pawn_schema, rt, ctx, bw);
@@ -791,7 +825,118 @@ bool PlayerPawnEmitter::emit_open(const sockaddr_in& client_addr) {
                  "for {} subobjects",
                  bits, (bits + 7) / 8, pawn_schema.components.size());
 
-    // ── Send ───────────────────────────────────────────────────────────
+    // ── 2026-06-11 — PARTIAL-BUNCH FRAGMENTATION (same fix as PC ch=3) ─────
+    //
+    // The Pawn ActorOpen carries MANY subobject content blocks (BaseCharacter
+    // Info, CombatInfo, OwnerInfo, Backpack/Equipment, appearance, …) and is
+    // the OpenActor most likely to exceed the retail server's
+    // MAX_SINGLE_BUNCH_SIZE_BITS (~3545 bits, the PC ActorOpen's confirmed
+    // split point in docs/re-plan/poss/fleet/pc-channel-identify.md §2).  A
+    // single OPEN bunch over that size trips the client's
+    // `Bunch.IsError() after ReceivedNextBunch` → "corrupted packet data" —
+    // the SAME failure the PC ActorOpen hit.  When the payload exceeds the
+    // threshold, emit it as a bPartialInitial…bPartialFinal reliable chain on
+    // ch=19 (chSeq 954 → 955), exactly like the PC fix.
+    //
+    // Gated by probe_pawn_partial_split.txt (DEFAULT 1 = auto when oversized):
+    //   0 → always single bunch (legacy)
+    //   1 → split when payload > probe_pawn_split_bit.txt (default 3545)
+    int pawn_partial_split = 1;
+    if (std::FILE* fp = std::fopen("probe_pawn_partial_split.txt", "r")) {
+        std::fscanf(fp, "%d", &pawn_partial_split);
+        std::fclose(fp);
+    }
+    uint32_t pawn_split_threshold = 3545;
+    if (std::FILE* fp = std::fopen("probe_pawn_split_bit.txt", "r")) {
+        std::fscanf(fp, "%u", &pawn_split_threshold);
+        std::fclose(fp);
+    }
+
+    // Payload bits = total bunch bits minus the (single-bunch) header.  We
+    // rebuild the payload-only stream to get an exact, header-free bit count
+    // and buffer (byte-identical to build_spawn's payload portion).
+    emit::BunchWriter pawn_payload_bw;
+    size_t pawn_payload_bits =
+        builder.build_spawn_payload(pawn_schema, rt, ctx, pawn_payload_bw);
+
+    int dump_pawn_actoropen = 0;
+    if (std::FILE* fp = std::fopen("probe_dump_pawn_actoropen.txt", "r")) {
+        std::fscanf(fp, "%d", &dump_pawn_actoropen);
+        std::fclose(fp);
+    }
+    if (dump_pawn_actoropen != 0) {
+        // Optional offline diff dump for comparing the generated Pawn
+        // ActorOpen payload and full bunch against a captured stream.
+        const size_t pay_bytes = (pawn_payload_bits + 7) / 8;
+        const size_t bunch_bytes = (bits + 7) / 8;
+        auto dump = [](const char* name, const uint8_t* d, size_t n) {
+            const std::string paths[] = {
+                std::string("dist/Release/") + name, std::string(name) };
+            for (const auto& p : paths) {
+                if (FILE* f = std::fopen(p.c_str(), "wb")) {
+                    std::fwrite(d, 1, n, f); std::fclose(f); break;
+                }
+            }
+        };
+        dump("our_pawn_payload.bin", pawn_payload_bw.data(), pay_bytes);
+        dump("our_pawn_bunch.bin",   bw.data(),             bunch_bytes);
+        auto read_probe_int = [](const char* path, int default_value) {
+            int value = default_value;
+            if (FILE* f = std::fopen(path, "r")) {
+                std::fscanf(f, "%d", &value);
+                std::fclose(f);
+            }
+            return value;
+        };
+        int level_skipped = read_probe_int("probe_pawn_skip_level.txt", 0) != 0;
+        const int level_gate = read_probe_int("probe_sna_level_gate.txt", -1);
+        if (level_gate == 0) {
+            level_skipped = 1;
+        }
+        for (const char* p : {"dist/Release/our_pawn_meta.txt", "our_pawn_meta.txt"}) {
+            if (FILE* f = std::fopen(p, "w")) {
+                std::fprintf(f,
+                    "payload_bits=%zu\nbunch_bits=%zu\nactor_netguid=%llu\n"
+                    "actor_server_id=%u\narchetype_netguid=%llu\nlevel_skipped=%d\n"
+                    "spawn_x=%d\nspawn_y=%d\nspawn_z=%d\nminimal=%d\nchannel=%u\nchseq=%u\n"
+                    "has_pme=%d\nnum_exports=%zu\n",
+                    pawn_payload_bits, bits,
+                    (unsigned long long)rt.actor_netguid, rt.actor_server_id,
+                    (unsigned long long)rt.archetype_netguid, level_skipped,
+                    spawn_x, spawn_y, spawn_z, 1, ctx.channel, ctx.ch_sequence,
+                    (int)!ctx.package_map_exports.empty(),
+                    ctx.package_map_exports.size());
+                std::fclose(f); break;
+            }
+        }
+        spdlog::warn("[PlayerPawnEmitter] dumped pawn ActorOpen payload={} bits "
+                     "({} bytes) + bunch={} bits to our_pawn_payload.bin/our_pawn_bunch.bin",
+                     pawn_payload_bits, pay_bytes, bits);
+    }
+
+    if (pawn_partial_split != 0 && pawn_payload_bits > pawn_split_threshold) {
+        const uint32_t split_bit = pawn_split_threshold;
+        spdlog::warn("[PlayerPawnEmitter] PARTIAL-SPLIT Pawn ActorOpen: "
+                     "payload={} bits > threshold={} -> b0={} b1={} (chSeq {}+{})",
+                     pawn_payload_bits, pawn_split_threshold, split_bit,
+                     pawn_payload_bits - split_bit, ctx.ch_sequence,
+                     ctx.ch_sequence + 1);
+        bool ok = host_.send_partial_open_chain(
+            client_key_, client_addr,
+            pawn_payload_bw.data(), pawn_payload_bits,
+            ctx.channel, ctx.ch_sequence, ctx.ch_name_ename_idx,
+            /*has_exports=*/!ctx.package_map_exports.empty(),
+            split_bit);
+        if (!ok) {
+            spdlog::error("[PlayerPawnEmitter] send_partial_open_chain failed");
+            return false;
+        }
+        spdlog::warn("[PlayerPawnEmitter] ★ Player Pawn ActorOpen sent "
+                     "(PARTIAL CHAIN, ch=19, NetGUID {})", pawn_obj);
+        return true;
+    }
+
+    // ── Send (single bunch — payload fits within MAX_SINGLE_BUNCH_SIZE_BITS) ─
     bool ok = host_.send_bunch_packet(client_key_, client_addr, bw.data(), bits);
     if (!ok) {
         spdlog::error("[PlayerPawnEmitter] send_bunch_packet failed");
@@ -799,8 +944,9 @@ bool PlayerPawnEmitter::emit_open(const sockaddr_in& client_addr) {
     }
 
     spdlog::warn("[PlayerPawnEmitter] ★ Player Pawn ActorOpen sent "
-                  "(PM45: native, ch=19, NetGUID {}, archetype=PlayerPawn_C)",
-                  pawn_obj);
+                  "(PM45: native, ch=19, NetGUID {}, archetype=PlayerPawn_C, "
+                  "single bunch {} payload bits)",
+                  pawn_obj, pawn_payload_bits);
     return true;
 }
 

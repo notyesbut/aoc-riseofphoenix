@@ -282,6 +282,28 @@ void NativeConnectSequencer::do_maintain() {
         }
     }
 
+    // ── PM150 (2026-06-09) — periodic World Partition cell keepalive (~1 Hz) ──
+    // Every 10th tick (10 × 100 ms ≈ 1000 ms) re-pin every relevant cell the
+    // client has reported via ServerUpdateLevelVisibility, so the GC sweep that
+    // fires when the loading screen drops can't unload them.  The host owns the
+    // relevant-cell set AND the ch=3 reliable chSeq tracker (each per-cell send
+    // uses a live, contiguous chSeq).  drive_streaming_keepalive is a no-op when
+    // the keepalive is disabled (probe_streaming_keepalive.txt=0) or the set is
+    // empty, so this is cheap until the client actually reports cells.
+    // DISABLED (2026-06-09) — realm-timeout root cause.  This 1 Hz re-pin shipped
+    // 609 ClientUpdateLevelStreamingStatus bunches on ch=3 RELIABLE in a single
+    // session, spanning the FULL 10-bit chSeq window (1..1023).  The retail
+    // client streams the WP grid autonomously (POSSESSION-RESOLUTION §4) and does
+    // NOT ack this server-driven status flood, so the outgoing-reliable buffer
+    // fills and the game-UDP NetConnection drops minutes after the loading screen
+    // drops — surfacing as "Connection to the Realm timed out".  The spawn cell
+    // is already made-visible by the one-shot CALV; the continuous re-pin is
+    // redundant and harmful.  (If post-drop GC unloads cells, re-introduce a
+    // LOW-frequency, UNRELIABLE re-pin instead — tracked in the realm-fix batch.)
+    // if ((tick_count % 10) == 0) {
+    //     host_.drive_streaming_keepalive(client_key_, *addr);
+    // }
+
     // Summary log every ~10 s (100 ticks × 100 ms)
     if ((tick_count % 100) == 0) {
         spdlog::info("[NativeConnectSequencer] Maintain tick {} "

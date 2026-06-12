@@ -18,9 +18,11 @@ Wire format from package_map_exporter.cpp:
 Find what NetGUID 7193 (subobject reference on ch=3) actually maps to.
 """
 import struct, sys, io
+from pathlib import Path
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-PATH = r"<REPO_ROOT>\dist\Release\replay_data.bin"
+REPO_ROOT = Path(__file__).resolve().parents[3]
+PATH = str(REPO_ROOT / 'dist' / 'Release' / 'replay_data.bin')
 
 def rb(buf, off, n=1):
     v = 0

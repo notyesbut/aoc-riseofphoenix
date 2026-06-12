@@ -19,7 +19,7 @@
 //    * kDynamicBase = 0x01000000 (16.7M) — well clear of captured NetGUIDs
 //      which are in the low thousands range.
 //    * Per-player block of kBlockSize = 256 GUIDs.  A player gets their
-//      PC=base, Pawn=base+1, PlayerState=base+2, plus room for components.
+//      PC=base, Pawn=base+2, PlayerState=base+4, plus room for components.
 //    * Up to (MaxPlayers) = (UINT32_MAX - kDynamicBase) / kBlockSize
 //      ≈ 16 million players.  More than enough for any realistic server.
 //

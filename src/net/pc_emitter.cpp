@@ -352,13 +352,105 @@ bool PcEmitter::emit_open(const sockaddr_in& client_addr) {
         }
     }
 
+    // ── 2026-06-11 — PARTIAL-BUNCH FRAGMENTATION (THE world-entry fix) ─────
+    //
+    // The retail server splits the 4859-bit ch=3 PC ActorOpen into a reliable
+    // partial chain (chSeq 954 [bPartialInitial, 3545 bdb] + chSeq 955
+    // [bPartialFinal, 1314 bdb]); see
+    // docs/re-plan/poss/fleet/pc-channel-identify.md §2.  We previously shipped
+    // it as ONE non-partial bunch (bdb≈4859), which the client rejects with
+    // `UChannel::ReceivedRawBunch: Bunch.IsError() after ReceivedNextBunch 1`
+    // → "Received corrupted packet data" (a single OPEN bunch whose data
+    // exceeds the server's MAX_SINGLE_BUNCH_SIZE_BITS / fails the reassembled-
+    // total validation).  Re-frame as the capture's two-fragment chain.
+    //
+    // Gated by probe_pc_partial_split.txt (DEFAULT 1 = ON, this is the fix):
+    //   0 → legacy single non-partial bunch (the old, rejected behavior)
+    //   1 → partial chain, split at probe_pc_split_bit.txt (default 3545)
+    int partial_split = 1;
+    if (std::FILE* fp = std::fopen("probe_pc_partial_split.txt", "r")) {
+        std::fscanf(fp, "%d", &partial_split);
+        std::fclose(fp);
+    }
+
+    if (partial_split != 0) {
+        // Rebuild the PAYLOAD ONLY (no single-bunch header) — byte-identical
+        // to the payload portion of the build_spawn above.
+        emit::BunchWriter payload_bw;
+        size_t payload_bits = builder.build_spawn_payload(*pc_schema, rt, ctx,
+                                                           payload_bw);
+        if (payload_bits == 0) {
+            spdlog::error("[PcEmitter] build_spawn_payload returned 0 bits");
+            return false;
+        }
+
+        int dump_pc_actoropen = 0;
+        if (std::FILE* fp = std::fopen("probe_dump_pc_actoropen.txt", "r")) {
+            std::fscanf(fp, "%d", &dump_pc_actoropen);
+            std::fclose(fp);
+        }
+        if (dump_pc_actoropen != 0) {
+            // Optional offline diff dump for comparing the generated
+            // PlayerController ActorOpen payload against a captured stream.
+            const size_t nb = (payload_bits + 7) / 8;
+            for (const char* p : {"dist/Release/our_pc_payload.bin", "our_pc_payload.bin"}) {
+                if (FILE* f = std::fopen(p, "wb")) {
+                    std::fwrite(payload_bw.data(), 1, nb, f); std::fclose(f); break;
+                }
+            }
+            for (const char* p : {"dist/Release/our_pc_meta.txt", "our_pc_meta.txt"}) {
+                if (FILE* f = std::fopen(p, "w")) {
+                    std::fprintf(f, "payload_bits=%zu\nactor_netguid=%llu\n"
+                                 "archetype_netguid=%llu\nlevel_netguid=%llu\n",
+                                 payload_bits, (unsigned long long)rt.actor_netguid,
+                                 (unsigned long long)rt.archetype_netguid,
+                                 (unsigned long long)rt.level_netguid);
+                    std::fclose(f); break;
+                }
+            }
+            spdlog::warn("[PcEmitter] dumped PC ActorOpen payload={} bits ({} bytes) to our_pc_payload.bin",
+                         payload_bits, nb);
+        }
+
+        // Split point: the capture used 3545 of 4859.  Clamp into range so the
+        // open fragment never exceeds the payload and both fragments are
+        // non-empty.  Probe-overridable for A/B sweeps of the threshold.
+        uint32_t split_bit = 3545;
+        if (std::FILE* fp = std::fopen("probe_pc_split_bit.txt", "r")) {
+            std::fscanf(fp, "%u", &split_bit);
+            std::fclose(fp);
+        }
+        if (split_bit == 0 || split_bit >= payload_bits) {
+            split_bit = static_cast<uint32_t>(payload_bits / 2);
+        }
+
+        spdlog::warn("[PcEmitter] PARTIAL-SPLIT PC ActorOpen: payload={} bits, "
+                     "split={} -> b0={} b1={} (chSeq {}+{})",
+                     payload_bits, split_bit, split_bit,
+                     payload_bits - split_bit, ctx.ch_sequence,
+                     ctx.ch_sequence + 1);
+
+        bool ok = host_.send_partial_open_chain(
+            client_key_, client_addr,
+            payload_bw.data(), payload_bits,
+            ctx.channel, ctx.ch_sequence, ctx.ch_name_ename_idx,
+            /*has_exports=*/!ctx.package_map_exports.empty(),
+            split_bit);
+        if (!ok) {
+            spdlog::error("[PcEmitter] send_partial_open_chain failed");
+            return false;
+        }
+        spdlog::warn("[PcEmitter] ★ PC ActorOpen sent (PARTIAL CHAIN)");
+        return true;
+    }
+
     bool ok = host_.send_bunch_packet(client_key_, client_addr,
                                         bw.data(), bits);
     if (!ok) {
         spdlog::error("[PcEmitter] send_bunch_packet failed");
         return false;
     }
-    spdlog::warn("[PcEmitter] ★ PC ActorOpen sent");
+    spdlog::warn("[PcEmitter] ★ PC ActorOpen sent (single bunch, legacy)");
     return true;
 }
 
@@ -726,7 +818,14 @@ bool PcEmitter::emit_pawn_link(const sockaddr_in& client_addr) {
         return n;
     };
 
-    constexpr uint32_t kClientRestartHandle = 45;
+    // RANK 4 (2026-06-09): was 45 — which is ClientSetHUD, NOT ClientRestart,
+    // so this whole bunch silently mis-dispatched and possession was never even
+    // attempted via this (the project's primary, most-developed) path.  The
+    // decompmine2 batch (clientrestart_wire, HIGH conf) confirmed ClientRestart
+    // is wire handle 31 (SIP dispatch byte 0x3E): alphabetical 0-index 26 among
+    // APlayerController FUNC_Net funcs + 5 reserved, anchored to captured
+    // ground-truth ServerNotifyLoadedWorld (wire 67 = byte 0x86).
+    constexpr uint32_t kClientRestartHandle = 31;
     const uint32_t value_num_bits  = read_uint("probe_size.txt", 136u);
     const uint32_t leading_zero_bits = read_uint("probe_lead.txt", 0u);
     // PM95 (2026-05-03): default bare_mode flipped to 4 = AOC custom-mode
@@ -1180,9 +1279,10 @@ bool PcEmitter::emit_player_state_link(const sockaddr_in& client_addr) {
 // in our test) and replies with `ClientUpdateLevelStreamingStatus` to confirm
 // each cell should stay loaded.
 //
-// Wire format reverse-engineered from APlayerController.h declaration plus
-// AOC's intern table position 0x3F0 (offset 0xB0 from ClientRestart=0x340 =
-// 22 entries, candidate handle range 65-75 — default 70).
+// Wire format reverse-engineered from APlayerController.h declaration plus the
+// rank-1 ClassNetCache table.  PM148+ fixes the selector to handle 151 written
+// as bounded SerializeInt; older 53/SIP and 70/fixed-width guesses are retained
+// only as live rollback probes.
 //
 // UFunction signature (UE 5.x):
 //   ClientUpdateLevelStreamingStatus(
@@ -1203,17 +1303,210 @@ bool PcEmitter::emit_player_state_link(const sockaddr_in& client_addr) {
 // `Verra_World_Master`.  If the cell-level granularity is required, we'll
 // expand this to iterate captured cell hashes from a probe file.
 // ───────────────────────────────────────────────────────────────────────────
+// ── PM150 — build the streaming-status bunch for ONE cell ──────────────────
+//
+// Builds (does NOT send) a ClientUpdateLevelStreamingStatus bunch for the cell
+// described by `p` into `out`.  Returns the total bit count (0 on failure).
+//
+// The 7-param UE 5.1+/5.2+ payload (declaration order, per streaming-rpc.md §1):
+//   1. FName  PackageName
+//   2. bool   bNewShouldBeLoaded
+//   3. bool   bNewShouldBeVisible
+//   4. bool   bNewShouldBlockOnLoad
+//   5. int32  LODIndex
+//   6. uint32 TransactionId (FNetLevelVisibilityTransactionId.Data)   ← PM150 fix
+//   7. bool   bNewShouldBlockOnUnload                                 ← PM150 fix
+//
+// PM148+ correction: the S->C RPC receiver reads the selector with bounded
+// SerializeInt(value, FieldCount), not SerializeIntPacked.  Default handle 151
+// / max 216 is the rank-1 ClientUpdateLevelStreamingStatus slot from
+// docs/re-plan/poss/fleet/streaming-rpc-wire.md.  A SIP rollback probe remains
+// for live A/B comparison.
+size_t PcEmitter::build_streaming_status_bunch(
+    const StreamingStatusParams& p,
+    aoc::protocol::emit::BunchWriter& out) {
+
+    if (p.package_name.empty()) {
+        spdlog::warn("[PcEmitter] build_streaming_status_bunch: empty package "
+                      "name — refusing to build");
+        return 0;
+    }
+
+    // ── Build the RPC inner payload (7 params, declaration order) ───────────
+    aoc::protocol::emit::BunchWriter inner(256);
+
+    // Param 1 — FName PackageName.  AOC FName wire format = [bIsHardcoded(1)][...]
+    // For non-hardcoded (dynamic) names: write [0][FString][int32 Number=0].
+    inner.write_bit(0);                          // bIsHardcoded = 0
+    aoc::protocol::emit::PackageMapExporter::write_fstring(inner, p.package_name);
+    inner.write_uint32(0);                       // FName.Number = 0
+
+    // Params 2-4 — three bool bits (declaration order):
+    inner.write_bit(p.should_be_loaded  ? 1 : 0);   // bNewShouldBeLoaded
+    inner.write_bit(p.should_be_visible ? 1 : 0);   // bNewShouldBeVisible
+    inner.write_bit(p.block_on_load     ? 1 : 0);   // bNewShouldBlockOnLoad
+
+    // Param 5 — int32 LODIndex (0 = full detail, non-zero selects HLOD proxy).
+    inner.write_uint32(static_cast<uint32_t>(p.lod_index));
+
+    // ── PM150 CONFIRMED-BUG FIX — params 6 & 7 were missing (33 bits short) ──
+    // Param 6 — uint32 FNetLevelVisibilityTransactionId.Data (32 bits LSB-first).
+    inner.write_uint32(p.transaction_id);
+    // Param 7 — bool bNewShouldBlockOnUnload (1 bit).
+    inner.write_bit(p.block_on_unload ? 1 : 0);
+
+    const uint32_t inner_bits = static_cast<uint32_t>(inner.bit_pos());
+
+    // ── Wrap in RPC content block ──────────────────────────────────────────
+    aoc::protocol::emit::BunchWriter rpc_payload(512);
+    uint32_t field_max = p.field_max;
+    if (field_max <= p.field_handle) {
+        const uint32_t corrected = p.field_handle + 1u;
+        spdlog::warn("[PcEmitter] keepalive field_max={} cannot encode handle={}; "
+                     "using max={} for this bunch",
+                     field_max, p.field_handle, corrected);
+        field_max = corrected;
+    }
+    auto sip_bits_for = [](uint64_t v) -> uint32_t {
+        uint32_t bits = 8;
+        while (v >= 128u) { v >>= 7; bits += 8; }
+        return bits;
+    };
+    const uint32_t selector_bits = p.use_serializeint
+        ? static_cast<uint32_t>(::ue5::serialize_int_bit_count(p.field_handle,
+                                                               field_max))
+        : sip_bits_for(p.field_handle);
+    if (p.use_serializeint) {
+        rpc_payload.write_serialize_int(p.field_handle, field_max);
+    } else {
+        rpc_payload.write_sip(p.field_handle);
+    }
+    rpc_payload.write_sip(inner_bits);                   // SIP NumPayloadBits
+    rpc_payload.write_bit_range(inner.data(), 0, inner_bits);
+    const uint32_t rpc_bits = static_cast<uint32_t>(rpc_payload.bit_pos());
+
+    aoc::protocol::emit::BunchWriter wrapped(512);
+    wrapped.write_bit(0);                        // bOutermostEnd  = 0
+    wrapped.write_bit(1);                        // bIsChannelActor = 1 (PC)
+    wrapped.write_sip(rpc_bits);                 // outer NumPayloadBits
+    wrapped.write_bit_range(rpc_payload.data(), 0, rpc_bits);
+    const uint32_t wrapped_bits = static_cast<uint32_t>(wrapped.bit_pos());
+
+    spdlog::info("[PcEmitter] keepalive build: pkg=\"{}\" selector_mode={} "
+                  "handle={} max={} selector_bits={} chSeq={} txn={} "
+                  "inner_bits={} rpc_bits={} wrapped_bits={}",
+                  p.package_name,
+                  p.use_serializeint ? "SerializeInt" : "legacy-SIP",
+                  p.field_handle, field_max, selector_bits, p.ch_sequence,
+                  p.transaction_id, inner_bits, rpc_bits, wrapped_bits);
+
+    // ── Build the bunch ────────────────────────────────────────────────────
+    aoc::protocol::emit::PropertyUpdateBunchBuilder b;
+    b.set_channel(3);
+    b.set_ch_sequence(p.ch_sequence);            // chSeq baked in by the caller
+    b.set_reliable(true);
+    b.set_ch_name_hardcoded(102);                // NAME_Actor (PC channel)
+    b.set_use_modern_inner_format(true);
+    b.set_is_rep_paused(false);
+    b.set_has_mbg(true);
+    b.add_raw_payload(wrapped.data(), wrapped_bits);
+
+    const size_t bits = b.build(out);
+    if (bits == 0) {
+        spdlog::error("[PcEmitter] keepalive: builder returned 0 bits");
+        return 0;
+    }
+    return bits;
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// PM151 — ClientSetBlockOnAsyncLoading() asset-registry pre-warm RPC
+//
+// Builds (does NOT send) the stock UE5
+// `APlayerController::ClientSetBlockOnAsyncLoading()` reliable client RPC on
+// ch=3.  Per docs/re-plan/re-appearance-asset-preload.md §b.1 this is a
+// PARAM-LESS RPC (`ProcessEvent(Func, nullptr)`): after the function selector
+// there are ZERO payload bits.
+//
+// The envelope is byte-for-byte the same shape as build_streaming_status_bunch
+// above (content block bHasRepLayout=0 / bIsActor=1 + SIP payload-size; field /
+// function handle via write_sip) — the ONLY difference is that the inner RPC
+// payload is empty, so SIP(NumPayloadBits) is SIP(0) and no value bits follow.
+//
+//   [content block]
+//     bit 0:  bOutermostEnd  = 0       (more content follows the actor block)
+//     bit 1:  bIsChannelActor = 1      (this update targets the PC actor)
+//     SIP(outer NumPayloadBits = rpc_bits)
+//     [rpc payload]
+//       SIP(field_handle)              ← function selector (default 40)
+//       SIP(inner NumPayloadBits = 0)  ← param-less ⇒ zero value bits
+//       (no value bits)
+// ───────────────────────────────────────────────────────────────────────────
+size_t PcEmitter::build_client_set_block_on_async_loading(
+    uint32_t field_handle, uint16_t ch_sequence,
+    aoc::protocol::emit::BunchWriter& out) {
+
+    // ── RPC inner payload: empty (the function takes no parameters) ─────────
+    // ProcessEvent(Func, nullptr) → 0 value bits.  Mirrors the streaming
+    // emitter's `inner` BunchWriter but with nothing written into it.
+    const uint32_t inner_bits = 0;
+
+    // ── Wrap in the RPC content block (mirror build_streaming_status_bunch) ──
+    aoc::protocol::emit::BunchWriter rpc_payload(64);
+    rpc_payload.write_sip(field_handle);                 // SIP field/function handle
+    rpc_payload.write_sip(inner_bits);                   // SIP NumPayloadBits = 0
+    // (no value bits — param-less RPC)
+    const uint32_t rpc_bits = static_cast<uint32_t>(rpc_payload.bit_pos());
+
+    aoc::protocol::emit::BunchWriter wrapped(64);
+    wrapped.write_bit(0);                        // bOutermostEnd  = 0
+    wrapped.write_bit(1);                        // bIsChannelActor = 1 (PC)
+    wrapped.write_sip(rpc_bits);                 // outer NumPayloadBits
+    wrapped.write_bit_range(rpc_payload.data(), 0, rpc_bits);
+    const uint32_t wrapped_bits = static_cast<uint32_t>(wrapped.bit_pos());
+
+    spdlog::info("[PcEmitter] async-block build: handle={} chSeq={} "
+                  "inner_bits={} rpc_bits={} wrapped_bits={}",
+                  field_handle, ch_sequence, inner_bits, rpc_bits, wrapped_bits);
+
+    // ── Build the bunch (same builder config as the streaming emitter) ──────
+    aoc::protocol::emit::PropertyUpdateBunchBuilder b;
+    b.set_channel(3);
+    b.set_ch_sequence(ch_sequence);              // chSeq baked in by the caller
+    b.set_reliable(true);
+    b.set_ch_name_hardcoded(102);                // NAME_Actor (PC channel)
+    b.set_use_modern_inner_format(true);
+    b.set_is_rep_paused(false);
+    b.set_has_mbg(true);
+    b.add_raw_payload(wrapped.data(), wrapped_bits);
+
+    const size_t bits = b.build(out);
+    if (bits == 0) {
+        spdlog::error("[PcEmitter] async-block: builder returned 0 bits");
+        return 0;
+    }
+    return bits;
+}
+
 bool PcEmitter::emit_client_update_level_streaming_status(
     const sockaddr_in& client_addr) {
 
-    // Gate on probe.  Default disabled.
+    // ── PM150 — gate on probe.  DEFAULT ENABLED. ───────────────────────────
+    // Set probe_streaming_keepalive.txt=0 to DISABLE (kill-switch).  Absent
+    // file ⇒ ENABLED.  Mirrors the probe_cic_emit default-on idiom.
     {
         std::FILE* fp = std::fopen("probe_streaming_keepalive.txt", "r");
-        if (!fp) return true;
-        int v = 0;
-        std::fscanf(fp, "%d", &v);
-        std::fclose(fp);
-        if (v == 0) return true;
+        if (fp) {
+            int v = 1;                            // default-on if file present-but-empty
+            std::fscanf(fp, "%d", &v);
+            std::fclose(fp);
+            if (v == 0) {
+                spdlog::info("[PcEmitter] streaming keepalive DISABLED "
+                              "(probe_streaming_keepalive.txt=0)");
+                return true;
+            }
+        }
+        // absent ⇒ ENABLED
     }
 
     auto read_uint = [](const char* path, uint32_t default_val) -> uint32_t {
@@ -1242,86 +1535,41 @@ bool PcEmitter::emit_client_update_level_streaming_status(
         return default_val;
     };
 
-    const uint32_t handle     = read_uint("probe_streaming_keepalive_handle.txt", 70u);
-    const uint32_t handle_max = read_uint("probe_streaming_keepalive_max.txt", 1024u);
+    // PM148+ — S->C selector is bounded SerializeInt by default.  Keep a
+    // rollback probe for the legacy SIP framing while live-tuning max 216/256.
+    const uint32_t use_sint   = read_uint("probe_streaming_keepalive_serializeint.txt", 1u);
+    const uint32_t handle     = read_uint("probe_streaming_keepalive_handle.txt", 151u);
+    const uint32_t field_max  = read_uint("probe_streaming_keepalive_max.txt", 216u);
     const uint32_t chseq      = read_uint("probe_streaming_keepalive_chseq.txt", 957u);
     const std::string package = read_string(
         "probe_streaming_keepalive_package.txt",
         "/Game/Levels/Verra_World_Master/Verra_World_Master");
 
-    spdlog::warn("[PcEmitter] emit_client_update_level_streaming_status: "
-                  "handle={} max={} chSeq={} package=\"{}\"",
-                  handle, handle_max, chseq, package);
+    spdlog::warn("[PcEmitter] emit_client_update_level_streaming_status "
+                  "(legacy one-shot prime): selector_mode={} handle={} max={} "
+                  "chSeq={} package=\"{}\"",
+                  use_sint != 0u ? "SerializeInt" : "legacy-SIP",
+                  handle, field_max, chseq, package);
 
-    // ── Build the RPC inner payload ─────────────────────────────────────────
-    aoc::protocol::emit::BunchWriter inner(256);
-
-    // FName PackageName: AOC FName wire format = [bIsHardcoded(1)][...]
-    // For non-hardcoded names: write [0][FString][int32 Number=0]
-    inner.write_bit(0);                          // bIsHardcoded = 0
-    // FString: int32 SaveNum (= 1 + chars.size() including NUL) + chars + NUL
-    aoc::protocol::emit::PackageMapExporter::write_fstring(inner, package);
-    inner.write_uint32(0);                       // Number = 0
-
-    // Three bool bits (in declaration order):
-    inner.write_bit(1);                          // bNewShouldBeLoaded   = true
-    inner.write_bit(1);                          // bNewShouldBeVisible  = true
-    inner.write_bit(0);                          // bNewShouldBlockOnLoad = false
-
-    // int32 LODIndex
-    inner.write_uint32(0);                       // LODIndex = 0
-
-    const uint32_t inner_bits = static_cast<uint32_t>(inner.bit_pos());
-
-    // ── Wrap in RPC content block ──────────────────────────────────────────
-    auto serialize_int_to = [&](aoc::protocol::emit::BunchWriter& bw,
-                                  uint32_t value, uint32_t max) {
-        uint32_t n_bits = 0;
-        if (max > 1) {
-            uint32_t v = max - 1;
-            while (v) { v >>= 1; ++n_bits; }
-        }
-        if (n_bits == 0) return;
-        bw.write_bits(static_cast<uint64_t>(value), static_cast<int>(n_bits));
-    };
-
-    aoc::protocol::emit::BunchWriter rpc_payload(512);
-    serialize_int_to(rpc_payload, handle, handle_max);   // 10 bits if max=1024
-    rpc_payload.write_sip(inner_bits);                   // SIP NumPayloadBits
-    rpc_payload.write_bit_range(inner.data(), 0, inner_bits);
-    const uint32_t rpc_bits = static_cast<uint32_t>(rpc_payload.bit_pos());
-
-    aoc::protocol::emit::BunchWriter wrapped(512);
-    wrapped.write_bit(0);                        // bOutermostEnd  = 0
-    wrapped.write_bit(1);                        // bIsChannelActor = 1 (PC)
-    wrapped.write_sip(rpc_bits);                 // outer NumPayloadBits
-    wrapped.write_bit_range(rpc_payload.data(), 0, rpc_bits);
-    const uint32_t wrapped_bits = static_cast<uint32_t>(wrapped.bit_pos());
-
-    spdlog::info("[PcEmitter] keepalive: inner_bits={} rpc_bits={} wrapped_bits={}",
-                  inner_bits, rpc_bits, wrapped_bits);
-
-    // ── Build the bunch ────────────────────────────────────────────────────
-    aoc::protocol::emit::PropertyUpdateBunchBuilder b;
-    b.set_channel(3);
-    b.set_ch_sequence(chseq);
-    b.set_reliable(true);
-    b.set_ch_name_hardcoded(102);                // NAME_Actor (PC channel)
-    b.set_use_modern_inner_format(true);
-    b.set_is_rep_paused(false);
-    b.set_has_mbg(true);
-    b.add_raw_payload(wrapped.data(), wrapped_bits);
+    // Thin wrapper: fill params from probe defaults, build, send via the
+    // (verbatim) send_bunch_packet path with the STATIC chSeq.  The per-cell,
+    // live-chSeq periodic path is GameServer::emit_level_streaming_status.
+    StreamingStatusParams p;
+    p.package_name = package;
+    p.field_handle = handle;
+    p.field_max    = field_max;
+    p.use_serializeint = (use_sint != 0u);
+    p.ch_sequence  = static_cast<uint16_t>(chseq);
+    // transaction_id / bools left at defaults (loaded+visible, LOD 0).
 
     aoc::protocol::emit::BunchWriter bw(512);
-    const size_t bits = b.build(bw);
-    if (bits == 0) {
-        spdlog::error("[PcEmitter] keepalive: builder returned 0 bits");
-        return false;
-    }
+    const size_t bits = build_streaming_status_bunch(p, bw);
+    if (bits == 0) return false;
 
     const bool ok = host_.send_bunch_packet(client_key_, client_addr,
                                               bw.data(), bits);
-    spdlog::warn("[PcEmitter] keepalive sent: bits={} ok={}", bits, ok);
+    spdlog::warn("[PcEmitter] keepalive sent (legacy one-shot): bits={} ok={}",
+                  bits, ok);
     return ok;
 }
 

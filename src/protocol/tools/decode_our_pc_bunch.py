@@ -18,7 +18,8 @@ sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
 from phase1_parser import decode_bunch_data, read_bit, read_bits_le
 
-OUR_BUNCH = Path(r'<REPO_ROOT>\dist\Release\our_pc_bunch.bin')
+REPO_ROOT = Path(__file__).resolve().parents[3]
+OUR_BUNCH = REPO_ROOT / 'dist' / 'Release' / 'our_pc_bunch.bin'
 
 
 def main():

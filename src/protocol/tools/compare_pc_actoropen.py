@@ -22,7 +22,8 @@ from phase1_parser import parse_packet, read_bit
 from walk_replay_props import load_packets, REPLAY
 from reassemble_and_extract_appearance import reassemble_partials
 
-OUR_BUNCH = Path(r'<REPO_ROOT>\dist\Release\our_pc_bunch.bin')
+REPO_ROOT = Path(__file__).resolve().parents[3]
+OUR_BUNCH = REPO_ROOT / 'dist' / 'Release' / 'our_pc_bunch.bin'
 
 
 def main():

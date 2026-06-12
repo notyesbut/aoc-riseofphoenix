@@ -31,6 +31,15 @@ src/protocol/tools/newnode_phase1.json
 src/protocol/tools/bard_login.jsonl
 
 # ──────────────────────────────────────────────────────────────────────────
+# Local tool state and one-off RE scratch
+# ──────────────────────────────────────────────────────────────────────────
+.claude/
+CLAUDE.md
+AGENTS.md
+src/protocol/tools/_*
+ghidra-out/
+
+# ──────────────────────────────────────────────────────────────────────────
 # Build outputs
 # ──────────────────────────────────────────────────────────────────────────
 build/

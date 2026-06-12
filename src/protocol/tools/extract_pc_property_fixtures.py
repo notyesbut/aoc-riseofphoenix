@@ -27,7 +27,8 @@ sys.stdout.reconfigure(encoding='utf-8')
 sys.path.insert(0, str(HERE.parent.parent.parent / 'tools'))
 import replay_decoder as rd
 
-REPLAY = Path('<REPO_ROOT>/dist/Release/replay_data.bin')
+REPO_ROOT = Path(__file__).resolve().parents[3]
+REPLAY = REPO_ROOT / 'dist' / 'Release' / 'replay_data.bin'
 
 print(f"Loading {REPLAY}")
 replay = rd.load_replay(str(REPLAY))

@@ -42,6 +42,51 @@ bool encode_raw_bits(const RawBits& rb, BunchWriter& w) {
     return true;
 }
 
+/// FArrayProperty encoder.
+///
+/// Wire format (UE5 dynamic-array / "Function C", per
+/// actor_builder.cpp:608-622 RE finding "real TArrays always prefix with
+/// uint16 count"):
+///
+///   [uint16 count]                  — element count, LSB-first, max 65534
+///   [count × element body]          — each via encode_property(element_desc)
+///
+/// The element type comes from `desc.element_desc` (a single descriptor
+/// shared by every element).  The PropertyValue holds an ArrayValue whose
+/// `elements` are the per-element PropertyValues in order.
+bool encode_farray(const ReplicatedPropertyDesc& desc,
+                   const PropertyValue&          value,
+                   BunchWriter&                  writer) {
+    const ArrayValue* av = std::get_if<ArrayValue>(&value.payload);
+    if (!av) {
+        spdlog::error("[replayout/encode_farray] property '{}' expected "
+                      "ArrayValue payload", desc.name);
+        return false;
+    }
+    if (!desc.element_desc) {
+        spdlog::error("[replayout/encode_farray] property '{}' has no "
+                      "element_desc — cannot encode {} elements",
+                      desc.name, av->elements.size());
+        return false;
+    }
+    if (av->elements.size() >= 0xFFFFu) {
+        spdlog::error("[replayout/encode_farray] property '{}' too large "
+                      "({} elements) for uint16 count prefix",
+                      desc.name, av->elements.size());
+        return false;
+    }
+
+    writer.write_uint16(static_cast<uint16_t>(av->elements.size()));
+    for (const auto& elem : av->elements) {
+        if (!encode_property(*desc.element_desc, elem, writer)) {
+            spdlog::error("[replayout/encode_farray] property '{}' element "
+                          "encode failed", desc.name);
+            return false;
+        }
+    }
+    return true;
+}
+
 } // namespace
 
 bool encode_property(const ReplicatedPropertyDesc& desc,
@@ -65,11 +110,11 @@ bool encode_property(const ReplicatedPropertyDesc& desc,
         case FPropertyType::Double: return encode_fdouble(value, writer);
         case FPropertyType::Object: return encode_fobject(value, writer);
         case FPropertyType::Struct: return encode_fstruct(desc, value, writer);
+        case FPropertyType::Array:  return encode_farray (desc, value, writer);
 
         case FPropertyType::Name:
         case FPropertyType::Text:
         case FPropertyType::SoftObject:
-        case FPropertyType::Array:
         case FPropertyType::Map:
         case FPropertyType::Set:
             spdlog::warn("[replayout/encode_property] no encoder yet for type "

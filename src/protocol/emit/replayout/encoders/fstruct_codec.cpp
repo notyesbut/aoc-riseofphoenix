@@ -8,6 +8,8 @@
 
 #include "spdlog/spdlog.h"
 
+#include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <functional>
 #include <unordered_map>
@@ -185,44 +187,146 @@ bool encode_frotator(const PropertyValue& v, BunchWriter& w) {
     return write_triple_double(v, w, "encode_frotator");
 }
 
-// ─── FVector_NetQuantize* — stubs ────────────────────────────────────
+// ─── FVector_NetQuantize* — UE5 SerializePackedVector<Scale, MaxBits> ──
 //
-// These use UE5's WritePackedVector<Precision, MaxBits>:
-//   bit 0          : "all zero?" flag
-//   bits 1..2      : component byte-count (SerializeInt(max MaxBits+1))
-//   remaining      : per-component packed ints, with sign bit + magnitude
+// Ported from ActorBuilder::write_packed_vector (actor_builder.cpp:63-95)
+// which implements UE5's WritePackedVector<Scale, MaxBitsPerComponent>
+// (Engine/Private/NetSerialization.h).  Wire format per component triple:
 //
-// Fleshing this out requires matching UE5's integer packing exactly.
-// We'll do it when we see divergence on SpawnLocation or similar.
-// For now, stub returns false so the RawBits fallback kicks in when the
-// caller handles it — but the caller MUST supply explicit bit length
-// from another mechanism.
+//   Bits = min( CeilLogTwo(|maxAbs|+1) + 1, MaxBits )      // +1 for sign
+//   SerializeInt(Bits, MaxBits + 1)                         // header
+//   For each axis (X, Y, Z):
+//     Bits bits of ((scaledValue + Bias) & Mask)            // OFFSET BINARY
+//       where Bias = 1 << (Bits-1), Mask = (1 << Bits) - 1
+//
+// `scaledValue` is round(component * Scale) — an integer.  Offset-binary
+// means the top bit naturally carries the sign (MSB=1 ⇒ negative).
+//
+// The PropertyValue representation is identical to plain FVector/FRotator:
+// a 3-field StructValue of doubles holding the *unscaled* world-space
+// component values.  Quantization (×Scale, round) happens at encode time
+// and is undone (÷Scale) at decode time, so a value that survives the
+// quantization grid round-trips exactly.
+//
+// UE5 Scale/MaxBits per variant (Engine/Classes/Engine/NetSerialization.h):
+//   FVector_NetQuantize    : Scale=1   MaxBits=20
+//   FVector_NetQuantize10  : Scale=10  MaxBits=24
+//   FVector_NetQuantize100 : Scale=100 MaxBits=30
 
-PropertyValue decode_fvector_netquantize(::aoc::protocol::wire::PacketReader&) {
-    spdlog::warn("[replayout/decode_fvector_netquantize] not implemented yet");
-    return {};
-}
-bool encode_fvector_netquantize(const PropertyValue&, BunchWriter&) {
-    spdlog::warn("[replayout/encode_fvector_netquantize] not implemented yet");
-    return false;
+namespace {
+
+/// FMath::CeilLogTwo — smallest k such that (1 << k) >= n.  Matches the
+/// helper in actor_builder.cpp (CeilLogTwo(0)=0, CeilLogTwo(1)=0, ...).
+inline uint32_t ceil_log_two(uint32_t n) {
+    if (n <= 1) return 0;
+    uint32_t k = 0;
+    uint32_t v = n - 1;
+    while (v) { v >>= 1; ++k; }
+    return k;
 }
 
-PropertyValue decode_fvector_netquantize10(::aoc::protocol::wire::PacketReader&) {
-    spdlog::warn("[replayout/decode_fvector_netquantize10] not implemented yet");
-    return {};
-}
-bool encode_fvector_netquantize10(const PropertyValue&, BunchWriter&) {
-    spdlog::warn("[replayout/encode_fvector_netquantize10] not implemented yet");
-    return false;
+inline uint64_t abs64(int64_t v) {
+    return v < 0 ? static_cast<uint64_t>(-v) : static_cast<uint64_t>(v);
 }
 
-PropertyValue decode_fvector_netquantize100(::aoc::protocol::wire::PacketReader&) {
-    spdlog::warn("[replayout/decode_fvector_netquantize100] not implemented yet");
-    return {};
+/// Encode a 3-double StructValue as a packed vector with the given scale
+/// and max-bits-per-component.  Mirrors actor_builder.cpp:write_packed_vector.
+bool write_packed_vector_struct(const PropertyValue& value, BunchWriter& w,
+                                 double scale, int max_bits,
+                                 const char* label) {
+    const StructValue* sv = std::get_if<StructValue>(&value.payload);
+    if (!sv || sv->fields.size() != 3) {
+        spdlog::error("[replayout/{}] expected 3-field StructValue", label);
+        return false;
+    }
+
+    // Scale + round each component to an integer (UE5 FMath::RoundToInt).
+    int64_t comps[3];
+    for (int i = 0; i < 3; ++i) {
+        const double* d = std::get_if<double>(&sv->fields[i].payload);
+        if (!d) {
+            spdlog::error("[replayout/{}] field {} not a double", label, i);
+            return false;
+        }
+        comps[i] = static_cast<int64_t>(std::llround(*d * scale));
+    }
+
+    const uint64_t max_abs =
+        std::max(abs64(comps[0]), std::max(abs64(comps[1]), abs64(comps[2])));
+
+    // Bits = CeilLogTwo(max_abs + 1) + 1   (clamped to max_bits)
+    uint32_t bits = ceil_log_two(static_cast<uint32_t>(max_abs + 1)) + 1;
+    if (bits > static_cast<uint32_t>(max_bits)) {
+        bits = static_cast<uint32_t>(max_bits);
+    }
+
+    // Header: SerializeInt(bits, max_bits + 1)
+    w.write_serialize_int(bits, static_cast<uint32_t>(max_bits) + 1);
+
+    // Offset-binary per component.
+    const uint64_t bias = 1ULL << (bits - 1);
+    const uint64_t mask = (bits >= 64) ? ~0ULL : ((1ULL << bits) - 1);
+    for (int i = 0; i < 3; ++i) {
+        int64_t  biased  = comps[i] + static_cast<int64_t>(bias);
+        uint64_t encoded = static_cast<uint64_t>(biased) & mask;
+        w.write_bits(encoded, static_cast<int>(bits));
+    }
+    return true;
 }
-bool encode_fvector_netquantize100(const PropertyValue&, BunchWriter&) {
-    spdlog::warn("[replayout/encode_fvector_netquantize100] not implemented yet");
-    return false;
+
+/// Decode a packed vector into a 3-double StructValue, undoing the scale.
+PropertyValue read_packed_vector_struct(::aoc::protocol::wire::PacketReader& r,
+                                        double scale, int max_bits) {
+    // Header: SerializeInt(max_bits + 1) gives bits-per-component.
+    uint32_t bits = r.read_serialize_int(static_cast<uint32_t>(max_bits) + 1);
+    if (r.overflowed() || bits == 0 || bits > 64) {
+        return {};
+    }
+
+    const uint64_t bias = 1ULL << (bits - 1);
+    const double inv_scale = 1.0 / scale;
+
+    StructValue sv;
+    sv.fields.reserve(3);
+    for (int i = 0; i < 3; ++i) {
+        if (r.overflowed()) return {};
+        uint64_t encoded = r.read_bits(static_cast<int>(bits));
+        if (r.overflowed()) return {};
+        // Undo offset-binary: signed = encoded - bias.
+        int64_t signed_val =
+            static_cast<int64_t>(encoded) - static_cast<int64_t>(bias);
+        PropertyValue v;
+        v.type = FPropertyType::Double;
+        v.payload = static_cast<double>(signed_val) * inv_scale;
+        sv.fields.push_back(std::move(v));
+    }
+    return PropertyValue::make_struct(std::move(sv));
+}
+
+} // namespace
+
+PropertyValue decode_fvector_netquantize(::aoc::protocol::wire::PacketReader& r) {
+    return read_packed_vector_struct(r, /*scale=*/1.0, /*max_bits=*/20);
+}
+bool encode_fvector_netquantize(const PropertyValue& v, BunchWriter& w) {
+    return write_packed_vector_struct(v, w, /*scale=*/1.0, /*max_bits=*/20,
+                                      "encode_fvector_netquantize");
+}
+
+PropertyValue decode_fvector_netquantize10(::aoc::protocol::wire::PacketReader& r) {
+    return read_packed_vector_struct(r, /*scale=*/10.0, /*max_bits=*/24);
+}
+bool encode_fvector_netquantize10(const PropertyValue& v, BunchWriter& w) {
+    return write_packed_vector_struct(v, w, /*scale=*/10.0, /*max_bits=*/24,
+                                      "encode_fvector_netquantize10");
+}
+
+PropertyValue decode_fvector_netquantize100(::aoc::protocol::wire::PacketReader& r) {
+    return read_packed_vector_struct(r, /*scale=*/100.0, /*max_bits=*/30);
+}
+bool encode_fvector_netquantize100(const PropertyValue& v, BunchWriter& w) {
+    return write_packed_vector_struct(v, w, /*scale=*/100.0, /*max_bits=*/30,
+                                      "encode_fvector_netquantize100");
 }
 
 // ─── FRepMovement — stub ────────────────────────────────────────────

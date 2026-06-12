@@ -32,6 +32,8 @@
 #include <memory>
 #include <vector>
 #include <csignal>
+#include <cstdlib>
+#include <system_error>
 #include <filesystem>
 
 // ─── gRPC interceptor to log ALL incoming requests ──────────────────────────
@@ -378,17 +380,30 @@ int main(int argc, char* argv[]) {
         spdlog::info("EAC mode: game will launch via bootstrapper '{}'", game_exe);
     }
 
-    // Auto-detect game path from Steam if not provided
+    // Auto-detect game path if not provided.
+    // 1) GAME_ROOT env override (set by launch scripts / the user).
     if (game_path.empty()) {
-        // Common Steam library paths to check
-        std::vector<std::string> steam_paths = {
+        if (const char* gr = std::getenv("GAME_ROOT")) {
+            std::error_code ec;
+            if (gr[0] != '\0' && fs::exists(gr, ec)) {
+                game_path = gr;
+                spdlog::info("Using GAME_ROOT game path: {}", game_path);
+            }
+        }
+    }
+    // 2) Common Steam library locations.  NOTE: use the non-throwing
+    //    fs::exists(path, error_code) overload — the throwing overload aborts
+    //    the process (STATUS_STACK_BUFFER_OVERRUN) when a hardcoded path lives
+    //    on a drive letter that does not exist on this machine.
+    if (game_path.empty()) {
+        const std::vector<std::string> steam_paths = {
             "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Ashes of Creation\\Game",
             "C:\\Program Files\\Steam\\steamapps\\common\\Ashes of Creation\\Game",
-            "D:\\SteamLibrary\\steamapps\\common\\Ashes of Creation\\Game",
-            "E:\\SteamLibrary\\steamapps\\common\\Ashes of Creation\\Game",
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Ashes of Creation Playtest\\Game",
         };
         for (const auto& p : steam_paths) {
-            if (fs::exists(p)) {
+            std::error_code ec;
+            if (fs::exists(p, ec)) {
                 game_path = p;
                 spdlog::info("Auto-detected game path: {}", game_path);
                 break;

@@ -4,6 +4,9 @@ captured ch=3 update (pkt#30) to find structural differences.
 
 Generated 2026-04-26 to diagnose why V3 spectator silently dropped."""
 import struct, sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
 
 # UE5 wire-format primitives (same as ue5_primitives.h)
 def write_bits(buf, off, value, n):
@@ -145,7 +148,7 @@ v, b = read_bit(buf, b);   print(f"    end marker   = {v}")
 print("\n" + "=" * 72)
 print("CAPTURED pkt#30 ch=3 update — bit-aligned header decode")
 print("=" * 72)
-PATH = r"<REPO_ROOT>\dist\Release\replay_data.bin"
+PATH = str(REPO_ROOT / 'dist' / 'Release' / 'replay_data.bin')
 with open(PATH, 'rb') as f:
     data = f.read()
 
