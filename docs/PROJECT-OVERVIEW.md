@@ -18,7 +18,7 @@ Current public snapshot: [`re-plan/PUBLIC-PROGRESS-2026-06-12.md`](re-plan/PUBLI
 
 - **Replay-driven smoke path.** `scripts\launch_all.bat` remains the regression baseline for the captured S>C flow.
 - **Four-process loopback stack:** auth/launcher, `aoc_server` (UDP:443), `tether_server` (UDP:19021), and launcher/client helpers.
-- **20 registered tests pass through `scripts\build.ps1 -Test`.** Coverage includes bit-level packet parsing, replayout codecs, packet fixtures, ActorBuilder, dispatcher/session state, LiveWorld, NMT packet builders, PackageMap export, and PC/Pawn spawn diff harnesses.
+- **20 registered test executables pass through `scripts\build.ps1 -Test`.** This is the full test-target suite present in upstream `9e32e15`, not a reduction of the older "148 tests" claim; that legacy number counted internal assertions inside a smaller subset of harnesses. Coverage includes bit-level packet parsing, replayout codecs, packet fixtures, ActorBuilder, dispatcher/session state, LiveWorld, NMT packet builders, PackageMap export, and PC/Pawn spawn diff harnesses.
 - **Native NMT replies** (`NMT_Challenge`, `NMT_Welcome`, `NMT_NetGUIDAssign`) emit byte-identical to capture.
 - **Native ActorOpen/SNA path has advanced.** The current native path emits package-map exports, `SerializeNewActor`, even-stride dynamic NetGUIDs, and a minimal valid actor-root content tail.
 - **Structured SULV → CALV probe path.** The server parses client `ServerUpdateLevelVisibility` payloads, queues `ClientAckUpdateLevelVisibility`, and now reaches the client-side CALV RPC parameter reader.
@@ -106,7 +106,7 @@ Each Bunch:
   Payload (BDB bits)
 ```
 
-Confidence: **VERIFIED-FROM-CODE** (captured fixture round-trips plus the current 20-test registered suite).
+Confidence: **VERIFIED-FROM-CODE** (captured fixture round-trips plus the current 20-executable registered suite).
 
 #### Critical AoC deviations from stock UE5
 
@@ -238,7 +238,7 @@ The full ActorOpen catalog across 2000 captured packets shows **359 unique actor
 See [README.md](../README.md) for prerequisites (VS 2022, CMake 3.22+, vcpkg, retail AoC client).
 
 ```powershell
-# Build + test (20 registered tests, all green expected)
+# Build + test (20 registered test executables, all green expected)
 .\scripts\build.ps1 -Configure
 .\scripts\build.ps1 -Test
 
