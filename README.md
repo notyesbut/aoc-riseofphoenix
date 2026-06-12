@@ -10,24 +10,26 @@ It's an educational, non-commercial effort. No game assets are redistributed. No
 
 ## Status
 
-| Phase | What works |
+Current public snapshot: [`docs/re-plan/PUBLIC-PROGRESS-2026-06-12.md`](./docs/re-plan/PUBLIC-PROGRESS-2026-06-12.md).
+
+There are two useful modes:
+
+| Mode | Current state |
 |---|---|
-| Handshake | StatelessConnect, NMT, IntrepidNetDriver custom flags |
-| Login | Auth server, character select, lobby transitions |
-| World load | `LoadMap` to `/Game/Levels/Verra_World_Master`, World Partition initializes |
-| Spawn | PC + Pawn + PlayerState replicated, NetGUIDs registered, real Riverlands coordinates |
-| Possession | `ClientRestart` RPC dispatched, `ServerAcknowledgePossession` flows back |
-| Rendering | Verra terrain visible (HLOD level), player nameplate at correct location |
+| Replay baseline (`launch_all.bat`) | Plays the captured pre-shutdown stream and remains the regression smoke test. Useful for verifying that login, map load, and the client/proxy stack still work. |
+| Native synthesis (`launch_all_native.bat`) | Active development path. Builds post-NMT traffic from server state and current RE findings. It now reaches the client-side `ClientAckUpdateLevelVisibility` RPC parameter reader, but stable world streaming is still blocked by a CALV payload bit-consumption mismatch. |
 
 | Currently broken / WIP |
 |---|
-| 60-second client timeout (no continuous actor data — fix in progress) |
-| Streaming cells unload after loading screen drops (HLOD-only view) |
-| No visible character mesh — appearance replication needs more work |
+| Native mode is not yet a stable playable server. |
+| `ClientAckUpdateLevelVisibility` parameter serialization still mismatches the retail client reader. |
+| Full ActorOpen property/subobject fidelity is still behind the minimal valid content-tail path. |
+| Streaming cell visibility is not stable until CALV is exact. |
+| Visible character mesh and detailed appearance replication need more work. |
 | No movement reconciliation — `ServerMove` parsed but not echoed |
-| Single-player only — multi-client testing is ahead of us |
+| Multi-client testing is ahead of us |
 
-**TL;DR:** you can connect, log in, possess your character, and look around Verra for ~60 seconds before the client disconnects. Body mesh and detailed world streaming are the next blockers.
+**TL;DR:** replay mode is the "does the old captured flow still work" baseline. Native mode has progressed past outer ActorOpen/content-block framing into the CALV RPC reader, but the server is not yet stable/playable until the remaining CALV parameter layout is derived from the current retail client.
 
 ---
 
@@ -37,9 +39,10 @@ This is **not** a complete game server. It's a wire-format emulator. There's no 
 
 - A **C++ networking stack** that speaks UE5 / IntrepidNetDriver wire protocol (handshake, packet notify, bunches, NetGUID exports, RepLayout property streams).
 - An **actor synthesis pipeline** (`ActorBuilder`, `PropertyUpdateBunchBuilder`, per-class emitters in `src/net/*_emitter.cpp`) that constructs PC / Pawn / PlayerState ActorOpen bunches from schema definitions.
-- A **PC-tail splice mechanism** that takes the captured PC ActorOpen's RepLayout property tail and substitutes its captured per-session NetGUIDs with our minted ones at the correct bit offsets — the only way to get the PC's initial property state correct without a full RepLayout decoder.
+- A **minimal ActorOpen content-tail path** that registers NetGUIDs cleanly while full property/subobject fidelity is still being derived.
+- A **probeable PC-tail / content-block path** kept for byte-diffing and for restoring richer property state once the current client reader layout is fully understood.
 - A **NetGUID allocator** (`src/protocol/net_guid_allocator.h`) that hands fresh dynamic GUID blocks per connecting client.
-- **Reverse-engineering tooling** (`src/protocol/tools/`): Python decoders for captured replays, IDA scripts for client binary analysis, fixture extractors, a YLPR replay format walker.
+- **Reverse-engineering tooling** (`src/protocol/tools/`, `tools/ghidra/`): Python decoders for captured replays, IDA scripts for client binary analysis, fixture extractors, a YLPR replay format walker, and targeted Ghidra decompile helpers.
 - **Captured-replay fixtures** (`src/net/captured_*.h` and `fixtures/replay_data.bin`): bit-perfect snippets of the original AoC server's wire output, used as ground truth.
 - **IDA Pro decompilation dumps** (`docs/ida-dumps/`): ~350 raw RE artifacts — Hex-Rays pseudocode for individual functions, keyword-driven topic analyses (NetGUID, PackageMap, bunch parser, RPC tables), and working notes. This is the research substrate the wire-format work is built on. Every `sub_XXXXXXXX` or `0xXXXXXXXX` reference in source comments has a matching `.txt` in there.
 - **AoC client SDK dump** (`docs/aoc-sdk/`): full Dumper-7 output for the Alpha-2 client (engine `5.6.0-438018+++game+jvs_game_rel-AOC`). Contains the C++ class hierarchy, property offsets, function signatures, GObjects table, and IDA name mappings. Lets you cross-reference any class/property mentioned in source comments without re-running the dumper yourself.
@@ -95,8 +98,8 @@ The aoc_server is where 95% of the interesting work happens: parsing incoming bu
 ### Prerequisites
 
 - **Windows 10/11 x64**
-- **Visual Studio 2022** with the *Desktop development with C++* workload
-- **CMake 3.22+**
+- **Visual Studio Build Tools 2026** or **Visual Studio 2022** with the *Desktop development with C++* workload. `scripts\build.ps1` auto-selects the matching Visual Studio generator.
+- **CMake 3.22+** (tested locally with CMake 4.3.x)
 - **vcpkg** (manifest mode supported via `vcpkg.json`) — set `VCPKG_ROOT`
 - A local installation of the **retail AoC game client** (the binary, not the source — Intrepid never released source). Default expected path: `C:\Ashes of Creation\Game`. Override with the `GAME_ROOT` env var.
 - **Git**
@@ -145,7 +148,7 @@ The server feeds the AoC client a captured pre-shutdown S→C packet stream from
 Behind the scenes: `aoc_server.exe --replay replay_data.bin` (replay thread enabled, fires captured packets in sequence with timing).
 
 **`launch_all_native.bat` — native synthesis (active development).**
-The server's `NativeConnectSequencer` + `WorldBootstrapEmitter` construct **every post-NMT bunch from scratch** using `ActorBuilder` / `PropertyUpdateBunchBuilder` and the per-class emitters in `src/net/`. The captured replay is still loaded so the bootstrap plan can splice individual rows we haven't fully RE'd yet, but the replay packet thread is disabled (`--no-replay-loop`) — the native sequencer is the sole driver. This is the path everything from PM107 onward targets: Riverlands spawn coords, real per-session NetGUIDs, possession via from-scratch `ClientRestart`, the planned PM148 periodic-actor-traffic fix, the planned `ClientUpdateLevelStreamingStatus` keepalive, and eventually the visible-mesh appearance flow. It's where contributors will spend most of their time.
+The server's `NativeConnectSequencer` + `WorldBootstrapEmitter` drive post-NMT traffic using `ActorBuilder` / `PropertyUpdateBunchBuilder` and the per-class emitters in `src/net/`. The captured replay is still loaded so the bootstrap plan can splice rows we have not fully RE'd yet, but the replay packet thread is disabled (`--no-replay-loop`) — the native sequencer is the sole driver. This path now covers Riverlands spawn coords, per-session NetGUIDs, minimal ActorOpen content-tail registration, structured SULV parsing, and CALV probe emission. The current blocker is the exact `ClientAckUpdateLevelVisibility` parameter layout, not the outer content-block framing.
 
 Behind the scenes: `aoc_server.exe --native --replay replay_data.bin --no-replay-loop`.
 
@@ -154,9 +157,7 @@ In short — **`launch_all.bat` is the "does it still work" smoke test; `launch_
 ### Run tests only
 
 ```powershell
-dist\Release\test_replayout_codecs.exe       # primitive-codec tests
-dist\Release\test_replay_mutator.exe         # mutation round-trip tests
-dist\Release\test_pkt104_round_trip.exe      # captured FString round-trip
+.\scripts\build.ps1 -Test                    # builds and runs the registered test suite
 ```
 
 ---
@@ -209,10 +210,11 @@ AoC-RiseOfPhoenix/
 If you want to understand the project end-to-end:
 
 1. **[`docs/PROJECT-OVERVIEW.md`](./docs/PROJECT-OVERVIEW.md)** — single consolidated entry point: current state, architecture, RE catalog, roadmap.
-2. **[`docs/architecture.md`](./docs/architecture.md)** — 10,000-ft component layout.
-3. **[`docs/wire-format.md`](./docs/wire-format.md)** — authoritative wire-format spec.
-4. **[`docs/phase-ii-postmortem.md`](./docs/phase-ii-postmortem.md)** — what didn't work and why (replay-mutation approach).
-5. **[`docs/phase-iii-roadmap.md`](./docs/phase-iii-roadmap.md)** — active roadmap.
+2. **[`docs/re-plan/PUBLIC-PROGRESS-2026-06-12.md`](./docs/re-plan/PUBLIC-PROGRESS-2026-06-12.md)** — current sanitized native-server progress and blockers.
+3. **[`docs/architecture.md`](./docs/architecture.md)** — 10,000-ft component layout.
+4. **[`docs/wire-format.md`](./docs/wire-format.md)** — authoritative wire-format spec.
+5. **[`docs/phase-ii-postmortem.md`](./docs/phase-ii-postmortem.md)** — what didn't work and why (replay-mutation approach).
+6. **[`docs/phase-iii-roadmap.md`](./docs/phase-iii-roadmap.md)** — historical Phase III plan plus current update note.
 
 Then look at:
 
@@ -227,15 +229,14 @@ Then look at:
 | Milestone | Description |
 |---|---|
 | ✅ M1 | Handshake, login, character select |
-| ✅ M2 | World load, possession, terrain visible |
-| 🚧 PM148 | Continuous actor traffic to defeat the 60s client timeout |
-| ⏭ PM149 | Live `ServerMove` parsing → server-side position tracking |
-| ⏭ PM150 | `ClientUpdateLevelStreamingStatus` for cell keepalive (full-detail world) |
-| ⏭ PM151 | `CharacterAppearanceComponent` replication → visible body mesh |
-| ⏭ PM152 | First multi-client smoke test |
+| ✅ M2 | Replay-driven world-load baseline |
+| ✅ PM148-PM152 partials | Native ActorOpen/SNA/content-tail, ClientRestart, SULV parser, CALV probe matrix |
+| 🚧 Current blocker | Exact `ClientAckUpdateLevelVisibility` parameter serialization |
+| ⏭ Next | Replace CALV probes with one proven layout, then restore full ActorOpen property/subobject fidelity |
+| ⏭ Later | Live `ServerMove` echo, visible mesh/appearance, multi-client smoke |
 | ⏭ Phase IV | Schema-driven RepLayout for actors beyond PC/Pawn/PS (NPCs, items) |
 
-PM = "Progress Milestone." Each is a discrete RE / wire-format unblock. The codebase has ~150 of these tagged in commit messages and source comments.
+PM = "Progress Milestone." Each is a discrete RE / wire-format unblock. The active status is tracked in `docs/re-plan/` rather than only in commit history.
 
 ---
 

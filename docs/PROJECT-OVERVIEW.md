@@ -6,32 +6,35 @@
 
 ## 1. What this project is
 
-`AoC-RiseOfPhoenix` is a **private, educational reverse-engineering project** targeting the networking layer of *Ashes of Creation* — Intrepid Studios' UE5-based MMO. It impersonates the four Intrepid services the retail client expects (auth, launcher, game, tether) on `127.0.0.1` so the unmodified shipping client logs in and renders a character against our local stack. Today it works as a **replay emulator** that streams a captured S>C session bit-for-bit; the active development frontier is replacing replay with **live, server-synthesised bunches** built from authoritative state.
+`AoC-RiseOfPhoenix` is an educational reverse-engineering project targeting the networking layer of *Ashes of Creation* — Intrepid Studios' UE5-based MMO. It impersonates the Intrepid services the retail client expects (auth, launcher, game, tether) on loopback so the unmodified shipping client can talk to a local stack. The stable baseline is still replay-driven; the active development frontier is replacing replay with **live, server-synthesised bunches** built from authoritative state.
 
 ---
 
 ## 2. Current state
 
+Current public snapshot: [`re-plan/PUBLIC-PROGRESS-2026-06-12.md`](re-plan/PUBLIC-PROGRESS-2026-06-12.md).
+
 ### What works today (VERIFIED-FROM-CODE)
 
-- **Full handshake → world-entry via captured replay.** Stock UE5 `StatelessConnect` + NMT_Hello/Welcome/NetSpeed/Join → captured bytes stream from `fixtures/replay_data.bin` → client renders the captured "RandomChar" in Verra_World_Master, stays connected indefinitely via keepalives.
-- **Four-process loopback stack:** `auth_server` (HTTPS:8081), `aoc_server` (UDP:443), `tether_server` (UDP:19021), `launcher` (Qt/native). Launched via `scripts\launch_all.bat`.
-- **148 green tests.** Bit-level wire primitives, FString round-trip, all primitive `FProperty` codecs (`FBool`, `FByte`, `FInt`, `FInt64`, `FFloat`, `FDouble`, `FObject` as 128-bit GUID, `FStruct` recursive), pkt#22 PC ActorOpen byte-identity (4859/4864 bits matching the captured fixture), pkt#104 FString region round-trip.
+- **Replay-driven smoke path.** `scripts\launch_all.bat` remains the regression baseline for the captured S>C flow.
+- **Four-process loopback stack:** auth/launcher, `aoc_server` (UDP:443), `tether_server` (UDP:19021), and launcher/client helpers.
+- **20 registered tests pass through `scripts\build.ps1 -Test`.** Coverage includes bit-level packet parsing, replayout codecs, packet fixtures, ActorBuilder, dispatcher/session state, LiveWorld, NMT packet builders, PackageMap export, and PC/Pawn spawn diff harnesses.
 - **Native NMT replies** (`NMT_Challenge`, `NMT_Welcome`, `NMT_NetGUIDAssign`) emit byte-identical to capture.
-- **`NativeConnectSequencer` scaffold** (`--native` CLI flag) walks the post-NMT state machine but its `SendBootstrap`/`SendPcOpen`/`SendPcProps` handlers are mostly empty.
-- **Character persistence** (`data/characters.json`) — survives restarts.
+- **Native ActorOpen/SNA path has advanced.** The current native path emits package-map exports, `SerializeNewActor`, even-stride dynamic NetGUIDs, and a minimal valid actor-root content tail.
+- **Structured SULV → CALV probe path.** The server parses client `ServerUpdateLevelVisibility` payloads, queues `ClientAckUpdateLevelVisibility`, and now reaches the client-side CALV RPC parameter reader.
+- **Character persistence** (`data/characters.json`) survives restarts.
 - **gRPC services** (auth/launcher/xclient/tether) — character create/list/select all work.
 
 ### What does NOT work today
 
 | Gap | Impact | Notes |
 |---|---|---|
-| **Custom character names** | Stuck at "RandomChar" | Fix attempted via in-place packet mutation (Phase II) — see §6. Real fix is native synthesis (Phase III). |
-| **Native PC spawn end-to-end** | M1.1+ blocked | Bunch-framing emitter is byte-identical, but the per-class catalog → property-stream emit path isn't wired into the live socket. |
-| **V3 property updates / live deltas** | No HUD values, no live HP/MP | Replay mode's first stat update arrives ~pkt#100. Hybrid mode `MAX_PKTS` was capped at 100 (now 150) — fixes display but isn't live. |
-| **Live multiplayer** | Single-client only | `replay_data_` is shared across clients; `client_mu_` is correctly held but the replay path itself is single-instance. |
+| **Stable native world streaming** | Native mode is not yet a stable playable server | CALV enters the client's parameter reader but still ends in `Mismatch read`. |
+| **Full CALV parameter serialization** | Current blocker | Need exact receiver-side bit-consumption for package name, request id, and boolean within bounded `NumPayloadBits`. |
+| **Full ActorOpen property/subobject fidelity** | Native actors are still minimal | The minimal tail is useful for NetGUID registration; complete replicated actor state still needs the exact ClassNetCache/field layout. |
+| **Live deltas / HUD values** | No complete live HP/MP/name pipeline | Property/RPC payloads remain probe-gated until the reader path is exact. |
 | **Movement input handling** | Player can't actually walk | `ServerMove` RPC parsing not implemented. |
-| **Per-tick simulation** | World is frozen between replay packets | No tick loop, no physics, no AI. |
+| **Live multiplayer** | Single-client only | Multi-client visibility and broadcast testing are later milestones. |
 
 ---
 
@@ -79,7 +82,7 @@ All four run on `127.0.0.1`. The client talks to each in the same order it would
 ### 3.3 Replay vs Synthesis (the two emission paths)
 
 - **Replay (today's default)** — `GameServer::replay_loop` rewrites the outer header (seq/ack/our session's custom field), copies the bunch verbatim from `fixtures/replay_data.bin`, sends. One packet at a time, paced ~15 ms.
-- **Synthesis (Phase III, in progress)** — `ActorBuilder::build_spawn` composes the bunch from typed `CharacterProfile` state through `BunchWriter` + `PackageMapExporter` + `replayout` per-property encoders. Bit-identical against captured fixtures for the parts we've shipped (PC ActorOpen header).
+- **Synthesis (active development)** — `NativeConnectSequencer` + `WorldBootstrapEmitter` drive post-NMT traffic through `ActorBuilder`, per-class emitters, and probeable property/RPC payload builders. The current focus is deriving the exact CALV parameter layout from the retail client reader path.
 
 ---
 
@@ -103,7 +106,7 @@ Each Bunch:
   Payload (BDB bits)
 ```
 
-Confidence: **VERIFIED-FROM-CODE** (148 round-trip tests, validated against captured pkt#22/79/104 fixtures).
+Confidence: **VERIFIED-FROM-CODE** (captured fixture round-trips plus the current 20-test registered suite).
 
 #### Critical AoC deviations from stock UE5
 
@@ -224,7 +227,7 @@ Confirmed via string scan of the shipping binary + `OnRep_*` callbacks (276 cata
 | 5 — Big PC partial stream | 29-44 | ~75K bits of PC RepLayout tail + subobjects across 16 packets | YES |
 | 6 — Other actors | 47-99 | ch=4+ NPC / environment spawns | Optional for character render |
 
-**Empirical findings**: <30 pkts → loading-screen loop; 30-50 → loading screen never exits; ~100 → world loads, character visible, HUD frame rendered but values blank; ~150 → first stat updates arrive (pkts #100-115 carry HP/MP/Stamina + the cmd=0x6A Name update at pkt#104).
+**Historical empirical findings**: <30 pkts → loading-screen loop; 30-50 → loading screen never exits; ~100 → world loads, character visible, HUD frame rendered but values blank; ~150 → first stat updates arrive (pkts #100-115 carry HP/MP/Stamina + the cmd=0x6A Name update at pkt#104). Current native work no longer tries to solve this by blindly extending replay; it targets the specific client readers reached by native traffic.
 
 The full ActorOpen catalog across 2000 captured packets shows **359 unique actor channels** = 359 distinct ActorOpen synthesisers needed to fully replace the replay (3 player actors + ~20-50 world singletons + ~300 NPCs/interactables in relevancy range).
 
@@ -235,7 +238,7 @@ The full ActorOpen catalog across 2000 captured packets shows **359 unique actor
 See [README.md](../README.md) for prerequisites (VS 2022, CMake 3.22+, vcpkg, retail AoC client).
 
 ```powershell
-# Build + test (148 tests, all green expected)
+# Build + test (20 registered tests, all green expected)
 .\scripts\build.ps1 -Configure
 .\scripts\build.ps1 -Test
 
@@ -259,24 +262,19 @@ Login with `test222 / test` or register a new account via the launcher.
 
 ## 6. Roadmap
 
-### Phase A — Native PC spawn (currently active)
+### Current phase — Native world-entry stabilization
 
-**Goal**: emit the PC ActorOpen bunch (pkt#22) from typed `CharacterProfile` state with the chosen name baked in, replacing the replay copy.
+**Goal**: make the native path stable enough to keep the client in-world without depending on the captured replay loop.
 
-**Status**: bunch framing + package-map exports + SerializeNewActor + primitive codecs all proven byte-identical (4859/4859 bits matching against captured pkt#22). Blocker is the per-class catalog split into the **2-phase RepLayout model** (InitialRepProps vs LifetimeRepProps) and feeding live property values through Function G's emit pattern.
+**Status**: outer ActorOpen/content-tail and SULV/CALV routing progressed substantially. The client reaches `ReceivePropertiesForRPC` for `ClientAckUpdateLevelVisibility`; the remaining blocker is the exact CALV parameter payload layout.
 
-Concrete next deliverable: `decode_pc_spawn(bytes) → DecodedPCSpawn` round-trip validator, then mutate `name` and emit.
+Concrete next deliverable: derive the CALV leaf reader from the current retail client, replace probe-ranked payload variants with one proven layout, then restore richer ActorOpen property/subobject payloads behind tests.
 
-### Phase B — Native bootstrap
+### Next phase — Full native replicated actor state
 
-**Goal**: progressively replace each of the first 100 captured packets with native synthesisers, gated by per-packet byte-identity tests (see `WorldBootstrapEmitter` design in `NATIVE-EMISSION-ARCHITECTURE.md`). Each packet has one of three modes:
-- `SpliceBytes` (default — captured bytes verbatim)
-- `SplicePatched` (captured bytes with bit-patches for our NetGUIDs / custom name)
-- `NativeBuild` (full ActorBuilder emission; byte-identity test must pass first)
+**Goal**: replace minimal content-tail probes with complete property/subobject streams whose ClassNetCache and field counts are verified against the current retail client.
 
-Order of replacement: pkt#22 (PC) → pkt#78 (Pawn) → ch=85 GUIDExport bundles → PlayerState → GameState → PC RepLayout tail (pkts #29-#44 — the big one, requires CustomDelta / FastArraySerializer RE) → other NPCs/environment.
-
-### Phase C — Multiplayer + database (M2-M5 in `AUTHORITATIVE_SERVER_PLAN.md`)
+### Later phase — Multiplayer + database
 
 - M2.0: Second client + per-client `ActorRegistry` view + `BroadcastManager` (mirror UE5's `IntrepidNetReplicationGraph` + AoC's `UFilteredActorTrackingRegistry` pattern — names known, source paths leaked).
 - M2.1: Chat (`ServerSay`/`ClientMessage`).
@@ -303,7 +301,8 @@ Start in this order:
 | [`architecture.md`](architecture.md) | 10000-ft component overview |
 | [`wire-format.md`](wire-format.md) | Authoritative wire-format reference (decoder + encoder spec) |
 | [`phase-ii-postmortem.md`](phase-ii-postmortem.md) | What didn't work and why (don't redo it) |
-| [`phase-iii-roadmap.md`](phase-iii-roadmap.md) | Where we're going (Phase A milestone plan) |
+| [`phase-iii-roadmap.md`](phase-iii-roadmap.md) | Historical Phase III plan plus current update note |
+| [`re-plan/PUBLIC-PROGRESS-2026-06-12.md`](re-plan/PUBLIC-PROGRESS-2026-06-12.md) | Current sanitized native progress snapshot |
 | [`AUTHORITATIVE_SERVER_PLAN.md`](AUTHORITATIVE_SERVER_PLAN.md) | Full multi-milestone plan to multiplayer |
 
 Deep-reference data (don't read end-to-end; grep when needed):
@@ -367,4 +366,4 @@ scripts/build.ps1, launch_all.bat          ← build + run drivers
 
 ---
 
-*Last updated: 2026-04-26. For session-by-session notes documenting how each finding was reached, see `docs/archive/`.*
+*Last updated: 2026-06-12. For session-by-session notes documenting how each finding was reached, see `docs/archive/` and `docs/re-plan/`.*

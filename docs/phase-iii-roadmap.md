@@ -1,5 +1,15 @@
 # Phase III Roadmap — Live Synthesis
 
+> 2026-06-12 update: this document is now historical planning context plus
+> still-useful design notes. For the current native-server status, start with
+> [`re-plan/PUBLIC-PROGRESS-2026-06-12.md`](re-plan/PUBLIC-PROGRESS-2026-06-12.md)
+> and [`PROJECT-OVERVIEW.md`](PROJECT-OVERVIEW.md).
+>
+> The active blocker is no longer "emit standalone pkt#22". The native path now
+> reaches the `ClientAckUpdateLevelVisibility` RPC parameter reader; the next
+> task is deriving the exact CALV parameter bit layout from the current retail
+> client and replacing the probe matrix with one proven serializer.
+
 Phase III replaces the captured replay with server-synthesised bunches.
 The goal is a server that **emits actual per-client actor spawns from
 live state**, so things like custom character names work naturally —
