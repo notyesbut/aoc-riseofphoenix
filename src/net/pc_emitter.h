@@ -31,9 +31,15 @@
 #pragma once
 
 #include <cstdint>
+#include <cstddef>
 #include <string>
 
 struct sockaddr_in;
+
+// Forward-decl BunchWriter so build_streaming_status_bunch can take it by
+// reference without pulling the (heavy) emit header into this lightweight
+// public header.  The full type is included in pc_emitter.cpp.
+namespace aoc { namespace protocol { namespace emit { class BunchWriter; } } }
 
 namespace aoc { namespace net {
 
@@ -76,13 +82,73 @@ public:
     /// the spawn point.  Without these, the client's local GC sweep unloads
     /// every cell after the loading screen drops → black screen.
     ///
-    /// This emit sends one keepalive RPC per call.  Handle is empirically
-    /// iterated via `probe_streaming_keepalive_handle.txt` (default 70 based
-    /// on alphabetical position in the dispatch table relative to ClientRestart=45).
+    /// This emit sends one keepalive RPC per call.  PM148+ RE says the S->C
+    /// receiver reads the selector as bounded SerializeInt, not SIP; default
+    /// handle/max are 151/216 and remain probe-overridable.
     ///
     /// Probe-gated via `probe_streaming_keepalive.txt`.  Cell name from
     /// `probe_streaming_keepalive_package.txt` (default = persistent level).
+    ///
+    /// PM150 (2026-06-09) — DEFAULT ON.  Generalized below into
+    /// StreamingStatusParams + build_streaming_status_bunch; this legacy
+    /// one-shot is now a thin wrapper that reads the probe defaults, builds
+    /// the bunch, and sends it via host_.send_bunch_packet (static chSeq).
+    /// The per-cell, live-chSeq path is GameServer::emit_level_streaming_status
+    /// (driven by NativeConnectSequencer::do_maintain at ~1 Hz).
     bool emit_client_update_level_streaming_status(const sockaddr_in& client_addr);
+
+    /// PM150 — parameters for ONE ClientUpdateLevelStreamingStatus cell.
+    /// Recommended values to pin a World Partition cell at full detail are the
+    /// struct defaults (loaded+visible, no block, LOD 0).  `package_name` must
+    /// be a `_Generated_/` cell path (NOT the always-loaded persistent level).
+    /// `ch_sequence` is the reliable ch=3 chSeq to bake into the bunch; the
+    /// caller (host) supplies a LIVE value (last_outgoing_reliable_chseq[3]+1).
+    struct StreamingStatusParams {
+        std::string package_name;                 // _Generated_/ cell to pin
+        bool        should_be_loaded    = true;   // param 2 bNewShouldBeLoaded
+        bool        should_be_visible   = true;   // param 3 bNewShouldBeVisible
+        bool        block_on_load       = false;  // param 4 bNewShouldBlockOnLoad
+        int32_t     lod_index           = 0;      // param 5 LODIndex (0 = full detail)
+        uint32_t    transaction_id      = 0;      // param 6 FNetLevelVisibilityTransactionId.Data
+        bool        block_on_unload     = false;  // param 7 bNewShouldBlockOnUnload
+        uint16_t    ch_sequence         = 0;      // ch=3 reliable chSeq to bake in
+        uint32_t    field_handle        = 151;    // ClientUpdateLevelStreamingStatus FieldNetIndex
+        uint32_t    field_max           = 216;    // receiver ClassNetCache max probe
+        bool        use_serializeint    = true;   // false = legacy SIP rollback probe
+    };
+
+    /// PM150 — build (do NOT send) the ClientUpdateLevelStreamingStatus bunch
+    /// for one cell into `out`, returning the total bit count (0 on failure).
+    /// The HOST stamps chSeq via p.ch_sequence + sends, keeping ch=3 chSeq
+    /// contiguous (send_bunch_packet ships builder bits verbatim and does NOT
+    /// renumber chSeq — see GameServer::emit_level_streaming_status).
+    size_t build_streaming_status_bunch(const StreamingStatusParams& p,
+                                        aoc::protocol::emit::BunchWriter& out);
+
+    /// PM151 (re-appearance-asset-preload.md §b) — build (do NOT send) the
+    /// stock UE5 `APlayerController::ClientSetBlockOnAsyncLoading()` reliable
+    /// client RPC bunch on the PC channel (ch=3) into `out`, returning the
+    /// total bit count (0 on failure).
+    ///
+    /// This is the asset-registry pre-warm: it sets the connection's
+    /// async-load-flush flag so the SUBSEQUENT appearance OnRep bunch resolves
+    /// its async loads synchronously before the packet finishes processing,
+    /// keeping AcknowledgePossession alive with real cosmetic asset IDs.
+    ///
+    /// The RPC takes NO parameters (`ProcessEvent(Func, nullptr)`), so the
+    /// content block is just the function-handle field via write_sip(handle)
+    /// followed by SIP(0) NumPayloadBits and ZERO value bits — built by
+    /// MIRRORING build_streaming_status_bunch's envelope (content block
+    /// bHasRepLayout=0 / bIsActor=1 + SIP payload-size).
+    ///
+    /// `field_handle` is the RPC dispatch/function handle (INFERRED ~40 per
+    /// docs/re-plan/re-appearance-asset-preload.md §a.2 / RE-AOC-CLASSES.md:213);
+    /// the HOST supplies a probe-overridable value (probe_async_block_handle.txt,
+    /// default 40).  `ch_sequence` is the LIVE ch=3 reliable chSeq the caller
+    /// (host) bakes into the bunch (last_outgoing_reliable_chseq[3]+1).
+    size_t build_client_set_block_on_async_loading(
+        uint32_t field_handle, uint16_t ch_sequence,
+        aoc::protocol::emit::BunchWriter& out);
 
 private:
     IGameServerHost& host_;

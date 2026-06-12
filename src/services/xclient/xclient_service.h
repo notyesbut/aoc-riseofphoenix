@@ -2,6 +2,7 @@
 #include <grpcpp/grpcpp.h>
 #include <spdlog/spdlog.h>
 #include <string>
+#include <string_view>
 #include <chrono>
 #include <iomanip>
 #include <sstream>
@@ -101,10 +102,22 @@ struct WorldConfig {
     int32_t     character_count    = 0;
 };
 
-/// Default world list â€” single local emulation server
+static constexpr std::string_view kLegacyLocalWorldId = "aoc-emu-useast2-local";
+static constexpr std::string_view kClientConfigWorldId = "aoc-dev-minikube-minikube";
+
+static bool is_local_world_alias(std::string_view world_id) {
+    return world_id == kLegacyLocalWorldId || world_id == kClientConfigWorldId;
+}
+
+static bool world_ids_match(std::string_view lhs, std::string_view rhs) {
+    return lhs == rhs || (is_local_world_alias(lhs) && is_local_world_alias(rhs));
+}
+
+/// Default world list - expose the client-configured world and keep the
+/// previous local ID only as an internal alias for persisted characters.
 static std::vector<WorldConfig> make_default_worlds() {
     return {
-        {"aoc-emu-useast2-local", "[EMU] Local Server", true, 0, 0, 0},
+        {"aoc-dev-minikube-minikube", "[EMU] Local Server", true, 0, 0, 0},
     };
 }
 
@@ -852,8 +865,17 @@ private:
     int count_chars_in_world(const std::string& world_id) const {
         int n = 0;
         for (const auto& c : characters_)
-            if (c.world_id == world_id) ++n;
+            if (world_ids_match(c.world_id, world_id)) ++n;
         return n;
+    }
+
+    std::string advertised_world_id_for(std::string_view stored_world_id,
+                                        std::string_view requested_world_id = {}) const {
+        if (!requested_world_id.empty() && world_ids_match(stored_world_id, requested_world_id))
+            return std::string(requested_world_id);
+        if (is_local_world_alias(stored_world_id))
+            return std::string(kClientConfigWorldId);
+        return std::string(stored_world_id);
     }
 
     // Proxy mode members
@@ -1283,7 +1305,7 @@ private:
                 auto* rec = state.add_character_mini_records();
                 rec->set_character_id(c.character_id);
                 rec->set_character_name(c.character_name);
-                rec->set_world_id(c.world_id);
+                rec->set_world_id(advertised_world_id_for(c.world_id));
             }
             (*rep.mutable_data_map())["player_session_state"] =
                 state.SerializeAsString();
@@ -1329,7 +1351,11 @@ private:
     void on_get_worlds(const ics_common::MessageWrapper& in, Stream* s) {
         spdlog::info("[XClient] GetWorlds ({} configured)", worlds_.size());
         ics_xclient::GetWorldsReply rep;
-        for (auto& w : worlds_) fill(rep.add_worlds(), w);
+        for (auto& w : worlds_) {
+            WorldConfig out = w;
+            out.character_count = count_chars_in_world(w.world_id);
+            fill(rep.add_worlds(), out);
+        }
         auto inner = rep.SerializeAsString();
 
         for (int i = 0; i < rep.worlds_size(); ++i) {
@@ -1356,7 +1382,11 @@ private:
         // Bit 1 = WorldStatus (enum value 1), but also try bit 0 just in case
         if (evt.start_interest_bitmask() != 0) {
             ics_xclient::WorldStatusEvent wse;
-            for (auto& w : worlds_) fill(wse.add_worlds(), w);
+            for (auto& w : worlds_) {
+                WorldConfig out = w;
+                out.character_count = count_chars_in_world(w.world_id);
+                fill(wse.add_worlds(), out);
+            }
             send(s, make_push("ics_xclient.WorldStatusEvent", wse.SerializeAsString()),
                  "ics_lobby", true);
             spdlog::info("[XClient] >> WorldStatusEvent push ({} realms)", wse.worlds_size());
@@ -1368,11 +1398,14 @@ private:
         spdlog::info("[XClient] GetCharacters world='{}'", req.world_id());
         ics_xclient::GetCharactersReply rep;
         for (const auto& c : characters_) {
-            if (c.world_id == req.world_id()) {
-                std::string char_proto = build_character_proto(c);
+            if (world_ids_match(c.world_id, req.world_id())) {
+                StoredCharacter out = c;
+                out.world_id = advertised_world_id_for(c.world_id, req.world_id());
+                std::string char_proto = build_character_proto(out);
                 rep.add_characters_raw(char_proto);
-                spdlog::info("[XClient]   char '{}' id={} proto={}B",
-                             c.character_name, c.character_id, char_proto.size());
+                spdlog::info("[XClient]   char '{}' id={} stored_world='{}' reply_world='{}' proto={}B",
+                             c.character_name, c.character_id, c.world_id, out.world_id,
+                             char_proto.size());
                 spdlog::debug("[XClient]   char proto hex:\n{}",
                               hex_dump(char_proto, 256));
             }
@@ -1430,8 +1463,7 @@ private:
 
         // Update world character count
         for (auto& w : worlds_) {
-            if (w.world_id == req.world_id())
-                w.character_count = count_chars_in_world(req.world_id());
+            w.character_count = count_chars_in_world(w.world_id);
         }
 
         spdlog::info("[XClient] Stored char '{}' id={} (total: {})",
@@ -1490,8 +1522,7 @@ private:
 
         // Update world character count
         for (auto& w : worlds_) {
-            if (w.world_id == req.world_id())
-                w.character_count = count_chars_in_world(req.world_id());
+            w.character_count = count_chars_in_world(w.world_id);
         }
 
         ics_xclient::DeleteCharacterReply rep; rep.set_character_id(req.character_id());

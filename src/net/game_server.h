@@ -142,8 +142,11 @@ inline void init_sockets() {}
 #include "protocol/emit/property_update_bunch_builder.h"
 #include "protocol/emit/bunch_writer.h"
 
-// ─── Path B: authoritative-server connect orchestrator ─────────────────────
+// ─── Path B: authoritative-server connect sequencer ────────────────────────
 #include "net/native_connect_sequencer.h"
+// PM150 — PcEmitter::build_streaming_status_bunch is called by
+// GameServer::emit_level_streaming_status (level-streaming cell keepalive).
+#include "net/pc_emitter.h"
 
 // ─── UE5 Bit Reader/Writer ─────────────────────────────────────────────────
 //
@@ -705,9 +708,21 @@ struct ClientState {
     struct PendingSulvAck {
         std::string  package_name;       // extracted from SULV payload
         uint32_t     triggering_ch_idx;  // logging only
+        uint32_t     visibility_request_id = 0;  // echoed as CALV TransactionId (rank 2)
     };
     std::vector<PendingSulvAck> pending_sulv_acks;
     bool world_bootstrap_complete = false;
+
+    // ── PM150 (2026-06-09) — World Partition cell keepalive ───────────────
+    // Cells the client currently considers relevant, harvested from its
+    // ServerUpdateLevelVisibility (SULV) reports.  Key = _Generated_/ cell
+    // PackageName; value = last VisibilityRequestId echoed back as the
+    // keepalive's TransactionId (0 until we decode the real request id).
+    // NativeConnectSequencer::do_maintain re-pins every cell in this set at
+    // ~1 Hz via GameServer::drive_streaming_keepalive so the client's GC
+    // sweep can't unload them after the loading screen drops.
+    std::unordered_map<std::string, uint32_t> streaming_relevant_cells;
+    std::chrono::steady_clock::time_point last_streaming_keepalive{};
 
     // ── Phase B.0p4 (2026-04-28 PM) — reactive native ClientRestart ──
     // Set true by send_bunch_packet when it ships pkt#78 (PawnEmitter path)
@@ -1298,6 +1313,187 @@ public:
                                                         std::string{});
     }
 
+    // ── PM150 (2026-06-09) — streaming-keepalive probe gate (default ON) ───
+    // Returns true when the keepalive is ENABLED.  Mirrors the PcEmitter gate:
+    // probe_streaming_keepalive.txt absent ⇒ enabled; =0 ⇒ disabled.
+    static bool streaming_keepalive_enabled() {
+        std::FILE* fp = std::fopen("probe_streaming_keepalive.txt", "r");
+        if (!fp) return true;                 // absent ⇒ ENABLED
+        int v = 1;
+        std::fscanf(fp, "%d", &v);
+        std::fclose(fp);
+        return v != 0;
+    }
+
+    // ── PM150 — emit ONE ClientUpdateLevelStreamingStatus for `package_name` ──
+    //
+    // Lock discipline (CRITICAL — avoids the PM27 self-deadlock):
+    //   send_bunch_packet takes client_mu_ internally.  Calling it while
+    //   holding client_mu_ self-deadlocks.  So we:
+    //     1. take the lock, capture a LIVE contiguous chSeq + build the bunch,
+    //     2. RELEASE the lock,
+    //     3. send (send_bunch_packet re-takes the lock),
+    //     4. RE-TAKE the lock to bump cs.last_outgoing_reliable_chseq[3].
+    //   chSeq = last_outgoing_reliable_chseq[3]+1 (exact tracker+1, NO floor —
+    //   PM26), NOT the static 957.  Mirrors send_client_restart_native's
+    //   chSeq math (~game_server.h:2508-2521).
+    bool emit_level_streaming_status(const std::string& client_key,
+                                     const sockaddr_in& addr,
+                                     const std::string& package_name,
+                                     uint32_t transaction_id) override {
+        if (!streaming_keepalive_enabled()) return true;
+        if (package_name.empty()) return false;
+
+        // ── (1) capture chSeq + build bunch UNDER the lock ──────────────────
+        uint16_t chseq = 0;
+        aoc::protocol::emit::BunchWriter bw(512);
+        size_t bits = 0;
+        {
+            std::lock_guard<std::mutex> lk(client_mu_);
+            auto it = clients_.find(client_key);
+            if (it == clients_.end()) return false;
+            if (it->second.phase < ClientState::CONNECTED) return false;
+            ClientState& cs = it->second;
+
+            // Live, contiguous chSeq on ch=3 (exact tracker+1, no floor — PM26).
+            uint16_t last = 0;
+            auto trk = cs.last_outgoing_reliable_chseq.find(3);
+            if (trk != cs.last_outgoing_reliable_chseq.end()) last = trk->second;
+            chseq = static_cast<uint16_t>((last + 1u) & 0x3FFu);
+            if (chseq == 0) chseq = 1;           // never use 0 (reserved)
+
+            aoc::net::PcEmitter pc(*this, client_key);
+            aoc::net::PcEmitter::StreamingStatusParams p;
+            p.package_name   = package_name;
+            p.transaction_id = transaction_id;
+            p.ch_sequence    = chseq;            // bake the live chSeq into the bunch
+            bits = pc.build_streaming_status_bunch(p, bw);
+        } // ← LOCK RELEASED HERE (before send_bunch_packet re-takes it)
+
+        if (bits == 0) return false;
+
+        // ── (3) send WITHOUT holding the lock (send_bunch_packet re-takes it) ─
+        bool ok = send_bunch_packet(client_key, addr, bw.data(), bits);
+
+        // ── (4) RE-TAKE the lock to bump the tracker on success ─────────────
+        if (ok) {
+            std::lock_guard<std::mutex> lk(client_mu_);
+            auto it = clients_.find(client_key);
+            if (it != clients_.end()) {
+                it->second.last_outgoing_reliable_chseq[3] = chseq;
+            }
+        }
+        spdlog::info("[GameServer] emit_level_streaming_status: pkg='{}' "
+                      "chSeq={} txn={} bits={} ok={}",
+                      package_name, chseq, transaction_id, bits, ok);
+        return ok;
+    }
+
+    // ── PM151 — emit ClientSetBlockOnAsyncLoading() asset-registry pre-warm ──
+    //
+    // Stock UE5 param-less reliable client RPC on the PC channel (ch=3).  Fired
+    // immediately BEFORE the appearance bunch so the connection's async-load
+    // flush flag is armed when OnRep_CharacterCustomization arrives, converting
+    // the racy async cosmetic-asset load into a synchronous one so possession
+    // survives.  See docs/re-plan/re-appearance-asset-preload.md.
+    //
+    // Lock discipline mirrors emit_level_streaming_status EXACTLY (the PM27
+    // self-deadlock fix):
+    //   1. take client_mu_, capture a LIVE contiguous chSeq + build the bunch,
+    //   2. RELEASE the lock,
+    //   3. send (send_bunch_packet re-takes the lock internally),
+    //   4. RE-TAKE the lock to bump cs.last_outgoing_reliable_chseq[3].
+    //   chSeq = last_outgoing_reliable_chseq[3]+1 (exact tracker+1, NO floor).
+    //
+    // The RPC dispatch/function handle is INFERRED ~40 (RE-AOC-CLASSES.md:213);
+    // probe-overridable via probe_async_block_handle.txt (default 40).
+    bool emit_client_set_block_on_async_loading(const std::string& client_key,
+                                                const sockaddr_in& addr) {
+        // Probe-overridable function handle (INFERRED 40).
+        uint32_t field_handle = 40;
+        if (std::FILE* fp = std::fopen("probe_async_block_handle.txt", "r")) {
+            std::fscanf(fp, "%u", &field_handle);
+            std::fclose(fp);
+        }
+
+        // ── (1) capture chSeq + build bunch UNDER the lock ──────────────────
+        uint16_t chseq = 0;
+        aoc::protocol::emit::BunchWriter bw(64);
+        size_t bits = 0;
+        {
+            std::lock_guard<std::mutex> lk(client_mu_);
+            auto it = clients_.find(client_key);
+            if (it == clients_.end()) return false;
+            if (it->second.phase < ClientState::CONNECTED) return false;
+            ClientState& cs = it->second;
+
+            // Live, contiguous chSeq on ch=3 (exact tracker+1, no floor — PM26).
+            uint16_t last = 0;
+            auto trk = cs.last_outgoing_reliable_chseq.find(3);
+            if (trk != cs.last_outgoing_reliable_chseq.end()) last = trk->second;
+            chseq = static_cast<uint16_t>((last + 1u) & 0x3FFu);
+            if (chseq == 0) chseq = 1;           // never use 0 (reserved)
+
+            aoc::net::PcEmitter pc(*this, client_key);
+            bits = pc.build_client_set_block_on_async_loading(
+                field_handle, chseq, bw);
+        } // ← LOCK RELEASED HERE (before send_bunch_packet re-takes it)
+
+        if (bits == 0) return false;
+
+        // ── (3) send WITHOUT holding the lock (send_bunch_packet re-takes it) ─
+        bool ok = send_bunch_packet(client_key, addr, bw.data(), bits);
+
+        // ── (4) RE-TAKE the lock to bump the tracker on success ─────────────
+        if (ok) {
+            std::lock_guard<std::mutex> lk(client_mu_);
+            auto it = clients_.find(client_key);
+            if (it != clients_.end()) {
+                it->second.last_outgoing_reliable_chseq[3] = chseq;
+            }
+        }
+        spdlog::warn("[GameServer] emit_client_set_block_on_async_loading: "
+                      "handle={} chSeq={} bits={} ok={}",
+                      field_handle, chseq, bits, ok);
+        return ok;
+    }
+
+    // ── PM150 — periodic refresh over the whole relevant-cell set (~1 Hz) ────
+    //
+    // Snapshot cs.streaming_relevant_cells under the lock, release, then emit
+    // one keepalive per cell (each emit_level_streaming_status call re-takes
+    // the lock per-send to read+bump the chSeq tracker, keeping ch=3 chSeq
+    // strictly contiguous).  No-op if disabled or the set is empty.
+    bool drive_streaming_keepalive(const std::string& client_key,
+                                   const sockaddr_in& addr) override {
+        if (!streaming_keepalive_enabled()) return true;
+
+        // ── snapshot the relevant-cell set under the lock ───────────────────
+        std::vector<std::pair<std::string, uint32_t>> snapshot;
+        {
+            std::lock_guard<std::mutex> lk(client_mu_);
+            auto it = clients_.find(client_key);
+            if (it == clients_.end()) return false;
+            if (it->second.phase < ClientState::CONNECTED) return true;
+            ClientState& cs = it->second;
+            if (cs.streaming_relevant_cells.empty()) return true;  // nothing to pin yet
+            snapshot.reserve(cs.streaming_relevant_cells.size());
+            for (const auto& kv : cs.streaming_relevant_cells) {
+                snapshot.emplace_back(kv.first, kv.second);
+            }
+            cs.last_streaming_keepalive = std::chrono::steady_clock::now();
+        } // ← LOCK RELEASED before the per-cell sends
+
+        // ── emit one keepalive per cell (each call manages its own lock) ────
+        for (const auto& cell : snapshot) {
+            (void)emit_level_streaming_status(client_key, addr,
+                                              cell.first, cell.second);
+        }
+        spdlog::info("[GameServer] PM150 refresh: pinned {} cell(s) for '{}'",
+                      snapshot.size(), client_key);
+        return true;
+    }
+
     bool enable_relay(const std::string& target) {
         if (relay_active_.load()) {
             spdlog::info("[GameServer] Relay already active, updating target: {}", target);
@@ -1810,6 +2006,20 @@ private:
         if (sent > 0) {
             spdlog::info("[GameServer] send_bunch_packet: seq={} {}B "
                          "({} bunch bits)", sent_seq, pkt_len, bunch_bits);
+            // ── chSeq-seed (2026-06-09, batch wgk1sjya4 RANK 1) ──────────────
+            // Advance the per-channel reliable chSeq tracker for bunches shipped
+            // via THIS path (the native PC chain: emit_open=954, emit_pawn_link=
+            // 955, emit_player_state_link=956).  This path previously bypassed
+            // scan_outgoing_packet_chseq, so cs.last_outgoing_reliable_chseq[3]
+            // stayed 0 and the later native sends read tracker+1 = chSeq 1 —
+            // which the client's InReliable[3] (~957 after the PC chain) discards
+            // as a STALE DUPLICATE, silently dropping BOTH the ClientRestart (no
+            // possession) AND the CALV (WP streaming never finalizes).  Re-using
+            // the proven full-packet scanner on the packet we just built advances
+            // the tracker to 956, so send_client_restart_native picks chSeq=957
+            // (accepted) and the SULV/CALV drain follows contiguously.  One bug,
+            // both symptoms.
+            scan_outgoing_packet_chseq(cs, buf, pkt_len);
             // Phase B.0p4 (2026-04-28 PM) — flag pkt#78 emission so the
             // SNLW reactive handler knows NetGUID 88 is now registered on
             // the client and a native ClientRestart can be safely fired.
@@ -1826,6 +2036,150 @@ private:
             return true;
         }
         spdlog::warn("[GameServer] send_bunch_packet: send failed");
+        return false;
+    }
+
+    // ── 2026-06-11 — PARTIAL-BUNCH FRAGMENTATION for large ActorOpen ───────
+    //
+    // The retail server splits the ch=3 PlayerController ActorOpen (4859
+    // BunchData bits) into a reliable partial chain:
+    //   b0: bControl=1 bOpen=1 bReliable=1 bPartial=1 bPartialInitial=1
+    //       bHasPackageMapExports=1 ChName=EName[102] chSeq=954  bdb=3545
+    //   b1: bControl=0 bOpen=0 bReliable=1 bPartial=1 bPartialFinal=1
+    //       (continuation: NO exports, but DOES carry ChName=EName[102] —
+    //        the client reads ChName whenever bReliable||bOpen) chSeq=955 bdb=1314
+    // (docs/re-plan/poss/fleet/pc-channel-identify.md §2.)  Our emitter shipped
+    // this as ONE non-partial bunch (bPartial=0, bdb=4859).  The client's
+    // UChannel::ReceivedNextBunch validates the reassembled partial total and a
+    // single oversized OPEN bunch trips `Bunch.IsError() after ReceivedNextBunch`
+    // → "Received corrupted packet data".  This method reproduces the capture's
+    // two-fragment framing exactly.  Both fragments ride ONE UDP packet (the
+    // capture's pkt#22 carried all 4 ch=3 bunches in a single packet).
+    bool send_partial_open_chain(const std::string& client_key,
+                                 const sockaddr_in& addr,
+                                 const uint8_t* payload_bits,
+                                 size_t payload_bit_count,
+                                 uint32_t channel,
+                                 uint32_t ch_sequence,
+                                 uint32_t ename_idx,
+                                 bool has_exports,
+                                 size_t split_bit) override {
+        std::lock_guard<std::mutex> lk(client_mu_);
+        auto it = clients_.find(client_key);
+        if (it == clients_.end()) return false;
+        if (it->second.phase < ClientState::CONNECTED) return false;
+        ClientState& cs = it->second;
+
+        if (payload_bit_count == 0 || split_bit == 0 || split_bit >= payload_bit_count) {
+            spdlog::warn("[GameServer] send_partial_open_chain: bad split "
+                         "(payload={} split={})", payload_bit_count, split_bit);
+            return false;
+        }
+
+        const size_t b0_bits = split_bit;
+        const size_t b1_bits = payload_bit_count - split_bit;
+
+        // Build the two fragment bunches into a temp bit buffer, back-to-back.
+        // Each bunch = [header][BunchData bits].  Header layout mirrors
+        // actor_builder.cpp::write_bunch_header (LSB-first, see
+        // docs/wire-format.md §3 and sub_144230D50).
+        uint8_t chain[2048] = {};
+        size_t  cb = 0;
+
+        // ── Fragment 0 — bOpen + bPartialInitial (carries exports + ChName) ──
+        ue5::write_bits(chain, sizeof(chain), cb, 1, 1);  // bControl=1
+        ue5::write_bits(chain, sizeof(chain), cb, 1, 1);  // bOpen=1
+        ue5::write_bits(chain, sizeof(chain), cb, 0, 1);  // bClose=0
+        ue5::write_bits(chain, sizeof(chain), cb, 0, 1);  // bIsReplicationPaused=0
+        ue5::write_bits(chain, sizeof(chain), cb, 1, 1);  // bReliable=1
+        ue5::write_sip (chain, sizeof(chain), cb, channel);          // ChIndex
+        ue5::write_bits(chain, sizeof(chain), cb, has_exports ? 1 : 0, 1); // bHasPME
+        ue5::write_bits(chain, sizeof(chain), cb, 0, 1);  // bHasMustBeMappedGUIDs=0
+        ue5::write_bits(chain, sizeof(chain), cb, 1, 1);  // bPartial=1
+        ue5::write_serialize_int(chain, sizeof(chain), cb, ch_sequence, 1024); // ChSeq (10-bit)
+        ue5::write_bits(chain, sizeof(chain), cb, 1, 1);  // bPartialInitial=1
+        ue5::write_bits(chain, sizeof(chain), cb, 0, 1);  // bPartialCustomExportsFinal=0
+        ue5::write_bits(chain, sizeof(chain), cb, 0, 1);  // bPartialFinal=0
+        ue5::write_bits(chain, sizeof(chain), cb, 1, 1);  // ChName.bIsHardcoded=1
+        ue5::write_sip (chain, sizeof(chain), cb, ename_idx);        // ChName EName
+        ue5::write_serialize_int(chain, sizeof(chain), cb,
+                                 static_cast<uint32_t>(b0_bits), 1024 * 8); // BDB
+        for (size_t i = 0; i < b0_bits; ++i) {
+            int bit = (payload_bits[i >> 3] >> (i & 7)) & 1;
+            ue5::write_bits(chain, sizeof(chain), cb, bit, 1);
+        }
+
+        // ── Fragment 1 — continuation + bPartialFinal (no exports) ──
+        ue5::write_bits(chain, sizeof(chain), cb, 0, 1);  // bControl=0
+        ue5::write_bits(chain, sizeof(chain), cb, 0, 1);  // bIsReplicationPaused=0
+        ue5::write_bits(chain, sizeof(chain), cb, 1, 1);  // bReliable=1
+        ue5::write_sip (chain, sizeof(chain), cb, channel);          // ChIndex
+        ue5::write_bits(chain, sizeof(chain), cb, 0, 1);  // bHasPME=0 (continuation)
+        ue5::write_bits(chain, sizeof(chain), cb, 0, 1);  // bHasMustBeMappedGUIDs=0
+        ue5::write_bits(chain, sizeof(chain), cb, 1, 1);  // bPartial=1
+        ue5::write_serialize_int(chain, sizeof(chain), cb, ch_sequence + 1, 1024); // ChSeq
+        ue5::write_bits(chain, sizeof(chain), cb, 0, 1);  // bPartialInitial=0
+        ue5::write_bits(chain, sizeof(chain), cb, 0, 1);  // bPartialCustomExportsFinal=0
+        ue5::write_bits(chain, sizeof(chain), cb, 1, 1);  // bPartialFinal=1
+        // ── 2026-06-11 BIT-EXACT FIX — the continuation fragment DOES carry a
+        //    ChName on the wire.  The client's bunch-header reader
+        //    (sub_144230D50, UNetConnection::ReceivedPacket) gates the ChName
+        //    read on `bReliable || bOpen` — it does NOT skip ChName on partial
+        //    continuations (docs/re-plan/poss/fleet/mine-bunch-header.md §2
+        //    row 14; phase1_parser.parse_bunch_header line 298).  Decoding the
+        //    capture's pkt#22 b1 (chSeq 955) confirms a ChName=EName[102] field
+        //    sits between bPartialFinal and the 13-bit BDB, and the BDB only
+        //    reads as the correct 1314 WHEN that ChName is present (3545+1314=
+        //    4859 = the reassembled PC ActorOpen).  Omitting it made the client
+        //    consume our BDB+payload bits as a phantom hardcoded/FString name —
+        //    desyncing every subsequent bit, so the client read b1.bPartial=0,
+        //    OpenPacketId stayed -1, and the channel never opened ("Reliable
+        //    bunch before channel was fully open … bPartial: 0").  Writing the
+        //    ChName here makes our b1 header byte-identical to the capture.
+        ue5::write_bits(chain, sizeof(chain), cb, 1, 1);  // ChName.bIsHardcoded=1
+        ue5::write_sip (chain, sizeof(chain), cb, ename_idx); // ChName EName (=102)
+        ue5::write_serialize_int(chain, sizeof(chain), cb,
+                                 static_cast<uint32_t>(b1_bits), 1024 * 8); // BDB
+        for (size_t i = 0; i < b1_bits; ++i) {
+            size_t src = split_bit + i;
+            int bit = (payload_bits[src >> 3] >> (src & 7)) & 1;
+            ue5::write_bits(chain, sizeof(chain), cb, bit, 1);
+        }
+
+        const size_t chain_bits = cb;
+
+        // ── Wrap both fragments in ONE UDP packet (same shape as
+        //    send_bunch_packet: prefix + PacketInfo + bunch bits + sentinel) ──
+        uint8_t buf[4096] = {};
+        size_t  off = 0;
+        write_sc_packet_prefix(buf, sizeof(buf), off, cs, /*handshake=*/false);
+        ue5::write_bits(buf, sizeof(buf), off, 1,    1);   // bHasPacketInfo
+        ue5::write_bits(buf, sizeof(buf), off, 1023, 10);  // jitter=max
+        ue5::write_bits(buf, sizeof(buf), off, 0,    1);   // bHasServerFrameTime
+        for (size_t i = 0; i < chain_bits; ++i) {
+            int bit = (chain[i >> 3] >> (i & 7)) & 1;
+            ue5::write_bits(buf, sizeof(buf), off, bit, 1);
+        }
+        // EXTRA SENTINEL BIT (AoC PacketHandler requirement — see send_bunch_packet).
+        ue5::write_bits(buf, sizeof(buf), off, 1, 1);
+        size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
+
+        uint16_t sent_seq = cs.out_seq;
+        cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
+
+        int sent = send_to_client_impl(buf, pkt_len, addr);
+        if (sent > 0) {
+            spdlog::info("[GameServer] send_partial_open_chain: seq={} {}B "
+                         "ch={} chSeq {}+{} bdb {}+{} (payload={} split={})",
+                         sent_seq, pkt_len, channel, ch_sequence, ch_sequence + 1,
+                         b0_bits, b1_bits, payload_bit_count, split_bit);
+            // Advance the per-channel reliable chSeq tracker so subsequent native
+            // sends on this channel pick a contiguous chSeq (the chain consumed
+            // ch_sequence and ch_sequence+1).  Reuse the proven full-packet scanner.
+            scan_outgoing_packet_chseq(cs, buf, pkt_len);
+            return true;
+        }
+        spdlog::warn("[GameServer] send_partial_open_chain: send failed");
         return false;
     }
 
@@ -2231,6 +2585,22 @@ private:
             ClientState& cs = it->second;
             cs.world_bootstrap_complete = true;
 
+            // POSSESSION FIX (2026-06-09): the legacy writer flipped
+            // pkt78_emitted only when a bunch of exactly 4725 bits shipped
+            // (game_server.h:2015) — a fossil constant no current pkt#78 stream
+            // matches (streams are 3083/4749/5160), so in --native mode the flag
+            // never flipped and ClientRestart deferred forever (the 932x
+            // "pkt#78 not yet emitted" loading-screen loop). By the time the
+            // bootstrap completes, the native player Pawn (minted GUID
+            // block.player_pawn = 16777218) HAS been emitted, so a possessable
+            // pawn exists now. Mark it so the CR-fire below (and the reactive
+            // ServerNotifyLoadedWorld handler) become eligible.
+            if (!cs.pkt78_emitted) {
+                cs.pkt78_emitted = true;
+                spdlog::warn("[POST-BOOTSTRAP] native pawn emitted — "
+                             "pkt78_emitted set, possession now eligible");
+            }
+
             if (cs.pkt78_emitted && !cs.reactive_clientrestart_sent) {
                 cs.reactive_clientrestart_sent = true;
                 should_fire_cr = true;
@@ -2243,19 +2613,51 @@ private:
 
         // Fire native CR WITHOUT holding the lock
         if (should_fire_cr) {
-            spdlog::warn("[POST-BOOTSTRAP] firing 6 Pawn candidates "
-                         "(tracker[ch=3]={}, exact tracker+1 = {})",
+            spdlog::warn("[POST-BOOTSTRAP] firing ClientRestart ONCE "
+                         "(handle 31, native pawn; tracker[ch=3]={}, chSeq={})",
                          tracker_ch3,
                          (uint16_t)((tracker_ch3 + 1) & 0x3FF));
-            for (int i = 0; i < 6; ++i) {
-                bool ok = send_client_restart_native(
-                    client_key, addr,
-                    /*pawn_obj_id=*/0,    // overridden by pawn_idx fuzz
-                    /*pawn_server_id=*/0,
-                    /*pawn_randomizer=*/0);
-                if (!ok) {
-                    spdlog::warn("[POST-BOOTSTRAP] native CR send #{} FAILED", i+1);
-                    break;
+            // RANK 4 (2026-06-09): fire EXACTLY ONCE.  The old 6× loop sent the
+            // correct ClientRestart (wire handle 31) followed by 5 mis-handled
+            // RPCs (32..36) on the SAME reliable channel — those corrupt the
+            // client's RPC stream right after the good one.  Pawn GUID is set to
+            // the native minted pawn inside send_client_restart_native.  If the
+            // client needs another, it asks via ClientRetryClientRestart.
+            bool ok = send_client_restart_native(
+                client_key, addr,
+                /*pawn_obj_id=*/0,     // set to native pawn inside the function
+                /*pawn_server_id=*/0,
+                /*pawn_randomizer=*/0);
+            if (!ok) {
+                spdlog::warn("[POST-BOOTSTRAP] native ClientRestart send FAILED");
+            }
+
+            // RANK 4 (2026-06-09): INDEPENDENT possession path via the
+            // AController::Pawn replicated property (OnRep_Pawn →
+            // AcknowledgePossession).  DEFAULT-OFF — gated by
+            // probe_pawn_property_emit.txt (ABSENT or "0" ⇒ skip; "1" ⇒
+            // emit the Pawn-property bunch immediately AFTER the ClientRestart
+            // RPC bunch, on the same ch=3 reliable channel via the contiguous
+            // chSeq tracker).  This gives possession a second shot even if the
+            // ClientRestart RPC's FClassNetCache index is wrong, because both
+            // paths share the same receiver framing + FieldNetIndex space
+            // (docs/re-plan/poss/CLASSNETCACHE-TABLE.md §6).  Failure is
+            // non-fatal — log a warning and continue the SULV drain.
+            auto read_probe_emit = [](const char* path) -> uint32_t {
+                std::FILE* fp = std::fopen(path, "r");
+                if (!fp) return 0u;
+                uint32_t n = 0u;
+                std::fscanf(fp, "%u", &n);
+                std::fclose(fp);
+                return n;
+            };
+            if (read_probe_emit("probe_pawn_property_emit.txt") != 0u) {
+                spdlog::warn("[POST-BOOTSTRAP] probe_pawn_property_emit=1 — "
+                             "firing independent Pawn-property possession path");
+                bool pawn_ok = send_pawn_property_native(client_key, addr);
+                if (!pawn_ok) {
+                    spdlog::warn("[POST-BOOTSTRAP] native Pawn-property send FAILED "
+                                 "(non-fatal — ClientRestart path unaffected)");
                 }
             }
         }
@@ -2292,7 +2694,8 @@ private:
             // cs.last_outgoing_reliable_chseq[3] and bumps it for the next
             // call, so successive ACKs pick contiguous chSeq values.
             (void)send_client_ack_update_level_visibility(
-                cs, addr, client_key, ack.package_name, ack.triggering_ch_idx);
+                cs, addr, client_key, ack.package_name, ack.triggering_ch_idx,
+                ack.visibility_request_id);
         }
     }
 
@@ -2452,6 +2855,16 @@ private:
     //    }]
     //  + extra '1' sentinel bit + add_termination (AoC PacketHandler
     //    requirement, see send_keepalive ~5659).
+    //
+    //  Probe knobs (no rebuild required to iterate — mirrors the CIC probes
+    //  above; files are read from the server's working directory, which is
+    //  dist\Release at runtime):
+    //    probe_cr_handle.txt   — RepIndex / FieldNetIndex (default 31)
+    //    probe_cr_max.txt      — SerializeInt MAX (default 256 = 8 bits,
+    //                            oracle-confirmed — keep unless re-probing width)
+    //    probe_cr_autofuzz.txt — if "1", auto-increment handle by 1 on each
+    //                            connection that reaches this send, persisting
+    //                            state into probe_cr_handle.txt; wraps at MAX
     bool send_client_restart_native(const std::string& client_key,
                                       const sockaddr_in& addr,
                                       uint64_t pawn_obj_id,
@@ -2538,19 +2951,11 @@ private:
         //   50, 51, 53, 54, 55, 56 — if Server*=N preceding, then offset
         //   22 — same as ServerNotifyLoadedWorld empirically
         //   60, 65, 70 — far-out speculation
-        static constexpr uint16_t kHandleFuzzList[] = {
-            25, 26, 27, 28, 29, 30, 31, 32, 50, 51, 53, 54, 55, 56, 22, 60, 65, 70
-        };
-        static constexpr size_t kHandleFuzzCount =
-            sizeof(kHandleFuzzList) / sizeof(kHandleFuzzList[0]);
-        static thread_local size_t fuzz_idx = 0;
-        const uint16_t kFieldHandle = kHandleFuzzList[fuzz_idx % kHandleFuzzCount];
-        spdlog::warn("[FUZZ] ClientRestart attempt with handle={} "
-                      "(fuzz {} of {})",
-                      kFieldHandle,
-                      (fuzz_idx % kHandleFuzzCount) + 1,
-                      kHandleFuzzCount);
-        ++fuzz_idx;
+        // RANK 4 (2026-06-09): handle fuzz REMOVED — see the pinned wire_handle
+        // below.  The old 18-way thread_local fuzz only hit the correct value
+        // on the FIRST attempt of a fresh process and never restarted at the
+        // right index on reconnect, so possession was effectively never tried
+        // with the right handle after the very first server boot.
         // ── PM23 (2026-04-28) — wire_handle uses CALV +5 reserved offset ──
         //
         // PM22 retest with wire_handle = kFieldHandle + 1 (for handle=25,
@@ -2567,7 +2972,104 @@ private:
         //   Therefore wire_handle = kFieldHandle + 6 (= +1 to make 1-indexed +5 reserved)
         //
         // For the default fuzz handle 25: wire_handle = 25 + 6 = 31 (matches PM7 prediction)
-        const uint32_t wire_handle = static_cast<uint32_t>(kFieldHandle) + 6u;
+        // RepIndex = 31, read as a real SerializeInt(value, max(2,FieldCount)) —
+        // NOT SIP, NOT fixed-8-bit (2026-06-09, docs/re-plan/REPINDEX-RESOLUTION.md).
+        // The receiver ReadFieldHeaderAndPayload (docs/ida-dumps/sub_143F2DC60.txt)
+        // reads the selector via SerializeInt [vtable+400] with max = the CHANNEL
+        // ACTOR class's full GetMaxIndex (AAoCPlayerControllerBP_C ≈ 1048), then
+        // indexes FieldCache[RepIndex].  Value 31 = APlayerController FUNC_Net local
+        // index 26 + the 5-slot block base, anchored to four captured C->S Server*
+        // wire bytes (0x76/0x7E/0x80/0x86 => 59/63/64/67), incl. ground-truth
+        // ServerNotifyLoadedWorld=67; ClientRestart = 67 - 36 (same FUNC_Net block) = 31.
+        // The descriptor's 0x45=69 was the FFuncParams constant marker, not an index
+        // (69 ≈ a Server* RPC, invalid on an S->C bunch -> empty slot -> close).
+        // SerializeInt(31, 1048) = 10 bits, LSB-first bytes 0x1F 0x00.  Writing 31 in
+        // the WRONG width (8-bit / SIP 0x3E) is why it failed before: the 10-bit
+        // reader realigns and decodes a garbage field.
+        // MaxIndex = 256 (NOT 1048).  LIVE EVIDENCE (client AOC.log oracle): the
+        // prior 8-bit build (outer_payload_bits=152) reached "Invalid replicated
+        // field" — i.e. the client read the selector as 8 bits and got into the
+        // field lookup — so its runtime GetMaxIndex puts SerializeInt(31) in the
+        // 8-bit window [160,287].  Writing it as 10 bits (max=1048) added 2 zero pad
+        // bits that desynced the following NumPayloadBits SIP -> the client measured
+        // the content block past the bunch end -> ContentBlockFail/Bunch.IsError.
+        // SerializeInt(31, 256) = 8 bits = byte 0x1F.  Value 31 stays (well-anchored
+        // to captured ServerNotifyLoadedWorld=67); only the width was wrong.
+        //
+        // Probe knobs (no rebuild required — mirrors send_client_initialize_
+        // character_native above; one client relogin = one candidate tried):
+        //   probe_cr_handle.txt   — RepIndex / FieldNetIndex (default 129 —
+        //                           the SDK-derived FClassNetCache rank-1; the
+        //                           old 31 is oracle-PROVEN-WRONG, see
+        //                           docs/re-plan/poss/CLASSNETCACHE-TABLE.md)
+        //   probe_cr_max.txt      — SerializeInt MAX (default 256 = 8 bits,
+        //                           oracle-confirmed CORRECT — leave alone)
+        //   probe_cr_autofuzz.txt — if "1", strided sweep: each connection emits
+        //                           start + sweepidx*stride, advancing sweepidx by
+        //                           one per relogin so the live client NAMES the
+        //                           field at each index (OutField:) and we map the
+        //                           FClassNetCache to find the ClientRestart
+        //                           FUNCTION slot.  Knobs:
+        //                             probe_cr_sweep_start.txt  (default 0)
+        //                             probe_cr_sweep_stride.txt (default 1)
+        //                             probe_cr_sweepidx.txt     (position; auto)
+        //                           See docs/re-plan/poss/INDEX-NAME-MAP.md +
+        //                           rpc-dispatch-path.md (need a function-tagged
+        //                           slot, not a property slot).
+        auto read_probe_uint = [](const char* path, uint32_t default_val,
+                                  bool* found = nullptr) -> uint32_t {
+            std::FILE* fp = std::fopen(path, "r");
+            if (found) *found = (fp != nullptr);
+            if (!fp) return default_val;
+            uint32_t n = default_val;
+            std::fscanf(fp, "%u", &n);
+            std::fclose(fp);
+            return n;
+        };
+        auto write_probe_uint = [](const char* path, uint32_t value) {
+            std::FILE* fp = std::fopen(path, "w");
+            if (!fp) return;
+            std::fprintf(fp, "%u\n", value);
+            std::fclose(fp);
+        };
+        bool handle_from_file = false;
+        bool max_from_file    = false;
+        uint32_t wire_handle =                          // ClientRestart ClassNetCache FieldNetIndex
+            read_probe_uint("probe_cr_handle.txt", 45u, &handle_from_file);
+        const uint32_t kClientRestartMaxIndex =        // live FieldCount+1 (probe-overridable)
+            read_probe_uint("probe_cr_max.txt", 1035u, &max_from_file);
+        const uint32_t auto_fuzz = read_probe_uint("probe_cr_autofuzz.txt", 0u);
+
+        // Auto-fuzz: STRIDED sweep to MAP the FClassNetCache empirically. The
+        // live client logs "OutField: <name>" for every populated slot (property)
+        // and routes function-tagged slots to the RPC dispatcher, so each relogin
+        // names one index. We sweep start, start+stride, start+2*stride, ... to
+        // locate the ClientRestart FUNCTION slot (analytic index derivation failed
+        // 4x; see docs/re-plan/poss/REAL-RECEIVER-FRAMING.md + rpc-dispatch-path.md).
+        const char* handle_source_dyn = nullptr;
+        if (auto_fuzz != 0) {
+            const uint32_t sweep_start  = read_probe_uint("probe_cr_sweep_start.txt", 0u);
+            const uint32_t sweep_stride = std::max(1u, read_probe_uint("probe_cr_sweep_stride.txt", 1u));
+            uint32_t sweep_idx = read_probe_uint("probe_cr_sweepidx.txt", 0u);
+            const uint32_t this_val = sweep_start + sweep_idx * sweep_stride;
+            wire_handle = this_val;
+            handle_source_dyn = "autofuzz-sweep";
+            write_probe_uint("probe_cr_sweepidx.txt", sweep_idx + 1u);
+            // Mirror the value into probe_cr_handle.txt so the operator can read
+            // back exactly what this run used even without the server log.
+            write_probe_uint("probe_cr_handle.txt", this_val);
+            spdlog::info("[CR-FUZZ] sweep#{} start={} stride={} -> handle={}; next relogin advances",
+                         sweep_idx, sweep_start, sweep_stride, this_val);
+        }
+
+        const char* handle_source = (auto_fuzz != 0)   ? handle_source_dyn
+                                  : handle_from_file   ? "probe-file"
+                                                       : "default";
+        spdlog::info("[PAWN] ClientRestart RepIndex={} (SerializeInt max={} -> {} bits) "
+                     "handle-source={} max-source={}",
+                     wire_handle, kClientRestartMaxIndex,
+                     ue5::serialize_int_bit_count(wire_handle, kClientRestartMaxIndex),
+                     handle_source, max_from_file ? "probe-file" : "default");
 
         // ── PM24 (2026-04-29) — Pawn NetGUID candidates from packet scan ──
         //
@@ -2586,34 +3088,31 @@ private:
         //
         // Cycle through candidates via thread_local fuzz_idx; each test
         // session = one attempt.  Server-restart advances to next candidate.
-        struct PawnGuidCandidate {
-            const char* label;
-            uint64_t object_id;
-            uint32_t server_id;
-            uint32_t randomizer;
+        // POSSESSION FIX (2026-06-09): the old kPawnCandidates fuzz cycled
+        // CAPTURED-session GUIDs (pkt62 etc.) that the NATIVE client never
+        // registers, so ServerAcknowledgePossession could never resolve them.
+        // Point ClientRestart at the actual native player Pawn the client DID
+        // register via PlayerPawnEmitter::emit_open: ObjectId = the per-client
+        // native pawn from allocate_player_block(client_key) (idempotent — the
+        // SAME block the emitter minted, robust across reconnects/slots),
+        // ServerId = 60, Randomizer = rnd_for(obj) — the SAME deterministic
+        // hash the emitter used (player_pawn_emitter.cpp:442 ==
+        // bootstrap/netguid_allocator.h:132), so the CR references the exact
+        // 128-bit GUID the client has cached.
+        auto rnd_for = [](uint64_t obj) -> uint32_t {
+            uint64_t h = obj * 0x9E3779B97F4A7C15ULL;
+            h ^= (h >> 33);
+            h *= 0xFF51AFD7ED558CCDULL;
+            h ^= (h >> 33);
+            return static_cast<uint32_t>(h);
         };
-        static constexpr PawnGuidCandidate kPawnCandidates[] = {
-            // Top candidate first (large BDB suggests Pawn-class actor)
-            {"pkt62 ch=14",       0xF47BBB2E0000000Eull, 0xDAB716DCu, 0u},
-            {"pkt120 ch=24",      0xDD17764200000012ull, 0x39690C62u, 0u},
-            {"pkt127 ch=28",      0x4005739A00000010ull, 0x87269152u, 0u},
-            {"pkt136 ch=32",      0xECAC96D604000000ull, 0x28ADD85Au, 0u},
-            {"pkt144 ch=36",      0x4EC4561E00000010ull, 0x8BC3F1CEu, 0u},
-            // Reference: PC's own NetGUID (not Pawn, but for sanity check)
-            {"PC pkt22 ch=3",     0x2254786600000006ull, 0x613FAFEBu, 0u},
-        };
-        static constexpr size_t kPawnCandidateCount =
-            sizeof(kPawnCandidates) / sizeof(kPawnCandidates[0]);
-        static thread_local size_t pawn_idx = 0;
-        const auto& pawn_cand = kPawnCandidates[pawn_idx % kPawnCandidateCount];
-        // Override caller-provided values with our candidate
-        pawn_obj_id = pawn_cand.object_id;
-        pawn_server_id = pawn_cand.server_id;
-        pawn_randomizer = pawn_cand.randomizer;
-        spdlog::warn("[PAWN-FUZZ] Trying Pawn candidate '{}' "
-                     "(obj=0x{:016x} srv=0x{:08x} rnd=0x{:08x})",
-                     pawn_cand.label, pawn_obj_id, pawn_server_id, pawn_randomizer);
-        ++pawn_idx;
+        const uint64_t native_pawn_obj = allocate_player_block(client_key).pawn;
+        pawn_obj_id     = native_pawn_obj;
+        pawn_server_id  = 60u;
+        pawn_randomizer = rnd_for(native_pawn_obj);
+        spdlog::warn("[PAWN] ClientRestart -> NATIVE minted pawn "
+                     "(obj={} srv=60 rnd=0x{:08x})",
+                     pawn_obj_id, pawn_randomizer);
 
         auto sip_bit_count = [](uint32_t v) -> size_t {
             if (v == 0) return 8;
@@ -2634,19 +3133,112 @@ private:
         // For NetGUID 88: bytes = 58 00 00 00 00 00 00 00 | 00 00 00 00 | 00 00 00 00.
         // The BARE encoding was a guess from PM7 that never validated.
         constexpr size_t pawn_netguid_bits = 128;
+        // APawn* param = exactly 128 bits: InternalLoadObject reads the
+        // FIntrepidNetGUID (4× uint32) and reads NO trailing ExportFlags byte for a
+        // non-export reference (our pawn ObjectId 0x01000002).  The earlier 136 (an
+        // extra 8 "pad" bits) overran the field payload -> ContentBlockFail.
+        constexpr size_t pawn_field_bits   = 128;
 
-        const size_t handle_sip_bits     = sip_bit_count(wire_handle);
-        const size_t size_sip_bits       = sip_bit_count(static_cast<uint32_t>(pawn_netguid_bits));
-        const size_t terminator_sip_bits = 8;
-
-        const size_t outer_payload_bits = 1u                        // header
-                                        + handle_sip_bits
-                                        + size_sip_bits
-                                        + pawn_netguid_bits
-                                        + terminator_sip_bits;
+        // Genuine receiver framing — ReadFieldHeaderAndPayload (docs/ida-dumps/
+        // sub_143F2DC60.txt), AoC-custom path (UNetConnection+0x240 bit0 set):
+        //   RepIndex       = SerializeInt(value, max(2,FieldCount))  [vtable+400]
+        //   NumPayloadBits = SerializeIntPacked(value)               [vtable+408] → SIP
+        //   <param>        = NumPayloadBits bits
+        // (NO 1-bit advance, NO field-index SIP, NO SIP(0) terminator — those were a
+        //  wrong guess from the old field-loop and desynced the param read.)
+        // repindex_bits is the ACTUAL width of SerializeInt(31,1048) = 10 bits; the
+        // outer SIP + BunchDataBits must use this exact count or the client desyncs.
+        // ── RPC PARAM FRAMING (2026-06-10) ──
+        // Live oracle with the CORRECT cache index (45) reached the RPC dispatch and
+        // logged "ReceivedRPC: ReceivePropertiesForRPC - Mismatch read. Function:
+        // ClientRestart" — i.e. we hit ClientRestart, but the NewPawn param is not in
+        // the form ReceivePropertiesForRPC expects.  Per clientrestart-wire.md §2.3 the
+        // AoC-custom path reads params as a field-loop inside the NumPayloadBits
+        // sub-reader: { SIP(field_idx+1), SIP(field_bits), value }* terminated by SIP(0).
+        // So the sub-reader payload = SIP(1) + SIP(128) + 128-bit GUID + SIP(0).
+        // probe_cr_param_mode.txt: which param framing inside the NumPayloadBits sub-reader.
+        // The live client uses PATH A (flag0 segment-walk cache), i.e. the STOCK UE5
+        // ReceivePropertiesForRPC reader -> mode 2 ([per-prop is-present bit][value]).
+        //   0 = raw 128-bit GUID                          (tested: Mismatch read)
+        //   1 = AoC field-loop SIP(1)+SIP(128)+GUID+SIP(0) (tested: Mismatch read)
+        //   2 = stock [1-bit present=1][128 GUID] = 129    (DEFAULT — PATH A / flag0)
+        //   3 = stock [1-bit present=0][128 GUID] = 129
+        // CONFIRMED via IDA decompile of the PATH-A/flag0 RPC param reader
+        // sub_1444E8910 (the path the live client takes, gated by
+        // *(*(bitreader+0x48)+0xF0)&1 — the same flag0 that selects the
+        // segment-chain ClassNetCache).  Per-field wire shape:
+        //     SIP(handle = cmd_index+1)
+        //     SIP(NumBits)
+        //     <value: exactly NumBits bits, BLIND-COPIED into a sub-buffer>
+        //   ... terminated by SIP(handle == 0).
+        // The value is blind-copied (NumBits bits) then NetSerializeItem
+        // deserializes the object FROM that sub-buffer.  "Mismatch read" (the
+        // outer Pos!=Num check in ReceivedRPC, sub_143F37030 @ *(reader+160)==
+        // *(reader+168)) fires when the object reader OVERFLOWS the NumBits
+        // sub-buffer and the field loop bails early, leaving outer leftover.
+        // => NumBits must be >= the object's TRUE wire size.  InternalLoadObject
+        // (sub_1442740F0) reads a 128-bit FIntrepidNetGUID (sub_14141E960) then,
+        // when applicable, an 8-bit ExportFlags byte (bHasPath=0 stops there) =>
+        // ~136 bits, NOT 128.  mode-1's exact-128 under-ran the object => bail.
+        // ── OBJECT-REF ENCODING (2026-06-11) — CORRECTED to compact NetGUID ──
+        // GROUND TRUTH from offline decode of the retail capture (replay_data.bin,
+        // docs/re-plan/poss/CLIENTRESTART-PARAM-FROM-REPLAY.md): there is NO flat
+        // 128-bit FIntrepidNetGUID anywhere in the field streams of the whole
+        // 29010-record capture.  A UE5 UObject* parameter is serialized by
+        // UPackageMapClient::SerializeObject as a COMPACT PACKED NetGUID
+        // (SerializeIntPacked of the GUID value), ~8-40 bits — NOT the 16-byte
+        // {ObjLo,ObjHi,ServerId,Randomizer} struct.  This is exactly why the live
+        // client rejected NumBits=128 AND 136 with "Mismatch read": the object
+        // reader consumed far fewer bits than the 128/136 we padded, so the
+        // NumBits sub-buffer was never fully consumed -> field loop bailed ->
+        // outer Pos!=Num.  fobject_codec.h already names this as variant (A):
+        // "SIP-packed uint64 ObjectId".  We now emit variant (A) by default.
+        // probe_cr_objref_mode.txt (no rebuild):
+        //   0 = compact SIP(ObjectId u64)                       (DEFAULT, variant A)
+        //   1 = compact SIP(ObjectId) + ServerId(32) + Rand(32) (A + disambiguators)
+        //   2 = full 128-bit FIntrepidNetGUID struct            (old variant B)
+        //   3 = manual NumBits sweep via probe_cr_numbits.txt   (128-GUID + zero pad)
+        auto sip_bits_u64 = [](uint64_t v) -> size_t { size_t b = 8; while (v >>= 7) b += 8; return b; };
+        int objref_mode = 0;
+        if (std::FILE* fp = std::fopen("probe_cr_objref_mode.txt", "r")) {
+            int v = 0; std::fscanf(fp, "%d", &v); std::fclose(fp); objref_mode = v;
+        }
+        uint32_t fl_manual_numbits = 136;
+        if (std::FILE* fp = std::fopen("probe_cr_numbits.txt", "r")) {
+            int v = 136; std::fscanf(fp, "%d", &v); std::fclose(fp); fl_manual_numbits = static_cast<uint32_t>(v);
+        }
+        uint32_t fl_handle = 1;
+        if (std::FILE* fp = std::fopen("probe_cr_fieldhandle.txt", "r")) {
+            int v = 1; std::fscanf(fp, "%d", &v); std::fclose(fp); fl_handle = static_cast<uint32_t>(v);
+        }
+        // mode 4: SIP(arbitrary probe value) — sweep small NetGUID indices etc.
+        uint64_t fl_objval = pawn_obj_id;
+        if (std::FILE* fp = std::fopen("probe_cr_objval.txt", "r")) {
+            unsigned long long v = pawn_obj_id; std::fscanf(fp, "%llu", &v); std::fclose(fp); fl_objval = static_cast<uint64_t>(v);
+        }
+        // NumBits = the exact bit length of the chosen object-ref value encoding.
+        const size_t fl_numbits =
+              (objref_mode == 0) ? sip_bits_u64(pawn_obj_id)
+            : (objref_mode == 1) ? (sip_bits_u64(pawn_obj_id) + 64)
+            : (objref_mode == 2) ? 128
+            : (objref_mode == 4) ? sip_bits_u64(fl_objval)
+            : /* mode 3 */          fl_manual_numbits;
+        const size_t inner_payload_bits =
+            sip_bit_count(fl_handle) + sip_bit_count(static_cast<uint32_t>(fl_numbits))
+            + fl_numbits + sip_bit_count(0u);
+        const size_t repindex_bits       = ue5::serialize_int_bit_count(wire_handle, kClientRestartMaxIndex);
+        const size_t numpayload_sip_bits = sip_bit_count(static_cast<uint32_t>(inner_payload_bits));
+        const size_t outer_payload_bits  = repindex_bits           // SerializeInt(45,1035) = 10 bits
+                                         + numpayload_sip_bits     // SIP(NumPayloadBits)
+                                         + inner_payload_bits;     // field-loop body
         const size_t outer_size_varint_bits =
             sip_bit_count(static_cast<uint32_t>(outer_payload_bits));
         const size_t total_bdb = 2 + outer_size_varint_bits + outer_payload_bits;
+
+        spdlog::info("[PAWN] ClientRestart field-loop: objref_mode={} handle={} "
+                     "NumBits={} ObjectId={:#x} inner_payload_bits={} outer_payload_bits={}",
+                     objref_mode, fl_handle, fl_numbits, pawn_obj_id,
+                     inner_payload_bits, outer_payload_bits);
 
         // ── Bunch envelope ───────────────────────────────────────────────
         uint8_t bunch_buf[256] = {};
@@ -2695,29 +3287,45 @@ private:
         ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb,
                         static_cast<uint32_t>(outer_payload_bits));
 
-        // ── Outer payload ──
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // header
-        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, wire_handle);
+        // ── Outer payload — genuine receiver framing (sub_143F2DC60) ──
+        //   RepIndex = SerializeInt(31,1048) [vtable+400] → NumPayloadBits = SIP [vtable+408]
+        //   → 128-bit FIntrepidNetGUID param.  No field-loop, no terminator: the
+        //   content-block's outer SIP already bounds the whole thing, and the
+        //   receiver reads exactly these three tokens.
+        ue5::write_serialize_int(bunch_buf, sizeof(bunch_buf), bb,
+                                 wire_handle, kClientRestartMaxIndex);          // RepIndex = SerializeInt(45,1035) = 10 bits
         ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb,
-                        static_cast<uint32_t>(pawn_netguid_bits));
+                        static_cast<uint32_t>(inner_payload_bits));              // NumPayloadBits = SIP(inner)
 
-        // ── PM23 (2026-04-28) — FULL FIntrepidNetGUID (128 bits) ──
-        // Pawn parameter — write 4× uint32 raw matching sub_14141E960.
-        //
-        // Layout (each 32-bit field LE in stream order):
-        //   bytes 0-3:  ObjectId low 32 bits
-        //   bytes 4-7:  ObjectId high 32 bits
-        //   bytes 8-11: ServerId
-        //   bytes 12-15: Randomizer
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
-                        static_cast<uint32_t>(pawn_obj_id & 0xFFFFFFFFu), 32);  // ObjectId LSB
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
-                        static_cast<uint32_t>((pawn_obj_id >> 32) & 0xFFFFFFFFu), 32); // ObjectId MSB
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, pawn_server_id, 32); // ServerId
-        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, pawn_randomizer, 32); // Randomizer
+        // ── Field-loop entry: SIP(handle) + SIP(NumBits) ──
+        ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb, fl_handle);              // SIP(handle = cmd_index+1)
+        ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb, fl_numbits);             // SIP(NumBits)
 
-        // End-of-fields terminator
-        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 0);
+        // ── Value: the object-ref encoding selected by objref_mode (see above).
+        //    Default mode 0 = COMPACT packed NetGUID = SerializeIntPacked(ObjectId)
+        //    — UE5's "index-only in the property, full GUID in the export" form. ──
+        if (objref_mode == 4) {
+            ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb, fl_objval);          // SIP(arbitrary probe value)
+        } else if (objref_mode == 0) {
+            ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb, pawn_obj_id);        // SIP(ObjectId u64)
+        } else if (objref_mode == 1) {
+            ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb, pawn_obj_id);        // SIP(ObjectId)
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, pawn_server_id, 32);// + ServerId
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, pawn_randomizer, 32);// + Randomizer
+        } else {
+            // mode 2 (full 128-bit struct) and mode 3 (128-bit struct + zero pad).
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                            static_cast<uint32_t>(pawn_obj_id & 0xFFFFFFFFu), 32);
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                            static_cast<uint32_t>((pawn_obj_id >> 32) & 0xFFFFFFFFu), 32);
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, pawn_server_id, 32);
+            ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, pawn_randomizer, 32);
+            for (size_t i = pawn_field_bits; i < fl_numbits; ++i)
+                ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0u, 1);         // mode-3 slack
+        }
+
+        // ── Field-loop terminator: SIP(0) (handle == 0 ends the loop). ──
+        ue5::write_sip(bunch_buf, sizeof(bunch_buf), bb, 0u);
 
         const size_t bunch_bits = bb;
 
@@ -2745,10 +3353,10 @@ private:
         if (sent > 0) {
             spdlog::warn("[GameServer] >> ★ NATIVE ClientRestart "
                           "(FULL FIntrepidNetGUID obj={} srv={} rnd={} "
-                          "kFieldHandle={} wire_handle={} chSeq={} "
+                          "wire_handle={} chSeq={} "
                           "bunch_bits={} pkt={}B seq={})",
                           pawn_obj_id, pawn_server_id, pawn_randomizer,
-                          kFieldHandle, wire_handle, this_chseq,
+                          wire_handle, this_chseq,
                           bunch_bits, pkt_len, sent_seq);
             // Phase B.0p4 — flag the idempotent sentinel so the SNLW
             // handler won't fire ANOTHER ClientRestart on the next SNLW
@@ -2760,6 +3368,268 @@ private:
             return true;
         }
         spdlog::warn("[GameServer] send_client_restart_native: send failed");
+        return false;
+    }
+
+    //  send_pawn_property_native — RANK 4 (2026-06-09) — independent
+    //  possession trigger via the AController::Pawn replicated property.
+    //
+    //  Possession can be driven two ways in this UE5 client:
+    //    (a) the ClientRestart(NewPawn) RPC — send_client_restart_native
+    //        above; its FClassNetCache RPC index is still uncertain.
+    //    (b) replicating the AController::Pawn property, whose RepNotify
+    //        OnRep_Pawn calls AcknowledgePossession
+    //        (docs/re-plan/POSSESSION-RESOLUTION.md §4).
+    //
+    //  This method emits path (b) as a SEPARATE, probe-gated S->C reliable
+    //  bunch on ch=3.  It deliberately MIRRORS send_client_restart_native's
+    //  receiver framing exactly — same content-block envelope, same outer
+    //  field record shape, same 128-bit FIntrepidNetGUID writer, same chSeq
+    //  tracker logic — because both the RPC dispatch and the property update
+    //  travel through the SAME ReadFieldHeaderAndPayload receiver
+    //  (docs/ida-dumps/sub_143F2DC60.txt) and share the SAME FClassNetCache
+    //  FieldNetIndex space (docs/re-plan/poss/CLASSNETCACHE-TABLE.md).  The
+    //  only differences from the RPC path are:
+    //    - the selector value defaults to PawnRepIndex=73 (the SDK-derived
+    //      AController::Pawn FieldNetIndex, rank-1 of CLASSNETCACHE-TABLE.md
+    //      §6) rather than the ClientRestart RPC index, and
+    //    - the field payload is the pawn's 128-bit FIntrepidNetGUID — a plain
+    //      property value, no RPC parameter framing — which is byte-identical
+    //      to the CR path's pawn-GUID payload here, so OnRep_Pawn receives the
+    //      exact same pawn the CR RPC would have.
+    //
+    //  Wire layout (LSB-first per byte, UE5 FBitWriter — see
+    //  docs/wire-format.md):
+    //    content block: [bHasRepLayout=0 : 1][bIsActor=1 : 1][SIP(outer_bits)]
+    //    outer payload: [SerializeInt(PawnRepIndex, max) — 8 bits @ max=256]
+    //                   [SIP(NumPayloadBits=128)]
+    //                   [128-bit FIntrepidNetGUID = 4× uint32 LSB-first:
+    //                    {ObjectId.lo, ObjectId.hi, ServerId, Randomizer}]
+    //
+    //  Probe knobs (no rebuild — read from the server cwd = dist\Release,
+    //  mirroring the probe_cr_* pattern in send_client_restart_native):
+    //    probe_pawn_handle.txt   — PawnRepIndex / FieldNetIndex (default 73)
+    //    probe_pawn_max.txt      — SerializeInt MAX (default 256 = 8 bits,
+    //                              matching the CR path's confirmed width)
+    //    probe_pawn_autofuzz.txt — if "1", sweep the ranked SDK candidates
+    //                              {73,71,62,60,74} (Pawn under the three
+    //                              table-shape hypotheses + PlayerState
+    //                              neighbours, CLASSNETCACHE-TABLE.md §6) then
+    //                              a linear 0..MAX-1 tail; position persists in
+    //                              probe_pawn_sweepidx.txt.
+    //
+    //  Wiring: gated DEFAULT-OFF by probe_pawn_property_emit.txt (ABSENT or
+    //  "0" ⇒ OFF, "1" ⇒ emit immediately after the ClientRestart bunch).  See
+    //  the call site in on_world_bootstrap_complete.  Returns true on send.
+    bool send_pawn_property_native(const std::string& client_key,
+                                     const sockaddr_in& addr) {
+        std::lock_guard<std::mutex> lk(client_mu_);
+        auto it = clients_.find(client_key);
+        if (it == clients_.end()) return false;
+        if (it->second.phase < ClientState::CONNECTED) return false;
+        ClientState& cs = it->second;
+
+        // ── chSeq: exact next-in-sequence on ch=3, mirroring the CR path ──
+        // UE5 reliable channels are strictly contiguous; use tracker+1, wrap
+        // at 1024 (10-bit), never 0, and bump the tracker so the next ch=3
+        // send picks the following contiguous chSeq.
+        uint16_t last_ch3_seen = 0;
+        auto trk = cs.last_outgoing_reliable_chseq.find(3);
+        if (trk != cs.last_outgoing_reliable_chseq.end()) {
+            last_ch3_seen = trk->second;
+        }
+        uint16_t candidate = static_cast<uint16_t>((last_ch3_seen + 1u) & 0x3FFu);
+        if (candidate == 0) candidate = 1;
+        const uint32_t this_chseq_value = candidate;
+        cs.last_outgoing_reliable_chseq[3] = static_cast<uint16_t>(this_chseq_value);
+
+        // ── Probe knobs (same read_probe_uint/write_probe_uint lambda style
+        //    as send_client_restart_native) ──
+        auto read_probe_uint = [](const char* path, uint32_t default_val,
+                                  bool* found = nullptr) -> uint32_t {
+            std::FILE* fp = std::fopen(path, "r");
+            if (found) *found = (fp != nullptr);
+            if (!fp) return default_val;
+            uint32_t n = default_val;
+            std::fscanf(fp, "%u", &n);
+            std::fclose(fp);
+            return n;
+        };
+        auto write_probe_uint = [](const char* path, uint32_t value) {
+            std::FILE* fp = std::fopen(path, "w");
+            if (!fp) return;
+            std::fprintf(fp, "%u\n", value);
+            std::fclose(fp);
+        };
+        bool handle_from_file = false;
+        bool max_from_file    = false;
+        uint32_t pawn_repindex =                         // AController::Pawn FieldNetIndex
+            read_probe_uint("probe_pawn_handle.txt", 73u, &handle_from_file);
+        const uint32_t kPawnMaxIndex =                   // 8-bit window (probe-overridable)
+            read_probe_uint("probe_pawn_max.txt", 256u, &max_from_file);
+        const uint32_t auto_fuzz = read_probe_uint("probe_pawn_autofuzz.txt", 0u);
+
+        // RANKED SDK candidates for the Pawn property (CLASSNETCACHE-TABLE.md
+        // §6): 73 = rank-1 Pawn, 71 = rank-2 Pawn, 62 = rank-3 Pawn,
+        // 60/74 = PlayerState neighbours under the rank-3/rank-1 shapes.
+        static constexpr uint32_t kRankedPawn[] = {
+            73u,  // rank-1: AController::Pawn (name-merged props+net-funcs)
+            71u,  // rank-2: Pawn under [props alpha][net funcs alpha]
+            62u,  // rank-3: Pawn under child-first global layout
+            60u,  // rank-3: PlayerState neighbour
+            74u,  // rank-1: PlayerState neighbour
+        };
+        const char* handle_source_dyn = nullptr;
+        if (auto_fuzz != 0) {
+            const uint32_t wrap = (kPawnMaxIndex > 0) ? kPawnMaxIndex : 1u;
+            const uint32_t ranked_n =
+                static_cast<uint32_t>(sizeof(kRankedPawn) / sizeof(kRankedPawn[0]));
+            uint32_t sweep_idx = read_probe_uint("probe_pawn_sweepidx.txt", 0u);
+            uint32_t this_val;
+            if (sweep_idx < ranked_n) {
+                this_val = kRankedPawn[sweep_idx];
+                handle_source_dyn = "autofuzz-ranked";
+            } else {
+                this_val = (sweep_idx - ranked_n) % wrap;  // linear sweep tail
+                handle_source_dyn = "autofuzz-linear";
+            }
+            pawn_repindex = this_val;
+            write_probe_uint("probe_pawn_sweepidx.txt", sweep_idx + 1u);
+            write_probe_uint("probe_pawn_handle.txt", this_val);
+            spdlog::info("[PAWN-PROP-FUZZ] sweep#{} → repindex={} ({}); next relogin advances",
+                         sweep_idx, this_val, handle_source_dyn);
+        }
+
+        const char* handle_source = (auto_fuzz != 0)   ? handle_source_dyn
+                                  : handle_from_file   ? "probe-file"
+                                                       : "default";
+        spdlog::info("[PAWN] Pawn-property RepIndex={} (SerializeInt max={} -> {} bits) "
+                     "handle-source={} max-source={}",
+                     pawn_repindex, kPawnMaxIndex,
+                     ue5::serialize_int_bit_count(pawn_repindex, kPawnMaxIndex),
+                     handle_source, max_from_file ? "probe-file" : "default");
+
+        // ── Pawn NetGUID — IDENTICAL to send_client_restart_native ──
+        // Reuse the exact deterministic randomizer hash the CR path computes
+        // (rnd_for == player_pawn_emitter.cpp:442 == netguid_allocator.h:132)
+        // so both possession paths reference the SAME 128-bit pawn GUID the
+        // client cached via PlayerPawnEmitter::emit_open.
+        auto rnd_for = [](uint64_t obj) -> uint32_t {
+            uint64_t h = obj * 0x9E3779B97F4A7C15ULL;
+            h ^= (h >> 33);
+            h *= 0xFF51AFD7ED558CCDULL;
+            h ^= (h >> 33);
+            return static_cast<uint32_t>(h);
+        };
+        const uint64_t pawn_obj_id      = allocate_player_block(client_key).pawn;
+        const uint32_t pawn_server_id   = 60u;
+        const uint32_t pawn_randomizer  = rnd_for(pawn_obj_id);
+        spdlog::warn("[PAWN] Pawn-property -> NATIVE minted pawn "
+                     "(obj={} srv=60 rnd=0x{:08x})",
+                     pawn_obj_id, pawn_randomizer);
+
+        auto sip_bit_count = [](uint32_t v) -> size_t {
+            if (v == 0) return 8;
+            size_t bits = 0;
+            while (v > 0) { bits += 8; v >>= 7; }
+            return bits;
+        };
+
+        // 128-bit FIntrepidNetGUID property value (4× uint32), same width as
+        // the CR path's pawn parameter.
+        constexpr size_t pawn_field_bits = 128;
+
+        // Genuine receiver framing — ReadFieldHeaderAndPayload
+        // (docs/ida-dumps/sub_143F2DC60.txt), AoC-custom path:
+        //   RepIndex       = SerializeInt(value, max(2,FieldCount))  [vtable+400]
+        //   NumPayloadBits = SerializeIntPacked(value)               [vtable+408]
+        //   <value>        = NumPayloadBits bits
+        const size_t repindex_bits       =
+            ue5::serialize_int_bit_count(pawn_repindex, kPawnMaxIndex);
+        const size_t numpayload_sip_bits = sip_bit_count(static_cast<uint32_t>(pawn_field_bits));
+        const size_t outer_payload_bits  = repindex_bits
+                                         + numpayload_sip_bits
+                                         + pawn_field_bits;
+        const size_t outer_size_varint_bits =
+            sip_bit_count(static_cast<uint32_t>(outer_payload_bits));
+        const size_t total_bdb = 2 + outer_size_varint_bits + outer_payload_bits;
+
+        // ── Bunch envelope (identical to the CR path) ──
+        uint8_t bunch_buf[256] = {};
+        size_t bb = 0;
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bControl=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bIsRepPaused=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // bReliable=1
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 3);    // ChIdx=3 (PC)
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasPME=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasMBG=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bPartial=0
+
+        const uint32_t this_chseq = this_chseq_value;
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                        this_chseq & 0x3FF, 10);                 // ChSeq 10-bit
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // ChName.bIsHardcoded=1
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb, 102);  // EName=102 NAME_Actor
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                        total_bdb, 13);                          // BunchDataBits
+
+        // ── Content block envelope ──
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 0, 1); // bHasRepLayout=0
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, 1, 1); // bIsActor=1
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb,
+                        static_cast<uint32_t>(outer_payload_bits));
+
+        // ── Outer payload — Pawn property field record ──
+        //   RepIndex = SerializeInt(PawnRepIndex,max) → NumPayloadBits = SIP
+        //   → 128-bit FIntrepidNetGUID value.
+        ue5::write_serialize_int(bunch_buf, sizeof(bunch_buf), bb,
+                                 pawn_repindex, kPawnMaxIndex);
+        ue5::write_sip (bunch_buf, sizeof(bunch_buf), bb,
+                        static_cast<uint32_t>(pawn_field_bits));
+
+        // 128-bit FIntrepidNetGUID (4× uint32 LSB-first), matching sub_14141E960:
+        //   ObjectId.lo, ObjectId.hi, ServerId, Randomizer
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                        static_cast<uint32_t>(pawn_obj_id & 0xFFFFFFFFu), 32);
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb,
+                        static_cast<uint32_t>((pawn_obj_id >> 32) & 0xFFFFFFFFu), 32);
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, pawn_server_id, 32);
+        ue5::write_bits(bunch_buf, sizeof(bunch_buf), bb, pawn_randomizer, 32);
+
+        const size_t bunch_bits = bb;
+
+        // ── Wrap in UDP packet (identical to the CR path) ──
+        uint8_t buf[1024] = {};
+        size_t off = 0;
+        write_sc_packet_prefix(buf, sizeof(buf), off, cs, /*handshake=*/false);
+        ue5::write_bits(buf, sizeof(buf), off, 1,    1);   // hasPktInfo
+        ue5::write_bits(buf, sizeof(buf), off, 1023, 10);  // jitter
+        ue5::write_bits(buf, sizeof(buf), off, 0,    1);   // hasFrameTime
+
+        for (size_t i = 0; i < bunch_bits; ++i) {
+            int bit = (bunch_buf[i >> 3] >> (i & 7)) & 1;
+            ue5::write_bits(buf, sizeof(buf), off, bit, 1);
+        }
+
+        // AoC PacketHandler sentinel + standard termination
+        ue5::write_bits(buf, sizeof(buf), off, 1, 1);
+        size_t pkt_len = ue5::add_termination(buf, sizeof(buf), off);
+
+        const uint16_t sent_seq = cs.out_seq;
+        cs.out_seq = (cs.out_seq + 1) & ClientState::SEQ_MASK;
+
+        int sent = send_to_client_impl(buf, pkt_len, addr);
+        if (sent > 0) {
+            spdlog::warn("[GameServer] >> ★ NATIVE Pawn-property "
+                          "(FULL FIntrepidNetGUID obj={} srv={} rnd={} "
+                          "repindex={} chSeq={} "
+                          "bunch_bits={} pkt={}B seq={})",
+                          pawn_obj_id, pawn_server_id, pawn_randomizer,
+                          pawn_repindex, this_chseq,
+                          bunch_bits, pkt_len, sent_seq);
+            return true;
+        }
+        spdlog::warn("[GameServer] send_pawn_property_native: send failed");
         return false;
     }
 
@@ -3448,12 +4318,11 @@ private:
                 // nmt_result stays -1 even though parsing succeeded).
                 if (sm_ts != 0) server_move_ts_list.push_back(sm_ts);
                 if (nmt >= 0) nmt_types.push_back(nmt);
-                // Break on genuine parse failure: nmt < 0 AND no ServerMove
-                // detected AND bunch_off didn't fully advance past the bunch.
-                // If sm_ts is set OR we advanced, parsing succeeded for a
-                // non-NMT game bunch; keep scanning for more bunches.
-                if (nmt < 0 && sm_ts == 0) break;
+                // Break only on genuine parse failure.  Non-NMT game bunches
+                // return -1, but a successful parse still advances bunch_off;
+                // those packets may contain more bunches after the first one.
                 if (bunch_off == prev_off) break; // safety: no progress
+                if (nmt < 0 && sm_ts == 0 && bunch_off <= prev_off) break;
             }
             if (!nmt_types.empty()) {
                 nmt_type = nmt_types.back(); // last valid NMT type for compat
@@ -4007,6 +4876,59 @@ private:
                                  b_open, b_close, b_reliable, ch_seq,
                                  ue5::hex_dump(payload_bytes.data(), payload_bytes.size(), 128));
 
+                    struct DecodedRpcContentBlock {
+                        uint32_t handle = 0;
+                        uint64_t payload_bits = 0;
+                        size_t block_bit_start = 0;
+                        size_t payload_bit_start = 0;
+                    };
+                    std::vector<DecodedRpcContentBlock> rpc_content_blocks;
+                    if (ch_idx == 3 && b_reliable && bunch_data_bits >= 18) {
+                        size_t cb = bunch_data_start;
+                        while (cb + 18 <= payload_end && rpc_content_blocks.size() < 8) {
+                            const size_t block_start = cb;
+                            const bool has_rep_layout =
+                                ue5::read_bits(data, data_len, cb, 1) != 0;
+                            const bool is_actor =
+                                ue5::read_bits(data, data_len, cb, 1) != 0;
+                            if (has_rep_layout || !is_actor) break;
+
+                            const uint64_t cb_payload_bits =
+                                ue5::read_sip(data, data_len, cb);
+                            const size_t payload_start = cb;
+                            if (cb_payload_bits == 0
+                                || payload_start + cb_payload_bits > payload_end) {
+                                break;
+                            }
+
+                            size_t inner = payload_start;
+                            const uint64_t handle_plus_one =
+                                ue5::read_sip(data, data_len, inner);
+                            if (handle_plus_one == 0) break;
+
+                            rpc_content_blocks.push_back(DecodedRpcContentBlock{
+                                static_cast<uint32_t>(handle_plus_one - 1u),
+                                cb_payload_bits, block_start, payload_start });
+                            cb = payload_start + cb_payload_bits;
+                            if (cb <= block_start) break;
+                        }
+
+                        if (!rpc_content_blocks.empty()) {
+                            std::string handles;
+                            for (size_t i = 0; i < rpc_content_blocks.size(); ++i) {
+                                if (i) handles += ", ";
+                                handles += spdlog::fmt_lib::format(
+                                    "h{} payload_bits={} block@{} payload@{}",
+                                    rpc_content_blocks[i].handle,
+                                    rpc_content_blocks[i].payload_bits,
+                                    rpc_content_blocks[i].block_bit_start,
+                                    rpc_content_blocks[i].payload_bit_start);
+                            }
+                            spdlog::info("[C>S-RPC] ch=3 reliable content-blocks: {}",
+                                         handles);
+                        }
+                    }
+
                     // ── GUID-resolve sniffer ─────────────────────────────
                     // When the client sees an S>C bunch referencing a
                     // NetGUID it hasn't cached, UE's UPackageMapClient
@@ -4129,7 +5051,17 @@ private:
                                 }
                             }
                         }
-                        if (found_shifted || found_direct) {
+                        size_t snlw_block_count = 0;
+                        for (const auto& block : rpc_content_blocks) {
+                            // Live 2026-06-11 SNLW-class requests decode as an
+                            // 816-bit RPC content block.  The inner handle has
+                            // shifted across hypotheses, so require the
+                            // ServerNotifyLoadedWorld path signature plus the
+                            // structural block size rather than a stale handle.
+                            if (block.payload_bits == 816u)
+                                ++snlw_block_count;
+                        }
+                        if ((found_shifted || found_direct) && snlw_block_count > 0) {
                             // Hex-dump first 16 bytes (function ID + FName
                             // header — useful for further RE).
                             std::string hdr_hex;
@@ -4138,10 +5070,12 @@ private:
                                 hdr_hex += spdlog::fmt_lib::format("{:02x}", payload_bytes[k]);
                             }
                             spdlog::warn("[NMT-DETECT] ★ ServerNotifyLoadedWorld DETECTED "
-                                          "(ch={} chSeq={} bytes={} bits={} sig={} offset={}) "
+                                          "(ch={} chSeq={} bytes={} bits={} sig={} offset={} "
+                                          "blocks={}) "
                                           "hdr=[{}]",
                                           ch_idx, ch_seq, payload_bytes.size(), bunch_data_bits,
                                           found_shifted ? "shifted" : "direct", found_offset,
+                                          snlw_block_count,
                                           hdr_hex);
 
                             // ── Road A — Phase B.0e (2026-04-26) ─────────────
@@ -4326,6 +5260,7 @@ private:
                     // payload.  Conservative match: bunch_data_bits in
                     // 8-50 range AND first byte == 0x7E.
                     if (b_reliable && ch_idx == 3 && !b_partial && !b_exports
+                        && rpc_content_blocks.empty()
                         && bunch_data_bits >= 8 && bunch_data_bits <= 16384
                         && payload_bytes.size() >= 1) {
                         const uint8_t fb = payload_bytes[0];
@@ -4454,9 +5389,222 @@ private:
                     // consider the chunk "ready" from the server's view,
                     // which can block ClientRestart fully taking effect.
                     //
+                    bool structured_sulv_found = false;
+                    if (rpc_content_blocks.empty()
+                        && bunch_data_bits >= 160
+                        && payload_bytes.size() >= 32) {
+                        struct DecodedSulvEntry {
+                            std::string package_name;
+                            uint32_t visibility_request_id = 0;
+                            bool b_is_visible = false;
+                            bool b_try_make_visible = false;
+                            bool b_skip_close_on_error = false;
+                            size_t entry_bit_start = 0;
+                            size_t package_len_bit_start = 0;
+                            size_t filename_len_bit_start = 0;
+                            size_t id_bit_start = 0;
+                            int32_t package_len = 0;
+                            int32_t filename_len = 0;
+                        };
+
+                        auto read_sulv_fstring = [&](size_t& p, std::string& out,
+                                                     int32_t& out_len,
+                                                     size_t& len_bit_start) -> bool {
+                            if (p + 32 > payload_end) return false;
+                            len_bit_start = p;
+                            const int32_t len = static_cast<int32_t>(
+                                ::ue5::read_bits(data, data_len, p, 32));
+                            out_len = len;
+                            if (len < 0 || len > 512) return false;
+                            if (p + static_cast<size_t>(len) * 8 > payload_end)
+                                return false;
+                            if (len == 0) {
+                                out.clear();
+                                return true;
+                            }
+
+                            out.clear();
+                            out.reserve(static_cast<size_t>(len));
+                            for (int32_t i = 0; i < len; ++i) {
+                                const char c = static_cast<char>(
+                                    ::ue5::read_bits(data, data_len, p, 8));
+                                if (i == len - 1) {
+                                    if (c != 0) return false;
+                                    continue;
+                                }
+                                if (c == 0) return false;
+                                if (c < 0x20 || c > 0x7e) return false;
+                                out.push_back(c);
+                            }
+
+                            return true;
+                        };
+
+                        auto try_sulv_entry_at = [&](size_t start,
+                                                     DecodedSulvEntry& entry,
+                                                     size_t& next) -> bool {
+                            size_t p = start;
+                            std::string package_name;
+                            std::string filename;
+                            int32_t package_len = 0;
+                            int32_t filename_len = 0;
+                            size_t package_len_bit_start = 0;
+                            size_t filename_len_bit_start = 0;
+                            if (!read_sulv_fstring(p, package_name, package_len,
+                                                   package_len_bit_start))
+                                return false;
+                            if (package_name.find("_Generated_/") == std::string::npos)
+                                return false;
+                            if (!read_sulv_fstring(p, filename, filename_len,
+                                                   filename_len_bit_start))
+                                return false;
+                            // AoC's ServerUpdateMultipleLevelsVisibility payload puts
+                            // the three level-visibility bools before the transaction id.
+                            // Live capture 2026-06-11: reading the uint32 immediately at
+                            // the byte-aligned tail produced 5708<<3, proving the id starts
+                            // after these 3 bits.
+                            p = (p + 7u) & ~size_t{7u};
+                            if (p + 32 + 3 > payload_end) return false;
+
+                            entry.entry_bit_start = start;
+                            entry.package_len_bit_start = package_len_bit_start;
+                            entry.filename_len_bit_start = filename_len_bit_start;
+                            entry.package_len = package_len;
+                            entry.filename_len = filename_len;
+                            entry.package_name = std::move(package_name);
+                            entry.b_is_visible =
+                                ::ue5::read_bits(data, data_len, p, 1) != 0;
+                            entry.b_try_make_visible =
+                                ::ue5::read_bits(data, data_len, p, 1) != 0;
+                            entry.b_skip_close_on_error =
+                                ::ue5::read_bits(data, data_len, p, 1) != 0;
+                            entry.id_bit_start = p;
+                            entry.visibility_request_id = static_cast<uint32_t>(
+                                ::ue5::read_bits(data, data_len, p, 32));
+                            next = p;
+                            return !entry.package_name.empty()
+                                && entry.visibility_request_id != 0;
+                        };
+
+                        std::vector<DecodedSulvEntry> sulv_entries;
+                        for (size_t start = bunch_data_start;
+                             start + 120 < payload_end; ++start) {
+                            DecodedSulvEntry entry;
+                            size_t next = start;
+                            if (!try_sulv_entry_at(start, entry, next))
+                                continue;
+                            bool duplicate = false;
+                            for (const auto& existing : sulv_entries) {
+                                if (existing.package_name == entry.package_name
+                                    && existing.visibility_request_id
+                                           == entry.visibility_request_id) {
+                                    duplicate = true;
+                                    break;
+                                }
+                            }
+                            if (!duplicate) {
+                                sulv_entries.push_back(std::move(entry));
+                            }
+                            if (next > start) start = next - 1;
+                        }
+
+                        if (!sulv_entries.empty()) {
+                            structured_sulv_found = true;
+                            static std::atomic<int> structured_sulv_count{0};
+                            for (const auto& entry : sulv_entries) {
+                                const int n = ++structured_sulv_count;
+                                spdlog::warn("[SULV-STRUCT] ServerUpdateLevelVisibility #{}: "
+                                             "ch={} reliable={} bytes={} pkg='{}' "
+                                             "VisReqId={} visible={} tryMakeVisible={} "
+                                             "skipCloseOnError={} bits(entry={} pkgLen@{} "
+                                             "fileLen@{} id@{} lens={}/{})",
+                                             n, ch_idx, b_reliable,
+                                             payload_bytes.size(),
+                                             entry.package_name,
+                                             entry.visibility_request_id,
+                                             entry.b_is_visible,
+                                             entry.b_try_make_visible,
+                                             entry.b_skip_close_on_error,
+                                             entry.entry_bit_start,
+                                             entry.package_len_bit_start,
+                                             entry.filename_len_bit_start,
+                                             entry.id_bit_start,
+                                             entry.package_len,
+                                             entry.filename_len);
+
+                                if (streaming_keepalive_enabled()
+                                    && client_key) {
+                                    std::lock_guard<std::mutex> lk(client_mu_);
+                                    auto it = clients_.find(*client_key);
+                                    if (it != clients_.end()) {
+                                        auto& cells =
+                                            it->second.streaming_relevant_cells;
+                                        auto cit = cells.find(entry.package_name);
+                                        if (cit == cells.end()) {
+                                            cells.emplace(entry.package_name,
+                                                          entry.visibility_request_id);
+                                            spdlog::info("[NMT-DETECT]   PM150 recorded "
+                                                          "structured relevant cell '{}' "
+                                                          "VisReqId={} (set size {})",
+                                                          entry.package_name,
+                                                          entry.visibility_request_id,
+                                                          cells.size());
+                                        } else {
+                                            cit->second = entry.visibility_request_id;
+                                        }
+                                    }
+                                }
+
+                                constexpr bool kSendSulvAckStub = true;
+                                constexpr int  kSulvAckMaxQueue = 50;
+                                if (kSendSulvAckStub && n <= kSulvAckMaxQueue
+                                    && client_key && client_addr_for_reactive) {
+                                    std::lock_guard<std::mutex> lk(client_mu_);
+                                    auto it = clients_.find(*client_key);
+                                    if (it != clients_.end()
+                                        && it->second.phase >= ClientState::HANDSHAKE_COMPLETE) {
+                                        ClientState& cs = it->second;
+                                        cs.pending_sulv_acks.push_back(
+                                            ClientState::PendingSulvAck{
+                                                entry.package_name, ch_idx,
+                                                entry.visibility_request_id });
+                                        spdlog::info("[NMT-DETECT]   queued structured "
+                                                      "SULV ACK #{} (pkg='{}' "
+                                                      "VisReqId={} triggering_ch={}); "
+                                                      "queue depth now {}",
+                                                      n, entry.package_name,
+                                                      entry.visibility_request_id,
+                                                      ch_idx,
+                                                      cs.pending_sulv_acks.size());
+
+                                        if (cs.world_bootstrap_complete) {
+                                            spdlog::info("[NMT-DETECT]   bootstrap "
+                                                          "already complete — draining "
+                                                          "{} structured ack(s) inline",
+                                                          cs.pending_sulv_acks.size());
+                                            auto queue = std::move(cs.pending_sulv_acks);
+                                            cs.pending_sulv_acks.clear();
+                                            for (const auto& ack : queue) {
+                                                (void)send_client_ack_update_level_visibility(
+                                                    cs, *client_addr_for_reactive,
+                                                    *client_key, ack.package_name,
+                                                    ack.triggering_ch_idx,
+                                                    ack.visibility_request_id);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     // Detect via plain-ASCII signature of "_Generated_/"
-                    // (12 bytes) anywhere in the payload.
-                    if (payload_bytes.size() >= 32) {
+                    // (12 bytes) anywhere in the payload.  This is retained
+                    // only as a fallback when the structured SULV entry reader
+                    // above cannot decode a paired PackageName/VisibilityRequestId.
+                    if (rpc_content_blocks.empty()
+                        && !structured_sulv_found
+                        && payload_bytes.size() >= 32) {
                         static constexpr uint8_t kSigGenerated[12] = {
                             '_', 'G', 'e', 'n', 'e', 'r', 'a', 't', 'e', 'd', '_', '/'
                         };
@@ -4482,6 +5630,91 @@ private:
                                     pkg_name += c;
                                 }
                             }
+                            // ── STREAMING rank-2 probe (2026-06-09) ──────────────
+                            // Locate the uint32 VisibilityRequestId the client put
+                            // in this SULV so the CALV can echo it (it currently
+                            // echoes 0 at send_client_ack_update_level_visibility).
+                            // payload_bytes is byte-aligned at the cell name, so the
+                            // struct tail (NUL + FName Number + optional FileName +
+                            // uint32 VisibilityRequestId + bits) sits right after the
+                            // ASCII.  Dump the surrounding bytes + candidate uint32s.
+                            // LOG-ONLY — does NOT change the CALV (preserves the
+                            // working make-visible bar movement we just unlocked).
+                            if (n <= 6) {
+                                static const char* HX = "0123456789abcdef";
+                                size_t hs = (off_gen >= 6) ? off_gen - 6 : 0;
+                                size_t he = std::min(off_gen + pkg_name.size() + 32,
+                                                     payload_bytes.size());
+                                std::string hx;
+                                for (size_t k = hs; k < he; ++k) {
+                                    uint8_t bb = payload_bytes[k];
+                                    hx += HX[bb >> 4]; hx += HX[bb & 0xF]; hx += ' ';
+                                }
+                                size_t a = off_gen + pkg_name.size();
+                                auto rd32 = [&](size_t p) -> uint32_t {
+                                    uint32_t v = 0;
+                                    if (p + 4 <= payload_bytes.size())
+                                        std::memcpy(&v, &payload_bytes[p], 4);
+                                    return v;
+                                };
+                                spdlog::warn("[SULV-PROBE] pkg='{}' off_gen={} "
+                                              "aftASCII={} sz={} hex[off-6..]={}",
+                                              pkg_name, off_gen, a,
+                                              payload_bytes.size(), hx);
+                                spdlog::warn("[SULV-PROBE]   u32 @+0={} @+1={} "
+                                              "@+5={} @+9={} @+13={}",
+                                              rd32(a), rd32(a+1), rd32(a+5),
+                                              rd32(a+9), rd32(a+13));
+                            }
+                            // ── STREAMING rank-2 (2026-06-09) — extract the live
+                            // VisibilityRequestId.  It is the uint32 sitting right
+                            // after the PackageName FName tail (NUL string-term +
+                            // Number=0 padding, all zero bytes).  Skip the zero
+                            // padding then read the uint32 LSB-first (UE5 FBitReader
+                            // byte order).  Empirically at aftASCII+6 (=0x0B26 in the
+                            // 2026-06-09 10:21 capture).  The CALV must echo this so
+                            // the client correlates the make-visible transaction.
+                            uint32_t vis_req_id = 0;
+                            {
+                                size_t a2 = off_gen + pkg_name.size();
+                                size_t end2 = std::min(a2 + 12, payload_bytes.size());
+                                size_t p = a2;
+                                while (p < end2 && payload_bytes[p] == 0) ++p;
+                                if (p + 4 <= payload_bytes.size())
+                                    std::memcpy(&vis_req_id, &payload_bytes[p], 4);
+                            }
+                            // ── PM150 (2026-06-09) — record this cell as relevant ──
+                            // Harvest the _Generated_/ cell name the client just
+                            // reported into cs.streaming_relevant_cells so the
+                            // periodic refresh (NativeConnectSequencer::do_maintain
+                            // → GameServer::drive_streaming_keepalive) re-pins it
+                            // at ~1 Hz.  This is the authoritative cell list — the
+                            // exact set the client says it loaded; we do NOT guess
+                            // cell names.  We only RECORD here (no inline send) so
+                            // the recv path stays lock-clean and off the send path
+                            // (avoids re-entrancy / head-of-line stalls — §6 risk 5).
+                            // VisibilityRequestId echo is a follow-up; store 0 for
+                            // now (the documented "no transaction" sentinel).
+                            // Gated on the default-on probe (kill-switch parity).
+                            if (streaming_keepalive_enabled()
+                                && !pkg_name.empty() && client_key) {
+                                std::lock_guard<std::mutex> lk(client_mu_);
+                                auto it = clients_.find(*client_key);
+                                if (it != clients_.end()) {
+                                    auto& cells = it->second.streaming_relevant_cells;
+                                    auto cit = cells.find(pkg_name);
+                                    if (cit == cells.end()) {
+                                        cells.emplace(pkg_name, vis_req_id);
+                                        spdlog::info("[NMT-DETECT]   PM150 recorded "
+                                                      "relevant cell '{}' VisReqId={} "
+                                                      "(set size {})",
+                                                      pkg_name, vis_req_id, cells.size());
+                                    } else {
+                                        cit->second = vis_req_id;  // refresh latest id
+                                    }
+                                }
+                            }
+
                             if (n <= 5) {
                                 std::string tail;
                                 size_t tend = std::min(off_gen + 64, payload_bytes.size());
@@ -4588,7 +5821,14 @@ private:
                             // how long the connection survives WITHOUT this
                             // stub interfering.  Re-enable when the proper
                             // wire format is known.
-                            constexpr bool kSendSulvAckStub = false;
+                            // STREAMING FIX (2026-06-09): re-enabled per
+                            // docs/re-plan/WORLD-ENTRY-FIX.md — the client hangs at
+                            // "Waiting for World Partition Streaming" because no CALV
+                            // (ClientAckUpdateLevelVisibility) ever ships to finalize the
+                            // per-cell make-visible transaction. The encoder is byte-
+                            // verified and chSeq now comes from the ch=3 reliable tracker,
+                            // so the old 2026-05-05 chSeq=1981 collision no longer applies.
+                            constexpr bool kSendSulvAckStub = true;
                             constexpr int  kSulvAckMaxQueue = 50;
                             if (kSendSulvAckStub && n <= kSulvAckMaxQueue
                                 && client_key && client_addr_for_reactive) {
@@ -4598,7 +5838,7 @@ private:
                                     && it->second.phase >= ClientState::HANDSHAKE_COMPLETE) {
                                     ClientState& cs = it->second;
                                     cs.pending_sulv_acks.push_back(
-                                        ClientState::PendingSulvAck{ pkg_name, ch_idx });
+                                        ClientState::PendingSulvAck{ pkg_name, ch_idx, vis_req_id });
                                     spdlog::info("[NMT-DETECT]   queued SULV ACK #{} "
                                                   "(pkg='{}' triggering_ch={}); queue depth now {}",
                                                   n, pkg_name, ch_idx,
@@ -4622,7 +5862,8 @@ private:
                                             (void)send_client_ack_update_level_visibility(
                                                 cs, *client_addr_for_reactive,
                                                 *client_key, ack.package_name,
-                                                ack.triggering_ch_idx);
+                                                ack.triggering_ch_idx,
+                                                ack.visibility_request_id);
                                         }
                                     }
                                 }
@@ -7349,7 +8590,8 @@ private:
     bool send_client_ack_update_level_visibility(
             ClientState& cs, const sockaddr_in& client_addr,
             const std::string& key, std::string_view package_name,
-            uint32_t triggering_ch_idx) {
+            uint32_t triggering_ch_idx,
+            uint32_t visibility_request_id = 0) {
         // Throttle to avoid flooding if detector misfires
         static std::atomic<int> ack_sent_count{0};
         int n = ++ack_sent_count;
@@ -7475,45 +8717,680 @@ private:
         //     where N = pkg_name.length()
         //
         // Total param bits = (73 + 8N) + 32 + 1 = 106 + 8N
-        // Total bunch_data_bits (incl. dispatch byte) = 8 + 106 + 8N = 114 + 8N
-        const std::string pkg_str(package_name);
+        static constexpr std::string_view kVerraWorldPartitionRoot =
+            "/Game/Levels/Verra_World_Master/Verra_World_Master/";
+        std::string pkg_str(package_name);
+        if (pkg_str.rfind("_Generated_/", 0) == 0) {
+            pkg_str.insert(0, kVerraWorldPartitionRoot);
+        }
         const uint32_t name_len_with_nul =
             static_cast<uint32_t>(pkg_str.size()) + 1;
-        const uint32_t bunch_data_bits =
-            114u + 8u * static_cast<uint32_t>(pkg_str.size());
-        ue5::write_bits(buf, sizeof(buf), off, bunch_data_bits, 13);
+        // Raw param bits are computed after probe_calv_bool_bits is read below.
 
-        // ── Payload: dispatch byte + 3 params per the exec thunk ───────
+        // ── Probe knobs (no rebuild — mirror send_client_restart_native's
+        //    probe_cr_* lambdas; files read from the server cwd = dist\Release).
+        //
+        //  probe_calv_serializeint.txt  ABSENT/"1" ⇒ use the genuine
+        //                               SerializeInt field-record framing
+        //                               below (default ON);
+        //                               "0" ⇒ force the legacy SIP(7)
+        //                               framing byte-for-byte as rollback.
+        //  probe_calv_handle.txt        ClassNetCache FieldNetIndex selector
+        //                               value (default 103 — the SDK-derived
+        //                               rank-1 ClientAckUpdateLevelVisibility,
+        //                               docs/re-plan/poss/CLASSNETCACHE-TABLE.md
+        //                               §6).  Used ONLY when SerializeInt is on.
+        //  probe_calv_max.txt           SerializeInt MAX (default 216; width is
+        //                               handle-dependent, 7 bits for handle 103),
+        //                               first-pass CALV receiver width from
+        //                               docs/re-plan/poss/fleet/
+        //                               streaming-rpc-wire.md).
+        //
+        // The legacy path writes a single SIP(7)=0x0E selector byte,
+        // which the S→C RPC receiver — reading the selector as a bounded
+        // SerializeInt(value, FieldCount), NOT SerializeIntPacked — decodes as
+        // index 14 (0x0E), landing on the WRONG FClassNetCache field.  The
+        // SerializeInt path (default, or probe "1") instead uses the SAME content-block +
+        // field-record framing as send_client_restart_native (~PM23+):
+        //   content block  [bHasRepLayout=0:1][bIsActor=1:1][SIP(payload_bits)]
+        //   field record   [RepIndex = SerializeInt(handle,216) — dynamic width]
+        //                  [NumPayloadBits = SIP][CALV params]
+        // so the make-visible ack correlates with the client's pending
+        // World-Partition streaming transaction.  See PM148+ roadmap.
+        auto read_calv_probe = [](const char* path, uint32_t default_val,
+                                  bool* found = nullptr) -> uint32_t {
+            std::FILE* fp = std::fopen(path, "r");
+            if (found) *found = (fp != nullptr);
+            if (!fp) return default_val;
+            uint32_t v = default_val;
+            std::fscanf(fp, "%u", &v);
+            std::fclose(fp);
+            return v;
+        };
+        bool calv_mode_from_file = false;
+        bool calv_handle_from_file = false;
+        bool calv_max_from_file = false;
+        bool calv_param_mode_from_file = false;
+        bool calv_bool_bits_from_file = false;
+        const uint32_t use_serializeint =
+            read_calv_probe("probe_calv_serializeint.txt", 1u, &calv_mode_from_file);
+        const uint32_t calv_handle =
+            read_calv_probe("probe_calv_handle.txt", 21u, &calv_handle_from_file);
+        const uint32_t calv_max =
+            read_calv_probe("probe_calv_max.txt", 1035u, &calv_max_from_file);
+        const uint32_t calv_param_mode =
+            read_calv_probe("probe_calv_param_mode.txt", 0u, &calv_param_mode_from_file);
+        const uint32_t calv_fname_handle =
+            read_calv_probe("probe_calv_fname_handle.txt", 1u);
+        const uint32_t calv_tx_handle =
+            read_calv_probe("probe_calv_tx_handle.txt", 2u);
+        const uint32_t calv_bool_handle =
+            read_calv_probe("probe_calv_bool_handle.txt", 3u);
+        const uint32_t calv_single_handle =
+            read_calv_probe("probe_calv_single_handle.txt", 1u);
+        const uint32_t calv_fname_index =
+            read_calv_probe("probe_calv_fname_index.txt", 0u);
+        const uint32_t calv_bool_bits =
+            read_calv_probe("probe_calv_bool_bits.txt", 1u, &calv_bool_bits_from_file);
+
+        // local SIP bit-width helper (matches ue5::write_sip's byte count)
+        auto calv_sip_bits = [](uint32_t v) -> uint32_t {
+            uint32_t bits = 8;
+            while (v >= 128u) { v >>= 7; bits += 8; }
+            return bits;
+        };
+
+        const uint32_t calv_fname_bits =
+            73u + 8u * static_cast<uint32_t>(pkg_str.size());
+        const uint32_t calv_fstring_bits =
+            32u + 8u * name_len_with_nul;
+        const uint32_t calv_soft_name_no_number_bits =
+            1u + calv_fstring_bits;
+        const uint32_t calv_raw_param_bits =
+            calv_fname_bits + 32u + calv_bool_bits;
+        const uint32_t calv_raw_fstring_param_bits =
+            calv_fstring_bits + 32u + calv_bool_bits;
+        const uint32_t calv_raw_soft_name_no_number_param_bits =
+            calv_soft_name_no_number_bits + 32u + calv_bool_bits;
+
+        auto write_calv_fname = [&]() {
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 1);  // bHardcoded=0
+            ue5::write_bits(buf, sizeof(buf), off, name_len_with_nul, 32);
+            for (char c : pkg_str)
+                ue5::write_bits(buf, sizeof(buf), off,
+                                static_cast<uint8_t>(c), 8);
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 8);   // NUL terminator
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 32);  // FName Number=0
+        };
+
+        auto write_calv_fstring = [&]() {
+            ue5::write_bits(buf, sizeof(buf), off, name_len_with_nul, 32);
+            for (char c : pkg_str)
+                ue5::write_bits(buf, sizeof(buf), off,
+                                static_cast<uint8_t>(c), 8);
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 8);  // NUL terminator
+        };
+
+        auto write_calv_soft_name_no_number = [&]() {
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 1);  // bHardcoded=0
+            write_calv_fstring();
+        };
+
+        auto write_calv_raw_params = [&]() {
+            write_calv_fname();
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+        };
+
+        auto write_calv_raw_fstring_params = [&]() {
+            write_calv_fstring();
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+        };
+
+        auto write_calv_raw_soft_name_no_number_params = [&]() {
+            write_calv_soft_name_no_number();
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+        };
+
+        auto write_calv_field_loop_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_bits);
+            write_calv_fname();
+            ue5::write_sip(buf, sizeof(buf), off, calv_tx_handle);
+            ue5::write_sip(buf, sizeof(buf), off, 32u);
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_bits);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_field_loop_fstring_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_fstring_bits);
+            write_calv_fstring();
+            ue5::write_sip(buf, sizeof(buf), off, calv_tx_handle);
+            ue5::write_sip(buf, sizeof(buf), off, 32u);
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_bits);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_field_loop_soft_no_number_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_soft_name_no_number_bits);
+            write_calv_soft_name_no_number();
+            ue5::write_sip(buf, sizeof(buf), off, calv_tx_handle);
+            ue5::write_sip(buf, sizeof(buf), off, 32u);
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_bits);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_field_loop_fname_index_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_handle);
+            ue5::write_sip(buf, sizeof(buf), off, 16u);
+            ue5::write_bits(buf, sizeof(buf), off, calv_fname_index, 16);
+            ue5::write_sip(buf, sizeof(buf), off, calv_tx_handle);
+            ue5::write_sip(buf, sizeof(buf), off, 32u);
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_bits);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_nested_tx_fname_index_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_handle);
+            ue5::write_sip(buf, sizeof(buf), off, 16u);
+            ue5::write_bits(buf, sizeof(buf), off, calv_fname_index, 16);
+            ue5::write_sip(buf, sizeof(buf), off, calv_tx_handle);
+            constexpr uint32_t kNestedTxBits = 8u + 8u + 32u + 8u;
+            ue5::write_sip(buf, sizeof(buf), off, kNestedTxBits);
+            ue5::write_sip(buf, sizeof(buf), off, 1u);
+            ue5::write_sip(buf, sizeof(buf), off, 32u);
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_bits);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_prefixed_fname_index_params = [&]() {
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 1);
+            write_calv_field_loop_fname_index_params();
+        };
+
+        auto write_calv_prefixed_nested_tx_fname_index_params = [&]() {
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 1);
+            write_calv_nested_tx_fname_index_params();
+        };
+
+        auto write_calv_prefixed_field_loop_params = [&]() {
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 1);
+            write_calv_field_loop_params();
+        };
+
+        auto write_calv_field_loop_sip_fname_index_params = [&]() {
+            const uint32_t fname_index_bits = calv_sip_bits(calv_fname_index);
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_handle);
+            ue5::write_sip(buf, sizeof(buf), off, fname_index_bits);
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_index);
+            ue5::write_sip(buf, sizeof(buf), off, calv_tx_handle);
+            ue5::write_sip(buf, sizeof(buf), off, 32u);
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_bits);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_prefixed_field_loop_sip_fname_index_params = [&]() {
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 1);
+            write_calv_field_loop_sip_fname_index_params();
+        };
+
+        auto write_calv_field_loop_empty_fname_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_handle);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+            ue5::write_sip(buf, sizeof(buf), off, calv_tx_handle);
+            ue5::write_sip(buf, sizeof(buf), off, 32u);
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_bits);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_field_loop_no_fname_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_tx_handle);
+            ue5::write_sip(buf, sizeof(buf), off, 32u);
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_bits);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_only_tx_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_tx_handle);
+            ue5::write_sip(buf, sizeof(buf), off, 32u);
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_only_bool_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_bits);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_only_fname_index_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_handle);
+            ue5::write_sip(buf, sizeof(buf), off, 16u);
+            ue5::write_bits(buf, sizeof(buf), off, calv_fname_index, 16);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_empty_field_loop_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_prefixed_only_tx_params = [&]() {
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 1);
+            write_calv_only_tx_params();
+        };
+
+        auto write_calv_prefixed_only_bool_params = [&]() {
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 1);
+            write_calv_only_bool_params();
+        };
+
+        auto write_calv_prefixed_only_fname_index_params = [&]() {
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 1);
+            write_calv_only_fname_index_params();
+        };
+
+        auto write_calv_prefixed_empty_field_loop_params = [&]() {
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 1);
+            write_calv_empty_field_loop_params();
+        };
+
+        auto write_calv_present_params = [&]() {
+            ue5::write_bits(buf, sizeof(buf), off, 1u, 1);
+            write_calv_fname();
+            ue5::write_bits(buf, sizeof(buf), off, 1u, 1);
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, 1);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+        };
+
+        auto write_calv_single_field_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_single_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_raw_param_bits);
+            write_calv_raw_params();
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_nested_tx_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_bits);
+            write_calv_fname();
+            ue5::write_sip(buf, sizeof(buf), off, calv_tx_handle);
+            constexpr uint32_t kNestedTxBits = 8u + 8u + 32u + 8u;
+            ue5::write_sip(buf, sizeof(buf), off, kNestedTxBits);
+            ue5::write_sip(buf, sizeof(buf), off, 1u);
+            ue5::write_sip(buf, sizeof(buf), off, 32u);
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_bits);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_nested_tx_fstring_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_fstring_bits);
+            write_calv_fstring();
+            ue5::write_sip(buf, sizeof(buf), off, calv_tx_handle);
+            constexpr uint32_t kNestedTxBits = 8u + 8u + 32u + 8u;
+            ue5::write_sip(buf, sizeof(buf), off, kNestedTxBits);
+            ue5::write_sip(buf, sizeof(buf), off, 1u);
+            ue5::write_sip(buf, sizeof(buf), off, 32u);
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_bits);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
+        auto write_calv_nested_tx_soft_no_number_params = [&]() {
+            ue5::write_sip(buf, sizeof(buf), off, calv_fname_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_soft_name_no_number_bits);
+            write_calv_soft_name_no_number();
+            ue5::write_sip(buf, sizeof(buf), off, calv_tx_handle);
+            constexpr uint32_t kNestedTxBits = 8u + 8u + 32u + 8u;
+            ue5::write_sip(buf, sizeof(buf), off, kNestedTxBits);
+            ue5::write_sip(buf, sizeof(buf), off, 1u);
+            ue5::write_sip(buf, sizeof(buf), off, 32u);
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_handle);
+            ue5::write_sip(buf, sizeof(buf), off, calv_bool_bits);
+            ue5::write_bits(buf, sizeof(buf), off, 1u, calv_bool_bits);
+            ue5::write_sip(buf, sizeof(buf), off, 0u);
+        };
+
         constexpr uint8_t kWireIdx_CALV = 7;
         constexpr uint8_t kDispatchByte = (kWireIdx_CALV << 1) | 0;  // = 0x0E
-        // wire_idx 7 verified 2026-04-28 via direct binary RE:
-        //   Client* dispatch table base = 0x14AA557D0 (offset from observed
-        //   0x14AA55840 calibrated against ClientRestart at idx 31 verified
-        //   wire_idx 31).  Entry [7] @ 0x14AA55840 first qword points to
-        //   string "ClientAckUpdateLevelVisibility".
-        ue5::write_bits(buf, sizeof(buf), off, kDispatchByte, 8);
 
-        // ── Param 1: FName PackageName (soft form) ─────────────────────
-        // bHardcoded=0 → FString + uint32 Number suffix
-        ue5::write_bits(buf, sizeof(buf), off, 0u, 1);  // bHardcoded = 0 (soft)
-        ue5::write_bits(buf, sizeof(buf), off, name_len_with_nul, 32);
-        for (char c : pkg_str)
-            ue5::write_bits(buf, sizeof(buf), off,
-                            static_cast<uint8_t>(c), 8);
-        ue5::write_bits(buf, sizeof(buf), off, 0u, 8);   // NUL terminator
-        ue5::write_bits(buf, sizeof(buf), off, 0u, 32);  // FName Number suffix
+        if (use_serializeint != 0u) {
+            // ── SerializeInt field-record framing (probe ON) ──────────────
+            // BunchDataBits = 2 (content-block flags) + SIP(outer_payload_bits)
+            //                 + outer_payload_bits, where
+            //   outer_payload_bits = SerializeInt(handle,max) bits
+            //                      + SIP(param_bits)            (NumPayloadBits)
+            //                      + param_bits                 (3 CALV params)
+            // All sizes derived from the ACTUAL serialized lengths — the
+            // package name is variable, so nothing is hardcoded.  (Compare
+            // send_client_restart_native @ ~2985.)
+            const uint32_t field_loop_param_bits =
+                calv_sip_bits(calv_fname_handle) + calv_sip_bits(calv_fname_bits) + calv_fname_bits +
+                calv_sip_bits(calv_tx_handle) + calv_sip_bits(32u) + 32u +
+                calv_sip_bits(calv_bool_handle) + calv_sip_bits(calv_bool_bits) + calv_bool_bits +
+                calv_sip_bits(0u);
+            const uint32_t field_loop_fstring_param_bits =
+                calv_sip_bits(calv_fname_handle) + calv_sip_bits(calv_fstring_bits) + calv_fstring_bits +
+                calv_sip_bits(calv_tx_handle) + calv_sip_bits(32u) + 32u +
+                calv_sip_bits(calv_bool_handle) + calv_sip_bits(calv_bool_bits) + calv_bool_bits +
+                calv_sip_bits(0u);
+            const uint32_t field_loop_soft_no_number_param_bits =
+                calv_sip_bits(calv_fname_handle) + calv_sip_bits(calv_soft_name_no_number_bits) +
+                calv_soft_name_no_number_bits +
+                calv_sip_bits(calv_tx_handle) + calv_sip_bits(32u) + 32u +
+                calv_sip_bits(calv_bool_handle) + calv_sip_bits(calv_bool_bits) + calv_bool_bits +
+                calv_sip_bits(0u);
+            const uint32_t field_loop_fname_index_param_bits =
+                calv_sip_bits(calv_fname_handle) + calv_sip_bits(16u) + 16u +
+                calv_sip_bits(calv_tx_handle) + calv_sip_bits(32u) + 32u +
+                calv_sip_bits(calv_bool_handle) + calv_sip_bits(calv_bool_bits) + calv_bool_bits +
+                calv_sip_bits(0u);
+            const uint32_t field_loop_sip_fname_index_param_bits =
+                calv_sip_bits(calv_fname_handle) + calv_sip_bits(calv_sip_bits(calv_fname_index)) +
+                calv_sip_bits(calv_fname_index) +
+                calv_sip_bits(calv_tx_handle) + calv_sip_bits(32u) + 32u +
+                calv_sip_bits(calv_bool_handle) + calv_sip_bits(calv_bool_bits) + calv_bool_bits +
+                calv_sip_bits(0u);
+            constexpr uint32_t kNestedTxBits = 8u + 8u + 32u + 8u;
+            const uint32_t nested_tx_fname_index_param_bits =
+                calv_sip_bits(calv_fname_handle) + calv_sip_bits(16u) + 16u +
+                calv_sip_bits(calv_tx_handle) + calv_sip_bits(kNestedTxBits) + kNestedTxBits +
+                calv_sip_bits(calv_bool_handle) + calv_sip_bits(calv_bool_bits) + calv_bool_bits +
+                calv_sip_bits(0u);
+            const uint32_t prefixed_fname_index_param_bits =
+                1u + field_loop_fname_index_param_bits;
+            const uint32_t prefixed_nested_tx_fname_index_param_bits =
+                1u + nested_tx_fname_index_param_bits;
+            const uint32_t prefixed_field_loop_param_bits =
+                1u + field_loop_param_bits;
+            const uint32_t prefixed_field_loop_sip_fname_index_param_bits =
+                1u + field_loop_sip_fname_index_param_bits;
+            const uint32_t field_loop_empty_fname_param_bits =
+                calv_sip_bits(calv_fname_handle) + calv_sip_bits(0u) +
+                calv_sip_bits(calv_tx_handle) + calv_sip_bits(32u) + 32u +
+                calv_sip_bits(calv_bool_handle) + calv_sip_bits(calv_bool_bits) + calv_bool_bits +
+                calv_sip_bits(0u);
+            const uint32_t field_loop_no_fname_param_bits =
+                calv_sip_bits(calv_tx_handle) + calv_sip_bits(32u) + 32u +
+                calv_sip_bits(calv_bool_handle) + calv_sip_bits(calv_bool_bits) + calv_bool_bits +
+                calv_sip_bits(0u);
+            const uint32_t only_tx_param_bits =
+                calv_sip_bits(calv_tx_handle) + calv_sip_bits(32u) + 32u +
+                calv_sip_bits(0u);
+            const uint32_t only_bool_param_bits =
+                calv_sip_bits(calv_bool_handle) + calv_sip_bits(calv_bool_bits) + calv_bool_bits +
+                calv_sip_bits(0u);
+            const uint32_t only_fname_index_param_bits =
+                calv_sip_bits(calv_fname_handle) + calv_sip_bits(16u) + 16u +
+                calv_sip_bits(0u);
+            const uint32_t empty_field_loop_param_bits = calv_sip_bits(0u);
+            const uint32_t prefixed_only_tx_param_bits = 1u + only_tx_param_bits;
+            const uint32_t prefixed_only_bool_param_bits = 1u + only_bool_param_bits;
+            const uint32_t prefixed_only_fname_index_param_bits =
+                1u + only_fname_index_param_bits;
+            const uint32_t prefixed_empty_field_loop_param_bits =
+                1u + empty_field_loop_param_bits;
+            const uint32_t present_param_bits =
+                1u + calv_fname_bits + 1u + 32u + 1u + calv_bool_bits;
+            const uint32_t single_field_param_bits =
+                calv_sip_bits(calv_single_handle) + calv_sip_bits(calv_raw_param_bits) +
+                calv_raw_param_bits +
+                calv_sip_bits(0u);
+            const uint32_t nested_tx_param_bits =
+                calv_sip_bits(calv_fname_handle) + calv_sip_bits(calv_fname_bits) + calv_fname_bits +
+                calv_sip_bits(calv_tx_handle) + calv_sip_bits(kNestedTxBits) + kNestedTxBits +
+                calv_sip_bits(calv_bool_handle) + calv_sip_bits(calv_bool_bits) + calv_bool_bits +
+                calv_sip_bits(0u);
+            const uint32_t nested_tx_fstring_param_bits =
+                calv_sip_bits(calv_fname_handle) + calv_sip_bits(calv_fstring_bits) + calv_fstring_bits +
+                calv_sip_bits(calv_tx_handle) + calv_sip_bits(kNestedTxBits) + kNestedTxBits +
+                calv_sip_bits(calv_bool_handle) + calv_sip_bits(calv_bool_bits) + calv_bool_bits +
+                calv_sip_bits(0u);
+            const uint32_t nested_tx_soft_no_number_param_bits =
+                calv_sip_bits(calv_fname_handle) + calv_sip_bits(calv_soft_name_no_number_bits) +
+                calv_soft_name_no_number_bits +
+                calv_sip_bits(calv_tx_handle) + calv_sip_bits(kNestedTxBits) + kNestedTxBits +
+                calv_sip_bits(calv_bool_handle) + calv_sip_bits(calv_bool_bits) + calv_bool_bits +
+                calv_sip_bits(0u);
+            uint32_t rpc_param_bits = calv_raw_param_bits;
+            if (calv_param_mode == 1u) {
+                rpc_param_bits = field_loop_param_bits;
+            } else if (calv_param_mode == 2u) {
+                rpc_param_bits = present_param_bits;
+            } else if (calv_param_mode == 3u) {
+                rpc_param_bits = single_field_param_bits;
+            } else if (calv_param_mode == 4u) {
+                rpc_param_bits = nested_tx_param_bits;
+            } else if (calv_param_mode == 5u) {
+                rpc_param_bits = calv_raw_fstring_param_bits;
+            } else if (calv_param_mode == 6u) {
+                rpc_param_bits = calv_raw_soft_name_no_number_param_bits;
+            } else if (calv_param_mode == 7u) {
+                rpc_param_bits = field_loop_fstring_param_bits;
+            } else if (calv_param_mode == 8u) {
+                rpc_param_bits = nested_tx_fstring_param_bits;
+            } else if (calv_param_mode == 9u) {
+                rpc_param_bits = field_loop_soft_no_number_param_bits;
+            } else if (calv_param_mode == 10u) {
+                rpc_param_bits = nested_tx_soft_no_number_param_bits;
+            } else if (calv_param_mode == 11u) {
+                rpc_param_bits = field_loop_fname_index_param_bits;
+            } else if (calv_param_mode == 12u) {
+                rpc_param_bits = field_loop_empty_fname_param_bits;
+            } else if (calv_param_mode == 13u) {
+                rpc_param_bits = field_loop_no_fname_param_bits;
+            } else if (calv_param_mode == 14u) {
+                rpc_param_bits = nested_tx_fname_index_param_bits;
+            } else if (calv_param_mode == 15u) {
+                rpc_param_bits = prefixed_fname_index_param_bits;
+            } else if (calv_param_mode == 16u) {
+                rpc_param_bits = prefixed_nested_tx_fname_index_param_bits;
+            } else if (calv_param_mode == 17u) {
+                rpc_param_bits = only_tx_param_bits;
+            } else if (calv_param_mode == 18u) {
+                rpc_param_bits = only_bool_param_bits;
+            } else if (calv_param_mode == 19u) {
+                rpc_param_bits = only_fname_index_param_bits;
+            } else if (calv_param_mode == 20u) {
+                rpc_param_bits = empty_field_loop_param_bits;
+            } else if (calv_param_mode == 21u) {
+                rpc_param_bits = prefixed_only_tx_param_bits;
+            } else if (calv_param_mode == 22u) {
+                rpc_param_bits = prefixed_only_bool_param_bits;
+            } else if (calv_param_mode == 23u) {
+                rpc_param_bits = prefixed_only_fname_index_param_bits;
+            } else if (calv_param_mode == 24u) {
+                rpc_param_bits = prefixed_empty_field_loop_param_bits;
+            } else if (calv_param_mode == 25u) {
+                rpc_param_bits = prefixed_field_loop_sip_fname_index_param_bits;
+            } else if (calv_param_mode == 26u) {
+                rpc_param_bits = prefixed_field_loop_param_bits;
+            } else if (calv_param_mode == 27u) {
+                rpc_param_bits = field_loop_sip_fname_index_param_bits;
+            } else if (calv_param_mode == 28u) {
+                rpc_param_bits = field_loop_param_bits;
+            }
+            const bool calv_prefix_before_npb =
+                calv_param_mode == 27u || calv_param_mode == 28u;
+            const uint32_t repindex_bits = static_cast<uint32_t>(
+                ue5::serialize_int_bit_count(calv_handle, calv_max));
+            const uint32_t numpayload_sip_bits = calv_sip_bits(rpc_param_bits);
+            const uint32_t outer_payload_bits =
+                repindex_bits + (calv_prefix_before_npb ? 1u : 0u) +
+                numpayload_sip_bits + rpc_param_bits;
+            const uint32_t outer_size_varint_bits =
+                calv_sip_bits(outer_payload_bits);
+            const uint32_t bunch_data_bits =
+                2u + outer_size_varint_bits + outer_payload_bits;
+            ue5::write_bits(buf, sizeof(buf), off, bunch_data_bits, 13);
 
-        // ── Param 2: uint32 TransactionId ──────────────────────────────
-        // We don't know the right TransactionId for the SULV that triggered
-        // us; AOC's exec thunk should accept any value (it's stored, not
-        // validated).  Use 0 as placeholder.
-        ue5::write_bits(buf, sizeof(buf), off, 0u, 32);
+            // content block: [bHasRepLayout=0][bIsActor=1][SIP(payload_bits)]
+            ue5::write_bits(buf, sizeof(buf), off, 0u, 1);  // bHasRepLayout=0
+            ue5::write_bits(buf, sizeof(buf), off, 1u, 1);  // bIsActor=1
+            ue5::write_sip (buf, sizeof(buf), off, outer_payload_bits);
 
-        // ── Param 3: bool bClientAckCanMakeVisible (1 BIT, not 8) ──────
-        // CRITICAL: must be TRUE to grant permission to make level visible.
-        // FBoolProperty::NetSerializeItem reads exactly 1 bit (per binary
-        // RE — different from the in-memory C++ struct which uses 1 byte).
-        ue5::write_bits(buf, sizeof(buf), off, 1u, 1);
+            // field record: [SerializeInt(handle,max)][SIP(param_bits)]
+            ue5::write_serialize_int(buf, sizeof(buf), off, calv_handle, calv_max);
+            if (calv_prefix_before_npb) {
+                ue5::write_bits(buf, sizeof(buf), off, 0u, 1);
+            }
+            ue5::write_sip (buf, sizeof(buf), off, rpc_param_bits);
+
+            if (calv_param_mode == 1u) {
+                write_calv_field_loop_params();
+            } else if (calv_param_mode == 2u) {
+                write_calv_present_params();
+            } else if (calv_param_mode == 3u) {
+                write_calv_single_field_params();
+            } else if (calv_param_mode == 4u) {
+                write_calv_nested_tx_params();
+            } else if (calv_param_mode == 5u) {
+                write_calv_raw_fstring_params();
+            } else if (calv_param_mode == 6u) {
+                write_calv_raw_soft_name_no_number_params();
+            } else if (calv_param_mode == 7u) {
+                write_calv_field_loop_fstring_params();
+            } else if (calv_param_mode == 8u) {
+                write_calv_nested_tx_fstring_params();
+            } else if (calv_param_mode == 9u) {
+                write_calv_field_loop_soft_no_number_params();
+            } else if (calv_param_mode == 10u) {
+                write_calv_nested_tx_soft_no_number_params();
+            } else if (calv_param_mode == 11u) {
+                write_calv_field_loop_fname_index_params();
+            } else if (calv_param_mode == 12u) {
+                write_calv_field_loop_empty_fname_params();
+            } else if (calv_param_mode == 13u) {
+                write_calv_field_loop_no_fname_params();
+            } else if (calv_param_mode == 14u) {
+                write_calv_nested_tx_fname_index_params();
+            } else if (calv_param_mode == 15u) {
+                write_calv_prefixed_fname_index_params();
+            } else if (calv_param_mode == 16u) {
+                write_calv_prefixed_nested_tx_fname_index_params();
+            } else if (calv_param_mode == 17u) {
+                write_calv_only_tx_params();
+            } else if (calv_param_mode == 18u) {
+                write_calv_only_bool_params();
+            } else if (calv_param_mode == 19u) {
+                write_calv_only_fname_index_params();
+            } else if (calv_param_mode == 20u) {
+                write_calv_empty_field_loop_params();
+            } else if (calv_param_mode == 21u) {
+                write_calv_prefixed_only_tx_params();
+            } else if (calv_param_mode == 22u) {
+                write_calv_prefixed_only_bool_params();
+            } else if (calv_param_mode == 23u) {
+                write_calv_prefixed_only_fname_index_params();
+            } else if (calv_param_mode == 24u) {
+                write_calv_prefixed_empty_field_loop_params();
+            } else if (calv_param_mode == 25u) {
+                write_calv_prefixed_field_loop_sip_fname_index_params();
+            } else if (calv_param_mode == 26u) {
+                write_calv_prefixed_field_loop_params();
+            } else if (calv_param_mode == 27u) {
+                write_calv_field_loop_sip_fname_index_params();
+            } else if (calv_param_mode == 28u) {
+                write_calv_field_loop_params();
+            } else {
+                write_calv_raw_params();
+            }
+
+            spdlog::info("[S>C] CALV framing=SerializeInt handle={} (max={} -> "
+                         "{} bits) mode-source={} handle-source={} max-source={} "
+                         "param_mode={} param-mode-source={} raw_param_bits={} "
+                         "raw_fstring_param_bits={} raw_soft_nonum_param_bits={} "
+                         "rpc_param_bits={} bool_bits={} bool-bits-source={} "
+                         "handles={}/{}/{} fname_index={} bdb={}",
+                         calv_handle, calv_max, repindex_bits,
+                         calv_mode_from_file ? "probe-file" : "default(on)",
+                         calv_handle_from_file ? "probe-file" : "default(21)",
+                         calv_max_from_file ? "probe-file" : "default(1035)",
+                         calv_param_mode,
+                         calv_param_mode_from_file ? "probe-file" : "default(raw)",
+                         calv_raw_param_bits, calv_raw_fstring_param_bits,
+                         calv_raw_soft_name_no_number_param_bits,
+                         rpc_param_bits, calv_bool_bits,
+                         calv_bool_bits_from_file ? "probe-file" : "default(1)",
+                         calv_fname_handle, calv_tx_handle, calv_bool_handle,
+                         calv_fname_index,
+                         bunch_data_bits);
+        } else {
+            // ── Legacy SIP(7) framing (probe OFF — byte-identical to before) ─
+            // Total bunch_data_bits (incl. dispatch byte) = 8 + 106 + 8N
+            //                                             = 114 + 8N
+            const uint32_t bunch_data_bits = 8u + calv_raw_param_bits;
+            ue5::write_bits(buf, sizeof(buf), off, bunch_data_bits, 13);
+
+            // ── Payload: dispatch byte + 3 params per the exec thunk ───────
+            // wire_idx 7 verified 2026-04-28 via direct binary RE:
+            //   Client* dispatch table base = 0x14AA557D0 (offset from observed
+            //   0x14AA55840 calibrated against ClientRestart at idx 31 verified
+            //   wire_idx 31).  Entry [7] @ 0x14AA55840 first qword points to
+            //   string "ClientAckUpdateLevelVisibility".
+            ue5::write_bits(buf, sizeof(buf), off, kDispatchByte, 8);
+
+            // ── Param 1: FName PackageName (soft form) ─────────────────────
+            write_calv_fname();
+
+            // ── Param 2: uint32 TransactionId (= VisibilityRequestId echo) ──
+            // RANK 2 (2026-06-09): echo the live VisibilityRequestId the client
+            // sent in the triggering SULV (decoded at aftASCII+6 in the SULV
+            // recognizer) so the client correlates this ACK to its pending
+            // make-visible transaction and finalizes World Partition streaming.
+            // Falls back to 0 when not decoded (preserves prior behavior).
+            ue5::write_bits(buf, sizeof(buf), off, visibility_request_id, 32);
+
+            // ── Param 3: bool bClientAckCanMakeVisible (1 BIT, not 8) ──────
+            // CRITICAL: must be TRUE to grant permission to make level visible.
+            // FBoolProperty::NetSerializeItem reads exactly 1 bit (per binary
+            // RE — different from the in-memory C++ struct which uses 1 byte).
+            ue5::write_bits(buf, sizeof(buf), off, 1u, 1);
+
+            spdlog::info("[S>C] CALV framing=legacy-SIP selector=0x{:02X} "
+                         "(SIP(7)) param_bits={} bdb={}",
+                         kDispatchByte, calv_raw_param_bits, bunch_data_bits);
+        }
 
         // ── Termination ────────────────────────────────────────────────
         ue5::write_bits(buf, sizeof(buf), off, 1, 1); // sentinel
@@ -7524,9 +9401,21 @@ private:
 
         int sent = send_to_client(buf, pkt_len, client_addr);
         if (sent > 0) {
-            spdlog::warn("[S>C] >> ClientAckUpdateLevelVisibility STUB #{} to {} "
-                         "({}B seq={} chSeq={} triggered_by_ch={} pkg='{}')",
-                         n, key, pkt_len, sent_seq, ch_seq, triggering_ch_idx, package_name);
+            if (use_serializeint != 0u) {
+                spdlog::warn("[S>C] >> ClientAckUpdateLevelVisibility #{} to {} "
+                             "({}B selector_mode=SerializeInt handle={} max={} "
+                             "seq={} chSeq={} triggered_by_ch={} VisReqId={} pkg='{}')",
+                             n, key, pkt_len, calv_handle, calv_max, sent_seq,
+                             ch_seq, triggering_ch_idx, visibility_request_id,
+                             pkg_str);
+            } else {
+                spdlog::warn("[S>C] >> ClientAckUpdateLevelVisibility #{} to {} "
+                             "({}B selector_mode=legacy-SIP selector=0x{:02X} "
+                             "handle=disabled max=disabled seq={} chSeq={} "
+                             "triggered_by_ch={} VisReqId={} pkg='{}')",
+                             n, key, pkt_len, kDispatchByte, sent_seq, ch_seq,
+                             triggering_ch_idx, visibility_request_id, pkg_str);
+            }
         } else {
             spdlog::warn("[GameServer]    ClientAckUpdateLevelVisibility STUB send FAILED");
             return false;
@@ -7671,7 +9560,16 @@ private:
             // client hasn't sent GameSpecific yet — Verra_World_Master can take
             // 60-90s to load before the client is ready to fire NMT_GameSpecific.
             // Use 30s for everything else (idle/stale connections).
+            // Once pkt#78 (the native pawn ActorOpen) has shipped, the client is
+            // IN-WORLD: it drops the WP-streaming screen and holds on "final
+            // touches" while it waits for possession, sending NO C>S UDP for
+            // minutes.  The NativeConnectSequencer Maintain loop keeps sending
+            // keepalives (so the client's own NetConnection stays alive), so the
+            // server must NOT idle-kill it here — that removal is exactly what
+            // surfaced as "Connection to the Realm timed out" right after the
+            // loading screen dropped.  Use a very generous in-world limit.
             int timeout_sec = active_send ? 300
+                            : cs.pkt78_emitted ? 1800
                             : (cs.nmt_state >= 2) ? 120
                             : 30;
             if (idle.count() > timeout_sec) {

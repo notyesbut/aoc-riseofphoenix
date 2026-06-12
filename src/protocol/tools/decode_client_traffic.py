@@ -14,9 +14,11 @@ The goal: see WHAT the client is asking for that we're not answering.
 Usage: python decode_client_traffic.py [server_log_path]
 """
 import sys, os, re
+from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[3]
 LOG_PATH = sys.argv[1] if len(sys.argv) > 1 else \
-    r"<REPO_ROOT>\dist\Release\logs\emu-20260427-164816.log"
+    str(REPO_ROOT / 'dist' / 'Release' / 'logs' / 'emu-20260427-164816.log')
 
 # Known wire_idx -> RPC name table (from our recognizer)
 WIRE_IDX_NAMES = {

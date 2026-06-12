@@ -16,6 +16,9 @@
 #include "net/player_pawn_splicer.h"         // PM106 (2026-05-04) Phase D Step 2.2
 #include "net/appearance_emitter.h"          // PM103 (2026-05-04) Phase D Step 2
 #include "net/player_state_emitter.h"        // PD3 (2026-05-05) Phase D Step 3
+#include "net/game_server.h"                  // PM151 — concrete GameServer for
+                                              // emit_client_set_block_on_async_loading
+                                              // (not on the IGameServerHost iface)
 
 #ifdef _WIN32
 #  include <winsock2.h>
@@ -193,10 +196,21 @@ bool WorldBootstrapEmitter::dispatch_one(const sockaddr_in& addr,
         // Failure here is non-fatal: Pawn channel is open, just orphaned from
         // the PC.  Log warn and proceed; user will iterate cmd_handle if needed.
         PcEmitter pc(host_, client_key_);
-        if (!pc.emit_pawn_link(addr)) {
-            spdlog::warn("[WorldBootstrap] PC.Pawn link emission failed "
-                         "(non-fatal — Pawn channel is open but unpossessed)");
-        }
+        // DISABLED (2026-06-09) — emit_pawn_link's body is the PM79 ClientRestart
+        // PROBE: it ships a wrong-handle (auto-incrementing, last seen 11; the
+        // real ClientRestart handle is 31) RPC bunch on ch=3 at chSeq 955, right
+        // BEFORE the clean send_client_restart_native CR at 956.  A malformed/
+        // mis-dispatched bunch at 955 makes the client reject it, leaving its
+        // InReliable[3] stuck at 955 so the CORRECT CR (956) buffers behind it
+        // and never runs — silent no-possession.  The clean CR (handle 31, §1
+        // field-loop, 128-bit pawn GUID) itself calls SetPawn(NewPawn) +
+        // AcknowledgePossession, so the property-path PC.Pawn link is not needed
+        // for the RPC trigger.  Removing it keeps the chain clean (954 open,
+        // 955 ClientRestart, 956 CALV) so the real CR is processed.
+        // (Re-introduce a CLEAN PC.Pawn property update later — needs the PC
+        //  RepLayout field index for AController::Pawn, tracked in the batch.)
+        // if (!pc.emit_pawn_link(addr)) { ... }
+        (void)pc;
 
         // PM103 (2026-05-04) — Phase D Step 2: appearance seed (Option A test).
         //
@@ -209,6 +223,48 @@ bool WorldBootstrapEmitter::dispatch_one(const sockaddr_in& addr,
         // struct layouts from the captured replay (Phase D Step 2.1).
         //
         // Failure here is non-fatal — possession is already complete.
+
+        // ── PM151 — ClientSetBlockOnAsyncLoading() asset-registry pre-warm ───
+        //
+        // Fire the stock UE5 param-less `ClientSetBlockOnAsyncLoading()` RPC
+        // (ch=3 reliable) IMMEDIATELY BEFORE the appearance bunch so the
+        // connection's async-load-flush flag is armed when
+        // OnRep_CharacterCustomization arrives — converting the racy async
+        // cosmetic-asset load into a synchronous one so AcknowledgePossession
+        // survives with real asset IDs.  Ordering matters: the flag must be set
+        // FIRST, then the appearance OnRep runs its loads to completion.
+        // See docs/re-plan/re-appearance-asset-preload.md §c.
+        //
+        // Probe-gated DEFAULT-OFF: probe_async_block_emit.txt ABSENT ⇒ OFF, so
+        // the current working appearance path is unaffected until intentionally
+        // testing the real-ID path.  Set probe_async_block_emit.txt=1 to enable.
+        // Handle override via probe_async_block_handle.txt (default 40).
+        //
+        // The emitter lives on the concrete GameServer (it mirrors
+        // emit_level_streaming_status's live-chSeq + lock discipline) rather
+        // than the IGameServerHost interface; host_ is always a GameServer on
+        // the native path, so a static_cast is safe here.  Failure is non-fatal.
+        {
+            bool async_block_enabled = false;     // ABSENT ⇒ OFF
+            if (std::FILE* fp = std::fopen("probe_async_block_emit.txt", "r")) {
+                int v = 0;
+                std::fscanf(fp, "%d", &v);
+                std::fclose(fp);
+                async_block_enabled = (v != 0);
+            }
+            if (async_block_enabled) {
+                auto& gs = static_cast<::GameServer&>(host_);
+                if (!gs.emit_client_set_block_on_async_loading(client_key_, addr)) {
+                    spdlog::warn("[WorldBootstrap] ClientSetBlockOnAsyncLoading "
+                                 "emit failed (non-fatal — appearance path "
+                                 "still proceeds)");
+                }
+            } else {
+                spdlog::info("[WorldBootstrap] ClientSetBlockOnAsyncLoading "
+                              "skipped (probe_async_block_emit.txt absent/0)");
+            }
+        }
+
         AppearanceEmitter app(host_, client_key_);
         if (!app.emit_default_seed(addr)) {
             spdlog::warn("[WorldBootstrap] Appearance seed emission failed "
@@ -249,10 +305,21 @@ bool WorldBootstrapEmitter::dispatch_one(const sockaddr_in& addr,
         // when the loading screen drops.  Probe-gated via
         // probe_streaming_keepalive.txt (default off).  See pc_emitter.cpp
         // for the full RE rationale.
-        if (!pc.emit_client_update_level_streaming_status(addr)) {
-            spdlog::warn("[WorldBootstrap] streaming keepalive failed "
-                         "(non-fatal)");
-        }
+        // ── DISABLED (2026-06-09) — chSeq-gap fix ────────────────────────
+        // This legacy one-shot emitted ClientUpdateLevelStreamingStatus on ch=3
+        // at a HARDCODED chSeq=957 (it assumed the player_state_link at 956 had
+        // fired — but player_state_link is probe-gated OFF, so it does not).
+        // That left a GAP at 956 in the ch=3 reliable stream: the client's
+        // InReliable[3] stuck at 956 and buffered EVERYTHING after it (the 957
+        // prime, the CIC, ClientRestart=958, CALV=959) indefinitely — so BOTH
+        // possession and WP make-visible silently hung.  The retail client
+        // streams the WP grid autonomously (POSSESSION-RESOLUTION §4) and the
+        // PM150 Maintain keepalive (emit_level_streaming_status) re-pins cells at
+        // ~1 Hz, so this one-shot prime is redundant.  Removing it keeps the ch=3
+        // chain contiguous (954 open, 955 pawn-link, 956 ClientRestart, 957 CALV).
+        // if (!pc.emit_client_update_level_streaming_status(addr)) {
+        //     spdlog::warn("[WorldBootstrap] streaming keepalive failed (non-fatal)");
+        // }
 
         // ── 2026-05-05 — ClientInitializeCharacter() RPC ──────────────
         //
@@ -266,8 +333,14 @@ bool WorldBootstrapEmitter::dispatch_one(const sockaddr_in& addr,
         // Wire handle 142 per docs/RE-CLIENTINITIALIZECHARACTER-HANDLE.md
         // (DERIVED-FROM-RE ±10).  Probe-override via probe_cic_handle.txt.
         //
-        // Probe knob: probe_cic_emit.txt — set to 0 to disable (default 1).
-        bool cic_enabled = true;
+        // Probe knob: probe_cic_emit.txt — set to 0 to disable.
+        // DEFAULT FLIPPED TO false (2026-06-09): the CIC shipped an EXTRA ch=3
+        // reliable bunch (wire handle 142, "DERIVED-FROM-RE ±10" — unconfirmed)
+        // right before ClientRestart, contributing to the chSeq pollution that
+        // buffered possession.  Keep the bootstrap ch=3 chain minimal until bare
+        // possession is confirmed, then re-enable (batch RANK 7).  Re-enable via
+        // probe_cic_emit.txt=1 if needed for appearance init.
+        bool cic_enabled = false;
         if (std::FILE* fp = std::fopen("probe_cic_emit.txt", "r")) {
             int v = 1;
             std::fscanf(fp, "%d", &v);

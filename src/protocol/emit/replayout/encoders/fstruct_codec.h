@@ -66,9 +66,13 @@ PropertyValue decode_frotator (::aoc::protocol::wire::PacketReader& r);
 bool          encode_frotator (const PropertyValue& v, BunchWriter& w);
 
 /// FVector_NetQuantize variants — packed integer encoding per UE5's
-/// WritePackedVector<Precision, MaxBits>.  Stubbed for now; will be
-/// fleshed out when we hit a divergence on SpawnLocation or
-/// ReplicatedMovement.
+/// WritePackedVector<Scale, MaxBits> (offset-binary, SerializeInt header).
+/// Ported from ActorBuilder::write_packed_vector.  The PropertyValue is a
+/// 3-double StructValue of UNSCALED world-space components; scaling/rounding
+/// happens internally.  Scale/MaxBits per UE5 NetSerialization.h:
+///   NetQuantize    Scale=1   MaxBits=20
+///   NetQuantize10  Scale=10  MaxBits=24
+///   NetQuantize100 Scale=100 MaxBits=30
 PropertyValue decode_fvector_netquantize   (::aoc::protocol::wire::PacketReader& r);
 bool          encode_fvector_netquantize   (const PropertyValue& v, BunchWriter& w);
 

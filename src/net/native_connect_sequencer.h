@@ -1,7 +1,7 @@
 // ============================================================================
 //  net/native_connect_sequencer.h
 //
-//  Authoritative-server connect orchestrator.  Replaces `replay_thread` when
+//  Authoritative-server connect sequencer.  Replaces `replay_thread` when
 //  the server runs in --native mode.  Drives the post-NMT handshake flow
 //  entirely from server-side state — no captured bytes played verbatim.
 //
@@ -133,6 +133,37 @@ public:
                                     const uint8_t* bunch_data,
                                     size_t bunch_bits) = 0;
 
+    /// 2026-06-11 — emit a large ActorOpen as a bPartialInitial…bPartialFinal
+    /// reliable partial-bunch CHAIN, instead of a single oversized bunch.
+    ///
+    /// `payload_bits`/`payload_bit_count` are the BunchData ONLY (no bunch
+    /// header) — exactly what `ActorBuilder::build_spawn_payload` returns.
+    /// The host frames it into two fragments on `channel` exactly like the
+    /// retail server's ch=3 PC ActorOpen (chSeq 954 [bOpen+bPartialInitial,
+    /// carries exports+ChName] → chSeq 955 [continuation, bPartialFinal]),
+    /// splitting the payload at `split_bit`, and ships BOTH fragments in one
+    /// UDP packet.  `ch_sequence` is the first fragment's chSeq; the second
+    /// fragment uses ch_sequence+1.  `ename_idx` is the open fragment's
+    /// hardcoded ChName (102 = NAME_Actor for PC).  `has_exports` sets the
+    /// open fragment's bHasPackageMapExports.
+    ///
+    /// Returns true on successful send.  Default no-op so non-native hosts
+    /// (tests, replay) need not implement it.
+    virtual bool send_partial_open_chain(const std::string& client_key,
+                                         const sockaddr_in& addr,
+                                         const uint8_t* payload_bits,
+                                         size_t payload_bit_count,
+                                         uint32_t channel,
+                                         uint32_t ch_sequence,
+                                         uint32_t ename_idx,
+                                         bool has_exports,
+                                         size_t split_bit) {
+        (void)client_key; (void)addr; (void)payload_bits;
+        (void)payload_bit_count; (void)channel; (void)ch_sequence;
+        (void)ename_idx; (void)has_exports; (void)split_bit;
+        return false;
+    }
+
     /// M1.4.d — Fix #36 equivalent.  True once the client has signalled
     /// that its game thread has finished `LoadMap()` (i.e. it sent a
     /// post-NMT packet with any bunch bits and no NMT opcodes).  The
@@ -200,6 +231,34 @@ public:
     virtual bool emit_client_initialize_character(
             const std::string& client_key,
             const sockaddr_in& addr) = 0;
+
+    /// PM150 (2026-06-09) — emit ONE ClientUpdateLevelStreamingStatus for
+    /// `package_name` on ch=3 reliable, stamping a LIVE contiguous chSeq from
+    /// cs.last_outgoing_reliable_chseq[3]+1 and bumping the tracker.  This is
+    /// the ONLY correct way to send the keepalive periodically:
+    /// send_bunch_packet ships builder bits verbatim and does NOT renumber
+    /// chSeq, so a static chSeq would collide / stall the reliable window.
+    /// `transaction_id` echoes the client's VisibilityRequestId for the cell
+    /// (0 when unknown).  Default no-op so non-native hosts need not implement.
+    virtual bool emit_level_streaming_status(const std::string& client_key,
+                                             const sockaddr_in& addr,
+                                             const std::string& package_name,
+                                             uint32_t transaction_id) {
+        (void)client_key; (void)addr; (void)package_name; (void)transaction_id;
+        return true;
+    }
+
+    /// PM150 (2026-06-09) — periodic refresh: emit a
+    /// ClientUpdateLevelStreamingStatus for every cell in
+    /// cs.streaming_relevant_cells, each with a live contiguous chSeq.  Called
+    /// from NativeConnectSequencer::do_maintain at ~1 Hz.  No-op (returns true)
+    /// if the keepalive is disabled or the relevant-cell set is empty.
+    /// Default no-op so non-native hosts don't have to implement it.
+    virtual bool drive_streaming_keepalive(const std::string& client_key,
+                                           const sockaddr_in& addr) {
+        (void)client_key; (void)addr;
+        return true;
+    }
 
     /// Road A — Phase B.0 (2026-04-26) — splice a captured packet from
     /// loaded ReplayData and send it to the client with our session's

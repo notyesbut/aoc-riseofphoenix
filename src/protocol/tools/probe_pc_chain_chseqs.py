@@ -8,9 +8,11 @@ with any captured bunch.
 Includes ChName parsing for OPEN bunches (the v1 scanner missed this).
 """
 import sys, struct, os
+from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[3]
 REPLAY_FILE = sys.argv[1] if len(sys.argv) > 1 else \
-    r"<REPO_ROOT>\dist\Release\replay_data.bin"
+    str(REPO_ROOT / 'dist' / 'Release' / 'replay_data.bin')
 
 MAGIC = 0x52504C59
 

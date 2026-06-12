@@ -36,7 +36,8 @@ from phase1_parser import (
     serialize_int_packed, serialize_int_packed64, serialize_int,
 )
 
-REPLAY = Path(r'<REPO_ROOT>\dist\Release\replay_data.bin')
+REPO_ROOT = Path(__file__).resolve().parents[3]
+REPLAY = REPO_ROOT / 'dist' / 'Release' / 'replay_data.bin'
 
 # ─── replay reader (matches decode_ctrl_bunches.py header format) ────────
 def load_packets(path):

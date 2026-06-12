@@ -44,22 +44,32 @@ void write_serialize_int_bits(BunchWriter& out, uint32_t value,
     out.write_bits(static_cast<uint64_t>(value), static_cast<int>(num_bits));
 }
 
-/// UE5 SerializePackedVector<ScaleFactor, MaxBitsPerComponent> — writer path.
+uint32_t read_probe_u32(const char* path, uint32_t default_val,
+                        bool* found = nullptr) {
+    std::FILE* fp = std::fopen(path, "r");
+    if (found) *found = (fp != nullptr);
+    if (!fp) return default_val;
+    uint32_t v = default_val;
+    std::fscanf(fp, "%u", &v);
+    std::fclose(fp);
+    return v;
+}
+
+/// SerializeNewActor quantized vector writer.
 ///
-/// Source: Engine/Private/NetSerialization.h::WritePackedVector<..>.
+/// Default mode mirrors the AoC reader candidate from sub_1442618D0:
+///   SerializeInt(n, 24)
+///   X/Y/Z via SerializeInt(max = 1 << (n + 2))
+///   value = (axis - (1 << (n + 1))) * 0.1
 ///
-/// Wire format:
-///   Bits = min( CeilLogTwo(|max|+1) + 1, MaxBitsPerComponent )   // +1 for sign
-///   SerializeInt(Bits, MaxBitsPerComponent + 1)                    // header
-///   For each axis:
-///     Bits bits of ((value + Bias) & Mask)
-///     where Bias = 1 << (Bits-1), Mask = (1 << Bits) - 1
+/// Probe files let live runs switch between this AoC candidate and stock UE
+/// WritePackedVector without rebuilding:
+///   probe_vector_mode.txt         0=AoC n/axis, 1=stock UE, 2=decoupled
+///   probe_vector_axis_bits.txt    force component bit width
+///   probe_vector_header_value.txt force SerializeInt header value
+///   probe_vector_header_max.txt   force SerializeInt header max
 ///
-/// This is OFFSET BINARY, NOT sign-magnitude.  The top bit of each
-/// component naturally carries the sign (MSB=1 for negative values).
-///
-/// `ix/iy/iz` are the pre-scaled integer components (i.e. round(value *
-/// ScaleFactor) already applied by the caller).
+/// `ix/iy/iz` are already scaled by 10 for the AoC candidate.
 void write_packed_vector(BunchWriter& out,
                           int32_t ix, int32_t iy, int32_t iz,
                           int32_t max_bits_per_component) {
@@ -70,24 +80,64 @@ void write_packed_vector(BunchWriter& out,
     uint64_t ax = abs64(ix), ay = abs64(iy), az = abs64(iz);
     uint64_t max_abs = std::max(ax, std::max(ay, az));
 
-    // UE5 formula: Bits = CeilLogTwo(max_abs + 1) + 1    (+1 for sign)
-    uint32_t bits = ceil_log_two(static_cast<uint32_t>(max_abs + 1)) + 1;
-    if (bits > static_cast<uint32_t>(max_bits_per_component)) {
-        bits = static_cast<uint32_t>(max_bits_per_component);
+    uint32_t axis_bits = ceil_log_two(static_cast<uint32_t>(max_abs + 1)) + 1;
+    if (axis_bits < 2u) {
+        axis_bits = 2u;
+    }
+    if (axis_bits > static_cast<uint32_t>(max_bits_per_component)) {
+        axis_bits = static_cast<uint32_t>(max_bits_per_component);
     }
 
-    // Header: SerializeInt(bits, max_bits_per_component + 1)
-    write_serialize_int_bits(out, bits,
-                               static_cast<uint32_t>(max_bits_per_component) + 1);
+    const uint32_t mode = read_probe_u32("probe_vector_mode.txt", 0u);
+    bool axis_bits_from_file = false;
+    const uint32_t axis_bits_probe =
+        read_probe_u32("probe_vector_axis_bits.txt", axis_bits, &axis_bits_from_file);
+    if (axis_bits_from_file && axis_bits_probe >= 2u && axis_bits_probe <= 30u) {
+        axis_bits = axis_bits_probe;
+    }
 
-    // Offset-binary encoding.  Bias = 1 << (Bits-1); each component is
-    // (value + Bias) & ((1 << Bits) - 1) written as `bits` bits LSB-first.
-    const uint64_t bias = 1ULL << (bits - 1);
-    const uint64_t mask = (bits == 64) ? ~0ULL : ((1ULL << bits) - 1);
+    uint32_t header_value = (axis_bits >= 2u) ? (axis_bits - 2u) : 0u;
+    uint32_t header_max = 24u;
+    const char* mode_name = "aoc";
+    if (mode == 1u) {
+        header_value = axis_bits;
+        header_max = static_cast<uint32_t>(max_bits_per_component) + 1u;
+        mode_name = "stock";
+    } else if (mode == 2u) {
+        mode_name = "decoupled";
+    }
+
+    bool legacy_header_n_from_file = false;
+    const uint32_t legacy_header_n =
+        read_probe_u32("probe_vector_header_n.txt", header_value,
+                       &legacy_header_n_from_file);
+    bool header_value_from_file = false;
+    header_value =
+        read_probe_u32("probe_vector_header_value.txt",
+                       legacy_header_n_from_file ? legacy_header_n : header_value,
+                       &header_value_from_file);
+    bool header_max_from_file = false;
+    header_max = read_probe_u32("probe_vector_header_max.txt", header_max,
+                                &header_max_from_file);
+    if (header_max < 2u) header_max = 2u;
+
+    if (mode != 0u || axis_bits_from_file || legacy_header_n_from_file ||
+        header_value_from_file || header_max_from_file) {
+        spdlog::warn("[ActorBuilder] vector probe mode={} header_value={} "
+                     "header_max={} axis_bits={} max_bits_per_component={}",
+                     mode_name, header_value, header_max, axis_bits,
+                     max_bits_per_component);
+    }
+
+    out.write_serialize_int(header_value, header_max);
+
+    const uint64_t bias = 1ULL << (axis_bits - 1);
+    const uint64_t mask = (axis_bits == 64) ? ~0ULL : ((1ULL << axis_bits) - 1);
     auto write_component = [&](int32_t v) {
         int64_t  biased = static_cast<int64_t>(v) + static_cast<int64_t>(bias);
         uint64_t encoded = static_cast<uint64_t>(biased) & mask;
-        out.write_bits(encoded, static_cast<int>(bits));
+        out.write_serialize_int(static_cast<uint32_t>(encoded),
+                                static_cast<uint32_t>(1ULL << axis_bits));
     };
     write_component(ix);
     write_component(iy);
@@ -213,6 +263,36 @@ size_t write_serialize_new_actor(BunchWriter& out, const ActorRuntime& runtime,
                                   const schema::ActorSchema& schema) {
     size_t start = out.bit_pos();
 
+    // ── SNA BISECT PROBES (2026-06-11, ACTOROPEN-SERIALIZENEWACTOR-RE.md
+    //    §1a / §7 step 2) — per-emit file reads (no rebuild needed to A/B). ──
+    //
+    // probe_pawn_skip_level=1  : do NOT write the 128-bit Level NetGUID.
+    //   RE doc §1a: the client reads the Level GUID only when
+    //   `(a2+40 & 4) || GetEngineNetVer() >= 5`.  If our announced net version
+    //   makes that gate FALSE, the client never reads those 128 bits and our
+    //   unconditional write shifts every subsequent bit by 128 → overrun.
+    //   Dropping it isolates whether this gate is FALSE in the current client.
+    //
+    // probe_pawn_skip_location=1 : force bSerializeLocation=0 (no location
+    //   payload at all).  RE doc §1/§7: the quantized packed-vector read
+    //   (sub_1442618D0) is a suspect for a SerializeNewActor-internal desync;
+    //   writing the bare flag=0 removes the packed vector from the wire.
+    int skip_level = 0;
+    if (std::FILE* fp = std::fopen("probe_pawn_skip_level.txt", "r")) {
+        std::fscanf(fp, "%d", &skip_level); std::fclose(fp);
+    }
+    int skip_location = 0;
+    if (std::FILE* fp = std::fopen("probe_pawn_skip_location.txt", "r")) {
+        std::fscanf(fp, "%d", &skip_location); std::fclose(fp);
+    }
+    // probe_sna_level_gate folds into skip_level: if it explicitly says "0"
+    // (= do NOT write level) treat as skip_level; "1" (write level) leaves it.
+    int level_gate_probe = -1;
+    if (std::FILE* fp = std::fopen("probe_sna_level_gate.txt", "r")) {
+        std::fscanf(fp, "%d", &level_gate_probe); std::fclose(fp);
+        if (level_gate_probe == 0) skip_level = 1;
+    }
+
     // H.3d CORRECTION: AoC replaced stock UE5's 32-bit FNetworkGUID with a
     // 128-bit FIntrepidNetworkGUID struct (ObjectId u64 + ServerId u32 +
     // Randomizer u32).  Confirmed by RE of sub_14141E960 in the shipping
@@ -238,19 +318,37 @@ size_t write_serialize_new_actor(BunchWriter& out, const ActorRuntime& runtime,
         runtime.archetype_randomizer};
     write_intrepid_guid(out, archetype);
 
-    // Level NetGUID — 128 bits
-    FIntrepidNetworkGUID level{
-        runtime.level_netguid ? runtime.level_netguid : schema.level_netguid,
-        runtime.level_server_id,
-        runtime.level_randomizer};
-    write_intrepid_guid(out, level);
+    // Level NetGUID — 128 bits (RE doc §1a: client read is GATED).
+    if (skip_level) {
+        if (level_gate_probe == 0) {
+            spdlog::warn("[ActorBuilder] probe_sna_level_gate=0 -> OMITTING the "
+                         "128-bit Level NetGUID from SerializeNewActor (Level GUID "
+                         "gate/SNA framing probe) - bunch shrinks by 128 bits");
+        } else {
+            spdlog::warn("[ActorBuilder] probe_pawn_skip_level=1 -> OMITTING the "
+                         "128-bit Level NetGUID from SerializeNewActor (Level GUID "
+                         "gate/SNA framing probe) - bunch shrinks by 128 bits");
+        }
+    } else {
+        FIntrepidNetworkGUID level{
+            runtime.level_netguid ? runtime.level_netguid : schema.level_netguid,
+            runtime.level_server_id,
+            runtime.level_randomizer};
+        write_intrepid_guid(out, level);
+    }
 
     // bSerializeLocation
-    const bool has_loc = runtime.serialize_location ||
-                          runtime.spawn_location.x != 0.0f ||
-                          runtime.spawn_location.y != 0.0f ||
-                          runtime.spawn_location.z != 0.0f ||
-                          runtime.quantize_location;
+    bool has_loc = runtime.serialize_location ||
+                    runtime.spawn_location.x != 0.0f ||
+                    runtime.spawn_location.y != 0.0f ||
+                    runtime.spawn_location.z != 0.0f ||
+                    runtime.quantize_location;
+    if (skip_location && has_loc) {
+        spdlog::warn("[ActorBuilder] probe_pawn_skip_location=1 -> forcing "
+                     "bSerializeLocation=0 (no packed-vector location payload; "
+                     "RE doc §1/§7 packed-vector test)");
+        has_loc = false;
+    }
     out.write_bit(has_loc ? 1 : 0);
     if (has_loc) {
         // bQuantizeLocation — captured pkt#22 uses the quantized path.
@@ -472,52 +570,119 @@ void write_v3_subobject_stably_named(BunchWriter& out,
 
 /// Write the content block for the actor root or one subobject.
 ///
-/// H.3f AoC-specific format (from sub_14504F1A0 + sub_145057C30 RE):
+/// ── ACTOROPEN-SERIALIZENEWACTOR-RE.md §3/§4/§6/§8 (Fix 1, 2026-06-11) ──
 ///
-///   For each property with a non-default value:
-///     [uint32 cmd_index]            — 32 bits LSB-first, bit-contiguous
-///     [per-property data]           — via emit_property (type-dispatched)
+/// ROOT-CAUSE FIX.  The retail client's `UActorChannel::ReceivedBunch`
+/// (`FUN_143f329d0`) loops over content blocks calling `ReadContentBlockPayload`
+/// (`FUN_143f30bf0`).  For EVERY block it reads, LSB-first per byte:
 ///
-/// Differences from stock UE5:
-///   - NO `bHasRepLayout` / `bIsActor` header bits
-///   - NO SIP-encoded payload_bits prefix
-///   - NO handle=0 terminator (bunch BDB defines the end)
-///   - Each property is prefixed by a full 32-bit cmd_index, not a SIP handle
-///   - Function J rollback: if a property's data writes zero bits (e.g. all
-///     default sub-elements), both the cmd_index AND data are rolled back.
+///   ReadContentBlockHeader (`FUN_143f2f4f0`):
+///     [1 bit  bHasRepLayout]
+///     [1 bit  bIsActor]                  ← 1: this block targets the channel actor
+///       (bIsActor==0 → SIP/128-bit sub-object NetGUID + class branch — handled
+///        by write_v3_subobject_* helpers, NOT here)
+///   ReadContentBlockPayload:
+///     [SIP   NumPayloadBits]
+///     [NumPayloadBits bits payload]      ← inner field records (see below)
 ///
-/// NOTE on the legacy `is_actor` + `subobject_netguid` args: captured
-/// pkt#22 has a SINGLE contiguous property stream for the actor — no
-/// separate subobject headers.  Subobject components likely ride on the
-/// actor's root property stream via the RepLayout tree (with their cmds
-/// appearing at predefined indices).  Kept the args for API compat.
+/// The PRIOR implementation emitted a BARE AoC `[32-bit cmd_index][data]…`
+/// stream with NO header bits and NO SIP NumPayloadBits (the stale
+/// wire-format.md §7 model — the live receiver has no such path).  The client
+/// read our cmd_index's low 2 bits as bHasRepLayout/bIsActor, then a SIP from
+/// the middle of our data → instant desync → bit-cursor overrun →
+/// `Ar.SetError()` → `Bunch.IsError() after ReceivedNextBunch` →
+/// "corrupted packet data".  See RE doc §4.
+///
+/// CORRECT envelope (RE doc §6/§8 Fix 1):
+///   [bHasRepLayout=0][bIsActor=1][SIP NumPayloadBits][field records]
+/// where each inner field record (RE doc §3 "inner field record",
+/// `ReadFieldHeaderAndPayload` `FUN_143f30e10`) is:
+///   [SerializeInt(NetFieldIndex, max(2, FieldCount))]   field selector
+///   [SIP NumBits]                                       per-field payload size
+///   [NumBits of field data]
+/// `NetFieldIndex` is the property's 0-based position in `props` (the RepLayout
+/// NetFieldExportHandle order); `FieldCount` is the number of replicated
+/// properties in this block.  With empty `values` this collapses to
+/// `[0][1][SIP 0]` — exactly the minimal legal actor-root terminator.
+///
+/// `is_actor` selects the bIsActor bit (true for the channel actor's root
+/// block).  `subobject_netguid` is unused in this path — sub-object blocks go
+/// through write_v3_subobject_*; kept for API compat.
+///
+/// Gated on `probe_cb_envelope.txt` (default 1 = correct envelope; 0 = legacy
+/// bare `[32-bit cmd_index][data]` stream) for rebuild-free A/B validation.
 void write_content_block(BunchWriter& out, bool is_actor,
                           uint64_t subobject_netguid,
                           const std::vector<schema::PropertySchema>& props,
                           const std::unordered_map<uint32_t, SchemaValue>& values) {
-    (void)is_actor;
     (void)subobject_netguid;
 
-    for (const auto& prop : props) {
-        auto it = values.find(prop.handle);
-        if (it == values.end()) continue;  // skip unset (would rollback anyway)
-
-        // Function J rollback semantic: write cmd_index + data into a
-        // temp writer first.  If the data write advanced the archive,
-        // commit the whole thing (cmd_index + data) to `out`.  Otherwise
-        // drop it entirely.  Our `emit_property` is deterministic per
-        // schema type — so "advanced" is just "wrote at least 1 bit".
-        BunchWriter prop_data(64);
-        ActorBuilder::emit_property(prop, it->second, prop_data);
-        if (prop_data.bit_pos() == 0) continue;  // nothing written → rollback
-
-        out.write_uint32(prop.handle);  // cmd_index (32 bits LSB-first)
-        out.write_bit_range(prop_data.data(), 0, prop_data.bit_pos());
+    // Per-build probe read (default 1 = new correct content-block envelope).
+    int cb_envelope = 1;
+    if (std::FILE* fp = std::fopen("probe_cb_envelope.txt", "r")) {
+        std::fscanf(fp, "%d", &cb_envelope);
+        std::fclose(fp);
     }
 
-    // No terminator: the bunch's BunchDataBits (in the bunch header) tells
-    // the receiver how many bits belong to this bunch's content.  When the
-    // bit cursor reaches BDB, Function G's outer loop terminates.
+    if (cb_envelope == 0) {
+        // ── LEGACY (stale) bare-stream path — kept for A/B only. ──
+        // RE doc §4 proves this desyncs the live client; do NOT enable except
+        // to confirm the regression.  Identical to the pre-Fix-1 behaviour.
+        spdlog::warn("[ActorBuilder] probe_cb_envelope=0 -> emitting LEGACY bare "
+                     "[32-bit cmd_index][data] content stream (no envelope) — "
+                     "expected to corrupt the bunch (RE doc §4)");
+        for (const auto& prop : props) {
+            auto it = values.find(prop.handle);
+            if (it == values.end()) continue;
+            BunchWriter prop_data(64);
+            ActorBuilder::emit_property(prop, it->second, prop_data);
+            if (prop_data.bit_pos() == 0) continue;
+            out.write_uint32(prop.handle);  // cmd_index (32 bits LSB-first)
+            out.write_bit_range(prop_data.data(), 0, prop_data.bit_pos());
+        }
+        return;
+    }
+
+    // ── CORRECT content-block envelope (RE doc §6/§8 Fix 1). ──
+    //
+    // FieldCount = number of replicated properties addressable in this block.
+    // The selector `SerializeInt(NetFieldIndex, max(2, FieldCount))` requires
+    // FieldCount >= 1; the client clamps the SerializeInt bound to >= 2 (RE
+    // doc §3).  NetFieldIndex is the property's 0-based index in `props`.
+    const uint32_t field_count =
+        static_cast<uint32_t>(props.size());
+    const uint32_t selector_max =
+        field_count < 2u ? 2u : field_count;
+
+    // Render the inner field-record payload into a temp so we can prefix it
+    // with the exact SIP NumPayloadBits.
+    BunchWriter payload(128);
+    for (uint32_t idx = 0; idx < field_count; ++idx) {
+        const auto& prop = props[idx];
+        auto it = values.find(prop.handle);
+        if (it == values.end()) continue;  // unset → skipped (no field record)
+
+        // Render the field data first so we know its bit length.
+        BunchWriter field_data(64);
+        ActorBuilder::emit_property(prop, it->second, field_data);
+        if (field_data.bit_pos() == 0) continue;  // wrote nothing → skip
+
+        // [SerializeInt(NetFieldIndex, max(2,FieldCount))] selector
+        payload.write_serialize_int(idx, selector_max);
+        // [SIP NumBits] per-field payload size
+        const uint32_t num_bits = static_cast<uint32_t>(field_data.bit_pos());
+        payload.write_sip(num_bits);
+        // [NumBits of field data]
+        payload.write_bit_range(field_data.data(), 0, num_bits);
+    }
+
+    // Envelope: [bHasRepLayout=0][bIsActor][SIP NumPayloadBits][payload].
+    out.write_bit(0);                                  // bHasRepLayout = 0
+    out.write_bit(is_actor ? 1 : 0);                   // bIsActor
+    out.write_sip(static_cast<uint64_t>(payload.bit_pos()));  // SIP NumPayloadBits
+    if (payload.bit_pos() > 0) {
+        out.write_bit_range(payload.data(), 0, payload.bit_pos());
+    }
 }
 
 } // anonymous namespace
@@ -633,16 +798,14 @@ void ActorBuilder::emit_property(const schema::PropertySchema& prop,
 
 // ── Public builder methods ──────────────────────────────────────────────────
 
-size_t ActorBuilder::build_spawn(const schema::ActorSchema& schema,
-                                  const ActorRuntime& runtime,
-                                  const EmitContext& ctx,
-                                  BunchWriter& out) {
-    size_t start = out.bit_pos();
-
-    // Render the bunch payload into a temp writer (SerializeNewActor +
-    // all content blocks), so we can compute BunchDataBits for the header.
-    BunchWriter payload(2048);
-
+// Internal: assemble ONLY the BunchData payload of a spawn into `payload`.
+// Shared by ActorBuilder::build_spawn (which prepends the bunch header) and
+// ActorBuilder::build_spawn_payload (which returns just these bits for the
+// partial-fragmentation path).  Returns the number of payload bits.
+static size_t assemble_spawn_payload(const schema::ActorSchema& schema,
+                                     const ActorRuntime& runtime,
+                                     const EmitContext& ctx,
+                                     BunchWriter& payload) {
     // Full-payload-splice mode — used when we don't yet understand the
     // payload format (e.g. bHasRepLayoutExport=1 compact field-mask) and
     // need to reproduce it verbatim for byte-identical round-trip or
@@ -656,11 +819,7 @@ size_t ActorBuilder::build_spawn(const schema::ActorSchema& schema,
         spdlog::debug("[ActorBuilder] Using FULL-payload splice ({} bits) "
                       "— header emitted from parsed fields, rest spliced",
                       ctx.spliced_tail_bit_count);
-        const uint32_t bunch_data_bits = static_cast<uint32_t>(payload.bit_pos());
-        write_bunch_header(out, ctx, schema, bunch_data_bits);
-        out.write_bit_range(payload.data(), 0, bunch_data_bits);
-        const size_t total = out.bit_pos() - start;
-        return total;
+        return payload.bit_pos();
     }
 
     // 0. Session H.3d: inline NetGUID export section.  Present only when
@@ -674,6 +833,112 @@ size_t ActorBuilder::build_spawn(const schema::ActorSchema& schema,
     // 1. SerializeNewActor
     write_serialize_new_actor(payload, runtime, schema);
 
+    // ── probe_sna_only (2026-06-11) — emit ZERO content blocks. ──
+    //   The client's UActorChannel::ReceivedBunch content-block loop runs
+    //   `while (!Bunch.AtEnd())`; if the bunch ends right after SerializeNewActor
+    //   the loop never executes and the actor REGISTERS with default properties.
+    //   This isolates whether the failure is in the tail or upstream in
+    //   SerializeNewActor / exports / Level GUID gate framing. If this still
+    //   fails, the content-block envelope is not the fix point. An ActorOpen
+    //   with no content blocks is a valid minimal open when BunchDataBits and
+    //   the post-SNA cursor agree - enough to register the NetGUID, which is
+    //   the gating prerequisite for ClientRestart possession.
+    {
+        int sna_only = 0;
+        if (std::FILE* fp = std::fopen("probe_sna_only.txt", "r")) {
+            std::fscanf(fp, "%d", &sna_only); std::fclose(fp);
+        }
+        if (sna_only != 0) {
+            spdlog::warn("[ActorBuilder] probe_sna_only=1 -> emitting SerializeNewActor "
+                         "with ZERO content blocks (tests SNA/export/Level GUID framing; "
+                         "a failure here is not a minimal-tail failure)");
+            return payload.bit_pos();
+        }
+    }
+
+    // ── probe_minimal_tail (2026-06-11, CONTENT-TAIL-FORMAT-DEFINITIVE.md) ──
+    //   Current RE finding: the ActorOpen content tail is the
+    //   stock-UE5 content-block WRAPPER loop, read by ReadContentBlockPayload
+    //   (FUN_143f30bf0) → ReadFieldHeaderAndPayload (FUN_143f30e10), NOT a raw
+    //   cmd_index/0xDEADBEEF stream.  The client runs `while(!Bunch.AtEnd())`;
+    //   an EMPTY tail is valid if the post-SNA cursor is exactly AtEnd, and a
+    //   failure there means upstream SNA/export/Level-GUID bit drift.  If a
+    //   block is emitted, the MINIMAL valid tail is exactly ONE actor-root block
+    //   `[bHasRepLayout=0][bIsActor=1][SIP NumPayloadBits=0]` (= 10 bits, bytes
+    //   02 00): the loop reads one clean zero-payload block, runs the field-record
+    //   loop ZERO times (no RepIndex → no ClassNetCache schema needed), and ends
+    //   with IsError()==false.  This opens the channel and REGISTERS the NetGUID
+    //   with default properties — the gating prerequisite for ClientRestart
+    //   possession.
+    //
+    //   Default 1 (emit the minimal valid tail).  Set probe_minimal_tail.txt=0
+    //   to fall through to the general field-record + V3-subobject + terminator
+    //   path (needed for full property/subobject fidelity once the live
+    //   AoCPlayerControllerBP_C ClassNetCache field bit-lengths are known).
+    {
+        int minimal_tail = 1;
+        if (std::FILE* fp = std::fopen("probe_minimal_tail.txt", "r")) {
+            std::fscanf(fp, "%d", &minimal_tail); std::fclose(fp);
+        }
+        if (minimal_tail != 0) {
+            // Exactly one actor-root block, empty payload.  Probe-controlled
+            // flags so we can A/B the header without a rebuild:
+            //   probe_cb_has_rep.txt   (default 0) -> bHasRepLayout bit. 0 is
+            //     the only safe synthetic actor-root wrapper: the client reads
+            //     SIP NumPayloadBits, binds a 0-bit reader, and the field loop
+            //     exits cleanly. 1 is kept only as an explicit failure probe:
+            //     the client skips the SIP, binds a 0-bit RepLayout reader, and
+            //     cb_npb=0 is guaranteed IsError.
+            //   probe_cb_npb.txt       (default 0) -> NumPayloadBits to declare
+            //     when bHasRepLayout=0 (0 = empty). Non-zero zero-padding is a
+            //     diagnostic only; it is not safer than the minimal empty block.
+            int cb_has_rep = 0;
+            if (std::FILE* fp = std::fopen("probe_cb_has_rep.txt", "r")) {
+                std::fscanf(fp, "%d", &cb_has_rep); std::fclose(fp);
+            }
+            int cb_npb = 0;
+            if (std::FILE* fp = std::fopen("probe_cb_npb.txt", "r")) {
+                std::fscanf(fp, "%d", &cb_npb); std::fclose(fp);
+            }
+            if (cb_npb < 0) {
+                spdlog::warn("[ActorBuilder] probe_cb_npb={} is invalid; clamping "
+                             "NumPayloadBits to 0", cb_npb);
+                cb_npb = 0;
+            }
+            payload.write_bit(cb_has_rep ? 1 : 0);          // bHasRepLayout
+            payload.write_bit(1);                            // bIsActor = 1 (root)
+            payload.write_sip(static_cast<uint64_t>(cb_npb)); // SIP NumPayloadBits
+            for (int i = 0; i < cb_npb; ++i) payload.write_bit(0);  // zero-pad payload
+            // probe_tail_bytepad (default 0): pad the WHOLE payload (exports+SNA+
+            //   content) to a multiple of 8 bits.  The captured real bunch is
+            //   byte-aligned (4864 bits = 608 bytes); ours is bit-exact.  If the
+            //   client's content-block loop limit (Num) is the byte-aligned bunch
+            //   size — or the SIP/NumPayloadBits reader needs a full spare byte —
+            //   a mid-byte BunchDataBits starves the read.  Byte-padding may let
+            //   the loop reach a clean AtEnd / give the SIP its byte.
+            int tail_bytepad = 0;
+            if (std::FILE* fp = std::fopen("probe_tail_bytepad.txt", "r")) {
+                std::fscanf(fp, "%d", &tail_bytepad); std::fclose(fp);
+            }
+            size_t pad_added = 0;
+            if (tail_bytepad != 0) {
+                while (payload.bit_pos() % 8 != 0) { payload.write_bit(0); ++pad_added; }
+            }
+            spdlog::warn("[ActorBuilder] probe_minimal_tail=1 -> actor-root block "
+                         "[bHasRepLayout={}][bIsActor=1][emitted SIP NumPayloadBits={}] "
+                         "(client_reads_sip={}; +{} byte-pad bits; {} payload bits total, "
+                         "byte-aligned={})",
+                         cb_has_rep, cb_npb, cb_has_rep == 0, pad_added, payload.bit_pos(),
+                         payload.bit_pos() % 8 == 0);
+            if (cb_has_rep != 0 && cb_npb == 0) {
+                spdlog::warn("[ActorBuilder] probe_cb_has_rep=1 with probe_cb_npb=0 "
+                             "is an explicit A/B failure probe: current RE says this "
+                             "path is guaranteed IsError");
+            }
+            return payload.bit_pos();
+        }
+    }
+
     // H.4: splice mode — when spliced_tail_bits is provided, append those
     // bits verbatim (they represent the RepLayout property stream which we
     // can't fully regenerate from schema yet).  Skip our own content blocks.
@@ -683,7 +948,17 @@ size_t ActorBuilder::build_spawn(const schema::ActorSchema& schema,
                       "({} bits) instead of content-block emission",
                       ctx.spliced_tail_bit_count);
     } else {
-        // 2. Root content block (AoC per-property [cmd_index][data] stream)
+        // 2. Root content block.
+        //    RE doc §4/§6/§8 Fix 1 (2026-06-11): with probe_cb_envelope=1
+        //    (default) this now emits the correct actor-root envelope
+        //    [bHasRepLayout=0][bIsActor=1][SIP NumPayloadBits][field records].
+        //    For empty root_values it collapses to [0][1][SIP 0] — itself a
+        //    legal actor-root terminator, so the bunch already ends on a block
+        //    boundary here.  The separate unconditional terminator emitted below
+        //    (probe_actor_terminator, default 1) is then a redundant-but-legal
+        //    second zero-length block retained for explicit A/B validation.
+        //    With probe_cb_envelope=0 (legacy bare stream) the trailing
+        //    terminator is REQUIRED to give the loop a clean final block.
         write_content_block(payload, /*is_actor=*/true, /*subobj=*/0,
                              schema.root_properties, runtime.root_values);
 
@@ -854,7 +1129,28 @@ size_t ActorBuilder::build_spawn(const schema::ActorSchema& schema,
              (ctx.appearance_force_v3_wrap &&
               ctx.appearance_subobject_index < schema.components.size()));
 
-        if (need_trailing && !schema.components.empty()) {
+        // ── ACTOROPEN TERMINATOR (2026-06-11, ACTOROPEN-SERIALIZENEWACTOR-RE.md
+        //    fix #2) — the client's ReceivedNextBunch content-block loop keeps
+        //    reading [bHasRepLayout][bIsActor][SIP NumPayloadBits] headers until
+        //    the bunch is exhausted.  WITHOUT a trailing actor-root terminator
+        //    [0][1][SIP 0] the loop reads one header PAST end-of-bunch -> the
+        //    FBitReader SetOverflow -> Bunch.IsError() after ReceivedNextBunch ->
+        //    "corrupted packet data" -> the actor never registers.  The old gate
+        //    (need_trailing && !components.empty()) emitted NO terminator for the
+        //    minimal pawn (components empty), which is exactly why seq-14285 was
+        //    still corrupt.  NumPayloadBits=0 touches ZERO handles, so it cannot
+        //    reset any property (the PM118 worry is unfounded).  Emit it
+        //    UNCONDITIONALLY for any ActorOpen; probe_actor_terminator.txt (default
+        //    1) lets us A/B without a rebuild. ──
+        bool emit_terminator = need_trailing && !schema.components.empty();
+        if (ctx.b_open) {
+            int tv = 1;
+            if (std::FILE* fp = std::fopen("probe_actor_terminator.txt", "r")) {
+                std::fscanf(fp, "%d", &tv); std::fclose(fp);
+            }
+            if (tv != 0) emit_terminator = true;
+        }
+        if (emit_terminator) {
             payload.write_bit(0);              // bHasRepLayout = 0
             payload.write_bit(1);              // bIsActor = 1 (ACTOR ROOT)
             payload.write_sip(0);              // SIP NumPayloadBits = 0
@@ -862,7 +1158,20 @@ size_t ActorBuilder::build_spawn(const schema::ActorSchema& schema,
         }
     }
 
-    uint32_t bunch_data_bits = static_cast<uint32_t>(payload.bit_pos());
+    return payload.bit_pos();
+}
+
+size_t ActorBuilder::build_spawn(const schema::ActorSchema& schema,
+                                  const ActorRuntime& runtime,
+                                  const EmitContext& ctx,
+                                  BunchWriter& out) {
+    size_t start = out.bit_pos();
+
+    // Render the bunch payload into a temp writer (SerializeNewActor +
+    // all content blocks), so we can compute BunchDataBits for the header.
+    BunchWriter payload(2048);
+    uint32_t bunch_data_bits =
+        static_cast<uint32_t>(assemble_spawn_payload(schema, runtime, ctx, payload));
 
     // 4. Bunch header (knows the bunch data size now)
     write_bunch_header(out, ctx, schema, bunch_data_bits);
@@ -875,6 +1184,15 @@ size_t ActorBuilder::build_spawn(const schema::ActorSchema& schema,
                   "(header={}, payload={})", schema.class_name, ctx.channel,
                   total, total - bunch_data_bits, bunch_data_bits);
     return total;
+}
+
+size_t ActorBuilder::build_spawn_payload(const schema::ActorSchema& schema,
+                                          const ActorRuntime& runtime,
+                                          const EmitContext& ctx,
+                                          BunchWriter& out) {
+    // Assemble the BunchData payload only (no bunch header).  Byte-identical
+    // to the payload portion of build_spawn, since both delegate here.
+    return assemble_spawn_payload(schema, runtime, ctx, out);
 }
 
 size_t ActorBuilder::build_delta(const schema::ActorSchema& schema,

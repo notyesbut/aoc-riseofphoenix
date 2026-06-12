@@ -24,9 +24,11 @@ Usage:
 import sys
 import struct
 import os
+from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[3]
 REPLAY_FILE = sys.argv[1] if len(sys.argv) > 1 else \
-    r"<REPO_ROOT>\dist\Release\replay_data.bin"
+    str(REPO_ROOT / 'dist' / 'Release' / 'replay_data.bin')
 
 MAGIC = 0x52504C59  # 'RPLY'
 

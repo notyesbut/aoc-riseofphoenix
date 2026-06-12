@@ -247,6 +247,16 @@ bool AppearanceEmitter::emit_seed(const sockaddr_in& client_addr,
     // PD2.3.1 strip-assets fallback.
     const uint32_t pawn_channel  = read_uint_file("probe_app_channel.txt", 19u);
     const uint32_t pawn_chseq    = read_uint_file("probe_app_chseq.txt",   956u);
+    // SDK-DERIVED HANDLE DEFAULTS (do not change without a live capture):
+    //   handle_max = 6  — NumReplicated on the CharacterAppearanceComponent
+    //                     CPF_Net chain (see derivation above); width = 3 bits.
+    //   handle_custom (CharacterCustomization) = 4  — 0-indexed wire handle.
+    //   handle_force_hide (bForceHideHeldItems) = 5 — 0-indexed wire handle.
+    // Derived from the SDK property chain in docs/re-plan/appearance-repindices.md
+    // §3 (table) and GameSystemsPlugin_classes.hpp / Engine_classes.hpp.  The
+    // probe overrides exist only for live-capture validation (risk R1: the
+    // AppearanceIDs TArray could shift later handles) — flip the probe files,
+    // no recompile needed.
     const uint32_t handle_max    = read_uint_file("probe_appearance_max.txt", 6u);
     const uint32_t handle_custom = read_uint_file("probe_appearance_handle_custom.txt",     4u);
     const uint32_t handle_force_hide = read_uint_file("probe_appearance_handle_force_hide.txt", 5u);

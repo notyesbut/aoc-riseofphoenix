@@ -31,8 +31,10 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
+#include <cmath>
 #include <cstring>
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -288,6 +290,21 @@ static bool vec3_equal(const PropertyValue& v, double x, double y, double z) {
     return a && b && c && *a == x && *b == y && *c == z;
 }
 
+// Tolerant variant for quantized codecs: each component must land within
+// `tol` of the expected value (the quantization grid step).
+static bool vec3_within(const PropertyValue& v, double x, double y, double z,
+                        double tol) {
+    const StructValue* sv = std::get_if<StructValue>(&v.payload);
+    if (!sv || sv->fields.size() != 3) return false;
+    const double* a = std::get_if<double>(&sv->fields[0].payload);
+    const double* b = std::get_if<double>(&sv->fields[1].payload);
+    const double* c = std::get_if<double>(&sv->fields[2].payload);
+    if (!a || !b || !c) return false;
+    return std::fabs(*a - x) <= tol &&
+           std::fabs(*b - y) <= tol &&
+           std::fabs(*c - z) <= tol;
+}
+
 void test_fstruct() {
     // 1) FVector round-trip (direct codec)
     {
@@ -401,6 +418,134 @@ void test_fstruct() {
     }
 }
 
+// ─── FVector_NetQuantize family (packed/quantized vectors) ───────────────
+
+void test_fvector_netquantize() {
+    // 1) NetQuantize10 (scale 10 → 0.1 grid) round-trip of a grid-aligned
+    //    vector.  Each component must land within the 0.1 quantization step.
+    {
+        BunchWriter bw;
+        auto v = make_vec3(10.0, -20.5, 100.3);
+        CHECK(encode_fvector_netquantize10(v, bw), "encode NetQuantize10");
+        PacketReader rd(bw.data(), bw.byte_size(), bw.bit_pos());
+        auto d = decode_fvector_netquantize10(rd);
+        CHECK(d.type == FPropertyType::Struct, "NetQuantize10 type Struct");
+        CHECK(vec3_within(d, 10.0, -20.5, 100.3, 0.1),
+              "NetQuantize10 round-trip within 0.1 grid");
+    }
+
+    // 2) NetQuantize10 minimal encoding — the all-zero vector.  With
+    //    max_abs=0, bits-per-component = CeilLogTwo(1)+1 = 1, so this is the
+    //    smallest possible packed vector.  It must round-trip back to exactly
+    //    zero on every axis.
+    {
+        BunchWriter bw;
+        auto v = make_vec3(0.0, 0.0, 0.0);
+        CHECK(encode_fvector_netquantize10(v, bw), "encode NetQuantize10 zero");
+        PacketReader rd(bw.data(), bw.byte_size(), bw.bit_pos());
+        auto d = decode_fvector_netquantize10(rd);
+        CHECK(vec3_equal(d, 0.0, 0.0, 0.0),
+              "NetQuantize10 zero round-trips to zero");
+    }
+
+    // 3) NetQuantize (scale 1 → integer grid) round-trip at its grid.
+    {
+        BunchWriter bw;
+        auto v = make_vec3(12.0, -34.0, 56.0);
+        CHECK(encode_fvector_netquantize(v, bw), "encode NetQuantize");
+        PacketReader rd(bw.data(), bw.byte_size(), bw.bit_pos());
+        auto d = decode_fvector_netquantize(rd);
+        CHECK(vec3_within(d, 12.0, -34.0, 56.0, 1.0),
+              "NetQuantize round-trip within 1.0 grid");
+    }
+
+    // 4) NetQuantize100 (scale 100 → 0.01 grid) round-trip at its grid.
+    {
+        BunchWriter bw;
+        auto v = make_vec3(1.23, -4.56, 7.89);
+        CHECK(encode_fvector_netquantize100(v, bw), "encode NetQuantize100");
+        PacketReader rd(bw.data(), bw.byte_size(), bw.bit_pos());
+        auto d = decode_fvector_netquantize100(rd);
+        CHECK(vec3_within(d, 1.23, -4.56, 7.89, 0.01),
+              "NetQuantize100 round-trip within 0.01 grid");
+    }
+}
+
+// ─── FArray (count-prefixed dynamic array of Int elements) ───────────────
+
+void test_farray() {
+    // Element descriptor: a plain Int.  Shared by every element.
+    auto int_elem = std::make_shared<ReplicatedPropertyDesc>();
+    int_elem->name = "Elem";
+    int_elem->type = FPropertyType::Int;
+
+    // Array property descriptor pointing at the Int element desc.
+    ReplicatedPropertyDesc arr_desc;
+    arr_desc.name = "IntArray";
+    arr_desc.type = FPropertyType::Array;
+    arr_desc.element_desc = int_elem;
+
+    // 1) A few ints — round-trip via the central dispatcher.
+    {
+        ArrayValue av;
+        av.elements.push_back(PropertyValue::make_int(7));
+        av.elements.push_back(PropertyValue::make_int(-13));
+        av.elements.push_back(PropertyValue::make_int(0x7FFFFFFF));
+        auto v = PropertyValue::make_array(std::move(av));
+
+        BunchWriter bw;
+        CHECK(encode_property(arr_desc, v, bw), "encode Array of 3 ints");
+        //  16-bit count prefix + 3 × 32-bit int = 16 + 96 = 112 bits
+        CHECK(bw.bit_pos() == 16 + 3 * 32, "Array(3) = 112 bits");
+        PacketReader rd(bw.data(), bw.byte_size(), bw.bit_pos());
+        auto d = decode_property(arr_desc, rd);
+        CHECK(d.type == FPropertyType::Array, "decoded type Array");
+        const ArrayValue* out = std::get_if<ArrayValue>(&d.payload);
+        CHECK(out && out->elements.size() == 3, "decoded 3 elements");
+        if (out && out->elements.size() == 3) {
+            auto* a = std::get_if<int32_t>(&out->elements[0].payload);
+            auto* b = std::get_if<int32_t>(&out->elements[1].payload);
+            auto* c = std::get_if<int32_t>(&out->elements[2].payload);
+            CHECK(a && *a == 7,          "element[0] == 7");
+            CHECK(b && *b == -13,        "element[1] == -13");
+            CHECK(c && *c == 0x7FFFFFFF, "element[2] == INT_MAX");
+        }
+    }
+
+    // 2) Empty array (count 0) — just the 16-bit count prefix, no body.
+    {
+        auto v = PropertyValue::make_array(ArrayValue{});
+
+        BunchWriter bw;
+        CHECK(encode_property(arr_desc, v, bw), "encode empty Array");
+        CHECK(bw.bit_pos() == 16, "empty Array = 16 bits (count only)");
+        PacketReader rd(bw.data(), bw.byte_size(), bw.bit_pos());
+        auto d = decode_property(arr_desc, rd);
+        CHECK(d.type == FPropertyType::Array, "decoded empty type Array");
+        const ArrayValue* out = std::get_if<ArrayValue>(&d.payload);
+        CHECK(out && out->elements.empty(), "decoded 0 elements");
+    }
+}
+
+// ─── Catalog two-phase split (initial vs lifetime) ───────────────────────
+
+void test_catalog_two_phase() {
+    // APlayerState (and its AActor parent) are entirely Lifetime props for
+    // now — no class has tagged any property RepPhase::Initial yet.  So the
+    // Lifetime phase must account for EVERY cmd in the hierarchy, and the
+    // Initial phase must be empty.
+    const ClassCatalog& cat = aplayer_state_catalog();
+
+    CHECK(cat.phase_cmd_count(RepPhase::Lifetime) == cat.total_cmd_count(),
+          "all-Lifetime: phase_cmd_count(Lifetime) == total_cmd_count()");
+    CHECK(cat.phase_cmd_count(RepPhase::Initial) == 0,
+          "all-Lifetime: phase_cmd_count(Initial) == 0");
+    CHECK(cat.initial_props().empty(),
+          "all-Lifetime: initial_props() empty");
+    CHECK(!cat.lifetime_props().empty(),
+          "all-Lifetime: lifetime_props() non-empty");
+}
+
 } // namespace
 
 int main() {
@@ -430,6 +575,15 @@ int main() {
 
     spdlog::info("-- FStruct (FVector / FRotator / dispatcher) --");
     test_fstruct();
+
+    spdlog::info("-- FVector_NetQuantize (10 / 1 / 100) --");
+    test_fvector_netquantize();
+
+    spdlog::info("-- FArray (count-prefixed dynamic array) --");
+    test_farray();
+
+    spdlog::info("-- Catalog two-phase split --");
+    test_catalog_two_phase();
 
     spdlog::info("== Result: {} passed, {} failed ==", g_passed, g_failed);
     return g_failed == 0 ? 0 : 1;

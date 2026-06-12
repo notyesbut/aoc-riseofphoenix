@@ -171,6 +171,26 @@ public:
                         const EmitContext& ctx,
                         BunchWriter& out);
 
+    /// Build ONLY the BunchData payload of a spawn (everything `build_spawn`
+    /// would put AFTER the bunch header: export section + SerializeNewActor +
+    /// content blocks / spliced tail).  Writes the payload bits into `out`
+    /// and returns the number of payload bits.
+    ///
+    /// This is the seam used by the partial-bunch fragmentation path: a large
+    /// ActorOpen whose single-bunch BunchData would exceed the real server's
+    /// MAX_SINGLE_BUNCH_SIZE_BITS must be split across a bPartialInitial…
+    /// bPartialFinal reliable chain (the retail server splits the ch=3 PC
+    /// ActorOpen into chSeq 954 [3545b] + chSeq 955 [1314b]).  The caller
+    /// frames the returned payload into the fragment headers itself.
+    ///
+    /// The payload bits are byte-for-byte identical to the payload portion of
+    /// `build_spawn` for the same (schema, runtime, ctx) — both delegate to the
+    /// same internal assembler.
+    size_t build_spawn_payload(const schema::ActorSchema& schema,
+                               const ActorRuntime& runtime,
+                               const EmitContext& ctx,
+                               BunchWriter& out);
+
     /// Build a property-delta bunch for a subset of changed handles.
     /// `changed_root_handles` and `changed_component_values` specify which
     /// properties to re-emit (rest are assumed unchanged client-side).

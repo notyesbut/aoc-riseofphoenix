@@ -36,7 +36,7 @@ using aoc::protocol::emit::BunchWriter;  // unused but keeps include symmetry
 using aoc::protocol::wire::PacketReader;
 
 constexpr const char* FIXTURE_DIR =
-    "<REPO_ROOT>\\"
+    AOC_REPO_ROOT "\\"
     "src\\protocol\\tools\\";
 
 int g_passed = 0;

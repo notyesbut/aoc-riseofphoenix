@@ -23,6 +23,36 @@
 
 namespace aoc { namespace protocol { namespace emit { namespace replayout {
 
+namespace {
+
+/// FArrayProperty decoder — inverse of encode_farray (encoder.cpp).
+///
+///   [uint16 count][count × element body]
+///
+/// Each element is decoded via decode_property(*desc.element_desc).  Result
+/// is an ArrayValue PropertyValue (type == Array).
+PropertyValue decode_farray(const ReplicatedPropertyDesc& desc,
+                            ::aoc::protocol::wire::PacketReader& reader) {
+    if (!desc.element_desc) {
+        spdlog::warn("[replayout/decode_farray] property '{}' has no "
+                     "element_desc — cannot determine element bit length, "
+                     "returning empty.", desc.name);
+        return {};
+    }
+    uint16_t count = reader.read_uint16();
+    if (reader.overflowed()) return {};
+
+    ArrayValue av;
+    av.elements.reserve(count);
+    for (uint16_t i = 0; i < count; ++i) {
+        if (reader.overflowed()) return {};
+        av.elements.push_back(decode_property(*desc.element_desc, reader));
+    }
+    return PropertyValue::make_array(std::move(av));
+}
+
+} // namespace
+
 PropertyValue decode_property(const ReplicatedPropertyDesc& desc,
                               ::aoc::protocol::wire::PacketReader& reader) {
     switch (desc.type) {
@@ -36,11 +66,11 @@ PropertyValue decode_property(const ReplicatedPropertyDesc& desc,
         case FPropertyType::Double: return decode_fdouble(reader);
         case FPropertyType::Object: return decode_fobject(reader);
         case FPropertyType::Struct: return decode_fstruct(desc, reader);
+        case FPropertyType::Array:  return decode_farray (desc, reader);
 
         case FPropertyType::Name:
         case FPropertyType::Text:
         case FPropertyType::SoftObject:
-        case FPropertyType::Array:
         case FPropertyType::Map:
         case FPropertyType::Set:
             spdlog::warn("[replayout/decode_property] no decoder yet for type "

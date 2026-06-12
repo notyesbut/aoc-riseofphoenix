@@ -150,6 +150,22 @@ inline void write_serialize_int(uint8_t* data, size_t data_cap, size_t& off,
     }
 }
 
+/// Number of bits write_serialize_int(value, max_val) emits.  Mirrors the same
+/// stop condition (one bit per mask while new_val+mask < max_val), so callers can
+/// size a payload that contains a SerializeInt without writing it twice.
+inline size_t serialize_int_bit_count(uint32_t value, uint32_t max_val) {
+    if (max_val <= 1) return 0;
+    size_t bits = 0;
+    uint32_t new_val = 0;
+    uint32_t mask = 1;
+    while (new_val + mask < max_val && mask != 0) {
+        if (value & mask) new_val |= mask;
+        ++bits;
+        mask <<= 1;
+    }
+    return bits;
+}
+
 // ─── SerializeIntPacked (variable-length byte-based varint) ──────────────────
 
 /// UE5 SerializeIntPacked — write uint64 as 1..10 bytes.

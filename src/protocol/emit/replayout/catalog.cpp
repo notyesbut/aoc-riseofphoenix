@@ -18,19 +18,63 @@
 //    6. aaoc_player_state_catalog       — CharacterArchetype likely here
 //    7. apawn_catalog, acharacter_catalog, aaoc_pawn_catalog (for pkt#78)
 //
+//  PHASE TAGS: every property carries a RepPhase (catalog.h).  Until each
+//  class's GetLifetimeReplicatedProps() is RE'd for COND_InitialOnly, the
+//  `add` helpers below leave `phase` at its default (RepPhase::Lifetime),
+//  which reproduces the previous single-list stream order exactly.  When
+//  the phase RE lands, tag the InitialOnly props via the phase-aware add
+//  overload (see acontroller_catalog for the pattern).
+//
 //  LAYER:  Protocol / emit / replayout
 // ============================================================================
 #include "protocol/emit/replayout/catalog.h"
 
 namespace aoc { namespace protocol { namespace emit { namespace replayout {
 
+namespace {
+
+/// Cmd-count contribution of a single property: itself + (if a Struct) its
+/// flattened sub_cmds.
+inline uint32_t cmd_span(const ReplicatedPropertyDesc& p) {
+    uint32_t n = 1;
+    if (p.type == FPropertyType::Struct) {
+        n += static_cast<uint32_t>(p.sub_cmds.size());
+    }
+    return n;
+}
+
+} // namespace
+
+std::vector<const ReplicatedPropertyDesc*>
+ClassCatalog::initial_props() const {
+    std::vector<const ReplicatedPropertyDesc*> out;
+    for (const auto& p : own_props) {
+        if (p.phase == RepPhase::Initial) out.push_back(&p);
+    }
+    return out;
+}
+
+std::vector<const ReplicatedPropertyDesc*>
+ClassCatalog::lifetime_props() const {
+    std::vector<const ReplicatedPropertyDesc*> out;
+    for (const auto& p : own_props) {
+        if (p.phase == RepPhase::Lifetime) out.push_back(&p);
+    }
+    return out;
+}
+
 uint32_t ClassCatalog::total_cmd_count() const {
     uint32_t n = parent ? parent->total_cmd_count() : 0;
     for (const auto& p : own_props) {
-        n += 1;
-        if (p.type == FPropertyType::Struct) {
-            n += static_cast<uint32_t>(p.sub_cmds.size());
-        }
+        n += cmd_span(p);
+    }
+    return n;
+}
+
+uint32_t ClassCatalog::phase_cmd_count(RepPhase phase) const {
+    uint32_t n = parent ? parent->phase_cmd_count(phase) : 0;
+    for (const auto& p : own_props) {
+        if (p.phase == phase) n += cmd_span(p);
     }
     return n;
 }
@@ -47,6 +91,31 @@ ClassCatalog::property_at_cmd(uint32_t cmd_index) const {
     }
     uint32_t running = 0;
     for (const auto& p : own_props) {
+        if (running == cmd_index) return &p;
+        ++running;
+        if (p.type == FPropertyType::Struct) {
+            for (const auto& sub : p.sub_cmds) {
+                if (running == cmd_index) return &sub;
+                ++running;
+            }
+        }
+    }
+    return nullptr;
+}
+
+const ReplicatedPropertyDesc*
+ClassCatalog::property_at_cmd(RepPhase phase, uint32_t cmd_index) const {
+    // Per-phase, hierarchy-wide: parents occupy the lower per-phase range.
+    if (parent) {
+        const uint32_t parent_count = parent->phase_cmd_count(phase);
+        if (cmd_index < parent_count) {
+            return parent->property_at_cmd(phase, cmd_index);
+        }
+        cmd_index -= parent_count;
+    }
+    uint32_t running = 0;
+    for (const auto& p : own_props) {
+        if (p.phase != phase) continue;
         if (running == cmd_index) return &p;
         ++running;
         if (p.type == FPropertyType::Struct) {
@@ -175,12 +244,18 @@ const ClassCatalog& acontroller_catalog() {
 
     // Cluster at 0x14A877A60..0x14A877BA0.  2 replicated properties.
     if (c.own_props.empty()) {
+        // Phase-aware add: pass RepPhase::Initial for a COND_InitialOnly
+        // property once GetLifetimeReplicatedProps RE confirms it.  Both
+        // AController props are change-over-time (Lifetime) — neither
+        // PlayerState nor Pawn is InitialOnly in stock UE5.
         auto add = [&](uint32_t rep_idx, const char* name,
-                        FPropertyType t) {
+                        FPropertyType t,
+                        RepPhase phase = RepPhase::Lifetime) {
             ReplicatedPropertyDesc d;
             d.rep_index = rep_idx;
             d.name = name;
             d.type = t;
+            d.phase = phase;
             c.own_props.push_back(std::move(d));
         };
         add(0, "PlayerState", FPropertyType::Object);  // APlayerState* (OnRep_PlayerState)

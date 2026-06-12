@@ -9,8 +9,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# ── Testing ─────────────────────────────────────────────────────────────────
+# Enable CTest so every test_* executable can be registered with add_test()
+# and driven by `ctest` (and by scripts/build.ps1 -Test).
+enable_testing()
+
 # ── Output directory ────────────────────────────────────────────────────────
-set(AOC_DIST_ROOT "<REPO_ROOT>/dist" CACHE PATH
+set(AOC_DIST_ROOT "${CMAKE_SOURCE_DIR}/dist" CACHE PATH
     "Canonical output root: binaries land in <AOC_DIST_ROOT>/<config>/")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG          "${AOC_DIST_ROOT}/Debug")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE        "${AOC_DIST_ROOT}/Release")
@@ -118,7 +123,7 @@ set(SERVER_SOURCES
     # Phase III M1 — native Name-update bunch emission
     src/protocol/emit/name_update_bunch.cpp
     src/protocol/emit/property_update_bunch_builder.cpp
-    # Path B — authoritative-server connect orchestrator (M1.0 scaffolding)
+    # Path B — authoritative-server connect sequencer (M1.0 scaffolding)
     src/net/native_connect_sequencer.cpp
     # Path B — M1.1 bootstrap emitter (ch=0 control bunches before PC spawn)
     src/net/bootstrap_emitter.cpp
@@ -235,6 +240,7 @@ target_link_libraries(aoc_server
         ics_protos
         gRPC::grpc++
         gRPC::grpc++_reflection
+        gRPC::grpc
         protobuf::libprotobuf
         OpenSSL::SSL
         OpenSSL::Crypto
@@ -250,6 +256,7 @@ endif()
 target_compile_features(aoc_server PRIVATE cxx_std_20)
 
 if(MSVC)
+    target_sources(aoc_server PRIVATE src/platform/msvc_stl_compat.cpp)
     target_compile_definitions(aoc_server PRIVATE
         _CRT_SECURE_NO_WARNINGS
         WIN32_LEAN_AND_MEAN
@@ -447,6 +454,7 @@ if(MSVC)
         _CRT_SECURE_NO_WARNINGS
         WIN32_LEAN_AND_MEAN
         NOMINMAX
+        AOC_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}"
     )
 endif()
 set_target_properties(test_pkt22_round_trip PROPERTIES FOLDER "Tools")
@@ -466,6 +474,7 @@ if(MSVC)
         _CRT_SECURE_NO_WARNINGS
         WIN32_LEAN_AND_MEAN
         NOMINMAX
+        AOC_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}"
     )
 endif()
 set_target_properties(test_pkt104_round_trip PROPERTIES FOLDER "Tools")
@@ -542,6 +551,7 @@ if(MSVC)
         _CRT_SECURE_NO_WARNINGS
         WIN32_LEAN_AND_MEAN
         NOMINMAX
+        AOC_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}"
     )
 endif()
 set_target_properties(test_replay_mutator PROPERTIES FOLDER "Tools")
@@ -758,7 +768,8 @@ target_include_directories(test_pc_spawn_diff PRIVATE ${CMAKE_CURRENT_SOURCE_DIR
 target_link_libraries(test_pc_spawn_diff PRIVATE spdlog::spdlog)
 if(MSVC)
     target_compile_definitions(test_pc_spawn_diff PRIVATE
-        _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX)
+        _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX
+        AOC_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
 endif()
 set_target_properties(test_pc_spawn_diff PROPERTIES FOLDER "Tools")
 
@@ -776,3 +787,33 @@ if(MSVC)
         _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX)
 endif()
 set_target_properties(test_package_map_export PROPERTIES FOLDER "Tools")
+
+# ── Test registration (CTest) ───────────────────────────────────────────────
+# Register every test_* executable with CTest so `ctest` (and
+# scripts/build.ps1 -Test) can build and run the full suite.  Each entry runs
+# the target's own executable; the test passes iff the exe exits 0.
+set(AOC_TEST_TARGETS
+    test_player_controller_builder
+    test_packet_parser
+    test_schemas
+    test_replayout_codecs
+    test_pkt22_round_trip
+    test_pkt104_round_trip
+    test_name_update_bunch
+    test_property_update_bunch_builder
+    test_pawn_spawn_diff
+    test_replay_mutator
+    test_actor_builder
+    test_simulation
+    test_replication
+    test_dispatcher
+    test_live_server
+    test_nmt_welcome
+    test_nmt_challenge
+    test_nmt_netguid_assign
+    test_pc_spawn_diff
+    test_package_map_export
+)
+foreach(_aoc_test ${AOC_TEST_TARGETS})
+    add_test(NAME ${_aoc_test} COMMAND ${_aoc_test})
+endforeach()
